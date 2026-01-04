@@ -1,0 +1,281 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * murasaki-win98 UI Library
+ * Windows 98 Style CSS Variables and Theme Configuration
+ *
+ * Usage: In your CSS file, add:
+ *   @import "@murasaki/win98/globals.css";
+ *   @source "../node_modules/@murasaki/win98";
+ */
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   CSS Variables - Windows 98 Color Palette
+   ========================================================================== */
+
+:root {
+  /* Button */
+  --button-alternate-face: rgb(192, 192, 192);
+  --button-dk-shadow: rgb(64, 64, 64);
+  --button-face: rgb(212, 208, 200);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(212, 208, 200);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(212, 208, 200);
+  --app-workspace: rgb(128, 128, 128);
+  --background: rgb(58, 110, 165);
+  --inactive-border: rgb(212, 208, 200);
+  --scrollbar: rgb(212, 208, 200);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(0, 0, 0);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(10, 36, 106);
+  --gradient-active-title: rgb(166, 202, 240);
+  --gradient-inactive-title: rgb(192, 192, 192);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(212, 208, 200);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(212, 208, 200);
+  --menu-bar: rgb(192, 192, 192);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(10, 36, 106);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 128);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Spacing */
+  --element-spacing: 8px;
+  --label-spacing: 6px;
+  --grouped-button-spacing: 4px;
+  --grouped-element-spacing: 6px;
+  --checkbox-width: 13px;
+  --option-size: 12px;
+  --range-track-height: 4px;
+  --range-spacing: 10px;
+
+  /* Computed - Radio buttons */
+  --radio-total-width: calc(var(--option-size) + var(--label-spacing));
+  --radio-left: calc(-1 * var(--radio-total-width));
+  --radio-dot-width: 4px;
+  --radio-dot-top: var(--radio-dot-width);
+  --radio-dot-left: calc(var(--radio-left) + var(--radio-dot-top));
+
+  /* Computed - Checkboxes */
+  --checkbox-total-width: calc(var(--checkbox-width) + var(--label-spacing));
+  --checkbox-left: calc(-1 * var(--checkbox-total-width));
+  --checkmark-width: 7px;
+  --checkmark-top: 3px;
+  --checkmark-left: 3px;
+}
+
+/* ==========================================================================
+   Tailwind Theme Extension
+   ========================================================================== */
+
+@theme inline {
+  /* Button */
+  --color-btn-face: var(--button-face);
+  --color-btn-text: var(--button-text);
+  --color-btn-shadow: var(--button-shadow);
+  --color-btn-hilight: var(--button-hilight);
+  --color-btn-dk-shadow: var(--button-dk-shadow);
+  --color-btn-light: var(--button-light);
+  --color-btn-alternate: var(--button-alternate-face);
+
+  /* Window */
+  --color-window-bg: var(--window);
+  --color-window-text: var(--window-text);
+  --color-window-frame: var(--window-frame);
+  --color-window-border-active: var(--active-border);
+  --color-window-border-inactive: var(--inactive-border);
+
+  /* TitleBar */
+  --color-title-active: var(--active-title);
+  --color-title-active-text: var(--title-text);
+  --color-title-active-gradient: var(--gradient-active-title);
+  --color-title-inactive: var(--inactive-title);
+  --color-title-inactive-text: var(--inactive-title-text);
+  --color-title-inactive-gradient: var(--gradient-inactive-title);
+
+  /* Menu */
+  --color-menu-bg: var(--menu);
+  --color-menu-text: var(--menu-text);
+  --color-menu-bar: var(--menu-bar);
+  --color-menu-hilight: var(--menu-hilight);
+  --color-menu-hilight-text: var(--hilight-text);
+  --color-menu-disabled: var(--gray-text);
+  --color-menu-hottrack: var(--hot-tracking-color);
+
+  /* Scrollbar */
+  --color-scrollbar: var(--scrollbar);
+
+  /* Tooltip */
+  --color-tooltip-bg: var(--info-window);
+  --color-tooltip-text: var(--info-text);
+
+  /* Desktop */
+  --color-desktop: var(--background);
+  --color-workspace: var(--app-workspace);
+
+  /* Selection */
+  --color-selection: var(--hilight);
+  --color-selection-text: var(--hilight-text);
+
+  /* Font */
+  --font-pixel: "Pixelated MS Sans Serif", sans-serif;
+
+  /* Spacing */
+  --spacing-element: var(--element-spacing);
+  --spacing-grouped-btn: var(--grouped-button-spacing);
+  --spacing-grouped-el: var(--grouped-element-spacing);
+  --spacing-label: var(--label-spacing);
+  --spacing-range: var(--range-spacing);
+
+  /* Shadows */
+  --shadow-raised-outer: inset -1px -1px var(--color-btn-dk-shadow),
+    inset 1px 1px var(--color-btn-hilight);
+  --shadow-raised-inner: inset -2px -2px var(--color-btn-shadow),
+    inset 2px 2px var(--color-btn-light);
+  --shadow-raised: var(--shadow-raised-outer), var(--shadow-raised-inner);
+
+  --shadow-sunken-outer: inset -1px -1px var(--color-btn-hilight),
+    inset 1px 1px var(--color-btn-dk-shadow);
+  --shadow-sunken-inner: inset -2px -2px var(--color-btn-light),
+    inset 2px 2px var(--color-btn-shadow);
+  --shadow-sunken: var(--shadow-sunken-outer), var(--shadow-sunken-inner);
+
+  --shadow-border-field: inset -1px -1px var(--color-btn-hilight),
+    inset 1px 1px var(--color-btn-shadow),
+    inset -2px -2px var(--color-btn-light),
+    inset 2px 2px var(--color-btn-dk-shadow);
+}
+
+/* ==========================================================================
+   Base Styles & Font Faces
+   ========================================================================== */
+
+@layer base {
+  @font-face {
+    font-family: "Pixelated MS Sans Serif";
+    src: url("./assets/fonts/ms_sans_serif.woff2") format("woff2"),
+      url("./assets/fonts/ms_sans_serif.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pixelated MS Sans Serif";
+    src: url("./assets/fonts/ms_sans_serif_bold.woff2") format("woff2"),
+      url("./assets/fonts/ms_sans_serif_bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply pixelated font-pixel;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ==========================================================================
+   Custom Utilities
+   ========================================================================== */
+
+@utility pixelated {
+  image-rendering: pixelated;
+}
+
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+
+@utility flex-center-column {
+  @apply flex flex-col items-center justify-center;
+}
+
+@utility break-line {
+  @apply text-wrap wrap-break-word break-all whitespace-pre-line;
+}
+
+@utility sunken-panel {
+  @apply bg-window-bg overflow-auto border-2 border-transparent;
+  border-style: groove;
+  border-image: url("./assets/icons/sunken-panel-border.svg") 2;
+}
+
+/* ==========================================================================
+   Scrollbar Styles (Windows 98 Style)
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 17px;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--button-face);
+}
+
+::-webkit-scrollbar-track {
+  background-image: url("./assets/icons/scrollbar-background.svg");
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--button-face);
+  box-shadow: var(--shadow-raised);
+}
+
+::-webkit-scrollbar-button:horizontal:start:decrement,
+::-webkit-scrollbar-button:horizontal:end:increment,
+::-webkit-scrollbar-button:vertical:start:decrement,
+::-webkit-scrollbar-button:vertical:end:increment {
+  display: block;
+}
+
+::-webkit-scrollbar-button:vertical:start {
+  height: 17px;
+  background-image: url("./assets/icons/button-up.svg");
+}
+
+::-webkit-scrollbar-button:vertical:end {
+  height: 17px;
+  background-image: url("./assets/icons/button-down.svg");
+}
+
+::-webkit-scrollbar-button:horizontal:start {
+  width: 16px;
+  background-image: url("./assets/icons/button-left.svg");
+}
+
+::-webkit-scrollbar-button:horizontal:end {
+  width: 16px;
+  background-image: url("./assets/icons/button-right.svg");
+}

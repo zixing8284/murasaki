@@ -1,0 +1,16 @@
+/*
+ * Playground Styles
+ * Import the win98 UI library styles
+ */
+@import "../../src/globals.css";
+@source "../../src";
+
+/*
+ * Add any playground-specific styles below
+ */
+
+ body {
+  min-height: 100vh;
+  padding: 2rem;
+  background: teal;
+}

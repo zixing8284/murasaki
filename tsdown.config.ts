@@ -4,11 +4,11 @@ import { defineConfig } from 'tsdown'
 export default defineConfig({
   platform: 'neutral',
   alias: {
-    "#/*": "./src/*",
+    '#/*': './src/*',
   },
-  copy: ["src/assets", "src/globals.css"],
-  entry: ["./src/index.ts"],
-  outDir: "dist",
+  copy: ['src/assets', 'src/globals.css'],
+  entry: ['./src/index.ts'],
+  outDir: 'dist',
   plugins: [
     pluginBabel({
       babelHelpers: 'bundled',

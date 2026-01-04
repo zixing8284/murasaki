@@ -1,6 +1,6 @@
-import { Button, TextBox } from "#/index";
+import { Button, TextBox } from '#/index'
 
-export function App() {
+export function App(): React.ReactElement {
   return (
     <>
       <Button>ようこそ Win98 Playground へ！</Button>
@@ -8,5 +8,5 @@ export function App() {
         <TextBox placeholder="ここにテキストを入力してください..." />
       </div>
     </>
-  );
+  )
 }

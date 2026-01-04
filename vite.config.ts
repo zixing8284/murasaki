@@ -1,24 +1,24 @@
+import tailwindcss from '@tailwindcss/vite'
 /// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 import { defineConfig } from 'vite'
-import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  root: "./playground",
+  root: './playground',
   plugins: [
     react({
-      babel: { plugins: ["babel-plugin-react-compiler"] },
+      babel: { plugins: ['babel-plugin-react-compiler'] },
     }),
     tailwindcss(),
   ],
   test: {
-    root: ".",
+    root: '.',
     browser: {
       enabled: true,
       provider: playwright(),
-      instances: [{ browser: "chromium" }],
+      instances: [{ browser: 'chromium' }],
       headless: true,
     },
   },
-});
+})

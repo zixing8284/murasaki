@@ -1,12 +1,6 @@
 {
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "#/*": [
-        "./src/*"
-      ]
-    },
     "target": "esnext",
     "jsx": "react-jsx",
     "lib": [
@@ -14,8 +8,14 @@
       "DOM"
     ],
     "moduleDetection": "force",
+    "baseUrl": ".",
     "module": "preserve",
     "moduleResolution": "bundler",
+    "paths": {
+      "#/*": [
+        "./src/*"
+      ]
+    },
     "resolveJsonModule": true,
     "types": [],
     "declaration": true,

@@ -1,9 +1,9 @@
-import { expect, test } from 'vitest'
+import { expect, it } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { MyButton } from '../src'
+import { Button } from '../src'
 
-test('button', async () => {
-  const screen = await render(<MyButton type="primary" />)
+it('button', async () => {
+  const screen = await render(<Button type="primary" />)
   const buttonElement = screen.getByRole('button')
 
   expect(buttonElement).toBeInTheDocument()

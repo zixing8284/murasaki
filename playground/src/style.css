@@ -9,8 +9,44 @@
  * Add any playground-specific styles below
  */
 
- body {
-  min-height: 100vh;
-  padding: 2rem;
-  background: teal;
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+body {
+  /* background: teal; */
+  cursor: url("data:image/gif;base64,R0lGODlhCwATAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAALABMAAAIrhI4JlhrcBAgvSlrbxPBs7mAU9IlMaV7mwo6jY2zk+Xphh8iWint1tDgUAAA7"), auto;
+  width: clamp(460px, 100%, 100%);
+  font-size: 11px;
+}
+
+:root {
+  --scan-line-dot: linear-gradient(rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%),
+  linear-gradient(90deg,
+    rgba(255, 0, 0, 0.06),
+    rgba(0, 255, 0, 0.02),
+    rgba(0, 0, 255, 0.06));
+  --scan-line-solid: radial-gradient(at center center, transparent 0px,
+    transparent 60%, rgba(0, 0, 0, 0.15) 100%),
+  repeating-linear-gradient(0deg, transparent, transparent 1px,
+    rgba(0, 0, 0, 0.35) 3px);
+}
+/* Scanline CRT effect overlay */
+.scanline-overlay::after {
+  content: "";
+  z-index: 9999;
+  display: block;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  background-image: var(--scan-line-dot);
+  background-size: 100% 1px, 2px 100%;
+  background-color: #a4979721;
+  pointer-events: none;
+  opacity: 0.9;
 }

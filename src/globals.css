@@ -24,7 +24,7 @@
   --button-hilight: rgb(255, 255, 255);
   --button-light: rgb(212, 208, 200);
   --button-shadow: rgb(128, 128, 128);
-  --button-text: rgb(0, 0, 0);
+  --button-text: rgb(34, 34, 34);
 
   /* Window */
   --active-border: rgb(212, 208, 200);

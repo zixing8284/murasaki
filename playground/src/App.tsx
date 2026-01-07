@@ -1,5 +1,5 @@
-import { Button } from '#/index'
 import { useEffect, useState } from 'react'
+import { Taskbar } from './components/Taskbar'
 
 function formatTime(): string {
   return new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
@@ -62,60 +62,11 @@ export function App(): React.ReactElement {
       )}
 
       {/* Taskbar */}
-      <footer className="flex flex-row items-center bg-[silver] p-0.75 shadow-[inset_-1px_-1px_#000,inset_1px_1px_#d4d0c8,inset_-2px_-2px_#808080,inset_2px_2px_#fff] z-2 overflow-hidden mt-auto select-none">
-        {/* Start Button */}
-        <div>
-          <Button
-            active={showStartMenu}
-            onClick={() => setShowStartMenu(!showStartMenu)}
-          >
-            Hello
-          </Button>
-        </div>
-
-        {/* Divider */}
-        <div className="shadow-[inset_-1px_-1px_#0a0a0a,inset_1px_1px_#dfdfdf,inset_-2px_-2px_grey,inset_2px_2px_#fff] h-5.5 w-0.5 mx-0.5" />
-
-        {/* Quick Launcher */}
-        <div className="flex flex-row [&>img]:my-0 [&>img]:mx-0.5 [&>img]:cursor-pointer [&>img]:p-0.5 [&>img]:hover:shadow-[-1px_-1px_#dfdfdf,1px_1px_grey] [&>img]:active:shadow-[1px_1px_#dfdfdf,-1px_-1px_grey]">
-          <img
-            src="/img/desktop.png"
-            alt="Show Desktop"
-            title="Show Desktop"
-          />
-          <img
-            src="/img/express.png"
-            alt="Email Me"
-            title="Outlook Express"
-          />
-        </div>
-
-        {/* Divider */}
-        <div className="shadow-[inset_-1px_-1px_#0a0a0a,inset_1px_1px_#dfdfdf,inset_-2px_-2px_grey,inset_2px_2px_#fff] h-5.5 w-0.5 mx-0.5" />
-
-        {/* Running Tasks */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Task buttons would go here */}
-        </div>
-
-        {/* Divider */}
-        <div className="shadow-[inset_-1px_-1px_#0a0a0a,inset_1px_1px_#dfdfdf,inset_-2px_-2px_grey,inset_2px_2px_#fff] h-5.5 w-0.5 mx-0.5" />
-
-        {/* System Tray */}
-        <div className="h-5.5 px-0.5 flex flex-row items-center border-l border-l-[#7b7b7b] border-t border-t-[#7b7b7b] border-r border-r-white border-b border-b-white mt-px pointer-events-none truncate">
-          <img
-            className="mx-px"
-            src="/img/network.png"
-            alt="network"
-          />
-          <img
-            className="mx-px"
-            src="/img/computer.png"
-            alt="computer"
-          />
-          <span className="mx-1 antialiased">{time}</span>
-        </div>
-      </footer>
+      <Taskbar
+        showStartMenu={showStartMenu}
+        onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
+        time={time}
+      />
     </div>
   )
 }

@@ -1,6 +1,6 @@
-import { ProgressIndicator } from "../progress-indicator";
+import { ProgressIndicator } from '../progress-indicator'
 
-export function TileDemo() {
+export function TileDemo(): React.ReactElement {
   return (
     <div className="flex w-80 flex-col gap-4">
       <ProgressIndicator value={0} variant="tile" />
@@ -9,5 +9,5 @@ export function TileDemo() {
       <ProgressIndicator value={75} variant="tile" />
       <ProgressIndicator value={100} variant="tile" />
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react'
 
-import { TreeView } from "../tree-view";
+import { TreeView } from '../tree-view'
 
 export default function TreeViewBasicDemo(): React.ReactElement {
   return (
@@ -35,5 +35,5 @@ export default function TreeViewBasicDemo(): React.ReactElement {
         <TreeView.Item label="Special Thanks" />
       </TreeView>
     </div>
-  );
+  )
 }

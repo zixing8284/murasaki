@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { Tabs } from "../tabs";
+import { Tabs } from '../tabs'
 
-export function ControlledTabs() {
-  const [activeTab, setActiveTab] = useState("tab1");
+export function ControlledTabs(): React.ReactElement {
+  const [activeTab, setActiveTab] = useState('tab1')
 
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm">
-        Current tab: <strong>{activeTab}</strong>
+        Current tab:
+        {' '}
+        <strong>{activeTab}</strong>
       </p>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-100">
         <Tabs.List>
@@ -27,5 +29,5 @@ export function ControlledTabs() {
         </Tabs.Panel>
       </Tabs>
     </div>
-  );
+  )
 }

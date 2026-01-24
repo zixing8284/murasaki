@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { Button } from "@/components/button/button";
+import { Button } from '@/components/button/button'
 
-import { Window } from "../window";
+import { Window } from '../window'
 
 export function BoundedContainer(): React.ReactElement {
-  const [container, setContainer] = useState<HTMLDivElement | null>(null);
-  const [showWindow, setShowWindow] = useState(false);
+  const [container, setContainer] = useState<HTMLDivElement | null>(null)
+  const [showWindow, setShowWindow] = useState(false)
 
   return (
     <div className="flex flex-col gap-2">
@@ -15,10 +15,10 @@ export function BoundedContainer(): React.ReactElement {
       </p>
       <Button
         onClick={() => {
-          setShowWindow((v) => !v);
+          setShowWindow(v => !v)
         }}
       >
-        {showWindow ? "Close Window" : "Open Window"}
+        {showWindow ? 'Close Window' : 'Open Window'}
       </Button>
       {showWindow && (
         <div
@@ -31,7 +31,7 @@ export function BoundedContainer(): React.ReactElement {
               appendTo={container}
               draggable
               onClose={() => {
-                setShowWindow(false);
+                setShowWindow(false)
               }}
               overlay
               title="Bounded Window"
@@ -42,5 +42,5 @@ export function BoundedContainer(): React.ReactElement {
         </div>
       )}
     </div>
-  );
+  )
 }

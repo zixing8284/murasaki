@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { Button } from "@/components/button/button";
+import { Button } from '@/components/button/button'
 
-import { Window } from "../window";
+import { Window } from '../window'
 
 export function ActiveInactive(): React.ReactElement {
-  const [showActive, setShowActive] = useState(false);
-  const [showInactive, setShowInactive] = useState(false);
+  const [showActive, setShowActive] = useState(false)
+  const [showInactive, setShowInactive] = useState(false)
 
   return (
     <div className="flex flex-col gap-2">
@@ -16,17 +16,17 @@ export function ActiveInactive(): React.ReactElement {
       <div className="flex gap-2">
         <Button
           onClick={() => {
-            setShowActive((v) => !v);
+            setShowActive(v => !v)
           }}
         >
-          {showActive ? "Close Active" : "Open Active"}
+          {showActive ? 'Close Active' : 'Open Active'}
         </Button>
         <Button
           onClick={() => {
-            setShowInactive((v) => !v);
+            setShowInactive(v => !v)
           }}
         >
-          {showInactive ? "Close Inactive" : "Open Inactive"}
+          {showInactive ? 'Close Inactive' : 'Open Inactive'}
         </Button>
       </div>
       {showActive && (
@@ -34,7 +34,7 @@ export function ActiveInactive(): React.ReactElement {
           active
           draggable
           onClose={() => {
-            setShowActive(false);
+            setShowActive(false)
           }}
           title="Active Window"
         >
@@ -46,7 +46,7 @@ export function ActiveInactive(): React.ReactElement {
           active={false}
           draggable
           onClose={() => {
-            setShowInactive(false);
+            setShowInactive(false)
           }}
           title="Inactive Window"
         >
@@ -54,5 +54,5 @@ export function ActiveInactive(): React.ReactElement {
         </Window>
       )}
     </div>
-  );
+  )
 }

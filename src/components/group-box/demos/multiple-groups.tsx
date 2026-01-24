@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { OptionButton } from "@/components/option-button/option-button";
-import OptionGroup from "@/components/option-button/option-group";
+import { OptionButton } from '@/components/option-button/option-button'
+import OptionGroup from '@/components/option-button/option-group'
 
-import { GroupBox } from "../group-box";
+import { GroupBox } from '../group-box'
 
 export function MultipleGroups(): React.ReactElement {
-  const [alignment, setAlignment] = useState("left");
-  const [size, setSize] = useState("medium");
+  const [alignment, setAlignment] = useState('left')
+  const [size, setSize] = useState('medium')
 
   return (
     <div className="flex gap-4">
@@ -35,5 +35,5 @@ export function MultipleGroups(): React.ReactElement {
         </OptionGroup>
       </GroupBox>
     </div>
-  );
+  )
 }

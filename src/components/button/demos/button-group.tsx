@@ -1,4 +1,4 @@
-import { Button } from "../button";
+import { Button } from '../button'
 
 export function ButtonGroup(): React.ReactElement {
   return (
@@ -7,5 +7,5 @@ export function ButtonGroup(): React.ReactElement {
       <Button>Cancel</Button>
       <Button>Apply</Button>
     </div>
-  );
+  )
 }

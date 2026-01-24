@@ -1,6 +1,6 @@
-import { TextBox } from "../text-box";
+import { TextBox } from '../text-box'
 
-export function LabelPositions() {
+export function LabelPositions(): React.ReactElement {
   return (
     <div className="bg-btn-face flex flex-col gap-6 p-4">
       <div className="flex flex-col gap-2">
@@ -27,5 +27,5 @@ export function LabelPositions() {
         </div>
       </div>
     </div>
-  );
+  )
 }

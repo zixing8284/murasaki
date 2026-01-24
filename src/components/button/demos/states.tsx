@@ -1,4 +1,4 @@
-import { Button } from "../button";
+import { Button } from '../button'
 
 export function States(): React.ReactElement {
   return (
@@ -16,5 +16,5 @@ export function States(): React.ReactElement {
         <span className="text-xs">disabled</span>
       </div>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { Checkbox } from "../checkbox";
+import { Checkbox } from '../checkbox'
 
 export function States(): React.ReactElement {
   return (
@@ -14,5 +14,5 @@ export function States(): React.ReactElement {
         Disabled + Checked
       </Checkbox>
     </div>
-  );
+  )
 }

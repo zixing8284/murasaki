@@ -1,5 +1,5 @@
-import { OptionButton } from "../option-button";
-import OptionGroup from "../option-group";
+import { OptionButton } from '../option-button'
+import OptionGroup from '../option-group'
 
 export function DisabledChecked(): React.ReactElement {
   return (
@@ -13,5 +13,5 @@ export function DisabledChecked(): React.ReactElement {
         </OptionButton>
       </div>
     </OptionGroup>
-  );
+  )
 }

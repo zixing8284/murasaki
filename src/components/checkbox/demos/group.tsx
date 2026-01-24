@@ -1,4 +1,4 @@
-import { Checkbox } from "../checkbox";
+import { Checkbox } from '../checkbox'
 
 export function Group(): React.ReactElement {
   return (
@@ -9,5 +9,5 @@ export function Group(): React.ReactElement {
       </Checkbox>
       <Checkbox name="demo-autosave">Enable auto-save</Checkbox>
     </div>
-  );
+  )
 }

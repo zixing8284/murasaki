@@ -1,6 +1,6 @@
-import { NumberBox } from "../number-box";
+import { NumberBox } from '../number-box'
 
-export function States() {
+export function States(): React.ReactElement {
   return (
     <div className="flex flex-col gap-4 p-4">
       <NumberBox defaultValue={10} label="Normal:" />
@@ -11,5 +11,5 @@ export function States() {
 
       <NumberBox defaultValue={100} disabled label="Disabled (max reached):" max={100} />
     </div>
-  );
+  )
 }

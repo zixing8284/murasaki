@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { NumberBox } from "../number-box";
+import { NumberBox } from '../number-box'
 
-export function WithConstraints() {
-  const [quantity, setQuantity] = useState<number>(1);
-  const [percentage, setPercentage] = useState<number>(50);
-  const [temperature, setTemperature] = useState<number>(20);
+export function WithConstraints(): React.ReactElement {
+  const [quantity, setQuantity] = useState<number>(1)
+  const [percentage, setPercentage] = useState<number>(50)
+  const [temperature, setTemperature] = useState<number>(20)
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -36,10 +36,21 @@ export function WithConstraints() {
       />
 
       <div className="text-sm text-btn-text">
-        <div>Quantity: {quantity}</div>
-        <div>Percentage: {percentage}%</div>
-        <div>Temperature: {temperature}°C</div>
+        <div>
+          Quantity:
+          {quantity}
+        </div>
+        <div>
+          Percentage:
+          {percentage}
+          %
+        </div>
+        <div>
+          Temperature:
+          {temperature}
+          °C
+        </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { DropdownNative } from "../dropdown";
+import { DropdownNative } from '../dropdown'
 
 export function Native(): React.ReactElement {
   return (
@@ -8,5 +8,5 @@ export function Native(): React.ReactElement {
       <option value="rtf">Rich Text Format (*.rtf)</option>
       <option value="all">All Files (*.*)</option>
     </DropdownNative>
-  );
+  )
 }

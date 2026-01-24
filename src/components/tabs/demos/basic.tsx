@@ -1,6 +1,6 @@
-import { Tabs } from "../tabs";
+import { Tabs } from '../tabs'
 
-export function BasicTabs() {
+export function BasicTabs(): React.ReactElement {
   return (
     <Tabs defaultValue="desktop" className="w-100">
       <Tabs.List>
@@ -18,5 +18,5 @@ export function BasicTabs() {
         <p>System configuration and preferences.</p>
       </Tabs.Panel>
     </Tabs>
-  );
+  )
 }

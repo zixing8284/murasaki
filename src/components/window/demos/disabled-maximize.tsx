@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { Button } from "@/components/button/button";
+import { Button } from '@/components/button/button'
 
-import { Window } from "../window";
+import { Window } from '../window'
 
 export function DisabledMaximize(): React.ReactElement {
-  const [showWindow, setShowWindow] = useState(false);
+  const [showWindow, setShowWindow] = useState(false)
 
   return (
     <div className="flex flex-col gap-2">
@@ -14,17 +14,17 @@ export function DisabledMaximize(): React.ReactElement {
       </p>
       <Button
         onClick={() => {
-          setShowWindow((v) => !v);
+          setShowWindow(v => !v)
         }}
       >
-        {showWindow ? "Close Window" : "Open Window"}
+        {showWindow ? 'Close Window' : 'Open Window'}
       </Button>
       {showWindow && (
         <Window
           disableMaximize
           draggable
           onClose={() => {
-            setShowWindow(false);
+            setShowWindow(false)
           }}
           title="Fixed Size Window"
         >
@@ -35,5 +35,5 @@ export function DisabledMaximize(): React.ReactElement {
         </Window>
       )}
     </div>
-  );
+  )
 }

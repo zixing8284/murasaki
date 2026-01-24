@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface Transform {
-  offsetX: number;
-  offsetY: number;
+  offsetX: number
+  offsetY: number
 }
 
 interface UseWindowDraggableOptions {
@@ -11,9 +11,9 @@ interface UseWindowDraggableOptions {
    * - If null/undefined: constrain to viewport
    * - If an element: constrain to that element's bounds
    */
-  container?: HTMLElement | null;
+  container?: HTMLElement | null
   /** Enable/disable dragging */
-  draggable?: boolean;
+  draggable?: boolean
 }
 
 /**
@@ -38,98 +38,107 @@ interface UseWindowDraggableOptions {
 export function useWindowDraggable<
   TTarget extends HTMLElement = HTMLElement,
   TDrag extends HTMLElement = HTMLElement,
->(options: UseWindowDraggableOptions = {}) {
-  const { container = null, draggable = true } = options;
+>(options: UseWindowDraggableOptions = {}): {
+  dragging: boolean
+  dragRef: React.RefObject<TDrag | null>
+  targetRef: React.RefObject<TTarget | null>
+  transformRef: React.RefObject<Transform>
+  resetPosition: () => void
+} {
+  const { container = null, draggable = true } = options
 
-  const targetRef = useRef<null | TTarget>(null);
-  const dragRef = useRef<null | TDrag>(null);
-  const [dragging, setDragging] = useState(false);
-  const transformRef = useRef<Transform>({ offsetX: 0, offsetY: 0 });
+  const targetRef = useRef<null | TTarget>(null)
+  const dragRef = useRef<null | TDrag>(null)
+  const [dragging, setDragging] = useState(false)
+  const transformRef = useRef<Transform>({ offsetX: 0, offsetY: 0 })
 
   const resetPosition = useCallback(() => {
-    transformRef.current = { offsetX: 0, offsetY: 0 };
+    transformRef.current = { offsetX: 0, offsetY: 0 }
     if (targetRef.current) {
-      targetRef.current.style.transform = "";
+      targetRef.current.style.transform = ''
     }
-  }, []);
+  }, [])
 
   const onMousedown = useCallback(
     (e: MouseEvent) => {
-      const target = targetRef.current;
-      if (!target) return;
+      const target = targetRef.current
+      if (!target)
+        return
 
       // Prevent text selection during drag
-      e.preventDefault();
+      e.preventDefault()
 
-      const downX = e.clientX;
-      const downY = e.clientY;
-      const { offsetX, offsetY } = transformRef.current;
+      const downX = e.clientX
+      const downY = e.clientY
+      const { offsetX, offsetY } = transformRef.current
 
-      const targetRect = target.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect()
       const {
         height: targetHeight,
         left: targetLeft,
         top: targetTop,
         width: targetWidth,
-      } = targetRect;
+      } = targetRect
 
       // Calculate boundary constraints
-      let maxLeft: number, maxTop: number, minLeft: number, minTop: number;
+      let maxLeft: number, maxTop: number, minLeft: number, minTop: number
 
       if (container) {
         // Constrain to container element bounds
-        const containerRect = container.getBoundingClientRect();
-        minLeft = containerRect.left - targetLeft + offsetX;
-        maxLeft = containerRect.right - targetLeft - targetWidth + offsetX;
-        minTop = containerRect.top - targetTop + offsetY;
-        maxTop = containerRect.bottom - targetTop - targetHeight + offsetY;
-      } else {
+        const containerRect = container.getBoundingClientRect()
+        minLeft = containerRect.left - targetLeft + offsetX
+        maxLeft = containerRect.right - targetLeft - targetWidth + offsetX
+        minTop = containerRect.top - targetTop + offsetY
+        maxTop = containerRect.bottom - targetTop - targetHeight + offsetY
+      }
+      else {
         // Constrain to viewport (for fixed positioned windows)
-        const { clientHeight, clientWidth } = document.documentElement;
-        minLeft = -targetLeft + offsetX;
-        minTop = -targetTop + offsetY;
-        maxLeft = clientWidth - targetLeft - targetWidth + offsetX;
-        maxTop = clientHeight - targetTop - targetHeight + offsetY;
+        const { clientHeight, clientWidth } = document.documentElement
+        minLeft = -targetLeft + offsetX
+        minTop = -targetTop + offsetY
+        maxLeft = clientWidth - targetLeft - targetWidth + offsetX
+        maxTop = clientHeight - targetTop - targetHeight + offsetY
       }
 
-      const onMousemove = (e: MouseEvent) => {
+      const onMousemove = (e: MouseEvent): void => {
         // Clamp to boundaries
         const moveX = Math.min(
           Math.max(offsetX + e.clientX - downX, minLeft),
           maxLeft,
-        );
+        )
         const moveY = Math.min(
           Math.max(offsetY + e.clientY - downY, minTop),
           maxTop,
-        );
+        )
 
-        transformRef.current = { offsetX: moveX, offsetY: moveY };
-        target.style.transform = `translate(${moveX.toString()}px, ${moveY.toString()}px)`;
-      };
+        transformRef.current = { offsetX: moveX, offsetY: moveY }
+        target.style.transform = `translate(${moveX.toString()}px, ${moveY.toString()}px)`
+      }
 
-      const onMouseup = () => {
-        setDragging(false);
-        document.removeEventListener("mousemove", onMousemove);
-        document.removeEventListener("mouseup", onMouseup);
-      };
+      const onMouseup = (): void => {
+        setDragging(false)
+        document.removeEventListener('mousemove', onMousemove)
+        document.removeEventListener('mouseup', onMouseup)
+      }
 
-      setDragging(true);
-      document.addEventListener("mousemove", onMousemove);
-      document.addEventListener("mouseup", onMouseup);
+      setDragging(true)
+      document.addEventListener('mousemove', onMousemove)
+      document.addEventListener('mouseup', onMouseup)
     },
     [container],
-  );
+  )
 
   useEffect(() => {
-    const dragDom = dragRef.current;
+    const dragDom = dragRef.current
 
     if (draggable && dragDom) {
-      dragDom.addEventListener("mousedown", onMousedown);
+      dragDom.addEventListener('mousedown', onMousedown)
       return () => {
-        dragDom.removeEventListener("mousedown", onMousedown);
-      };
+        dragDom.removeEventListener('mousedown', onMousedown)
+      }
     }
-  }, [draggable, onMousedown]);
+    return undefined
+  }, [draggable, onMousedown])
 
   return {
     /** Whether the element is currently being dragged */
@@ -142,5 +151,5 @@ export function useWindowDraggable<
     targetRef,
     /** Internal transform state ref */
     transformRef,
-  };
+  }
 }

@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { OptionButton } from "@/components/option-button/option-button";
-import OptionGroup from "@/components/option-button/option-group";
+import { OptionButton } from '@/components/option-button/option-button'
+import OptionGroup from '@/components/option-button/option-group'
 
-import { GroupBox } from "../group-box";
+import { GroupBox } from '../group-box'
 
 export function WithOptionButtons(): React.ReactElement {
-  const [selected, setSelected] = useState("option1");
+  const [selected, setSelected] = useState('option1')
 
   return (
     <GroupBox label="Choose an option">
@@ -18,5 +18,5 @@ export function WithOptionButtons(): React.ReactElement {
         </div>
       </OptionGroup>
     </GroupBox>
-  );
+  )
 }

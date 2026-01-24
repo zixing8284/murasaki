@@ -1,6 +1,6 @@
-import { TextBox } from "../text-box";
+import { TextBox } from '../text-box'
 
-export function Multiline() {
+export function Multiline(): React.ReactElement {
   return (
     <div className="bg-btn-face flex flex-col gap-4 p-4">
       <TextBox multiline placeholder="Enter multiple lines of text..." />
@@ -28,5 +28,5 @@ export function Multiline() {
         rows={3}
       />
     </div>
-  );
+  )
 }

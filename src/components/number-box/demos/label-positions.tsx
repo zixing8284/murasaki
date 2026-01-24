@@ -1,6 +1,6 @@
-import { NumberBox } from "../number-box";
+import { NumberBox } from '../number-box'
 
-export function LabelPositions() {
+export function LabelPositions(): React.ReactElement {
   return (
     <div className="flex flex-col gap-4 p-4">
       <NumberBox defaultValue={10} label="Left Label:" labelPosition="left" />
@@ -9,5 +9,5 @@ export function LabelPositions() {
 
       <NumberBox defaultValue={30} />
     </div>
-  );
+  )
 }

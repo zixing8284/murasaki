@@ -1,6 +1,6 @@
-import { Tabs } from "../tabs";
+import { Tabs } from '../tabs'
 
-export function ManyTabs() {
+export function ManyTabs(): React.ReactElement {
   return (
     <Tabs defaultValue="desktop" className="w-150">
       <Tabs.List>
@@ -30,5 +30,5 @@ export function ManyTabs() {
         <p>System performance metrics and optimization.</p>
       </Tabs.Panel>
     </Tabs>
-  );
+  )
 }

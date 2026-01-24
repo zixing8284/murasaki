@@ -6,9 +6,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../table";
+} from '../table'
 
-export function BasicDemo() {
+export function BasicDemo(): React.ReactElement {
   return (
     <Table containerClassName="h-50 w-100">
       <TableCaption>ODBC Drivers</TableCaption>
@@ -42,5 +42,5 @@ export function BasicDemo() {
         </TableRow>
       </TableBody>
     </Table>
-  );
+  )
 }

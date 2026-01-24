@@ -1,8 +1,8 @@
-import { createContext, use, useId, useState } from "react";
+import { cn } from '#/lib/utils'
 
-import { cva } from "class-variance-authority";
+import { cva } from 'class-variance-authority'
 
-import { cn } from "@/lib/utils";
+import { createContext, use, useId, useState } from 'react'
 
 // ============================================================================
 // Context
@@ -10,60 +10,60 @@ import { cn } from "@/lib/utils";
 
 interface TabsContextValue {
   /** The currently selected tab value */
-  selectedValue: string;
+  selectedValue: string
   /** Callback to change the selected tab */
-  setSelectedValue: (value: string) => void;
+  setSelectedValue: (value: string) => void
   /** Base ID for generating unique IDs for tabs and panels */
-  baseId: string;
+  baseId: string
 }
 
-const TabsContext = createContext<TabsContextValue | undefined>(undefined);
+const TabsContext = createContext<TabsContextValue | undefined>(undefined)
 
-function useTabsContext() {
-  const context = use(TabsContext);
+function useTabsContext(): TabsContextValue {
+  const context = use(TabsContext)
   if (!context) {
-    throw new Error("Tabs compound components must be used within a Tabs");
+    throw new Error('Tabs compound components must be used within a Tabs')
   }
-  return context;
+  return context
 }
 
 // ============================================================================
 // Styles
 // ============================================================================
 
-const tabsRootVariants = cva(["inline-flex", "flex-col"]);
+const tabsRootVariants = cva(['inline-flex', 'flex-col'])
 
 const tabListVariants = cva([
-  "relative",
-  "m-0",
-  "-mb-0.5",
-  "p-0",
-  "pt-0.5", // Reserve space for selected tab's negative margin
-  "flex",
-  "list-none",
-]);
+  'relative',
+  'm-0',
+  '-mb-0.5',
+  'p-0',
+  'pt-0.5', // Reserve space for selected tab's negative margin
+  'flex',
+  'list-none',
+])
 
 const tabVariants = cva(
   [
-    "relative",
-    "z-1",
-    "pb-0.5",
-    "rounded-t-[3px]",
-    "bg-btn-face",
-    "cursor-pointer",
+    'relative',
+    'z-1',
+    'pb-0.5',
+    'rounded-t-[3px]',
+    'bg-btn-face',
+    'cursor-pointer',
     // Border styles mimicking Windows 98 tab
-    "shadow-[inset_-1px_0_var(--color-btn-dk-shadow),inset_1px_1px_var(--color-btn-hilight),inset_-2px_0_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]",
+    'shadow-[inset_-1px_0_var(--color-btn-dk-shadow),inset_1px_1px_var(--color-btn-hilight),inset_-2px_0_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]',
   ],
   {
     variants: {
       selected: {
         true: [
-          "z-8",
-          "-mt-0.5",
-          "-ml-0.75",
-          "first:ml-0",
+          'z-8',
+          '-mt-0.5',
+          '-ml-0.75',
+          'first:ml-0',
           // Active tab has bottom border matching background
-          "shadow-[inset_-1px_0_var(--color-btn-dk-shadow),inset_1px_1px_var(--color-btn-hilight),inset_-2px_0_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]",
+          'shadow-[inset_-1px_0_var(--color-btn-dk-shadow),inset_1px_1px_var(--color-btn-hilight),inset_-2px_0_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]',
         ],
         false: [],
       },
@@ -72,23 +72,23 @@ const tabVariants = cva(
       selected: false,
     },
   },
-);
+)
 
 const tabLabelVariants = cva(
   [
-    "block",
-    "m-1.5",
-    "text-btn-text",
-    "select-none",
-    "outline-none",
-    "focus-visible:outline-1",
-    "focus-visible:outline-dotted",
-    "focus-visible:outline-btn-text",
+    'block',
+    'm-1.5',
+    'text-btn-text',
+    'select-none',
+    'outline-none',
+    'focus-visible:outline-1',
+    'focus-visible:outline-dotted',
+    'focus-visible:outline-btn-text',
   ],
   {
     variants: {
       selected: {
-        true: ["focus-visible:outline-none"],
+        true: ['focus-visible:outline-none'],
         false: [],
       },
     },
@@ -96,49 +96,49 @@ const tabLabelVariants = cva(
       selected: false,
     },
   },
-);
+)
 
 const tabPanelVariants = cva([
-  "relative",
-  "z-2",
-  "bg-btn-face",
-  "p-2",
-  "shadow-raised",
-]);
+  'relative',
+  'z-2',
+  'bg-btn-face',
+  'p-2',
+  'shadow-raised',
+])
 
 // ============================================================================
 // Components
 // ============================================================================
 
-interface TabsRootProps extends React.ComponentProps<"div"> {
+interface TabsRootProps extends React.ComponentProps<'div'> {
   /** The default selected tab value (uncontrolled mode) */
-  defaultValue?: string;
+  defaultValue?: string
   /** The selected tab value (controlled mode) */
-  value?: string;
+  value?: string
   /** Callback when the selected tab changes */
-  onValueChange?: (value: string) => void;
+  onValueChange?: (value: string) => void
 }
 
 function TabsRoot({
   children,
   className,
-  defaultValue = "",
+  defaultValue = '',
   value,
   onValueChange,
   ...props
-}: TabsRootProps) {
-  const [internalValue, setInternalValue] = useState(defaultValue);
-  const baseId = useId();
+}: TabsRootProps): React.ReactElement {
+  const [internalValue, setInternalValue] = useState(defaultValue)
+  const baseId = useId()
 
-  const isControlled = value !== undefined;
-  const selectedValue = isControlled ? value : internalValue;
+  const isControlled = value !== undefined
+  const selectedValue = isControlled ? value : internalValue
 
-  const setSelectedValue = (newValue: string) => {
+  const setSelectedValue = (newValue: string): void => {
     if (!isControlled) {
-      setInternalValue(newValue);
+      setInternalValue(newValue)
     }
-    onValueChange?.(newValue);
-  };
+    onValueChange?.(newValue)
+  }
 
   return (
     <TabsContext value={{ selectedValue, setSelectedValue, baseId }}>
@@ -146,12 +146,12 @@ function TabsRoot({
         {children}
       </div>
     </TabsContext>
-  );
+  )
 }
 
-type TabListProps = React.ComponentProps<"menu">;
+type TabListProps = React.ComponentProps<'menu'>
 
-function TabList({ children, className, ...props }: TabListProps) {
+function TabList({ children, className, ...props }: TabListProps): React.ReactElement {
   return (
     <menu
       role="tablist"
@@ -160,37 +160,37 @@ function TabList({ children, className, ...props }: TabListProps) {
     >
       {children}
     </menu>
-  );
+  )
 }
 
-interface TabProps extends Omit<React.ComponentProps<"li">, "role"> {
+interface TabProps extends Omit<React.ComponentProps<'li'>, 'role'> {
   /** Unique value identifying this tab */
-  value: string;
+  value: string
   /** Whether the tab is disabled */
-  disabled?: boolean;
+  disabled?: boolean
 }
 
-function Tab({ children, className, value, disabled, ...props }: TabProps) {
-  const { selectedValue, setSelectedValue, baseId } = useTabsContext();
-  const isSelected = selectedValue === value;
+function Tab({ children, className, value, disabled, ...props }: TabProps): React.ReactElement {
+  const { selectedValue, setSelectedValue, baseId } = useTabsContext()
+  const isSelected = selectedValue === value
 
-  const tabId = `${baseId}-tab-${value}`;
-  const panelId = `${baseId}-panel-${value}`;
+  const tabId = `${baseId}-tab-${value}`
+  const panelId = `${baseId}-panel-${value}`
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     if (!disabled) {
-      setSelectedValue(value);
+      setSelectedValue(value)
     }
-  };
+  }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
       if (!disabled) {
-        setSelectedValue(value);
+        setSelectedValue(value)
       }
     }
-  };
+  }
 
   return (
     <li
@@ -209,23 +209,23 @@ function Tab({ children, className, value, disabled, ...props }: TabProps) {
         {children}
       </span>
     </li>
-  );
+  )
 }
 
-interface TabPanelProps extends Omit<React.ComponentProps<"div">, "role"> {
+interface TabPanelProps extends Omit<React.ComponentProps<'div'>, 'role'> {
   /** Value matching the corresponding Tab */
-  value: string;
+  value: string
 }
 
-function TabPanel({ children, className, value, ...props }: TabPanelProps) {
-  const { selectedValue, baseId } = useTabsContext();
-  const isSelected = selectedValue === value;
+function TabPanel({ children, className, value, ...props }: TabPanelProps): React.ReactElement | null {
+  const { selectedValue, baseId } = useTabsContext()
+  const isSelected = selectedValue === value
 
-  const tabId = `${baseId}-tab-${value}`;
-  const panelId = `${baseId}-panel-${value}`;
+  const tabId = `${baseId}-tab-${value}`
+  const panelId = `${baseId}-panel-${value}`
 
   if (!isSelected) {
-    return null;
+    return null
   }
 
   return (
@@ -238,7 +238,7 @@ function TabPanel({ children, className, value, ...props }: TabPanelProps) {
     >
       {children}
     </div>
-  );
+  )
 }
 
 // ============================================================================
@@ -247,6 +247,6 @@ function TabPanel({ children, className, value, ...props }: TabPanelProps) {
 
 export const Tabs = Object.assign(TabsRoot, {
   List: TabList,
-  Tab: Tab,
+  Tab,
   Panel: TabPanel,
-});
+})

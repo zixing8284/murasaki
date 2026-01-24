@@ -1,169 +1,169 @@
-import React, { useCallback, useId, useRef, useState } from "react";
+import { cn } from '#/lib/utils'
 
-import { cva } from "class-variance-authority";
+import { cva } from 'class-variance-authority'
 
-import { cn } from "@/lib/utils";
+import React, { useCallback, useId, useRef, useState } from 'react'
 
 // Container variants
-const containerVariants = cva(["relative", "inline-flex"], {
+const containerVariants = cva(['relative', 'inline-flex'], {
   variants: {
     vertical: {
-      true: "flex-col items-center",
-      false: "flex-row items-center",
+      true: 'flex-col items-center',
+      false: 'flex-row items-center',
     },
   },
   defaultVariants: {
     vertical: false,
   },
-});
+})
 
 // Hidden native input - preserves all native behaviors
 const nativeInputVariants = cva(
-  ["absolute", "opacity-0", "cursor-pointer", "z-10"],
+  ['absolute', 'opacity-0', 'cursor-pointer', 'z-10'],
   {
     variants: {
       vertical: {
         true: [
-          "h-full",
-          "w-full",
-          "left-0",
-          "top-0",
+          'h-full',
+          'w-full',
+          'left-0',
+          'top-0',
           // Use writing-mode to make native vertical slider work correctly
-          "[writing-mode:vertical-lr]",
+          '[writing-mode:vertical-lr]',
         ],
-        false: ["m-0", "w-full", "h-full"],
+        false: ['m-0', 'w-full', 'h-full'],
       },
     },
     defaultVariants: {
       vertical: false,
     },
-  }
-);
+  },
+)
 
 // Track wrapper for proper positioning with tick offsets
-const trackWrapperVariants = cva(["relative"], {
+const trackWrapperVariants = cva(['relative'], {
   variants: {
     vertical: {
-      true: "h-full w-[11px]",
-      false: "w-full h-[21px]",
+      true: 'h-full w-[11px]',
+      false: 'w-full h-[21px]',
     },
   },
   defaultVariants: {
     vertical: false,
   },
-});
+})
 
 // Track styles (the groove)
 const trackVariants = cva(
   [
-    "absolute",
-    "bg-window-text",
+    'absolute',
+    'bg-window-text',
     // Win98 track 3D effect using box-shadow
-    "shadow-[1px_0_0_var(--color-btn-hilight),1px_1px_0_var(--color-btn-hilight),0_1px_0_var(--color-btn-hilight),-1px_0_0_var(--color-btn-dk-shadow),-1px_-1px_0_var(--color-btn-dk-shadow),0_-1px_0_var(--color-btn-dk-shadow),-1px_1px_0_var(--color-btn-hilight),1px_-1px_var(--color-btn-dk-shadow)]",
-    "border-r",
-    "border-b",
-    "border-btn-shadow",
+    'shadow-[1px_0_0_var(--color-btn-hilight),1px_1px_0_var(--color-btn-hilight),0_1px_0_var(--color-btn-hilight),-1px_0_0_var(--color-btn-dk-shadow),-1px_-1px_0_var(--color-btn-dk-shadow),0_-1px_0_var(--color-btn-dk-shadow),-1px_1px_0_var(--color-btn-hilight),1px_-1px_var(--color-btn-dk-shadow)]',
+    'border-r',
+    'border-b',
+    'border-btn-shadow',
   ],
   {
     variants: {
       vertical: {
         true: [
-          "w-0.5",
-          "h-full",
-          "left-1/2",
-          "-translate-x-1/2",
-          "border-t",
-          "border-b-0",
-          "shadow-[1px_0_0_var(--color-btn-hilight),1px_1px_0_var(--color-btn-hilight),0_1px_0_var(--color-btn-hilight),0_-1px_0_var(--color-btn-dk-shadow),-1px_-1px_0_var(--color-btn-dk-shadow),-1px_0_0_var(--color-btn-dk-shadow),-1px_1px_0_var(--color-btn-dk-shadow),1px_-1px_var(--color-btn-dk-shadow)]",
+          'w-0.5',
+          'h-full',
+          'left-1/2',
+          '-translate-x-1/2',
+          'border-t',
+          'border-b-0',
+          'shadow-[1px_0_0_var(--color-btn-hilight),1px_1px_0_var(--color-btn-hilight),0_1px_0_var(--color-btn-hilight),0_-1px_0_var(--color-btn-dk-shadow),-1px_-1px_0_var(--color-btn-dk-shadow),-1px_0_0_var(--color-btn-dk-shadow),-1px_1px_0_var(--color-btn-dk-shadow),1px_-1px_var(--color-btn-dk-shadow)]',
         ],
-        false: ["h-0.5", "w-full", "top-1/2", "-translate-y-1/2"],
+        false: ['h-0.5', 'w-full', 'top-1/2', '-translate-y-1/2'],
       },
     },
     defaultVariants: {
       vertical: false,
     },
-  }
-);
+  },
+)
 
 // Thumb styles
-const thumbVariants = cva(["absolute", "pixelated", "pointer-events-none"], {
+const thumbVariants = cva(['absolute', 'pixelated', 'pointer-events-none'], {
   variants: {
     vertical: {
-      true: "left-1/2",
-      false: "top-1/2",
+      true: 'left-1/2',
+      false: 'top-1/2',
     },
     boxIndicator: {
-      true: "w-[11px] h-[21px]",
-      false: "w-[11px] h-[21px]",
+      true: 'w-[11px] h-[21px]',
+      false: 'w-[11px] h-[21px]',
     },
   },
   defaultVariants: {
     vertical: false,
     boxIndicator: false,
   },
-});
+})
 
 // Tick container styles - positioned relative to track wrapper
-const tickContainerVariants = cva(["absolute", "pointer-events-none"], {
+const tickContainerVariants = cva(['absolute', 'pointer-events-none'], {
   variants: {
     vertical: {
-      true: "left-full ml-1 h-full top-0",
-      false: "top-full mt-1 w-full left-0",
+      true: 'left-full ml-1 h-full top-0',
+      false: 'top-full mt-1 w-full left-0',
     },
   },
   defaultVariants: {
     vertical: false,
   },
-});
+})
 
 // Individual tick mark styles
-const tickMarkVariants = cva(["bg-btn-text", "shrink-0"], {
+const tickMarkVariants = cva(['bg-btn-text', 'shrink-0'], {
   variants: {
     vertical: {
-      true: "w-1.5 h-px",
-      false: "w-px h-1.5",
+      true: 'w-1.5 h-px',
+      false: 'w-px h-1.5',
     },
   },
   defaultVariants: {
     vertical: false,
   },
-});
+})
 
 // Tick label styles
 const tickLabelVariants = cva(
-  ["text-btn-text", "text-[10px]", "select-none", "leading-none"],
+  ['text-btn-text', 'text-[10px]', 'select-none', 'leading-none'],
   {
     variants: {
       vertical: {
-        true: "ml-1",
-        false: "mt-0.5",
+        true: 'ml-1',
+        false: 'mt-0.5',
       },
     },
     defaultVariants: {
       vertical: false,
     },
-  }
-);
+  },
+)
 
 export interface TickMark {
   /** The value where the tick should appear */
-  value: number;
+  value: number
   /** Optional label to display */
-  label?: string;
+  label?: string
 }
 
-interface SliderProps extends Omit<React.ComponentProps<"input">, "type"> {
+interface SliderProps extends Omit<React.ComponentProps<'input'>, 'type'> {
   /** Use a box indicator instead of the default triangle */
-  boxIndicator?: boolean;
+  boxIndicator?: boolean
   /** Render the slider vertically */
-  vertical?: boolean;
+  vertical?: boolean
   /** Tick marks with optional labels */
-  ticks?: TickMark[];
+  ticks?: TickMark[]
 }
 
 // Thumb dimensions (constant)
-const THUMB_WIDTH = 11;
-const THUMB_HEIGHT = 21;
+const THUMB_WIDTH = 11
+const THUMB_HEIGHT = 21
 
 export function Slider({
   className,
@@ -178,71 +178,71 @@ export function Slider({
   ticks,
   ...props
 }: SliderProps): React.ReactElement {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const datalistId = useId();
+  const inputRef = useRef<HTMLInputElement>(null)
+  const datalistId = useId()
 
   // Internal state for uncontrolled mode
   const [internalValue, setInternalValue] = useState<number>(() =>
-    defaultValue !== undefined ? Number(defaultValue) : Number(min)
-  );
+    defaultValue !== undefined ? Number(defaultValue) : Number(min),
+  )
 
   // Use controlled value if provided, otherwise internal
-  const isControlled = controlledValue !== undefined;
-  const currentValue = isControlled ? Number(controlledValue) : internalValue;
+  const isControlled = controlledValue !== undefined
+  const currentValue = isControlled ? Number(controlledValue) : internalValue
 
   // Calculate thumb position percentage
-  const minNum = Number(min);
-  const maxNum = Number(max);
-  const percentage = ((currentValue - minNum) / (maxNum - minNum)) * 100;
+  const minNum = Number(min)
+  const maxNum = Number(max)
+  const percentage = ((currentValue - minNum) / (maxNum - minNum)) * 100
 
   // Handle input change
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = Number(e.target.value);
+      const newValue = Number(e.target.value)
       if (!isControlled) {
-        setInternalValue(newValue);
+        setInternalValue(newValue)
       }
-      onChange?.(e);
+      onChange?.(e)
     },
-    [isControlled, onChange]
-  );
+    [isControlled, onChange],
+  )
 
   // Thumb image based on variant
   const thumbSrc = boxIndicator
-    ? "/assets/icons/indicator-rectangle-horizontal.svg"
-    : "/assets/icons/indicator-horizontal.svg";
+    ? '/assets/icons/indicator-rectangle-horizontal.svg'
+    : '/assets/icons/indicator-horizontal.svg'
 
   // Calculate thumb position (centered on track)
   const getThumbStyle = (): React.CSSProperties => {
     if (vertical) {
       return {
         bottom: `calc(${String(percentage)}% - ${String(THUMB_HEIGHT / 2)}px)`,
-        transform: "translateX(-50%) rotate(-90deg) scaleX(-1)",
-      };
+        transform: 'translateX(-50%) rotate(-90deg) scaleX(-1)',
+      }
     }
     return {
       left: `calc(${String(percentage)}% - ${String(THUMB_WIDTH / 2)}px)`,
-      transform: "translateY(-50%)",
-    };
-  };
+      transform: 'translateY(-50%)',
+    }
+  }
 
   // Calculate tick position - aligned with thumb center positions
   const getTickStyle = (tickValue: number): React.CSSProperties => {
-    const tickPercentage = ((tickValue - minNum) / (maxNum - minNum)) * 100;
+    const tickPercentage = ((tickValue - minNum) / (maxNum - minNum)) * 100
 
     if (vertical) {
       return {
-        position: "absolute",
+        position: 'absolute',
         bottom: `${String(tickPercentage)}%`,
-        transform: "translateY(50%)",
-      };
+        transform: 'translateY(50%)',
+      }
     }
     return {
-      position: "absolute",
+      position: 'absolute',
       left: `${String(tickPercentage)}%`,
-      transform: "translateX(-50%)",
-    };
-  };
+      transform: 'translateX(-50%)',
+    }
+  }
 
   return (
     <div className={cn(containerVariants({ vertical }), className)}>
@@ -260,14 +260,14 @@ export function Slider({
           onChange={handleChange}
           list={ticks ? datalistId : undefined}
           // Use dir attribute for RTL instead of CSS direction property (MDN recommendation)
-          dir={vertical ? "rtl" : undefined}
+          dir={vertical ? 'rtl' : undefined}
           {...props}
         />
 
         {/* Native datalist for accessibility */}
         {ticks && (
           <datalist id={datalistId}>
-            {ticks.map((tick) => (
+            {ticks.map(tick => (
               <option key={tick.value} value={tick.value} label={tick.label} />
             ))}
           </datalist>
@@ -287,12 +287,12 @@ export function Slider({
         {/* Custom tick marks with labels */}
         {ticks && (
           <div className={cn(tickContainerVariants({ vertical }))}>
-            {ticks.map((tick) => (
+            {ticks.map(tick => (
               <div
                 key={tick.value}
                 className={cn(
-                  "flex",
-                  vertical ? "flex-row items-center" : "flex-col items-center"
+                  'flex',
+                  vertical ? 'flex-row items-center' : 'flex-col items-center',
                 )}
                 style={getTickStyle(tick.value)}
               >
@@ -308,5 +308,5 @@ export function Slider({
         )}
       </div>
     </div>
-  );
+  )
 }

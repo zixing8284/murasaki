@@ -1,35 +1,36 @@
-import { useState } from "react";
+import { Button } from '#/components/button/button'
 
-import { Button } from "@/components/button/button";
+import { useState } from 'react'
 
-import { ProgressIndicator } from "../progress-indicator";
+import { ProgressIndicator } from '../progress-indicator'
 
-export function AnimatedDemo() {
-  const [progress, setProgress] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+export function AnimatedDemo(): React.ReactElement {
+  const [progress, setProgress] = useState(0)
+  const [isRunning, setIsRunning] = useState(false)
 
-  const startProgress = () => {
-    if (isRunning) return;
-    setIsRunning(true);
-    setProgress(0);
+  const startProgress = (): void => {
+    if (isRunning)
+      return
+    setIsRunning(true)
+    setProgress(0)
 
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval);
-          setIsRunning(false);
-          return 100;
+          clearInterval(interval)
+          setIsRunning(false)
+          return 100
         }
-        const diff = Math.random() * 10;
-        return Math.min(prev + diff, 100);
-      });
-    }, 500);
-  };
+        const diff = Math.random() * 10
+        return Math.min(prev + diff, 100)
+      })
+    }, 500)
+  }
 
-  const reset = () => {
-    setProgress(0);
-    setIsRunning(false);
-  };
+  const reset = (): void => {
+    setProgress(0)
+    setIsRunning(false)
+  }
 
   return (
     <div className="flex w-80 flex-col gap-4">
@@ -46,5 +47,5 @@ export function AnimatedDemo() {
         <Button onClick={reset}>Reset</Button>
       </div>
     </div>
-  );
+  )
 }

@@ -1,18 +1,19 @@
-import { OptionButton } from "./option-button";
+import type { OptionGroupProps } from './option-context'
+import { OptionButton } from './option-button'
 import {
   OptionButtonGroupContext,
-  type OptionGroupProps,
-} from "./option-context";
+
+} from './option-context'
 
 export default function OptionGroup(
   props: React.PropsWithChildren<OptionGroupProps>,
-) {
-  const { children, name, onChange, selectedValue } = props;
+): React.ReactElement {
+  const { children, name, onChange, selectedValue } = props
 
   return (
     <OptionButtonGroupContext value={{ name, onChange, selectedValue }}>
       {children}
     </OptionButtonGroupContext>
-  );
+  )
 }
-OptionGroup.Option = OptionButton;
+OptionGroup.Option = OptionButton

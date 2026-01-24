@@ -1,28 +1,29 @@
-import React from "react";
+import type { VariantProps } from 'class-variance-authority'
 
-import { type VariantProps, cva } from "class-variance-authority";
+import { cn } from '#/lib/utils'
+import { cva } from 'class-variance-authority'
 
-import { cn } from "@/lib/utils";
+import React from 'react'
 
 const groupBoxVariants = cva([
   // Restore user agent styles reset by Tailwind
-  "block",
-  "min-w-min",
+  'block',
+  'min-w-min',
   // Custom styles
-  "m-0",
-  "p-[calc(2*1px+var(--spacing-element))]",
-  "pt-element",
-  "border-2",
-  "[border-image:url('/assets/icons/groupbox-border.svg')_2]",
-]);
+  'm-0',
+  'p-[calc(2*1px+var(--spacing-element))]',
+  'pt-element',
+  'border-2',
+  '[border-image:url(\'/assets/icons/groupbox-border.svg\')_2]',
+])
 
-const legendVariants = cva(["bg-btn-alternate", "px-1"]);
+const legendVariants = cva(['bg-btn-alternate', 'px-1'])
 
 interface GroupBoxProps
-  extends React.ComponentProps<"fieldset">,
-    VariantProps<typeof groupBoxVariants> {
+  extends React.ComponentProps<'fieldset'>,
+  VariantProps<typeof groupBoxVariants> {
   /** Optional label displayed at the top of the group box */
-  label?: React.ReactNode;
+  label?: React.ReactNode
 }
 
 export function GroupBox({
@@ -36,5 +37,5 @@ export function GroupBox({
       {label && <legend className={cn(legendVariants())}>{label}</legend>}
       {children}
     </fieldset>
-  );
+  )
 }

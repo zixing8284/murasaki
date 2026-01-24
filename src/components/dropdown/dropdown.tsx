@@ -1,76 +1,77 @@
-import React, { useId, useMemo } from "react";
+import type { DropdownOption } from './use-dropdown-state'
 
-import { cva } from "class-variance-authority";
+import { cn } from '#/lib/utils'
 
-import { cn } from "@/lib/utils";
+import { cva } from 'class-variance-authority'
 
-import { type DropdownOption, useDropdownState } from "./use-dropdown-state";
+import React, { useId, useMemo } from 'react'
+import { useDropdownState } from './use-dropdown-state'
 
 // Trigger button variants - styled like DropdownNative's select
 const triggerVariants = cva([
   // Reset
-  "appearance-none",
-  "border-none",
-  "rounded-none",
+  'appearance-none',
+  'border-none',
+  'rounded-none',
   // Sizing
-  "box-border",
-  "h-[21px]",
-  "w-full",
-  "py-[3px]",
-  "pl-1",
-  "pr-8",
+  'box-border',
+  'h-[21px]',
+  'w-full',
+  'py-[3px]',
+  'pl-1',
+  'pr-8',
   // Colors
-  "bg-btn-hilight",
-  "text-window-text",
-  "text-left",
+  'bg-btn-hilight',
+  'text-window-text',
+  'text-left',
   // Border effect
-  "shadow-border-field",
+  'shadow-border-field',
   // Arrow icon (embedded in button)
-  "bg-[url('/assets/icons/button-down.svg')]",
-  "bg-no-repeat",
-  "bg-position-[right_2px_top_2px]",
+  'bg-[url(\'/assets/icons/button-down.svg\')]',
+  'bg-no-repeat',
+  'bg-position-[right_2px_top_2px]',
   // Active state
-  "active:bg-[url('/assets/icons/button-down-active.svg')]",
+  'active:bg-[url(\'/assets/icons/button-down-active.svg\')]',
   // Focus state
-  "focus:outline-none",
+  'focus:outline-none',
   // Disabled state
-  "disabled:bg-btn-face",
-  "disabled:text-btn-shadow",
-  "disabled:cursor-not-allowed",
+  'disabled:bg-btn-face',
+  'disabled:text-btn-shadow',
+  'disabled:cursor-not-allowed',
   // Text overflow
-  "overflow-hidden",
-  "whitespace-nowrap",
-  "text-ellipsis",
-]);
+  'overflow-hidden',
+  'whitespace-nowrap',
+  'text-ellipsis',
+])
 
 // Dropdown menu
 const menuVariants = cva([
-  "absolute",
-  "left-0",
-  "z-50",
-  "w-full",
-  "max-h-40",
-  "overflow-y-auto",
-  "bg-btn-hilight",
-  "border",
-  "border-btn-shadow",
-  "list-none",
-  "m-0",
-  "p-0",
-]);
+  'absolute',
+  'left-0',
+  'z-50',
+  'w-full',
+  'max-h-40',
+  'overflow-y-auto',
+  'bg-btn-hilight',
+  'border',
+  'border-btn-shadow',
+  'list-none',
+  'm-0',
+  'p-0',
+])
 
 // Menu item
 const menuItemVariants = cva(
   [
-    "box-border",
-    "w-full",
-    "px-1",
-    "py-0.5",
-    "cursor-pointer",
-    "outline-none",
-    "whitespace-nowrap",
-    "overflow-hidden",
-    "text-ellipsis",
+    'box-border',
+    'w-full',
+    'px-1',
+    'py-0.5',
+    'cursor-pointer',
+    'outline-none',
+    'whitespace-nowrap',
+    'overflow-hidden',
+    'text-ellipsis',
   ],
   {
     defaultVariants: {
@@ -78,75 +79,75 @@ const menuItemVariants = cva(
     },
     variants: {
       active: {
-        false: ["bg-transparent", "text-window-text"],
-        true: ["bg-menu-hilight", "text-menu-hilight-text"],
+        false: ['bg-transparent', 'text-window-text'],
+        true: ['bg-menu-hilight', 'text-menu-hilight-text'],
       },
     },
   },
-);
+)
 
-const labelVariants = cva(["inline-block", "mr-2", "leading-[21px]"]);
+const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])
 
-const wrapperVariants = cva(["relative", "inline-block"]);
+const wrapperVariants = cva(['relative', 'inline-block'])
 
 export interface DropdownProps<T = string>
-  extends Omit<React.ComponentProps<"div">, "defaultValue" | "onChange"> {
+  extends Omit<React.ComponentProps<'div'>, 'defaultValue' | 'onChange'> {
   /**
    * Default selected value (uncontrolled mode).
    */
-  defaultValue?: T;
+  defaultValue?: T
   /**
    * Whether the dropdown is disabled.
    */
-  disabled?: boolean;
+  disabled?: boolean
   /**
    * Custom display formatter for the selected option.
    */
-  formatDisplay?: (option: DropdownOption<T>) => string;
+  formatDisplay?: (option: DropdownOption<T>) => string
   /**
    * Optional label text for accessibility.
    */
-  label?: string;
+  label?: string
   /**
    * Additional className for the label element.
    */
-  labelClassName?: string;
+  labelClassName?: string
   /**
    * Maximum height of the dropdown menu.
    */
-  menuMaxHeight?: number | string;
+  menuMaxHeight?: number | string
   /**
    * The name attribute for form submission.
    */
-  name: string;
+  name: string
   /**
    * Callback fired when selection changes.
    */
-  onChange?: (option: DropdownOption<T>) => void;
+  onChange?: (option: DropdownOption<T>) => void
   /**
    * Callback fired when dropdown closes.
    */
-  onClose?: () => void;
+  onClose?: () => void
   /**
    * Callback fired when dropdown opens.
    */
-  onOpen?: () => void;
+  onOpen?: () => void
   /**
    * Array of options to display in the dropdown.
    */
-  options: DropdownOption<T>[];
+  options: DropdownOption<T>[]
   /**
    * Additional className for the trigger button.
    */
-  triggerClassName?: string;
+  triggerClassName?: string
   /**
    * Currently selected value (controlled mode).
    */
-  value?: T;
+  value?: T
   /**
    * Width of the dropdown.
    */
-  width?: React.CSSProperties["width"];
+  width?: React.CSSProperties['width']
 }
 
 /**
@@ -173,9 +174,9 @@ export function Dropdown<T = string>({
   width,
   ...props
 }: DropdownProps<T>): React.ReactElement {
-  const generatedId = useId();
-  const triggerId = id ?? (label ? generatedId : undefined);
-  const menuId = `${generatedId}-menu`;
+  const generatedId = useId()
+  const triggerId = id ?? (label ? generatedId : undefined)
+  const menuId = `${generatedId}-menu`
 
   const {
     activeIndex,
@@ -197,20 +198,22 @@ export function Dropdown<T = string>({
     onOpen,
     options,
     value,
-  });
+  })
 
   // Display label
   const displayLabel = useMemo(() => {
-    if (!selectedOption) return "";
-    if (formatDisplay) return formatDisplay(selectedOption);
-    return selectedOption.label ?? String(selectedOption.value);
-  }, [selectedOption, formatDisplay]);
+    if (!selectedOption)
+      return ''
+    if (formatDisplay)
+      return formatDisplay(selectedOption)
+    return selectedOption.label ?? String(selectedOption.value)
+  }, [selectedOption, formatDisplay])
 
   // Menu style with max height
   const menuStyle = useMemo(
     () => (menuMaxHeight ? { maxHeight: menuMaxHeight } : undefined),
     [menuMaxHeight],
-  );
+  )
 
   const dropdownElement = (
     <div
@@ -222,7 +225,7 @@ export function Dropdown<T = string>({
       <input
         name={name}
         type="hidden"
-        value={selectedOption ? String(selectedOption.value) : ""}
+        value={selectedOption ? String(selectedOption.value) : ''}
       />
 
       {/* Trigger button - styled like native select */}
@@ -254,9 +257,9 @@ export function Dropdown<T = string>({
           tabIndex={-1}
         >
           {options.map((option, index) => {
-            const isActive = index === activeIndex;
-            const isSelected = option.value === selectedOption?.value;
-            const optionLabel = option.label ?? String(option.value);
+            const isActive = index === activeIndex
+            const isSelected = option.value === selectedOption?.value
+            const optionLabel = option.label ?? String(option.value)
 
             return (
               <li
@@ -264,28 +267,28 @@ export function Dropdown<T = string>({
                 className={cn(menuItemVariants({ active: isActive }))}
                 key={`${String(option.value)}-${String(index)}`}
                 onClick={() => {
-                  handleOptionClick(index);
+                  handleOptionClick(index)
                 }}
                 onKeyDown={(e) => {
-                  handleOptionKeyDown(e);
+                  handleOptionKeyDown(e)
                 }}
                 onMouseEnter={() => {
-                  handleOptionMouseEnter(index);
+                  handleOptionMouseEnter(index)
                 }}
                 ref={(el) => {
-                  optionRefs.current[index] = el;
+                  optionRefs.current[index] = el
                 }}
                 role="option"
                 tabIndex={isActive ? 0 : -1}
               >
                 {optionLabel}
               </li>
-            );
+            )
           })}
         </ul>
       )}
     </div>
-  );
+  )
 
   if (label) {
     return (
@@ -298,11 +301,11 @@ export function Dropdown<T = string>({
         </label>
         {dropdownElement}
       </>
-    );
+    )
   }
 
-  return dropdownElement;
+  return dropdownElement
 }
 
-export type { DropdownOption };
-export { DropdownNative } from "./dropdown-native";
+export type { DropdownOption }
+export { DropdownNative } from './dropdown-native'

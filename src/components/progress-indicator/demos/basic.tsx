@@ -1,6 +1,6 @@
-import { ProgressIndicator } from "../progress-indicator";
+import { ProgressIndicator } from '../progress-indicator'
 
-export function BasicDemo() {
+export function BasicDemo(): React.ReactElement {
   return (
     <div className="flex w-80 flex-col gap-4">
       <ProgressIndicator value={0} />
@@ -9,5 +9,5 @@ export function BasicDemo() {
       <ProgressIndicator value={75} />
       <ProgressIndicator value={100} />
     </div>
-  );
+  )
 }

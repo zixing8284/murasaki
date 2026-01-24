@@ -1,6 +1,6 @@
-import { ProgressIndicator } from "../progress-indicator";
+import { ProgressIndicator } from '../progress-indicator'
 
-export function OptionsDemo() {
+export function OptionsDemo(): React.ReactElement {
   return (
     <div className="flex w-80 flex-col gap-4">
       <p className="text-sm">With percentage label (default):</p>
@@ -15,5 +15,5 @@ export function OptionsDemo() {
       <p className="text-sm">Tile without shadow:</p>
       <ProgressIndicator value={65} variant="tile" shadow={false} />
     </div>
-  );
+  )
 }

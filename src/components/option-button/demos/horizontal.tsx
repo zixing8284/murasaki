@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import { OptionButton } from "../option-button";
-import OptionGroup from "../option-group";
+import { OptionButton } from '../option-button'
+import OptionGroup from '../option-group'
 
 export function Horizontal(): React.ReactElement {
-  const [selected, setSelected] = useState("red");
+  const [selected, setSelected] = useState('red')
 
   return (
     <OptionGroup name="colors" onChange={setSelected} selectedValue={selected}>
@@ -14,5 +14,5 @@ export function Horizontal(): React.ReactElement {
         <OptionButton value="blue">Blue</OptionButton>
       </div>
     </OptionGroup>
-  );
+  )
 }

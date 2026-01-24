@@ -1,32 +1,32 @@
-import { createContext, use } from 'react'
+import { createContext, use } from "react";
 
 export interface OptionGroupProps {
   /**
    * provides the name attribute for each option button in the group
    */
-  name: string
+  name: string;
   /**
    * callback fired when an option button is selected
    * @param value the value of the selected option button
    */
-  onChange?: ((value: string) => void) | undefined
+  onChange?: (value: string) => void;
   /**
    * the currently selected value in the option button group
    */
-  selectedValue?: string | undefined
+  selectedValue?: string;
 }
 
 export const OptionButtonGroupContext = createContext<
-  OptionGroupProps | null
->(null)
+  OptionGroupProps | undefined
+>(undefined);
 
-export function useOptionButtonGroupContext(): OptionGroupProps {
-  const context = use(OptionButtonGroupContext)
+export const useOptionButtonGroupContext = () => {
+  const context = use(OptionButtonGroupContext);
   if (!context) {
     throw new Error(
-      'useOptionButtonGroupContext must be used within an OptionGroup',
-    )
+      "useOptionButtonGroupContext must be used within an OptionGroup",
+    );
   }
 
-  return context
-}
+  return context;
+};

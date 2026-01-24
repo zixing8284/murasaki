@@ -1,0 +1,72 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import TreeViewBasicDemo from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import TreeViewDataDemo from "./demos/data-driven";
+import DataSource from "./demos/data-driven.tsx?raw";
+
+# TreeView
+
+> A hierarchical list control that expands and collapses.
+
+## Quick Start
+
+```tsx
+import { TreeView } from "@/components/tree-view/tree-view";
+
+// Basic tree
+<TreeView>
+  <TreeView.Item label="Item 1" />
+  <TreeView.Item label="Folder">
+    <TreeView.Item label="Child 1" />
+    <TreeView.Item label="Child 2" />
+  </TreeView.Item>
+  <TreeView.Item label="Item 2" />
+</TreeView>
+```
+
+## Props
+
+### TreeView Props
+
+| Prop        | Type        | Required | Default | Description            |
+| ----------- | ----------- | -------- | ------- | ---------------------- |
+| `children`  | `ReactNode` | Yes      | -       | Tree items to display  |
+| `className` | `string`    | No       | -       | Additional CSS classes |
+
+### TreeView.Item Props
+
+| Prop              | Type         | Required | Default | Description                  |
+| ----------------- | ------------ | -------- | ------- | ---------------------------- |
+| `label`           | `ReactNode`  | Yes      | -       | The item label               |
+| `icon`            | `ReactNode`  | No       | -       | Icon to display before label |
+| `children`        | `ReactNode`  | No       | -       | Nested tree items            |
+| `defaultExpanded` | `boolean`    | No       | `false` | Initially expanded state     |
+| `disabled`        | `boolean`    | No       | `false` | Disable the item             |
+| `className`       | `string`     | No       | -       | Additional CSS classes       |
+| `onClick`         | `() => void` | No       | -       | Click handler for leaf items |
+
+## Examples
+
+### Basic
+
+<TreeViewBasicDemo />
+
+<ShowCode source={BasicSource} />
+
+### Data Driven
+
+You can render TreeView from a data array using a recursive function:
+
+<TreeViewDataDemo />
+
+<ShowCode source={DataSource} />
+
+## Features
+
+- **Expandable folders**: Items with children show +/- toggle
+- **Nested indentation**: Dotted border connects parent to children
+- **Keyboard navigation**: Enter/Space to expand/collapse or click leaf items
+- **Focus styling**: Blue focus ring for accessibility
+- **Hover effects**: Visual feedback on interactive items
+- **Disabled state**: Dimmed appearance for non-interactive items

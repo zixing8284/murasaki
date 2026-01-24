@@ -1,11 +1,11 @@
-import { Button } from '#/components/button/button'
+import { useState } from "react";
 
-import { useState } from 'react'
+import { Button } from "@/components/button/button";
 
-import { Window } from '../window'
+import { Window } from "../window";
 
 export function Basic(): React.ReactElement {
-  const [showWindow, setShowWindow] = useState(false)
+  const [showWindow, setShowWindow] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
@@ -14,16 +14,16 @@ export function Basic(): React.ReactElement {
       </p>
       <Button
         onClick={() => {
-          setShowWindow(v => !v)
+          setShowWindow((v) => !v);
         }}
       >
-        {showWindow ? 'Close Window' : 'Open Window'}
+        {showWindow ? "Close Window" : "Open Window"}
       </Button>
       {showWindow && (
         <Window
           draggable
           onClose={() => {
-            setShowWindow(false)
+            setShowWindow(false);
           }}
           title="Default Window"
         >
@@ -34,5 +34,5 @@ export function Basic(): React.ReactElement {
         </Window>
       )}
     </div>
-  )
+  );
 }

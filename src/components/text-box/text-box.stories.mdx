@@ -1,0 +1,102 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { Basic } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { InputTypes } from "./demos/input-types";
+import InputTypesSource from "./demos/input-types.tsx?raw";
+import { LabelPositions } from "./demos/label-positions";
+import LabelPositionsSource from "./demos/label-positions.tsx?raw";
+import { Multiline } from "./demos/multiline";
+import MultilineSource from "./demos/multiline.tsx?raw";
+import { States } from "./demos/states";
+import StatesSource from "./demos/states.tsx?raw";
+
+# TextBox
+
+> A text box (also referred to as an edit control) is a rectangular control where the user enters or edits text. It can be defined to support a single line or multiple lines of text.
+>
+> — _Microsoft Windows User Experience_
+
+## Quick Start
+
+```tsx
+import { TextBox } from "@/components/text-box/text-box";
+
+// Basic text input
+<TextBox placeholder="Enter text..." />
+
+// With label (left position - default)
+<TextBox label="Username" placeholder="Type here" />
+
+// With label on top
+<TextBox label="Address" labelPosition="top" />
+
+// Different input types
+<TextBox type="password" label="Password" />
+<TextBox type="email" label="Email" />
+<TextBox type="number" label="Age" />
+
+// Multiline textarea
+<TextBox multiline label="Description" labelPosition="top" rows={4} />
+```
+
+## Props
+
+| Prop               | Type                                                                        | Required | Default  | Description                   |
+| ------------------ | --------------------------------------------------------------------------- | -------- | -------- | ----------------------------- |
+| `type`             | `'text' \| 'email' \| 'password' \| 'number' \| 'tel' \| 'search' \| 'url'` | No       | `'text'` | Input type                    |
+| `multiline`        | `boolean`                                                                   | No       | `false`  | Render as textarea            |
+| `rows`             | `number`                                                                    | No       | -        | Visible text rows (multiline) |
+| `label`            | `ReactNode`                                                                 | No       | -        | Label text                    |
+| `children`         | `ReactNode`                                                                 | No       | -        | Alternative to label prop     |
+| `labelPosition`    | `'left' \| 'top'`                                                           | No       | `'left'` | Label position                |
+| `disabled`         | `boolean`                                                                   | No       | `false`  | Disable the input             |
+| `readOnly`         | `boolean`                                                                   | No       | `false`  | Make input read-only          |
+| `wrapperClassName` | `string`                                                                    | No       | -        | CSS class for wrapper div     |
+| `className`        | `string`                                                                    | No       | -        | CSS class for input/textarea  |
+
+Also accepts all standard `<input>` attributes.
+
+## Examples
+
+### Basic
+
+<Basic />
+
+<ShowCode source={BasicSource} />
+
+### Label Positions
+
+Use `labelPosition` prop to control where the label appears relative to the input.
+
+<LabelPositions />
+
+<ShowCode source={LabelPositionsSource} />
+
+### Input Types
+
+Different input types for various data entry needs.
+
+<InputTypes />
+
+<ShowCode source={InputTypesSource} />
+
+### States
+
+<States />
+
+<ShowCode source={StatesSource} />
+
+### Multiline
+
+Use `multiline` prop to render a `<textarea>` for multi-line text input. Control the height with the `rows` prop.
+
+<Multiline />
+
+<ShowCode source={MultilineSource} />
+
+## Visual States
+
+- **Normal**: White background with sunken border effect
+- **Disabled**: Gray background, text appears muted
+- **Read Only**: Gray background, label text appears muted

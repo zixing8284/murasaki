@@ -1,6 +1,6 @@
-import { Checkbox } from '#/components/checkbox/checkbox'
+import { Checkbox } from "@/components/checkbox/checkbox";
 
-import { GroupBox } from '../group-box'
+import { GroupBox } from "../group-box";
 
 export function Basic(): React.ReactElement {
   return (
@@ -13,5 +13,5 @@ export function Basic(): React.ReactElement {
         <Checkbox name="demo-autosave">Enable auto-save</Checkbox>
       </div>
     </GroupBox>
-  )
+  );
 }

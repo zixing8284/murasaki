@@ -1,0 +1,70 @@
+# ProgressIndicator
+
+> You can use a progress indicator, also known as a progress bar control, to show the percentage of completion of a lengthy operation.
+>
+> — _Microsoft Windows User Experience_
+
+There are two types of progress bars: solid and tile. The solid version is the default.
+
+## Basic Usage
+
+import { BasicDemo } from "./demos/basic";
+
+<BasicDemo />
+
+```tsx
+import { ProgressIndicator } from "@/components";
+
+<ProgressIndicator value={50} />
+```
+
+## Tile Variant
+
+The tile variant displays progress as a series of 16px-wide tiles with 2px gaps.
+
+import { TileDemo } from "./demos/tile";
+
+<TileDemo />
+
+```tsx
+<ProgressIndicator value={50} variant="tile" />
+```
+
+## Animated Progress
+
+Progress updates are optimized using CSS transforms to avoid browser reflow/repaint.
+
+import { AnimatedDemo } from "./demos/animated";
+
+<AnimatedDemo />
+
+## Options
+
+import { OptionsDemo } from "./demos/options";
+
+<OptionsDemo />
+
+```tsx
+// Hide percentage label
+<ProgressIndicator value={65} hideValue />
+
+// Without shadow effect
+<ProgressIndicator value={65} shadow={false} />
+```
+
+## Props
+
+| Prop        | Type                      | Default     | Description                                |
+| ----------- | ------------------------- | ----------- | ------------------------------------------ |
+| `value`     | `number`                  | (required)  | Progress value from 0 to 100               |
+| `variant`   | `'default'` \| `'tile'`   | `'default'` | Visual style variant                       |
+| `hideValue` | `boolean`                 | `false`     | Whether to hide the percentage text        |
+| `shadow`    | `boolean`                 | `true`      | Whether to show the sunken shadow effect   |
+
+## Accessibility
+
+The component uses proper ARIA attributes:
+- `role="progressbar"`
+- `aria-valuenow`: Current progress value
+- `aria-valuemin`: Minimum value (0)
+- `aria-valuemax`: Maximum value (100)

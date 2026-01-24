@@ -1,11 +1,11 @@
-import { Button } from '#/components/button/button'
+import { useState } from "react";
 
-import { useState } from 'react'
+import { Button } from "@/components/button/button";
 
-import { Window } from '../window'
+import { Window } from "../window";
 
 export function LargeContent(): React.ReactElement {
-  const [showWindow, setShowWindow] = useState(false)
+  const [showWindow, setShowWindow] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
@@ -14,16 +14,16 @@ export function LargeContent(): React.ReactElement {
       </p>
       <Button
         onClick={() => {
-          setShowWindow(v => !v)
+          setShowWindow((v) => !v);
         }}
       >
-        {showWindow ? 'Close Window' : 'Open Large Content Window'}
+        {showWindow ? "Close Window" : "Open Large Content Window"}
       </Button>
       {showWindow && (
         <Window
           draggable
           onClose={() => {
-            setShowWindow(false)
+            setShowWindow(false);
           }}
           title="Large Content Window"
         >
@@ -31,7 +31,7 @@ export function LargeContent(): React.ReactElement {
         </Window>
       )}
     </div>
-  )
+  );
 }
 
 /**
@@ -40,15 +40,15 @@ export function LargeContent(): React.ReactElement {
  * @returns A formatted string with numbered paragraphs
  */
 function generateLargeContent(paragraphs = 20): string {
-  const lines: string[] = []
+  const lines: string[] = [];
 
   for (let i = 1; i <= paragraphs; i++) {
     lines.push(
-      `[${String(i)}] Lorem ipsum dolor sit amet, consectetur adipiscing elit. `
-      + `Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. `
-      + `Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.`,
-    )
+      `[${String(i)}] Lorem ipsum dolor sit amet, consectetur adipiscing elit. ` +
+        `Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ` +
+        `Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.`,
+    );
   }
 
-  return lines.join('\n\n')
+  return lines.join("\n\n");
 }

@@ -1,0 +1,80 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { Basic } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { ButtonGroup } from "./demos/button-group";
+import ButtonGroupSource from "./demos/button-group.tsx?raw";
+import { States } from "./demos/states";
+import StatesSource from "./demos/states.tsx?raw";
+
+# Button
+
+> A command button, also referred to as a push button, is a control that causes the application to perform some action when the user clicks it.
+>
+> — _Microsoft Windows User Experience_
+
+## Quick Start
+
+```tsx
+import { Button } from "@/components/button/button";
+
+// Basic button
+<Button>OK</Button>
+
+// With click handler
+<Button onClick={handleClick}>Save</Button>
+
+// Active (pressed) state
+<Button active>Pressed</Button>
+
+// Disabled state
+<Button disabled>Can't Click</Button>
+
+// Button group
+<div className="flex gap-2">
+  <Button>OK</Button>
+  <Button>Cancel</Button>
+</div>
+```
+
+## Props
+
+| Prop        | Type         | Required | Default | Description                   |
+| ----------- | ------------ | -------- | ------- | ----------------------------- |
+| `children`  | `ReactNode`  | No       | -       | Button content                |
+| `active`    | `boolean`    | No       | `false` | Show pressed/active state     |
+| `disabled`  | `boolean`    | No       | `false` | Disable the button            |
+| `className` | `string`     | No       | -       | Additional CSS classes        |
+| `onClick`   | `() => void` | No       | -       | Click event handler           |
+
+Also accepts all standard `<button>` attributes.
+
+## Examples
+
+### Basic
+
+<Basic />
+
+<ShowCode source={BasicSource} />
+
+### Button Group
+
+<ButtonGroup />
+
+<ShowCode source={ButtonGroupSource} />
+
+### States
+
+<States />
+
+<ShowCode source={StatesSource} />
+
+Click a button to see the dotted focus outline.
+
+## Visual States
+
+- **Normal**: Raised 3D shadow effect
+- **Active** (prop): Sunken effect for pressed state
+- **Active** (pseudo-class): Sunken effect when clicked
+- **Focus**: Dotted outline (Win98 style)
+- **Disabled**: Embossed text with shadow

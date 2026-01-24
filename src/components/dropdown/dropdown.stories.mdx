@@ -1,0 +1,116 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { Basic } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { Controlled } from "./demos/controlled";
+import ControlledSource from "./demos/controlled.tsx?raw";
+import { Native } from "./demos/native";
+import NativeSource from "./demos/native.tsx?raw";
+import { WithLabel } from "./demos/with-label";
+import WithLabelSource from "./demos/with-label.tsx?raw";
+
+# Dropdown
+
+> A drop-down list box allows the selection of only a single item from a list. In its closed state, the control displays the current value for the control. The user opens the list to change the value.
+>
+> — _Microsoft Windows User Experience_
+
+This component provides two variants:
+
+- **Dropdown**: Custom rendered dropdown with full styling control over the dropdown list
+- **DropdownNative**: Uses the browser's native `<select>` element (better accessibility and mobile support)
+
+## Quick Start
+
+### Dropdown (Custom Rendered)
+
+```tsx
+import { Dropdown, type DropdownOption } from "@/components/dropdown/dropdown";
+
+const options: DropdownOption[] = [
+  { value: "txt", label: "Text Document (*.txt)" },
+  { value: "doc", label: "Word Document (*.doc)" },
+];
+
+// Basic usage
+<Dropdown name="file-type" options={options} />
+
+// With label
+<Dropdown name="file-type" label="File type:" options={options} />
+
+// With default value
+<Dropdown name="size" options={sizeOptions} defaultValue="medium" />
+
+// Controlled
+<Dropdown
+  name="pokemon"
+  options={pokemonOptions}
+  value={selected}
+  onChange={(opt) => setSelected(opt.value)}
+/>
+```
+
+### DropdownNative
+
+```tsx
+import { DropdownNative } from "@/components/dropdown/dropdown";
+
+// Basic usage with <option> children
+<DropdownNative name="file-type">
+  <option value="txt">Text Document (*.txt)</option>
+  <option value="doc">Word Document (*.doc)</option>
+</DropdownNative>
+
+// With label
+<DropdownNative name="encoding" label="Encoding:">
+  <option value="utf8">UTF-8</option>
+  <option value="ansi">ANSI</option>
+</DropdownNative>
+```
+
+## Props
+
+### Dropdown (Custom Rendered)
+
+| Prop               | Type                                    | Required | Default | Description                             |
+| ------------------ | --------------------------------------- | -------- | ------- | --------------------------------------- |
+| `name`             | `string`                                | **Yes**  | -       | The name attribute for form submission  |
+| `options`          | `DropdownOption[]`                      | **Yes**  | -       | Array of options to display             |
+| `value`            | `T`                                     | No       | -       | Controlled value                        |
+| `defaultValue`     | `T`                                     | No       | -       | Default value (uncontrolled)            |
+| `onChange`         | `(option: DropdownOption<T>) => void`   | No       | -       | Callback fired on selection change      |
+| `label`            | `string`                                | No       | -       | Label text for accessibility            |
+| `width`            | `CSS width`                             | No       | -       | Width of the dropdown                   |
+| `disabled`         | `boolean`                               | No       | false   | Whether the dropdown is disabled        |
+
+### DropdownNative
+
+| Prop             | Type                                 | Required | Default | Description                                  |
+| ---------------- | ------------------------------------ | -------- | ------- | -------------------------------------------- |
+| `name`           | `string`                             | **Yes**  | -       | The name attribute for form submission       |
+| `label`          | `string`                             | No       | -       | Label text for accessibility                 |
+| `className`      | `string`                             | No       | -       | Additional CSS classes for select            |
+
+Also accepts all standard `<select>` attributes.
+
+## Examples
+
+### Basic
+
+<Basic />
+<ShowCode source={BasicSource} />
+
+### With Label
+
+<WithLabel />
+<ShowCode source={WithLabelSource} />
+
+### Controlled
+
+<Controlled />
+<ShowCode source={ControlledSource} />
+
+### Native Dropdown
+
+<Native />
+<ShowCode source={NativeSource} />

@@ -1,15 +1,15 @@
-import { Button } from '#/components/button/button'
+import { useState } from "react";
 
-import { useState } from 'react'
+import { Button } from "@/components/button/button";
 
-import { Window } from '../window'
+import { Window } from "../window";
 
 export function Dialog(): React.ReactElement {
-  const [showDialog, setShowDialog] = useState(false)
+  const [showDialog, setShowDialog] = useState(false);
 
-  const closeDialog = (): void => {
-    setShowDialog(false)
-  }
+  const closeDialog = () => {
+    setShowDialog(false);
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -19,7 +19,7 @@ export function Dialog(): React.ReactElement {
       </p>
       <Button
         onClick={() => {
-          setShowDialog(true)
+          setShowDialog(true);
         }}
       >
         Open Dialog
@@ -43,5 +43,5 @@ export function Dialog(): React.ReactElement {
         </Window>
       )}
     </div>
-  )
+  );
 }

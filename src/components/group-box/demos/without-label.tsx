@@ -1,6 +1,6 @@
-import { Checkbox } from '#/components/checkbox/checkbox'
+import { Checkbox } from "@/components/checkbox/checkbox";
 
-import { GroupBox } from '../group-box'
+import { GroupBox } from "../group-box";
 
 export function WithoutLabel(): React.ReactElement {
   return (
@@ -10,5 +10,5 @@ export function WithoutLabel(): React.ReactElement {
         <Checkbox name="option-b">Option B</Checkbox>
       </div>
     </GroupBox>
-  )
+  );
 }

@@ -1,61 +1,60 @@
-import type { VariantProps } from 'class-variance-authority'
-import { cn } from '#/lib/utils'
+import React from "react";
 
-import { cva } from 'class-variance-authority'
+import { type VariantProps, cva } from "class-variance-authority";
 
-import React from 'react'
+import { cn } from "@/lib/utils";
 
 const selectVariants = cva([
   // Reset
-  'appearance-none',
-  'border-none',
-  'rounded-none',
+  "appearance-none",
+  "border-none",
+  "rounded-none",
   // Sizing
-  'box-border',
-  'h-[21px]',
-  'py-[3px]',
-  'pl-1',
-  'pr-8',
+  "box-border",
+  "h-[21px]",
+  "py-[3px]",
+  "pl-1",
+  "pr-8",
   // Colors
-  'bg-btn-hilight',
-  'text-window-text',
+  "bg-btn-hilight",
+  "text-window-text",
   // Border effect
-  'shadow-border-field',
+  "shadow-border-field",
   // Arrow icon
-  'bg-[url(\'/assets/icons/button-down.svg\')]',
-  'bg-no-repeat',
-  'bg-position-[right_2px_top_2px]',
+  "bg-[url('/assets/icons/button-down.svg')]",
+  "bg-no-repeat",
+  "bg-position-[right_2px_top_2px]",
   // Active state
-  'active:bg-[url(\'/assets/icons/button-down-active.svg\')]',
+  "active:bg-[url('/assets/icons/button-down-active.svg')]",
   // Focus state
-  'focus:outline-none',
-  'focus:text-btn-hilight',
-  'focus:bg-menu-hilight',
+  "focus:outline-none",
+  "focus:text-btn-hilight",
+  "focus:bg-menu-hilight",
   // Disabled state
-  'disabled:bg-btn-face',
-  'disabled:text-btn-shadow',
-  'disabled:cursor-not-allowed',
-])
+  "disabled:bg-btn-face",
+  "disabled:text-btn-shadow",
+  "disabled:cursor-not-allowed",
+]);
 
-const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])
+const labelVariants = cva(["inline-block", "mr-2", "leading-[21px]"]);
 
 interface DropdownNativeProps
-  extends React.ComponentProps<'select'>,
-  VariantProps<typeof selectVariants> {
+  extends React.ComponentProps<"select">,
+    VariantProps<typeof selectVariants> {
   /**
    * Optional label text for accessibility.
    * When provided, renders a <label> element and uses this as the select's id.
    */
-  label?: string
+  label?: string;
   /**
    * Additional className for the label element.
    */
-  labelClassName?: string
+  labelClassName?: string;
   /**
    * The name attribute for the select element.
    * Used as the key when form data is submitted.
    */
-  name: string
+  name: string;
 }
 
 /**
@@ -73,10 +72,10 @@ export function DropdownNative({
   ref,
   ...props
 }: {
-  ref?: React.RefObject<HTMLSelectElement | null>
+  ref?: React.RefObject<HTMLSelectElement | null>;
 } & DropdownNativeProps): React.ReactElement {
-  const generatedId = React.useId()
-  const selectId = id ?? (label ? generatedId : undefined)
+  const generatedId = React.useId();
+  const selectId = id ?? (label ? generatedId : undefined);
 
   const selectElement = (
     <select
@@ -88,7 +87,7 @@ export function DropdownNative({
     >
       {children}
     </select>
-  )
+  );
 
   if (label) {
     return (
@@ -101,8 +100,8 @@ export function DropdownNative({
         </label>
         {selectElement}
       </>
-    )
+    );
   }
 
-  return selectElement
+  return selectElement;
 }

@@ -1,0 +1,126 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { ActiveInactive } from "./demos/active-inactive";
+import ActiveInactiveSource from "./demos/active-inactive.tsx?raw";
+import { Basic } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { BoundedContainer } from "./demos/bounded-container";
+import BoundedContainerSource from "./demos/bounded-container.tsx?raw";
+import { Dialog } from "./demos/dialog";
+import DialogSource from "./demos/dialog.tsx?raw";
+import { DisabledMaximize } from "./demos/disabled-maximize";
+import DisabledMaximizeSource from "./demos/disabled-maximize.tsx?raw";
+import { LargeContent } from "./demos/large-content";
+import LargeContentSource from "./demos/large-content.tsx?raw";
+
+# Window
+
+> Every window has a boundary that defines its shape.
+>
+> — _Microsoft Windows User Experience_
+
+### Title Bar
+
+> At the top edge of the window, inside its border, is the title bar (also referred to as the caption or caption bar), which extends across the width of the window. The title bar identifies the contents of the window.
+>
+> — _Microsoft Windows User Experience_
+
+## Quick Start
+
+```tsx
+import { Window } from "@/components/window/window";
+
+// Basic window
+<Window title="My App">Content here</Window>
+
+// Draggable window
+<Window title="Drag Me" draggable>...</Window>
+
+// Modal dialog with overlay
+<Window
+  title="Confirm"
+  overlay
+  showMinimize={false}
+  showMaximize={false}
+  onClose={handleClose}
+  onOverlayClick={handleClose}
+>
+  ...
+</Window>
+
+// Bounded to container
+<Window title="Limited" draggable appendTo={containerElement}>...</Window>
+```
+
+## Props
+
+| Prop             | Type          | Required | Default    | Description                                       |
+| ---------------- | ------------- | -------- | ---------- | ------------------------------------------------- |
+| `title`          | `ReactNode`   | No       | `"Window"` | Title bar text                                    |
+| `active`         | `boolean`     | No       | `true`     | Active (blue) or inactive (gray) state            |
+| `draggable`      | `boolean`     | No       | `false`    | Enable title bar dragging                         |
+| `maximize`       | `boolean`     | No       | `false`    | Start maximized                                   |
+| `disableMaximize`| `boolean`     | No       | `false`    | Disable maximize button (grayed icon)             |
+| `overlay`        | `boolean`     | No       | `false`    | Show semi-transparent backdrop behind window      |
+| `appendTo`       | `HTMLElement` | No       | -          | Position container (enables absolute positioning). If not `document.body`, the container must have `position: relative` CSS. |
+| `showHelp`       | `boolean`     | No       | `false`    | Show help (?) button                              |
+| `showMinimize`   | `boolean`     | No       | `true`     | Show minimize button                              |
+| `showMaximize`   | `boolean`     | No       | `true`     | Show maximize button                              |
+| `showClose`      | `boolean`     | No       | `true`     | Show close button                                 |
+| `className`      | `string`      | No       | -          | Additional CSS classes                            |
+| `onClose`        | `() => void`  | No       | -          | Close button callback                             |
+| `onMinimize`     | `() => void`  | No       | -          | Minimize button callback                          |
+| `onMaximize`     | `() => void`  | No       | -          | Maximize button callback                          |
+| `onOverlayClick` | `() => void`  | No       | -          | Overlay click callback (for click-outside close)  |
+
+## Examples
+
+### Basic
+
+<Basic />
+<ShowCode source={BasicSource} />
+
+### Dialog Pattern
+
+Modal dialog with backdrop overlay, click outside or close button to dismiss.
+
+<Dialog />
+<ShowCode source={DialogSource} />
+
+### Bounded to Container
+
+Window constrained within a specific container using `appendTo` prop.
+
+<BoundedContainer />
+<ShowCode source={BoundedContainerSource} />
+
+### Active / Inactive States
+
+Compare active (blue title bar) and inactive (gray title bar) states.
+
+<ActiveInactive />
+<ShowCode source={ActiveInactiveSource} />
+
+### Disabled Maximize
+
+Window with disabled maximize button, commonly used for fixed-size dialogs.
+
+<DisabledMaximize />
+<ShowCode source={DisabledMaximizeSource} />
+
+### Large Content with Scrollbar
+
+Window with large content demonstrates the scrollbar behavior within the content area.
+
+<LargeContent />
+<ShowCode source={LargeContentSource} />
+
+## Common Patterns
+
+**Modal Dialog**: Use **overlay** prop with **showMinimize={`false`}** and **showMaximize={`false`}**. Add **onOverlayClick** to allow closing by clicking outside.
+
+**Bounded Window**: By default, the window uses fixed positioning and dragging is bounded to the viewport. Pass **appendTo** to use absolute positioning within that container, with dragging constrained to container bounds. **Note**: The container element must have `position: relative` CSS to ensure proper absolute positioning.
+
+**Maximized Window**: When maximized without **appendTo**, the window becomes fixed and fills the viewport. With **appendTo**, it fills the container instead.
+
+**Overlay Positioning**: The overlay respects **appendTo** - it uses fixed positioning for viewport-level windows and absolute positioning for container-bound windows.

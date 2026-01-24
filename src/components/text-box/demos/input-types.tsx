@@ -1,6 +1,6 @@
-import { TextBox } from '../text-box'
+import { TextBox } from "../text-box";
 
-export function InputTypes(): React.ReactElement {
+export function InputTypes() {
   return (
     <div className="bg-btn-face flex flex-col gap-3 p-4">
       <TextBox label="Text" placeholder="Plain text" type="text" />
@@ -11,5 +11,5 @@ export function InputTypes(): React.ReactElement {
       <TextBox label="URL" placeholder="https://example.com" type="url" />
       <TextBox label="Search" placeholder="Search..." type="search" />
     </div>
-  )
+  );
 }

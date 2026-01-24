@@ -1,0 +1,129 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { Basic } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { BoxIndicator } from "./demos/box-indicator";
+import BoxIndicatorSource from "./demos/box-indicator.tsx?raw";
+import { Vertical } from "./demos/vertical";
+import VerticalSource from "./demos/vertical.tsx?raw";
+import { WithStep } from "./demos/with-step";
+import WithStepSource from "./demos/with-step.tsx?raw";
+import { WithTicks } from "./demos/with-ticks";
+import WithTicksSource from "./demos/with-ticks.tsx?raw";
+
+# Slider
+
+> A slider, sometimes called a trackbar control, consists of a bar that defines the extent or range of the adjustment and an indicator that shows the current value for the control.
+>
+> — _Microsoft Windows User Experience_
+
+## Quick Start
+
+```tsx
+import { Slider } from "@/components/slider/slider";
+
+// Basic slider (controlled)
+const [value, setValue] = useState(50);
+<Slider
+  id="volume"
+  min={0}
+  max={100}
+  value={value}
+  onChange={(e) => setValue(Number(e.target.value))}
+/>
+
+// With step
+<Slider id="stepped" min={0} max={100} step={10} value={value} onChange={...} />
+
+// With box indicator
+<Slider id="box" min={0} max={100} value={value} onChange={...} boxIndicator />
+
+// Vertical slider
+<Slider id="v-slider" min={0} max={100} value={value} onChange={...} vertical />
+
+// With tick marks
+<Slider
+  id="ticks"
+  min={0}
+  max={100}
+  value={value}
+  onChange={...}
+  ticks={[
+    { value: 0, label: "0" },
+    { value: 50, label: "50" },
+    { value: 100, label: "100" },
+  ]}
+/>
+```
+
+## Props
+
+| Prop           | Type         | Required | Default | Description                                 |
+| -------------- | ------------ | -------- | ------- | ------------------------------------------- |
+| `id`           | `string`     | No       | -       | Unique identifier for the slider            |
+| `min`          | `number`     | No       | `0`     | Minimum value of the range                  |
+| `max`          | `number`     | No       | `100`   | Maximum value of the range                  |
+| `step`         | `number`     | No       | `1`     | Step increment for the slider               |
+| `defaultValue` | `number`     | No       | -       | Initial value (uncontrolled)                |
+| `value`        | `number`     | No       | -       | Controlled value of the slider              |
+| `boxIndicator` | `boolean`    | No       | `false` | Use a box indicator instead of the triangle |
+| `vertical`     | `boolean`    | No       | `false` | Render the slider vertically                |
+| `ticks`        | `TickMark[]` | No       | -       | Tick marks with optional labels             |
+| `className`    | `string`     | No       | -       | Additional CSS classes                      |
+| `onChange`     | `func`       | No       | -       | Change event handler                        |
+
+### TickMark Type
+
+```tsx
+interface TickMark {
+  value: number;   // The value where the tick should appear
+  label?: string;  // Optional label to display
+}
+```
+
+Also accepts all standard `<input type="range">` attributes.
+
+## Examples
+
+### Basic (Controlled)
+
+<Basic />
+
+<ShowCode source={BasicSource} />
+
+### Box Indicator
+
+Use the `boxIndicator` prop to replace the default triangle indicator with a rectangular box.
+
+<BoxIndicator />
+
+<ShowCode source={BoxIndicatorSource} />
+
+### With Step
+
+Use the `step` prop to control the increment granularity.
+
+<WithStep />
+
+<ShowCode source={WithStepSource} />
+
+### With Tick Marks
+
+Add visual tick marks and labels using the `ticks` prop.
+
+<WithTicks />
+
+<ShowCode source={WithTicksSource} />
+
+### Vertical
+
+Set the `vertical` prop to render the slider in a vertical orientation.
+
+<Vertical />
+
+<ShowCode source={VerticalSource} />
+
+## Indicator Types
+
+- **Default**: Triangle pointer indicator (classic Win98 style)
+- **Box**: Rectangular indicator for a different visual style

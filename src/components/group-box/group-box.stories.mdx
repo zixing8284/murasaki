@@ -1,0 +1,69 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { Basic } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { MultipleGroups } from "./demos/multiple-groups";
+import MultipleGroupsSource from "./demos/multiple-groups.tsx?raw";
+import { WithOptionButtons } from "./demos/with-option-buttons";
+import WithOptionButtonsSource from "./demos/with-option-buttons.tsx?raw";
+import { WithoutLabel } from "./demos/without-label";
+import WithoutLabelSource from "./demos/without-label.tsx?raw";
+
+# GroupBox
+
+> A group box is a special control you can use to organize a set of controls. A group box is a rectangular frame with an optional label that surrounds a set of controls.
+>
+> — _Microsoft Windows User Experience_
+
+A GroupBox contains a sunken outer border and a raised inner border, resembling an engraved box around the controls. It can also contain a label.
+
+## Quick Start
+
+```tsx
+import { GroupBox } from "@/components/group-box/group-box";
+
+<GroupBox label="Settings">
+  <Checkbox name="option1">Option 1</Checkbox>
+  <Checkbox name="option2">Option 2</Checkbox>
+</GroupBox>;
+```
+
+## Props
+
+| Prop        | Type        | Required | Default | Description                          |
+| ----------- | ----------- | -------- | ------- | ------------------------------------ |
+| `label`     | `ReactNode` | No       | -       | Label displayed at the top           |
+| `children`  | `ReactNode` | No       | -       | Content to be grouped inside the box |
+| `className` | `string`    | No       | -       | Additional CSS classes               |
+
+Also accepts all standard `<fieldset>` attributes.
+
+## Examples
+
+### Basic
+
+A GroupBox with checkboxes, commonly used for settings panels.
+
+<Basic />
+<ShowCode source={BasicSource} />
+
+### With OptionButtons
+
+GroupBox works well with radio button groups for mutually exclusive options.
+
+<WithOptionButtons />
+<ShowCode source={WithOptionButtonsSource} />
+
+### Without Label
+
+GroupBox can be used without a label for visual separation only.
+
+<WithoutLabel />
+<ShowCode source={WithoutLabelSource} />
+
+### Multiple Groups
+
+Side by side GroupBoxes for organizing multiple option sets.
+
+<MultipleGroups />
+<ShowCode source={MultipleGroupsSource} />

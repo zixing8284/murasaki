@@ -1,0 +1,107 @@
+import { ShowCode } from "@docs/mdx-components";
+
+import { BasicTabs } from "./demos/basic";
+import BasicSource from "./demos/basic.tsx?raw";
+import { ManyTabs } from "./demos/many-tabs";
+import ManyTabsSource from "./demos/many-tabs.tsx?raw";
+import { ControlledTabs } from "./demos/controlled";
+import ControlledSource from "./demos/controlled.tsx?raw";
+
+# Tabs
+
+> A tab control is analogous to a divider in a file cabinet or notebook. You can use this control to define multiple logical pages or sections of information within the same window.
+>
+> — _Microsoft Windows User Experience_
+
+> One row of tabs is enough. Again: One row is enough. And once more: One row is enough.
+>
+> — _GUI Design for Dummies_
+
+## Quick Start
+
+```tsx
+import { Tabs } from "@/components/tabs/tabs";
+
+// Basic tabs (uncontrolled)
+<Tabs defaultValue="desktop">
+  <Tabs.List>
+    <Tabs.Tab value="desktop">Desktop</Tabs.Tab>
+    <Tabs.Tab value="computer">My computer</Tabs.Tab>
+    <Tabs.Tab value="panel">Control panel</Tabs.Tab>
+  </Tabs.List>
+  <Tabs.Panel value="desktop">
+    <p>Desktop settings and wallpaper options.</p>
+  </Tabs.Panel>
+  <Tabs.Panel value="computer">
+    <p>View drives and system resources.</p>
+  </Tabs.Panel>
+  <Tabs.Panel value="panel">
+    <p>System configuration and preferences.</p>
+  </Tabs.Panel>
+</Tabs>
+
+// Controlled tabs
+const [activeTab, setActiveTab] = useState("tab1");
+<Tabs value={activeTab} onValueChange={setActiveTab}>
+  <Tabs.List>
+    <Tabs.Tab value="tab1">Tab 1</Tabs.Tab>
+    <Tabs.Tab value="tab2">Tab 2</Tabs.Tab>
+  </Tabs.List>
+  <Tabs.Panel value="tab1">Content 1</Tabs.Panel>
+  <Tabs.Panel value="tab2">Content 2</Tabs.Panel>
+</Tabs>
+```
+
+## Props
+
+### Tabs
+
+| Prop             | Type                    | Required | Default | Description                         |
+| ---------------- | ----------------------- | -------- | ------- | ----------------------------------- |
+| `defaultValue`   | `string`                | No       | -       | Initial active tab (uncontrolled)   |
+| `value`          | `string`                | No       | -       | Controlled active tab value         |
+| `onValueChange`  | `(value: string) => void` | No    | -       | Callback when tab changes           |
+| `children`       | `ReactNode`             | No       | -       | Tab list and panels                 |
+| `className`      | `string`                | No       | -       | Additional CSS classes              |
+
+### Tabs.Tab
+
+| Prop        | Type        | Required | Default | Description                  |
+| ----------- | ----------- | -------- | ------- | ---------------------------- |
+| `value`     | `string`    | Yes      | -       | Unique identifier for the tab |
+| `children`  | `ReactNode` | No       | -       | Tab label content            |
+| `className` | `string`    | No       | -       | Additional CSS classes       |
+
+### Tabs.Panel
+
+| Prop        | Type        | Required | Default | Description                          |
+| ----------- | ----------- | -------- | ------- | ------------------------------------ |
+| `value`     | `string`    | Yes      | -       | Matches the tab value to display for |
+| `children`  | `ReactNode` | No       | -       | Panel content                        |
+| `className` | `string`    | No       | -       | Additional CSS classes               |
+
+## Examples
+
+### Basic
+
+Use `Tabs` with compound components `Tabs.List`, `Tabs.Tab`, and `Tabs.Panel` to create a tabbed interface.
+
+<BasicTabs />
+
+<ShowCode source={BasicSource} />
+
+### Many Tabs
+
+Windows 98 style tabs support multiple tabs in a single row.
+
+<ManyTabs />
+
+<ShowCode source={ManyTabsSource} />
+
+### Controlled
+
+Use `value` and `onValueChange` props for controlled state management.
+
+<ControlledTabs />
+
+<ShowCode source={ControlledSource} />

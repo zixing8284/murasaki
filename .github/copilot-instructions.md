@@ -40,12 +40,12 @@ const derivedValue = useMemo(() => expensiveCompute(props), [props])
 ```tsx
 // ❌ Bad: Mutating props
 function Component({ items }) {
-  items.push(newItem)  // Never mutate props!
+  items.push(newItem) // Never mutate props!
 }
 
 // ❌ Bad: Mutating state directly
 const [items, setItems] = useState([])
-items.push(newItem)  // Never mutate state!
+items.push(newItem) // Never mutate state!
 
 // ✅ Good: Create new references
 setItems([...items, newItem])
@@ -69,8 +69,8 @@ setItems([...items, newItem])
 All components use `class-variance-authority` (cva) for variant-based styling:
 
 ```tsx
-import { cva } from 'class-variance-authority'
 import { cn } from '#/lib/utils'
+import { cva } from 'class-variance-authority'
 
 const buttonVariants = cva(['base-classes'], {
   variants: { active: { true: 'active-classes' } }
@@ -130,7 +130,7 @@ export default function OptionGroup({ children, name, onChange, selectedValue })
     </OptionButtonGroupContext>
   )
 }
-OptionGroup.Option = OptionButton  // Attach child as static property
+OptionGroup.Option = OptionButton // Attach child as static property
 ```
 **Runtime error pattern**: Always use `createContext(null)` + throw error in consumer hook. This ensures users see clear errors when components are used outside required providers.
 

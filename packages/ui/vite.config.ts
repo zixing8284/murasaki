@@ -5,7 +5,7 @@ import { playwright } from '@vitest/browser-playwright'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  root: './playground',
+  root: '.',
   plugins: [
     react({
       babel: { plugins: ['babel-plugin-react-compiler'] },
@@ -13,7 +13,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   test: {
-    root: '.',
+    include: ['tests/**/*.{test,spec}.{js,ts,jsx,tsx}'],
     browser: {
       enabled: true,
       provider: playwright(),

@@ -1,3 +1,4 @@
+import { OptionButton, OptionGroup, Window } from 'murasaki-react98'
 import { useEffect, useState } from 'react'
 import { Taskbar } from './components/Taskbar'
 
@@ -8,6 +9,8 @@ function formatTime(): string {
 export function App(): React.ReactElement {
   const [time, setTime] = useState(formatTime)
   const [showStartMenu, setShowStartMenu] = useState(false)
+
+  const [selected, setSelected] = useState('option1')
 
   useEffect(() => {
     const interval = setInterval(() => setTime(formatTime()), 1000)
@@ -20,6 +23,22 @@ export function App(): React.ReactElement {
       <div className="flex-1 overflow-hidden relative m-0.5">
         <div className="h-full relative">
           {/* Desktop content goes here */}
+          <Window
+            title="My Computer"
+            active={true}
+            className="w-[520px]"
+          >
+            <div className="p-2">
+              <p>Window content here...</p>
+              <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>
+                <div className="flex flex-col gap-2">
+                  <OptionButton value="option1">Option 1</OptionButton>
+                  <OptionButton value="option2">Option 2</OptionButton>
+                  <OptionButton value="option3">Option 3</OptionButton>
+                </div>
+              </OptionGroup>
+            </div>
+          </Window>
         </div>
       </div>
 

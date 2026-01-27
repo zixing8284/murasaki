@@ -1,0 +1,14 @@
+{
+  "extends": ["@tsconfig/strictest/tsconfig.json", "../../tsconfig.json"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "src",
+    "paths": { "#/*": ["./src/*"] },
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": false
+  },
+  "include": ["src"]
+}

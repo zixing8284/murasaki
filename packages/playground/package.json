@@ -1,0 +1,31 @@
+{
+  "name": "murasaki-react98-playground",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "murasaki-react98": "workspace:*",
+    "tailwind-merge": "catalog:",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:cli",
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "@vitejs/plugin-react": "catalog:cli",
+    "babel-plugin-react-compiler": "catalog:cli",
+    "react": "catalog:libs",
+    "react-dom": "catalog:libs",
+    "tailwindcss": "catalog:libs",
+    "typescript": "catalog:cli",
+    "vite": "catalog:cli"
+  }
+}

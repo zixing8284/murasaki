@@ -1,9 +1,11 @@
 /*
  * Playground Styles
- * Import the win98 UI library styles
+ * Import the murasaki-react98 UI library styles
  */
-@import "../../src/globals.css";
-@source "../../src";
+@import "murasaki-react98/globals.css";
+/* Scan the murasaki-react98 component library to detect Tailwind class names */
+/* Attention: @source must use relative path because node_modules is ignored by Tailwind by default */
+@source "../node_modules/murasaki-react98";
 
 /*
  * Add any playground-specific styles below
@@ -18,7 +20,7 @@ html, body, #root {
 }
 
 body {
-  /* background: teal; */
+  background: teal;
   cursor: url("data:image/gif;base64,R0lGODlhCwATAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAALABMAAAIrhI4JlhrcBAgvSlrbxPBs7mAU9IlMaV7mwo6jY2zk+Xphh8iWint1tDgUAAA7"), auto;
   width: clamp(460px, 100%, 100%);
   font-size: 11px;

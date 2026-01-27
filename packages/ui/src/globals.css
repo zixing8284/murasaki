@@ -2,12 +2,12 @@
 @import "tw-animate-css";
 
 /*
- * murasaki-win98 UI Library
+ * murasaki-react98 UI Library
  * Windows 98 Style CSS Variables and Theme Configuration
  *
  * Usage: In your CSS file, add:
- *   @import "@murasaki/win98/globals.css";
- *   @source "../node_modules/@murasaki/win98";
+ *   @import "murasaki-react98/globals.css";
+ *   @source "../node_modules/murasaki-react98";
  */
 
 @custom-variant dark (&:is(.dark *));

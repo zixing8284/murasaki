@@ -1,0 +1,68 @@
+{
+  "name": "murasaki-react98",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "A Windows 98-themed UI component library built with React and Tailwind CSS",
+  "author": "sasasa10 <zixing8284@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/zixing8284/murasaki-react98#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zixing8284/murasaki-react98.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zixing8284/murasaki-react98/issues"
+  },
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./globals.css": "./dist/globals.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "catalog:libs",
+    "react-dom": "catalog:libs"
+  },
+  "dependencies": {
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "catalog:cli",
+    "@tailwindcss/vite": "catalog:cli",
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "@vitejs/plugin-react": "catalog:cli",
+    "@vitest/browser-playwright": "catalog:cli",
+    "babel-plugin-react-compiler": "catalog:cli",
+    "bumpp": "catalog:cli",
+    "react": "catalog:libs",
+    "react-dom": "catalog:libs",
+    "tailwindcss": "catalog:libs",
+    "tsdown": "catalog:cli",
+    "typescript": "catalog:cli",
+    "vite": "catalog:cli",
+    "vitest": "catalog:cli",
+    "vitest-browser-react": "catalog:cli"
+  }
+}

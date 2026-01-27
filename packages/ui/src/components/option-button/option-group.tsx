@@ -5,7 +5,7 @@ import {
 
 } from './option-context'
 
-export default function OptionGroup(
+export function OptionGroup(
   props: React.PropsWithChildren<OptionGroupProps>,
 ): React.ReactElement {
   const { children, name, onChange, selectedValue } = props

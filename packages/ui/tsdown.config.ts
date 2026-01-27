@@ -10,6 +10,7 @@ export default defineConfig({
   entry: ['./src/index.ts'],
   outDir: 'dist',
   plugins: [
+    murasakiAssetPathPlugin(),
     pluginBabel({
       babelHelpers: 'bundled',
       parserOpts: {
@@ -21,3 +22,5 @@ export default defineConfig({
     }),
   ],
 })
+
+// const PLACEHOLDER_REGEX = /__MURASAKI_ASSET__\/(assets\/[^\s'")]+)/g

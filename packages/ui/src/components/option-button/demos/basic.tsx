@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { OptionButton } from '../option-button'
-import OptionGroup from '../option-group'
+import { OptionGroup } from '../option-group'
 
 export function Basic(): React.ReactElement {
   const [selected, setSelected] = useState('option1')

@@ -1,75 +1,19 @@
 {
-  "name": "murasaki-react98",
+  "name": "murasaki-react98-workspace",
   "type": "module",
-  "version": "0.0.0",
-  "description": "A Windows 98-themed UI component library built with React and Tailwind CSS",
-  "author": "sasasa10 <zixing8284@gmail.com>",
-  "license": "MIT",
-  "homepage": "https://github.com/zixing8284/murasaki-react98#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zixing8284/murasaki-react98.git"
-  },
-  "bugs": {
-    "url": "https://github.com/zixing8284/murasaki-react98/issues"
-  },
-  "imports": {
-    "#/*": "./src/*"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./globals.css": "./dist/globals.css",
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
-    "lint:fix": "eslint --fix",
-    "lint": "eslint",
-    "play:build": "vite build",
-    "play:preview": "vite preview",
-    "play": "vite",
-    "prepublishOnly": "pnpm run build",
-    "release": "bumpp && pnpm publish",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "play": "pnpm --filter murasaki-react98-playground dev",
+    "play:build": "pnpm --filter murasaki-react98-playground build",
+    "play:preview": "pnpm --filter murasaki-react98-playground preview",
+    "ui:build": "pnpm --filter murasaki-react98 build",
+    "ui:dev": "pnpm --filter murasaki-react98 dev",
+    "ui:test": "pnpm --filter murasaki-react98 test",
+    "lint": "pnpm eslint ."
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.7.3",
-    "@eslint-react/eslint-plugin": "^2.7.2",
-    "@rollup/plugin-babel": "^6.1.0",
-    "@tailwindcss/vite": "^4.1.18",
-    "@tsconfig/strictest": "^2.0.8",
-    "@types/node": "^25.0.10",
-    "@types/react": "^19.2.9",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
-    "@vitest/browser-playwright": "^4.0.18",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "bumpp": "^10.4.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "eslint": "^9.39.2",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.26",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.1.18",
-    "tsdown": "^0.18.4",
-    "tw-animate-css": "^1.4.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1",
-    "vitest": "^4.0.18",
-    "vitest-browser-react": "^2.0.4"
+    "@antfu/eslint-config": "catalog:root",
+    "@tsconfig/strictest": "catalog:root",
+    "eslint": "catalog:root"
   }
 }

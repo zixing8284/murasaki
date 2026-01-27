@@ -1,4 +1,4 @@
-import { Button } from '#/index'
+import { Button } from 'murasaki-react98'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 // Network status store using useSyncExternalStore

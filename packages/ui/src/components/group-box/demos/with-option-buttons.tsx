@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { OptionButton } from '@/components/option-button/option-button'
-import OptionGroup from '@/components/option-button/option-group'
+import { OptionButton } from '#/components/option-button/option-button'
+import { OptionGroup } from '#/components/option-button/option-group'
 
 import { GroupBox } from '../group-box'
 

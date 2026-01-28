@@ -1,9 +1,9 @@
 import type { VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
-
 import { cva } from 'class-variance-authority'
 
-import React from 'react'
+import * as React from 'react'
+
+import { cn } from '../../lib/utils'
 
 const buttonVariants = cva(
   [
@@ -32,7 +32,7 @@ const buttonVariants = cva(
   {
     variants: {
       active: {
-        true: ['shadow-sunken', 'bg-[url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC)]'],
+        true: ['shadow-sunken', 'bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'],
       },
     },
   },

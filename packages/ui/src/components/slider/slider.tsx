@@ -2,7 +2,8 @@ import { cn } from '#/lib/utils'
 
 import { cva } from 'class-variance-authority'
 
-import React, { useCallback, useId, useRef, useState } from 'react'
+import * as React from 'react'
+import { useCallback, useId, useRef, useState } from 'react'
 
 // Container variants
 const containerVariants = cva(['relative', 'inline-flex'], {

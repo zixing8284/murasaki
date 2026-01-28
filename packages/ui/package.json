@@ -23,6 +23,7 @@
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "style": "./dist/globals.css",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

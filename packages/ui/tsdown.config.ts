@@ -1,5 +1,6 @@
 import pluginBabel from '@rollup/plugin-babel'
 import { defineConfig } from 'tsdown'
+import { svgInlinePlugin } from './src/plugins/svg-inline-plugin.js'
 
 export default defineConfig({
   platform: 'neutral',
@@ -10,7 +11,7 @@ export default defineConfig({
   entry: ['./src/index.ts'],
   outDir: 'dist',
   plugins: [
-    murasakiAssetPathPlugin(),
+    svgInlinePlugin(),
     pluginBabel({
       babelHelpers: 'bundled',
       parserOpts: {
@@ -22,5 +23,3 @@ export default defineConfig({
     }),
   ],
 })
-
-// const PLACEHOLDER_REGEX = /__MURASAKI_ASSET__\/(assets\/[^\s'")]+)/g

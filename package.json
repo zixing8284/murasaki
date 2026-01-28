@@ -13,7 +13,10 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:root",
+    "@eslint-react/eslint-plugin": "catalog:root",
     "@tsconfig/strictest": "catalog:root",
-    "eslint": "catalog:root"
+    "eslint": "catalog:root",
+    "eslint-plugin-react-hooks": "catalog:root",
+    "eslint-plugin-react-refresh": "catalog:root"
   }
 }

@@ -1,4 +1,4 @@
-import { Checkbox } from '@/components/checkbox/checkbox'
+import { Checkbox } from '#/components/checkbox/checkbox'
 
 import { GroupBox } from '../group-box'
 

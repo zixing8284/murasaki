@@ -77,16 +77,16 @@ const contentVariants = cva([
 // See: https://tailwindcss.com/docs/detecting-classes-in-source-files#dynamic-class-names
 const titleBtnIcon = {
   close:
-    'bg-no-repeat bg-[url(\'/assets/icons/close.svg\')] bg-position-[top_3px_left_4px]',
-  help: 'bg-no-repeat bg-[url(\'/assets/icons/help.svg\')] bg-position-[top_2px_left_5px]',
+    'bg-no-repeat bg-[url(/assets/icons/close.svg)] bg-position-[top_3px_left_4px]',
+  help: 'bg-no-repeat bg-[url(/assets/icons/help.svg)] bg-position-[top_2px_left_5px]',
   maximize:
-    'bg-no-repeat bg-[url(\'/assets/icons/maximize.svg\')] bg-position-[top_2px_left_3px]',
+    'bg-no-repeat bg-[url(/assets/icons/maximize.svg)] bg-position-[top_2px_left_3px]',
   maximizeDisabled:
-    'bg-no-repeat bg-[url(\'/assets/icons/maximize-disabled.svg\')] bg-position-[top_2px_left_3px]',
+    'bg-no-repeat bg-[url(/assets/icons/maximize-disabled.svg)] bg-position-[top_2px_left_3px]',
   minimize:
-    'bg-no-repeat bg-[url(\'/assets/icons/minimize.svg\')] bg-position-[bottom_3px_left_4px]',
+    'bg-no-repeat bg-[url(/assets/icons/minimize.svg)] bg-position-[bottom_3px_left_4px]',
   restore:
-    'bg-no-repeat bg-[url(\'/assets/icons/restore.svg\')] bg-position-[top_2px_left_3px]',
+    'bg-no-repeat bg-[url(/assets/icons/restore.svg)] bg-position-[top_2px_left_3px]',
 }
 
 function getMaximizeIcon(disabled: boolean, isMaximized: boolean): string {

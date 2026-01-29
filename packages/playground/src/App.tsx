@@ -1,5 +1,5 @@
 import { OptionButton, OptionGroup, Window } from 'murasaki-react98'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Taskbar } from './components/Taskbar'
 
 function formatTime(): string {
@@ -11,6 +11,7 @@ export function App(): React.ReactElement {
   const [showStartMenu, setShowStartMenu] = useState(false)
 
   const [selected, setSelected] = useState('option1')
+  // const windowContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const interval = setInterval(() => setTime(formatTime()), 1000)
@@ -21,12 +22,15 @@ export function App(): React.ReactElement {
     <div className="h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-[#0000a2] selection:text-white scanline-overlay bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed">
       {/* Window Area */}
       <div className="flex-1 overflow-hidden relative m-0.5">
+        {/* <div className="h-full relative" ref={windowContainerRef}> */}
         <div className="h-full relative">
           {/* Desktop content goes here */}
           <Window
             title="My Computer"
             active={true}
             className="w-[520px]"
+            // appendTo={windowContainerRef}
+            draggable
           >
             <div className="p-2">
               <p>Window content here...</p>

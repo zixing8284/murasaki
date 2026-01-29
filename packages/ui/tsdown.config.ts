@@ -1,6 +1,6 @@
 import pluginBabel from '@rollup/plugin-babel'
 import { defineConfig } from 'tsdown'
-import { svgInlinePlugin } from './src/plugins/svg-inline-plugin.js'
+import { svgInlinePlugin } from './src/plugins/svg-inline-plugin'
 
 export default defineConfig({
   platform: 'neutral',

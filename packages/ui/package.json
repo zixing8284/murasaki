@@ -32,8 +32,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "tsdown --config-loader unrun",
+    "dev": "tsdown --watch --config-loader unrun",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },

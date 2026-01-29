@@ -1,3 +1,4 @@
+/* eslint-disable ts/explicit-function-return-type */
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
@@ -6,11 +7,11 @@ import process from 'node:process'
 // Handles: '/assets/icons/x.svg', url(/assets/icons/x.svg), bg-[url(/assets/icons/x.svg)]
 const SVG_PATH_REGEX = /(?:url\(\\?['"]?)?\\?['"]?\/assets\/icons\/[^'"()\s[\]]+\.svg\\?['"]?(?:\\?['"]?\))?/g
 
-function isSvgAssetPath(p) {
+function isSvgAssetPath(p: string) {
   return p.startsWith('/assets/icons/') && p.endsWith('.svg')
 }
 
-function svgToDataUri(svgPath) {
+function svgToDataUri(svgPath: string) {
   // Strip leading slash since path.resolve treats absolute paths differently
   const relativePath = svgPath.replace(/^\//, '')
   const resolvedPath = path.resolve(process.cwd(), 'src', relativePath)
@@ -25,7 +26,8 @@ function svgToDataUri(svgPath) {
       return svgPath
     }
     return `data:image/svg+xml,${encodeURIComponent(content)}`
-  } catch {
+  }
+  catch {
     return svgPath
   }
 }
@@ -34,7 +36,7 @@ export function svgInlinePlugin() {
   return {
     name: 'svg-inline',
     enforce: 'pre',
-    transform(code, id) {
+    transform(code: string, id: string) {
       // Only process .ts and .tsx files
       if (!id.endsWith('.ts') && !id.endsWith('.tsx')) {
         return null
@@ -67,7 +69,8 @@ export function svgInlinePlugin() {
               // url(/assets/icons/x.svg) -> url(\'data:image...\')
               // Use escaped single quote since result is inside a JS string
               replacement = `url(\\'${dataUri}\\')`
-            } else {
+            }
+            else {
               // '/assets/icons/x.svg' -> 'data:image...'
               replacement = `'${dataUri}'`
             }

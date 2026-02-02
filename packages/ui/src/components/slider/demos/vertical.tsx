@@ -1,6 +1,7 @@
 import type { TickMark } from '../slider'
 
-import React, { useState } from 'react'
+import * as React from 'react'
+import { useState } from 'react'
 import { Slider } from '../slider'
 
 const volumeTicks: TickMark[] = [

@@ -3,7 +3,8 @@ import type { VariantProps } from 'class-variance-authority'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import * as React from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 
 const containerVariants = cva(
   [

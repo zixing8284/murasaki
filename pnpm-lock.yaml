@@ -114,6 +114,9 @@ importers:
       eslint-plugin-react-refresh:
         specifier: catalog:root
         version: 0.4.26(eslint@9.39.2(jiti@2.6.1))
+      typescript:
+        specifier: catalog:cli
+        version: 5.9.3
 
   packages/playground:
     dependencies:

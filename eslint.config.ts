@@ -10,5 +10,6 @@ export default antfu({
     '**/public/',
     '*.css',
     '.github/',
+    '**/*.md',
   ],
 })

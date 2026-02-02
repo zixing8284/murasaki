@@ -1,6 +1,6 @@
 import type { TreeViewItemProps } from '../tree-view'
 
-import React from 'react'
+import * as React from 'react'
 import { TreeView } from '../tree-view'
 
 interface TreeNode extends Omit<TreeViewItemProps, 'children'> {

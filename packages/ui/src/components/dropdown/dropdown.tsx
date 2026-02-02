@@ -4,7 +4,8 @@ import { cn } from '#/lib/utils'
 
 import { cva } from 'class-variance-authority'
 
-import React, { useId, useMemo } from 'react'
+import * as React from 'react'
+import { useId, useMemo } from 'react'
 import { useDropdownState } from './use-dropdown-state'
 
 // Trigger button variants - styled like DropdownNative's select

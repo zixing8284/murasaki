@@ -17,6 +17,7 @@
     "@tsconfig/strictest": "catalog:root",
     "eslint": "catalog:root",
     "eslint-plugin-react-hooks": "catalog:root",
-    "eslint-plugin-react-refresh": "catalog:root"
+    "eslint-plugin-react-refresh": "catalog:root",
+    "typescript": "catalog:cli"
   }
 }

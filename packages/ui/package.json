@@ -60,7 +60,6 @@
     "react": "catalog:libs",
     "react-dom": "catalog:libs",
     "tailwindcss": "catalog:libs",
-    "tsdown": "catalog:cli",
     "typescript": "catalog:cli",
     "vite": "catalog:cli",
     "vitest": "catalog:cli",

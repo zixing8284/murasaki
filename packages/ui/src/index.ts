@@ -1,3 +1,6 @@
+// Import global styles - Vite will process and output to dist/globals.css
+import './globals.css'
+
 export { Button } from './components/button/button'
 export { OptionButton } from './components/option-button/option-button'
 export { OptionGroup } from './components/option-button/option-group'

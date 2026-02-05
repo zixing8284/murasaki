@@ -22,11 +22,11 @@ const selectVariants = cva([
   // Border effect
   'shadow-border-field',
   // Arrow icon
-  'bg-[url(\'/assets/icons/button-down.svg\')]',
+  'bgi-icon-button-down',
   'bg-no-repeat',
   'bg-position-[right_2px_top_2px]',
   // Active state
-  'active:bg-[url(\'/assets/icons/button-down-active.svg\')]',
+  'active:bgi-icon-button-down-active',
   // Focus state
   'focus:outline-none',
   'focus:text-btn-hilight',

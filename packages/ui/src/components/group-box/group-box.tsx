@@ -14,7 +14,7 @@ const groupBoxVariants = cva([
   'p-[calc(2*1px+var(--spacing-element))]',
   'pt-element',
   'border-2',
-  '[border-image:url(\'/assets/icons/groupbox-border.svg\')_2]',
+  'border-image-groupbox',
 ])
 
 const legendVariants = cva(['bg-btn-alternate', 'px-1'])

@@ -47,11 +47,11 @@ const checkboxVariants = cva([
   // input:active + label::before { background: var(--button-face); }
   'active:[&+label::before]:bg-btn-face',
   // input:checked + label::after { background: url(checkmark.svg); }
-  'checked:[&+label::after]:bg-[url(\'/assets/icons/checkmark.svg\')]',
+  'checked:[&+label::after]:bgi-icon-checkmark',
   // input[disabled] + label::before { background: var(--button-face); }
   'disabled:[&+label::before]:bg-btn-face',
   // input[disabled]:checked + label::after { background: url(checkmark-disabled.svg); }
-  'disabled:checked:[&+label::after]:bg-[url(\'/assets/icons/checkmark-disabled.svg\')]',
+  'disabled:checked:[&+label::after]:bgi-icon-checkmark-disabled',
 ])
 
 interface CheckboxProps

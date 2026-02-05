@@ -32,8 +32,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown --config-loader unrun",
-    "dev": "tsdown --watch --config-loader unrun",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },

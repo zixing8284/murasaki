@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import { createPortal } from 'react-dom'
 
@@ -103,10 +103,12 @@ interface WindowProps
    * - `undefined` (default): Window uses fixed positioning, rendered at body level
    *   via portal, dragging constrained to viewport (like `<dialog>`)
    * - `document.body`: Same as undefined - fixed positioning
-   * - Other element: Window uses absolute positioning within that container,
+   * - `HTMLElement`: Window uses absolute positioning within that container,
    *   rendered via portal, dragging/maximize constrained to container bounds
+   * - `React.RefObject<HTMLElement | null>`: Same as HTMLElement, but accepts a ref object.
+   *   The ref is resolved safely in an effect to avoid render-phase warnings.
    */
-  appendTo?: HTMLElement
+  appendTo?: HTMLElement | React.RefObject<HTMLElement | null>
   /** Disable maximize button */
   disableMaximize?: boolean
   /** Enable drag behavior via title bar */
@@ -163,19 +165,81 @@ export function Window({
   showMinimize = true,
   title = 'Window',
   ...props
-}: WindowProps): React.ReactElement {
+}: WindowProps): React.ReactElement | null {
   const [isMaximized, setIsMaximized] = useState(maximize)
 
-  const isAppendToBody = appendTo === document.body || !appendTo
-  const portalTarget = isAppendToBody ? document.body : appendTo
+  // Helper to check if value is a RefObject (has 'current' property)
+  const isRefObject = (
+    val: unknown,
+  ): val is React.RefObject<HTMLElement | null> => {
+    return val !== null && typeof val === 'object' && 'current' in val
+  }
+
+  // Resolve appendTo to actual DOM element.
+  // For non-ref values, initialize synchronously. For RefObject, start as null.
+  const [mountedTarget, setMountedTarget] = useState<HTMLElement | null>(() => {
+    if (!appendTo || appendTo === document.body)
+      return document.body
+    if (appendTo instanceof HTMLElement)
+      return appendTo
+    // RefObject: defer resolution to effect (cannot access .current in render)
+    return null
+  })
+
+  // Resolve RefObject targets after mount.
+  // useLayoutEffect ensures the target is resolved before paint, preventing visual flicker.
+  // The setState call here is intentional: it's a one-time sync when the ref becomes available.
+  useLayoutEffect(() => {
+    let newTarget: HTMLElement | null = null
+
+    if (!appendTo || appendTo === document.body) {
+      newTarget = document.body
+    }
+    else if (appendTo instanceof HTMLElement) {
+      newTarget = appendTo
+    }
+    else if (isRefObject(appendTo)) {
+      // For RefObject, check .current - it may be null on first effect run
+      // if the ref is attached to a sibling/parent that renders in the same cycle.
+      // We need to re-check after a microtask to catch late ref assignments.
+      if (appendTo.current) {
+        newTarget = appendTo.current
+      }
+      else {
+        // Schedule a re-check after React finishes attaching refs
+        const rafId = requestAnimationFrame(() => {
+          if (appendTo.current && appendTo.current !== mountedTarget) {
+            setMountedTarget(appendTo.current)
+          }
+        })
+        return () => {
+          cancelAnimationFrame(rafId)
+        }
+      }
+    }
+
+    // Only update if target actually changed (avoids unnecessary re-renders)
+    if (newTarget && newTarget !== mountedTarget) {
+      queueMicrotask(() => setMountedTarget(newTarget))
+    }
+
+    return undefined
+  }, [appendTo, mountedTarget])
+
+  // Derive positioning mode from resolved target
+  const isAppendToBody = mountedTarget === document.body
 
   const { dragRef: headerRef, targetRef: windowRef } = useWindowDraggable<
     HTMLDivElement,
     HTMLDivElement
   >({
-    container: isAppendToBody ? null : portalTarget,
+    container: isAppendToBody ? null : mountedTarget,
     draggable: draggable && !isMaximized,
   })
+
+  // Defer rendering until target is resolved (for RefObject case)
+  if (!mountedTarget)
+    return null
 
   const handleMaximize = (): void => {
     setIsMaximized(prev => !prev)
@@ -261,12 +325,12 @@ export function Window({
     />
   )
 
-  // Always render via portal
+  // Always render via portal to resolved target
   return createPortal(
     <>
       {overlayElement}
       {windowElement}
     </>,
-    portalTarget,
+    mountedTarget,
   )
 }

@@ -41,7 +41,7 @@ export default defineConfig({
       },
     },
     // Inline all assets as base64 (Win98 icons are tiny)
-    assetsInlineLimit: 100 * 1024,
+    assetsInlineLimit: 100 * 1024, // 100kb, include our fonts and icons
     cssCodeSplit: false,
   },
   test: {

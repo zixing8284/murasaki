@@ -1,11 +1,11 @@
 import { Button } from '#/components/button/button'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Window } from '../window'
 
 export function BoundedContainer(): React.ReactElement {
-  const [container, setContainer] = useState<HTMLDivElement | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [showWindow, setShowWindow] = useState(false)
 
   return (
@@ -24,21 +24,19 @@ export function BoundedContainer(): React.ReactElement {
         <div
           className="border-window-frame bg-desktop/20 relative h-[300px]
             border-2 border-dashed p-4"
-          ref={setContainer}
+          ref={containerRef}
         >
-          {container && (
-            <Window
-              appendTo={container}
-              draggable
-              onClose={() => {
-                setShowWindow(false)
-              }}
-              overlay
-              title="Bounded Window"
-            >
-              <p>Can&apos;t escape the container!</p>
-            </Window>
-          )}
+          <Window
+            appendTo={containerRef}
+            draggable
+            onClose={() => {
+              setShowWindow(false)
+            }}
+            overlay
+            title="Bounded Window"
+          >
+            <p>Can&apos;t escape the container!</p>
+          </Window>
         </div>
       )}
     </div>

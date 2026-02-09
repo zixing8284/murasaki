@@ -40,8 +40,8 @@ export function useWindowDraggable<
   TDrag extends HTMLElement = HTMLElement,
 >(options: UseWindowDraggableOptions = {}): {
   dragging: boolean
-  dragRef: React.RefObject<TDrag | null>
-  targetRef: React.RefObject<TTarget | null>
+  setDragRef: (el: TDrag | null) => void
+  setTargetRef: (el: TTarget | null) => void
   transformRef: React.RefObject<Transform>
   resetPosition: () => void
 } {
@@ -51,6 +51,14 @@ export function useWindowDraggable<
   const dragRef = useRef<null | TDrag>(null)
   const [dragging, setDragging] = useState(false)
   const transformRef = useRef<Transform>({ offsetX: 0, offsetY: 0 })
+
+  const setTargetRef = useCallback((el: TTarget | null) => {
+    targetRef.current = el
+  }, [])
+
+  const setDragRef = useCallback((el: TDrag | null) => {
+    dragRef.current = el
+  }, [])
 
   const resetPosition = useCallback(() => {
     transformRef.current = { offsetX: 0, offsetY: 0 }
@@ -143,12 +151,12 @@ export function useWindowDraggable<
   return {
     /** Whether the element is currently being dragged */
     dragging,
-    /** Ref to attach to the drag handle element (title bar) */
-    dragRef,
+    /** Ref callback to attach to the drag handle element (title bar) */
+    setDragRef,
     /** Reset position to initial state */
     resetPosition,
-    /** Ref to attach to the draggable target element (the window) */
-    targetRef,
+    /** Ref callback to attach to the draggable target element (the window) */
+    setTargetRef,
     /** Internal transform state ref */
     transformRef,
   }

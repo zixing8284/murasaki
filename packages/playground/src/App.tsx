@@ -25,24 +25,37 @@ export function App(): React.ReactElement {
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full relative" ref={setContainer}>
           {/* Desktop content goes here */}
-          <Window
-            title="My Computer"
+          <Window.Provider
             active={true}
-            appendTo={container ?? undefined}
-            className="w-[520px]"
+            container={container}
+            positioning="absolute"
             draggable
           >
-            <div className="p-2">
-              <p>Window content here...</p>
-              <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>
-                <div className="flex flex-col gap-2">
-                  <OptionButton value="option1">Option 1</OptionButton>
-                  <OptionButton value="option2">Option 2</OptionButton>
-                  <OptionButton value="option3">Option 3</OptionButton>
-                </div>
-              </OptionGroup>
-            </div>
-          </Window>
+            <Window.Portal container={container}>
+              <Window.Frame className="w-[520px]">
+                <Window.TitleBar>
+                  <Window.Title>My Computer</Window.Title>
+                  <Window.Buttons>
+                    <Window.MinimizeButton />
+                    <Window.MaximizeButton />
+                    <Window.CloseButton />
+                  </Window.Buttons>
+                </Window.TitleBar>
+                <Window.Content>
+                  <div className="p-2">
+                    <p>Window content here...</p>
+                    <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>
+                      <div className="flex flex-col gap-2">
+                        <OptionButton value="option1">Option 1</OptionButton>
+                        <OptionButton value="option2">Option 2</OptionButton>
+                        <OptionButton value="option3">Option 3</OptionButton>
+                      </div>
+                    </OptionGroup>
+                  </div>
+                </Window.Content>
+              </Window.Frame>
+            </Window.Portal>
+          </Window.Provider>
         </div>
       </div>
 

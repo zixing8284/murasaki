@@ -2,7 +2,7 @@ import { cn } from '#/lib/utils'
 
 import { cva } from 'class-variance-authority'
 
-import { useWindowContext, useWindowRefs } from './window-context'
+import { useWindowContext } from './window-context'
 
 const titleBarVariants = cva(
   [
@@ -34,21 +34,18 @@ export interface WindowTitleBarProps extends React.ComponentProps<'div'> {}
 export function WindowTitleBar({
   children,
   className,
+  ref,
   ...props
 }: WindowTitleBarProps): React.ReactElement {
-  const { state, meta } = useWindowContext()
-  const { setTitleBarRef } = useWindowRefs()
-  const isDraggable = meta.draggable && !state.maximized
+  const { state } = useWindowContext()
 
   return (
     <div
-      ref={setTitleBarRef}
+      ref={ref}
       className={cn(
         titleBarVariants({ active: state.active }),
-        isDraggable && 'cursor-move',
         className,
       )}
-      data-draggable={isDraggable ? 'true' : undefined}
       {...props}
     >
       {children}

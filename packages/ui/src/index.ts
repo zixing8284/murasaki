@@ -8,8 +8,6 @@ export { TextBox } from './components/text-box/text-box'
 
 // Window compound components
 export {
-  useWindowContext,
-  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -24,20 +22,28 @@ export {
   WindowTitleBar,
 } from './components/window/window'
 export type {
-  WindowActions,
   WindowButtonsProps,
   WindowCloseButtonProps,
   WindowContentProps,
-  WindowContextValue,
   WindowFrameProps,
   WindowHelpButtonProps,
   WindowMaximizeButtonProps,
-  WindowMeta,
   WindowMinimizeButtonProps,
   WindowOverlayProps,
   WindowPortalProps,
   WindowProviderProps,
-  WindowState,
   WindowTitleBarProps,
   WindowTitleProps,
 } from './components/window/window'
+export { useWindowContext } from './components/window/window-context'
+export type {
+  WindowActions,
+  WindowContextValue,
+  WindowMeta,
+  WindowState,
+} from './components/window/window-context'
+export { Window } from './components/window/window-namespace'
+
+// Hooks
+export { useDraggable } from './hooks/use-draggable'
+export type { UseDraggableOptions } from './hooks/use-draggable'

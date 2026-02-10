@@ -5,7 +5,7 @@ interface Transform {
   offsetY: number
 }
 
-interface UseWindowDraggableOptions {
+export interface UseDraggableOptions {
   /**
    * Container element to constrain dragging boundaries.
    * - If null/undefined: constrain to viewport
@@ -17,28 +17,30 @@ interface UseWindowDraggableOptions {
 }
 
 /**
- * Hook to enable draggable behavior for a window component.
+ * Generic hook to enable drag behavior on any element.
+ * Moves the target element via CSS `transform: translate()` when the user
+ * drags the handle element with the mouse.
+ *
  * Constrains movement within the specified container boundaries or viewport.
  *
- * Returns refs that should be attached to the target (window) and drag handle (title bar) elements.
- *
  * @param options - Configuration options
- * @returns Object containing refs to attach and drag state
+ * @returns Object containing ref callbacks to attach and drag state
  *
  * @example
  * ```tsx
- * const { targetRef, dragRef, dragging } = useWindowDraggable<HTMLDivElement, HTMLDivElement>({ draggable: true });
+ * const { setTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({ draggable: true });
  * return (
- *   <div ref={targetRef}>
- *     <div ref={dragRef}>Title Bar</div>
+ *   <div ref={setTargetRef}>
+ *     <div ref={setDragRef} className="cursor-move">Drag Handle</div>
+ *     <p>Content</p>
  *   </div>
  * );
  * ```
  */
-export function useWindowDraggable<
+export function useDraggable<
   TTarget extends HTMLElement = HTMLElement,
   TDrag extends HTMLElement = HTMLElement,
->(options: UseWindowDraggableOptions = {}): {
+>(options: UseDraggableOptions = {}): {
   dragging: boolean
   setDragRef: (el: TDrag | null) => void
   setTargetRef: (el: TTarget | null) => void
@@ -100,7 +102,7 @@ export function useWindowDraggable<
         maxTop = containerRect.bottom - targetTop - targetHeight + offsetY
       }
       else {
-        // Constrain to viewport (for fixed positioned windows)
+        // Constrain to viewport
         const { clientHeight, clientWidth } = document.documentElement
         minLeft = -targetLeft + offsetX
         minTop = -targetTop + offsetY
@@ -151,11 +153,11 @@ export function useWindowDraggable<
   return {
     /** Whether the element is currently being dragged */
     dragging,
-    /** Ref callback to attach to the drag handle element (title bar) */
+    /** Ref callback to attach to the drag handle element */
     setDragRef,
     /** Reset position to initial state */
     resetPosition,
-    /** Ref callback to attach to the draggable target element (the window) */
+    /** Ref callback to attach to the target element that will be moved */
     setTargetRef,
     /** Internal transform state ref */
     transformRef,

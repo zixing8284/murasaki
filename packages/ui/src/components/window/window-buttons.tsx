@@ -97,7 +97,7 @@ export function WindowMaximizeButton({
       ? buttonIcons.restore
       : buttonIcons.maximize
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     actions.toggleMaximized()
     onClick?.(e)
   }

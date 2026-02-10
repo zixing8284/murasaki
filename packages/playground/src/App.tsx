@@ -1,4 +1,4 @@
-import { OptionButton, OptionGroup, Window } from 'murasaki-react98'
+import { OptionButton, OptionGroup, useDraggable, Window } from 'murasaki-react98'
 import { useEffect, useState } from 'react'
 import { Taskbar } from './components/Taskbar'
 
@@ -14,6 +14,11 @@ export function App(): React.ReactElement {
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
 
+  const { setTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
+    container,
+    draggable: true,
+  })
+
   useEffect(() => {
     const interval = setInterval(() => setTime(formatTime()), 1000)
     return () => clearInterval(interval)
@@ -27,13 +32,11 @@ export function App(): React.ReactElement {
           {/* Desktop content goes here */}
           <Window.Provider
             active={true}
-            container={container}
             positioning="absolute"
-            draggable
           >
             <Window.Portal container={container}>
-              <Window.Frame className="w-[520px]">
-                <Window.TitleBar>
+              <Window.Frame ref={setTargetRef} className="w-[520px]">
+                <Window.TitleBar ref={setDragRef} className="cursor-move">
                   <Window.Title>My Computer</Window.Title>
                   <Window.Buttons>
                     <Window.MinimizeButton />

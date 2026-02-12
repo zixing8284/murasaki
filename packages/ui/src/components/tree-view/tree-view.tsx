@@ -190,8 +190,6 @@ function TreeViewRoot({
   )
 }
 
-export const TreeView = Object.assign(TreeViewRoot, {
-  Item: TreeViewItem,
-})
+export { TreeViewRoot }
 
 export type { TreeViewItemProps, TreeViewProps }

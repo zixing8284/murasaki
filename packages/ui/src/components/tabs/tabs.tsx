@@ -242,11 +242,8 @@ function TabPanel({ children, className, value, ...props }: TabPanelProps): Reac
 }
 
 // ============================================================================
-// Compound Component Export
+// Named Exports
 // ============================================================================
 
-export const Tabs = Object.assign(TabsRoot, {
-  List: TabList,
-  Tab,
-  Panel: TabPanel,
-})
+export { Tab, TabList, TabPanel, TabsRoot }
+export type { TabListProps, TabPanelProps, TabProps, TabsRootProps }

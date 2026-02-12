@@ -188,7 +188,7 @@ export function Dropdown<T = string>({
     handleTriggerClick,
     handleTriggerKeyDown,
     open,
-    optionRefs,
+    optionRef,
     selectedOption,
     triggerRef,
   } = useDropdownState({
@@ -277,7 +277,7 @@ export function Dropdown<T = string>({
                   handleOptionMouseEnter(index)
                 }}
                 ref={(el) => {
-                  optionRefs.current[index] = el
+                  optionRef.current[index] = el
                 }}
                 role="option"
                 tabIndex={isActive ? 0 : -1}

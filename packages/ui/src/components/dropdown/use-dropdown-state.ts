@@ -29,7 +29,7 @@ interface UseDropdownStateReturn<T> {
   handleTriggerKeyDown: (e: React.KeyboardEvent) => void
   // State
   open: boolean
-  optionRefs: React.RefObject<(HTMLLIElement | null)[]>
+  optionRef: React.RefObject<(HTMLLIElement | null)[]>
   selectedOption: DropdownOption<T> | undefined
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>
   // Refs
@@ -47,7 +47,7 @@ export function useDropdownState<T = string>({
 }: UseDropdownStateOptions<T>): UseDropdownStateReturn<T> {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const dropdownRef = useRef<HTMLUListElement | null>(null)
-  const optionRefs = useRef<(HTMLLIElement | null)[]>([])
+  const optionRef = useRef<(HTMLLIElement | null)[]>([])
 
   const [open, setOpen] = useState(false)
   const [internalValue, setInternalValue] = useState<T | undefined>(
@@ -195,8 +195,8 @@ export function useDropdownState<T = string>({
 
   // Focus active option when dropdown opens or active index changes
   useEffect(() => {
-    if (open && optionRefs.current[activeIndex]) {
-      optionRefs.current[activeIndex]?.focus()
+    if (open && optionRef.current[activeIndex]) {
+      optionRef.current[activeIndex]?.focus()
     }
   }, [open, activeIndex])
 
@@ -231,7 +231,7 @@ export function useDropdownState<T = string>({
     handleTriggerClick,
     handleTriggerKeyDown,
     open,
-    optionRefs,
+    optionRef,
     selectedOption,
     setActiveIndex,
     triggerRef,

@@ -1,0 +1,89 @@
+# Slider
+
+The `Slider` component renders a Windows 98 styled range slider with a draggable thumb.
+It supports horizontal and vertical orientations, tick marks with labels, and a box indicator variant.
+
+## Props
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'murasaki-react98'
+import { CodeBlock } from '../../components/docs-window/code-block'
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Prop</TableHead>
+      <TableHead>Type</TableHead>
+      <TableHead>Default</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`min`</TableCell>
+      <TableCell>`number`</TableCell>
+      <TableCell>`0`</TableCell>
+      <TableCell>Minimum value</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`max`</TableCell>
+      <TableCell>`number`</TableCell>
+      <TableCell>`100`</TableCell>
+      <TableCell>Maximum value</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`step`</TableCell>
+      <TableCell>`number`</TableCell>
+      <TableCell>`1`</TableCell>
+      <TableCell>Step increment</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`value`</TableCell>
+      <TableCell>`number`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Controlled value</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`defaultValue`</TableCell>
+      <TableCell>`number`</TableCell>
+      <TableCell>`min`</TableCell>
+      <TableCell>Initial value (uncontrolled)</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`onChange`</TableCell>
+      <TableCell>`(e) => void`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Change handler</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`vertical`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`false`</TableCell>
+      <TableCell>Render vertically</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`boxIndicator`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`false`</TableCell>
+      <TableCell>Use box-style thumb</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`ticks`</TableCell>
+      <TableCell>`TickMark[]`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Tick marks with optional labels</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Usage
+
+<CodeBlock code={`import { Slider } from 'murasaki-react98'
+
+<Slider min={0} max={100} defaultValue={50} />`} />
+
+## Vertical
+
+Set `vertical` to render the slider vertically. A default height of 150px is applied,
+which can be overridden via `className`.
+
+<CodeBlock code={`<Slider vertical min={0} max={100} defaultValue={50} />`} />

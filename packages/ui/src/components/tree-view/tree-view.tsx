@@ -22,7 +22,6 @@ const treeViewItemStyles = cva(
         summary: [
           'list-none',
           'before:block',
-          'before:content-[\'\']',
           'before:h-[11px]',
           'before:w-[11px]',
           'before:leading-[11px]',
@@ -54,18 +53,6 @@ const treeViewItemStyles = cva(
         false: 'hover:bg-transparent',
       },
     },
-    compoundVariants: [
-      {
-        variant: 'summary',
-        expanded: true,
-        className: 'before:content-[\'-\']',
-      },
-      {
-        variant: 'summary',
-        expanded: false,
-        className: 'before:content-[\'+\']',
-      },
-    ],
   },
 )
 
@@ -121,6 +108,11 @@ export function TreeViewItem({
                     disabled,
                   }),
                 )}
+                onClick={() => {
+                  if (!disabled) {
+                    onClick?.()
+                  }
+                }}
               >
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>

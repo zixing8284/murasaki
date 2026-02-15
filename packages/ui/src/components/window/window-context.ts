@@ -3,6 +3,7 @@ import { createContext, use } from 'react'
 export interface WindowState {
   active: boolean
   maximized: boolean
+  minimized: boolean
 }
 
 export interface WindowActions {

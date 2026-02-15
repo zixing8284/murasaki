@@ -1,5 +1,6 @@
 import { Button } from 'murasaki-react98'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useWindowList, useWindowManager } from '../stores/window-manager'
 
 // Network status store using useSyncExternalStore
 function subscribeToNetworkStatus(callback: () => void): () => void {
@@ -60,6 +61,9 @@ const NETWORK_ONLINE_ICONS = [
 const NETWORK_OFFLINE_ICON = '/img/conn_pcs_no_network.png'
 
 export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps): React.ReactElement {
+  const windows = useWindowList()
+  const activeId = useWindowManager(s => s.activeId)
+  const handleTaskbarClick = useWindowManager(s => s.handleTaskbarClick)
   const isOnline = useNetworkStatus()
   const [networkIconIndex, setNetworkIconIndex] = useState(0)
   const networkIconIndexRef = useRef(0)
@@ -271,8 +275,18 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
       </div>
 
       {/* Running Tasks */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Task buttons would go here */}
+      <div className="flex flex-1 overflow-hidden gap-0.5 px-0.5">
+        {windows.map(win => (
+          <Button
+            key={win.id}
+            active={activeId === win.id && !win.minimized}
+            onClick={() => handleTaskbarClick(win.id)}
+            className="max-w-40 min-w-10 w-full flex items-center gap-1 text-left px-1! truncate h-5.5! min-h-0!"
+          >
+            <img src={win.icon} alt="" className="w-4 h-4 shrink-0 pixelated" draggable={false} />
+            <span className={`truncate text-[11px] ${win.minimized ? 'opacity-70' : ''}`}>{win.title}</span>
+          </Button>
+        ))}
       </div>
 
       {/* Divider */}

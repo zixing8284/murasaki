@@ -1,0 +1,82 @@
+# Tabs
+
+The `Tabs` component provides a Windows 98 styled tabbed interface using a compound component pattern.
+It supports both controlled and uncontrolled modes.
+
+## Compound Components
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'murasaki-react98'
+import { CodeBlock } from '../../components/docs-window/code-block'
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Component</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`Tabs.Root`</TableCell>
+      <TableCell>Root container, manages tab state</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`Tabs.List`</TableCell>
+      <TableCell>Container for tab buttons</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`Tabs.Tab`</TableCell>
+      <TableCell>Individual tab button</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`Tabs.Panel`</TableCell>
+      <TableCell>Content panel associated with a tab</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Props (Tabs)
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Prop</TableHead>
+      <TableHead>Type</TableHead>
+      <TableHead>Default</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`defaultValue`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Default selected tab (uncontrolled)</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`value`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Selected tab (controlled)</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`onValueChange`</TableCell>
+      <TableCell>`(value: string) => void`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Selection change callback</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Usage
+
+<CodeBlock code={`import { Tabs } from 'murasaki-react98'
+
+<Tabs defaultValue="tab1">
+  <Tabs.List>
+    <Tabs.Tab value="tab1">General</Tabs.Tab>
+    <Tabs.Tab value="tab2">Advanced</Tabs.Tab>
+  </Tabs.List>
+  <Tabs.Panel value="tab1">General content</Tabs.Panel>
+  <Tabs.Panel value="tab2">Advanced content</Tabs.Panel>
+</Tabs>`} />

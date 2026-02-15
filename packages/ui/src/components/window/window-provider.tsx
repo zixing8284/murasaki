@@ -7,6 +7,8 @@ export interface WindowProviderProps {
   children: React.ReactNode
   /** Whether window appears active (focused). Default: true */
   active?: boolean
+  /** Whether window is minimized (hidden via CSS, DOM preserved). Default: false */
+  minimized?: boolean
   /** Initial maximized state. Default: false */
   defaultMaximized?: boolean
   /** Positioning mode. Default: 'fixed' */
@@ -16,6 +18,7 @@ export interface WindowProviderProps {
 export function WindowProvider({
   children,
   active = true,
+  minimized = false,
   defaultMaximized = false,
   positioning = 'fixed',
 }: WindowProviderProps): React.ReactElement {
@@ -24,6 +27,7 @@ export function WindowProvider({
   const state: WindowState = {
     active,
     maximized,
+    minimized,
   }
 
   const actions = {

@@ -1,15 +1,14 @@
 import { cn } from '#/lib/utils'
-
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { useCallback, useId, useRef, useState } from 'react'
 
 // Container variants
-const containerVariants = cva(['relative', 'inline-flex'], {
+const containerVariants = cva(['relative', 'flex'], {
   variants: {
     vertical: {
-      true: 'flex-col items-center',
+      true: 'flex-col items-center h-37.5',
       false: 'flex-row items-center',
     },
   },
@@ -94,8 +93,8 @@ const thumbVariants = cva(['absolute', 'pixelated', 'pointer-events-none'], {
       false: 'top-1/2',
     },
     boxIndicator: {
-      true: 'w-[11px] h-[21px]',
-      false: 'w-[11px] h-[21px]',
+      true: 'w-[11px] h-[21px] bgi-indicator-rectangle-horizontal',
+      false: 'w-[11px] h-[21px] bgi-indicator-horizontal',
     },
   },
   defaultVariants: {
@@ -208,11 +207,6 @@ export function Slider({
     [isControlled, onChange],
   )
 
-  // Thumb image based on variant
-  const thumbSrc = boxIndicator
-    ? '/assets/icons/indicator-rectangle-horizontal.svg'
-    : '/assets/icons/indicator-horizontal.svg'
-
   // Calculate thumb position (centered on track)
   const getThumbStyle = (): React.CSSProperties => {
     if (vertical) {
@@ -278,9 +272,7 @@ export function Slider({
         <div className={cn(trackVariants({ vertical }))} />
 
         {/* Custom thumb */}
-        <img
-          src={thumbSrc}
-          alt=""
+        <div
           className={cn(thumbVariants({ vertical, boxIndicator }))}
           style={getThumbStyle()}
         />

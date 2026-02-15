@@ -1,19 +1,27 @@
 /*
- * The library's globals.css is a compiled Tailwind CSS bundle that includes
- * all theme variables and utilities used by the library components.
+ * @source scans the library's dist JS files to detect Tailwind class names,
+ * but it does NOT import any CSS definitions (@theme, @utility, @layer base, etc.).
  *
- * This approach works because the library has been pre-built with all
- * necessary Tailwind utilities already included.
+ * The compiled globals.css loses all Tailwind directives (@theme inline → plain
+ * :root variables, @utility → removed entirely). So the consumer's Tailwind
+ * cannot generate utilities for custom theme tokens (bg-btn-face, shadow-raised)
+ * or custom utilities (sunken-panel, pixelated, bgi-icon-*).
+ *
+ * Solution: Import the library's SOURCE CSS which preserves @theme inline,
+ * @utility, @custom-variant, @layer base, and scrollbar styles. Tailwind will
+ * process these alongside the consumer's own configuration.
  */
-/* @import "murasaki-react98/globals.css"; */
-
 
 /* Scan the murasaki-react98 component library to detect Tailwind class names */
 /* Attention: @source must use relative path because node_modules is ignored by Tailwind by default */
-/* @source "../node_modules/murasaki-react98/dist"; */
+@source "../node_modules/murasaki-react98/dist";
 
 @import "tailwindcss";
 @import "tw-animate-css";
+
+/* Import library source CSS: provides @theme inline, @utility definitions,
+   @layer base (fonts, box-sizing), CSS variables, and scrollbar styles */
+@import "murasaki-react98/theme.css";
 
 
 
@@ -23,7 +31,6 @@ html, body, #root {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-weight: bold;
 }
 
 body {
@@ -58,4 +65,46 @@ body {
   background-color: #a4979721;
   pointer-events: none;
   opacity: 0.9;
+}
+
+/* ===== Docs MDX Content Styles ===== */
+.docs-mdx-content h1 {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  color: var(--color-window-text, #000);
+  border-bottom: 1px solid var(--color-btn-shadow, #808080);
+  padding-bottom: 4px;
+}
+
+.docs-mdx-content h2 {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 12px 0 6px 0;
+  color: var(--color-window-text, #000);
+}
+
+.docs-mdx-content h3 {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 10px 0 4px 0;
+}
+
+
+.docs-mdx-content pre {
+  margin: 8px 0;
+  padding: 6px;
+  background: white;
+  border: none;
+  overflow-x: auto;
+  box-shadow: inset -1px -1px var(--color-btn-hilight, #fff),
+              inset 1px 1px var(--color-btn-shadow, #808080),
+              inset -2px -2px var(--color-btn-light, #dfdfdf),
+              inset 2px 2px var(--color-btn-dk-shadow, #0a0a0a);
+}
+
+.docs-mdx-content pre code {
+  background: none;
+  padding: 0;
+  border: none;
 }

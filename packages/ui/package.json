@@ -19,6 +19,7 @@
   "exports": {
     ".": "./dist/index.js",
     "./globals.css": "./dist/globals.css",
+    "./theme.css": "./src/globals.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -26,7 +27,9 @@
   "style": "./dist/globals.css",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src/assets",
+    "src/globals.css"
   ],
   "publishConfig": {
     "access": "public"

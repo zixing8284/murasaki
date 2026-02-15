@@ -1,13 +1,22 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-
 /*
  * murasaki-react98 UI Library
  * Windows 98 Style CSS Variables and Theme Configuration
  *
- * Usage: In your CSS file, add:
+ * This file is exported as "murasaki-react98/theme.css" for Tailwind v4
+ * consumers who want Tailwind to generate utilities on-demand.
+ *
+ * Usage for Tailwind v4 consumers:
+ *
+ *   @source "../node_modules/murasaki-react98/dist";
+ *   @import "tailwindcss";
+ *   @import "murasaki-react98/theme.css";
+ *
+ * Usage for non-Tailwind consumers (self-contained bundle):
+ *
  *   @import "murasaki-react98/globals.css";
- *   @source "../node_modules/murasaki-react98";
+ *
+ * The globals.css export is a compiled CSS bundle that includes all
+ * Tailwind utilities used by the library components — no Tailwind required.
  */
 
 @custom-variant dark (&:is(.dark *));
@@ -319,6 +328,18 @@
 
 @utility bgi-border-image-groupbox {
   border-image: url("./assets/icons/groupbox-border.svg") 2;
+}
+
+/* ==========================================================================
+   Icon Utilities (Slider)
+   ========================================================================== */
+
+@utility bgi-indicator-horizontal {
+  background-image: url("./assets/icons/indicator-horizontal.svg");
+}
+
+@utility bgi-indicator-rectangle-horizontal {
+  background-image: url("./assets/icons/indicator-rectangle-horizontal.svg");
 }
 
 /* ==========================================================================

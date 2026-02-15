@@ -1,6 +1,14 @@
-import { OptionButton, OptionGroup, useDraggable, Window } from 'murasaki-react98'
 import { useEffect, useState } from 'react'
-import { Taskbar } from './components/Taskbar'
+import { DocsWindow } from './components/docs-window/docs-window'
+import { MyComputerWindow } from './components/my-computer-window'
+import { Taskbar } from './components/taskbar'
+import { WindowRenderer } from './components/window-renderer'
+import { registerApp } from './stores/app-registry'
+import { useWindowManager } from './stores/window-manager'
+
+// Register all application types
+registerApp({ appId: 'mycomputer', component: MyComputerWindow, defaultTitle: 'My Computer', defaultIcon: '/img/desktop/MyComputer.png' })
+registerApp({ appId: 'docs', component: DocsWindow, defaultTitle: 'Component Docs', defaultIcon: '/img/desktop/MyComputer.png' })
 
 function formatTime(): string {
   return new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
@@ -9,15 +17,21 @@ function formatTime(): string {
 export function App(): React.ReactElement {
   const [time, setTime] = useState(formatTime)
   const [showStartMenu, setShowStartMenu] = useState(false)
-
-  const [selected, setSelected] = useState('option1')
-
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
 
-  const { setTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
-    container,
-    draggable: true,
-  })
+  const { openWindow, deactivateAll } = useWindowManager()
+
+  // Open default windows on mount
+  useEffect(() => {
+    openWindow({ id: 'mycomputer', appId: 'mycomputer', title: 'My Computer', icon: '/img/desktop/MyComputer.png' })
+    openWindow({ id: 'docs', appId: 'docs', title: 'Component Docs', icon: '/img/desktop/MyComputer.png' })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleDesktopClick = (): void => {
+    deactivateAll()
+    setShowStartMenu(false)
+  }
 
   useEffect(() => {
     const interval = setInterval(() => setTime(formatTime()), 1000)
@@ -28,37 +42,11 @@ export function App(): React.ReactElement {
     <div className="h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-[#0000a2] selection:text-white scanline-overlay bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed">
       {/* Window Area */}
       <div className="flex-1 overflow-hidden relative">
-        <div className="h-full relative" ref={setContainer}>
+        <div className="h-full relative" ref={setContainer} onPointerDown={handleDesktopClick}>
           {/* Desktop content goes here */}
-          <Window.Provider
-            active={true}
-            positioning="absolute"
-          >
-            <Window.Portal container={container}>
-              <Window.Frame ref={setTargetRef} className="w-[520px]">
-                <Window.TitleBar ref={setDragRef} className="cursor-move">
-                  <Window.Title>My Computer</Window.Title>
-                  <Window.Buttons>
-                    <Window.MinimizeButton />
-                    <Window.MaximizeButton />
-                    <Window.CloseButton />
-                  </Window.Buttons>
-                </Window.TitleBar>
-                <Window.Content>
-                  <div className="p-2">
-                    <p>Window content here...</p>
-                    <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>
-                      <div className="flex flex-col gap-2">
-                        <OptionButton value="option1">Option 1</OptionButton>
-                        <OptionButton value="option2">Option 2</OptionButton>
-                        <OptionButton value="option3">Option 3</OptionButton>
-                      </div>
-                    </OptionGroup>
-                  </div>
-                </Window.Content>
-              </Window.Frame>
-            </Window.Portal>
-          </Window.Provider>
+
+          {/* All managed windows */}
+          <WindowRenderer container={container} />
         </div>
       </div>
 

@@ -50,16 +50,27 @@ export function useDraggable<
   const { container = null, draggable = true } = options
 
   const targetRef = useRef<null | TTarget>(null)
-  const dragRef = useRef<null | TDrag>(null)
+  // Use useState instead of useRef so that changes trigger useEffect re-run
+  const [dragElement, setDragElement] = useState<TDrag | null>(null)
   const [dragging, setDragging] = useState(false)
   const transformRef = useRef<Transform>({ offsetX: 0, offsetY: 0 })
 
+  // Store cleanup function for document-level event listeners
+  const cleanupRef = useRef<(() => void) | null>(null)
+
   const setTargetRef = useCallback((el: TTarget | null) => {
     targetRef.current = el
+    // Re-apply stored transform when element is re-mounted (e.g., after minimize/restore)
+    if (el) {
+      const { offsetX, offsetY } = transformRef.current
+      if (offsetX !== 0 || offsetY !== 0) {
+        el.style.transform = `translate(${offsetX.toString()}px, ${offsetY.toString()}px)`
+      }
+    }
   }, [])
 
   const setDragRef = useCallback((el: TDrag | null) => {
-    dragRef.current = el
+    setDragElement(el)
   }, [])
 
   const resetPosition = useCallback(() => {
@@ -71,6 +82,12 @@ export function useDraggable<
 
   const onMousedown = useCallback(
     (e: MouseEvent) => {
+      // Don't initiate drag when clicking interactive elements (e.g. title bar buttons)
+      const eventTarget = e.target as HTMLElement
+      if (eventTarget.closest('button, a, input, select, textarea, [role="button"]')) {
+        return
+      }
+
       const target = targetRef.current
       if (!target)
         return
@@ -129,6 +146,13 @@ export function useDraggable<
         setDragging(false)
         document.removeEventListener('mousemove', onMousemove)
         document.removeEventListener('mouseup', onMouseup)
+        cleanupRef.current = null
+      }
+
+      // Store cleanup function for use in useEffect cleanup
+      cleanupRef.current = () => {
+        document.removeEventListener('mousemove', onMousemove)
+        document.removeEventListener('mouseup', onMouseup)
       }
 
       setDragging(true)
@@ -139,16 +163,17 @@ export function useDraggable<
   )
 
   useEffect(() => {
-    const dragDom = dragRef.current
-
-    if (draggable && dragDom) {
-      dragDom.addEventListener('mousedown', onMousedown)
+    if (draggable && dragElement) {
+      dragElement.addEventListener('mousedown', onMousedown)
       return () => {
-        dragDom.removeEventListener('mousedown', onMousedown)
+        dragElement.removeEventListener('mousedown', onMousedown)
+        // Also clean up any document-level listeners if component unmounts during drag
+        cleanupRef.current?.()
+        cleanupRef.current = null
       }
     }
     return undefined
-  }, [draggable, onMousedown])
+  }, [draggable, dragElement, onMousedown])
 
   return {
     /** Whether the element is currently being dragged */

@@ -1,5 +1,6 @@
-// Import global styles - Vite will process and output to dist/globals.css
-import './globals.css'
+// Import standalone CSS entry - Vite/Tailwind will compile all used utility
+// classes into dist/globals.css as a self-contained bundle
+import './standalone.css'
 
 // Button
 export { Button } from './components/button/button'

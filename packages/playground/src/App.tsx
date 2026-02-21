@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DocsWindow } from './components/docs-window/docs-window'
 import { MyComputerWindow } from './components/my-computer-window'
 import { Taskbar } from './components/taskbar'
@@ -17,9 +17,15 @@ function formatTime(): string {
 export function App(): React.ReactElement {
   const [time, setTime] = useState(formatTime)
   const [showStartMenu, setShowStartMenu] = useState(false)
-  const [container, setContainer] = useState<HTMLDivElement | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const { openWindow, deactivateAll } = useWindowManager()
+  const { openWindow, deactivateAll, setContainer } = useWindowManager()
+
+  // Set container ref to store on mount
+  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+    containerRef.current = el
+    setContainer(el)
+  }, [setContainer])
 
   // Open default windows on mount
   useEffect(() => {
@@ -42,11 +48,11 @@ export function App(): React.ReactElement {
     <div className="h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-[#0000a2] selection:text-white scanline-overlay bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed">
       {/* Window Area */}
       <div className="flex-1 overflow-hidden relative">
-        <div className="h-full relative" ref={setContainer} onPointerDown={handleDesktopClick}>
+        <div className="h-full relative" ref={setContainerRef} onPointerDown={handleDesktopClick}>
           {/* Desktop content goes here */}
 
           {/* All managed windows */}
-          <WindowRenderer container={container} />
+          <WindowRenderer />
         </div>
       </div>
 

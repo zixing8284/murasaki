@@ -1,6 +1,5 @@
 export interface AppWindowProps {
   windowId: string
-  container: HTMLElement | null
 }
 
 export interface AppDefinition {

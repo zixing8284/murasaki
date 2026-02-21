@@ -1,11 +1,7 @@
 import { getAppDefinition } from '../stores/app-registry'
 import { useWindowManager } from '../stores/window-manager'
 
-interface WindowRendererProps {
-  container: HTMLElement | null
-}
-
-export function WindowRenderer({ container }: WindowRendererProps): React.ReactElement {
+export function WindowRenderer(): React.ReactElement {
   const windows = useWindowManager(s => s.windows)
   const windowIds = Object.keys(windows)
 
@@ -17,7 +13,7 @@ export function WindowRenderer({ container }: WindowRendererProps): React.ReactE
         if (!def)
           return null
         const Component = def.component
-        return <Component key={id} windowId={id} container={container} />
+        return <Component key={id} windowId={id} />
       })}
     </>
   )

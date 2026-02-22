@@ -30,6 +30,7 @@ const treeViewItemStyles = cva(
           'before:border-(--color-btn-shadow)',
           'before:text-center',
           'before:bg-(--color-btn-hilight)',
+          'before:text-(--color-window-text)',
           'before:flex',
           'before:cursor-pointer',
           'before:items-center',
@@ -52,6 +53,23 @@ const treeViewItemStyles = cva(
         true: 'hover:bg-(--color-menu-hottrack-light)',
         false: 'hover:bg-transparent',
       },
+      selected: {
+        true: [
+          'bg-(--color-menu-hilight)',
+          'text-(--color-menu-hilight-text)',
+        ],
+        false: [],
+      },
+    },
+    compoundVariants: [
+      {
+        selected: true,
+        interactive: true,
+        className: 'hover:bg-(--color-menu-hilight)',
+      },
+    ],
+    defaultVariants: {
+      selected: false,
     },
   },
 )
@@ -63,13 +81,21 @@ interface TreeViewItemProps {
   icon?: React.ReactNode
   /** Child items to nest under this item */
   children?: React.ReactNode
-  /** Whether this item is initially expanded */
+  /** Whether this item is initially expanded (uncontrolled) */
   defaultExpanded?: boolean
+  /** Controlled expanded state. When provided, overrides internal state. */
+  expanded?: boolean
+  /** Callback fired when the user attempts to toggle expand/collapse (controlled mode). */
+  onExpandedChange?: (expanded: boolean) => void
+  /** Whether this item is currently selected (shows highlight) */
+  selected?: boolean
+  /** When true and the item is expanded, clicking will not collapse it */
+  preventCollapse?: boolean
   /** Whether this item is disabled */
   disabled?: boolean
   /** Additional CSS classes */
   className?: string
-  /** Click handler for the item (when it has no children) */
+  /** Click handler for the item */
   onClick?: () => void
 }
 
@@ -78,12 +104,18 @@ export function TreeViewItem({
   icon,
   children,
   defaultExpanded = false,
+  expanded: expandedProp,
+  onExpandedChange,
+  selected = false,
+  preventCollapse = false,
   disabled = false,
   className,
   onClick,
 }: TreeViewItemProps): React.ReactElement {
   const hasChildren = Boolean(children)
-  const [expanded, setExpanded] = React.useState(defaultExpanded)
+  const isControlled = expandedProp !== undefined
+  const [internalExpanded, setInternalExpanded] = React.useState(defaultExpanded)
+  const expanded = isControlled ? expandedProp : internalExpanded
 
   return (
     <li className={cn('list-none', className)}>
@@ -95,8 +127,11 @@ export function TreeViewItem({
                 if (disabled) {
                   e.preventDefault()
                 }
+                else if (isControlled) {
+                  onExpandedChange?.(e.currentTarget.open)
+                }
                 else {
-                  setExpanded(e.currentTarget.open)
+                  setInternalExpanded(e.currentTarget.open)
                 }
               }}
             >
@@ -106,9 +141,13 @@ export function TreeViewItem({
                     variant: 'summary',
                     expanded,
                     disabled,
+                    selected,
                   }),
                 )}
-                onClick={() => {
+                onClick={(e) => {
+                  if (preventCollapse && expanded) {
+                    e.preventDefault()
+                  }
                   if (!disabled) {
                     onClick?.()
                   }
@@ -130,6 +169,7 @@ export function TreeViewItem({
                 treeViewItemStyles({
                   variant: 'leaf',
                   disabled,
+                  selected,
                   interactive: Boolean(onClick),
                 }),
               )}

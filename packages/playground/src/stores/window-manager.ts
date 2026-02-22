@@ -15,6 +15,7 @@ export interface WindowManagerState {
   zStack: string[]
   activeId: string | null
   container: HTMLElement | null
+  windowContainers: Record<string, HTMLElement | null>
 }
 
 export interface WindowManagerActions {
@@ -27,6 +28,7 @@ export interface WindowManagerActions {
   deactivateAll: () => void
   handleTaskbarClick: (id: string) => void
   setContainer: (container: HTMLElement | null) => void
+  setWindowContainer: (windowId: string, container: HTMLElement | null) => void
 }
 
 const initialState: WindowManagerState = {
@@ -34,6 +36,7 @@ const initialState: WindowManagerState = {
   zStack: [],
   activeId: null,
   container: null,
+  windowContainers: {},
 }
 
 export const useWindowManager = create<WindowManagerState & WindowManagerActions>((set, get) => ({
@@ -176,6 +179,12 @@ export const useWindowManager = create<WindowManagerState & WindowManagerActions
   setContainer: (container) => {
     set({ container })
   },
+
+  setWindowContainer: (windowId, container) => {
+    set(state => ({
+      windowContainers: { ...state.windowContainers, [windowId]: container },
+    }))
+  },
 }))
 
 // Selectors
@@ -205,5 +214,6 @@ export function useWindowActions(): WindowManagerActions {
     deactivateAll: s.deactivateAll,
     handleTaskbarClick: s.handleTaskbarClick,
     setContainer: s.setContainer,
+    setWindowContainer: s.setWindowContainer,
   })))
 }

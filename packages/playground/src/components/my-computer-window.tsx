@@ -7,7 +7,7 @@ export function MyComputerWindow({ windowId }: AppWindowProps): React.ReactEleme
   const [selected, setSelected] = useState('option1')
 
   return (
-    <WindowApp windowId={windowId} className="w-[520px]">
+    <WindowApp windowId={windowId} className="w-[520px] top-[10%] left-[10%]">
       <div className="p-2">
         <p>Window content here...</p>
         <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>

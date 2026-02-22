@@ -6,8 +6,7 @@ export function DocsWindow({ windowId }: AppWindowProps): React.ReactElement | n
   return (
     <WindowApp
       windowId={windowId}
-      className="w-[750px]"
-      style={{ height: '70%', top: '10%', left: '60px' }}
+      className="w-[750px] h-[90%] top-[10%] left-[60px]"
       titleIcon={<img src="/img/desktop/MyComputer.png" alt="" className="w-4 h-4 pixelated" />}
     >
       <DocsLayout />

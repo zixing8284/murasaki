@@ -19,13 +19,17 @@ export function App(): React.ReactElement {
   const [showStartMenu, setShowStartMenu] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const { openWindow, deactivateAll, setContainer } = useWindowManager()
+  const { openWindow, deactivateAll, setContainer, setWindowContainer } = useWindowManager()
 
   // Set container ref to store on mount
   const setContainerRef = useCallback((el: HTMLDivElement | null) => {
     containerRef.current = el
     setContainer(el)
   }, [setContainer])
+
+  const setDocsContainerRef = useCallback((el: HTMLDivElement | null) => {
+    setWindowContainer('docs', el)
+  }, [setWindowContainer])
 
   // Open default windows on mount
   useEffect(() => {
@@ -50,6 +54,12 @@ export function App(): React.ReactElement {
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full relative" ref={setContainerRef} onPointerDown={handleDesktopClick}>
           {/* Desktop content goes here */}
+
+          {/* Docs Window 专属容器（实验用） */}
+          <div
+            ref={setDocsContainerRef}
+            className="absolute top-[60px] left-[60px] w-[900px] h-[600px] border-2 border-dashed border-white/25 overflow-hidden"
+          />
 
           {/* All managed windows */}
           <WindowRenderer />

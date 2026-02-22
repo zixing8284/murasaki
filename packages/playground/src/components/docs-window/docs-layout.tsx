@@ -28,6 +28,7 @@ export function DocsLayout(): React.ReactElement {
         <TreeView className="border-none! shadow-none! bg-transparent! h-full">
           <TreeView.Item
             label="Welcome"
+            selected={selectedId === 'welcome'}
             onClick={() => setSelectedId('welcome')}
           />
           {docsNavTree.map(node => (
@@ -35,12 +36,15 @@ export function DocsLayout(): React.ReactElement {
               key={node.id}
               label={node.label}
               defaultExpanded
+              preventCollapse={node.id !== selectedId}
+              selected={selectedId === node.id}
               onClick={() => setSelectedId(node.id)}
             >
               {node.children?.map(child => (
                 <TreeView.Item
                   key={child.id}
                   label={child.label}
+                  selected={selectedId === child.id}
                   onClick={() => setSelectedId(child.id)}
                 />
               ))}

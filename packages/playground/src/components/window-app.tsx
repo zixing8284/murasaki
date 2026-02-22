@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useDraggable, Window } from 'murasaki-react98'
 import { useWindow, useWindowActions, useWindowManager } from '../stores/window-manager'
 
@@ -6,7 +6,6 @@ interface WindowAppProps {
   windowId: string
   children: ReactNode
   className?: string
-  style?: CSSProperties
   titleIcon?: ReactNode
   disableMaximize?: boolean
 }
@@ -15,13 +14,12 @@ export function WindowApp({
   windowId,
   children,
   className,
-  style,
   titleIcon,
   disableMaximize = false,
 }: WindowAppProps): React.ReactElement | null {
   const win = useWindow(windowId)
   const actions = useWindowActions()
-  const container = useWindowManager(s => s.container)
+  const container = useWindowManager(s => s.windowContainers[windowId] ?? s.container)
   const { setTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container,
     draggable: true,
@@ -38,7 +36,7 @@ export function WindowApp({
         <Window.Frame
           ref={setTargetRef}
           className={className}
-          style={{ zIndex, ...style }}
+          style={{ zIndex }}
           onPointerDown={(e) => {
             e.stopPropagation()
             actions.activateWindow(windowId)

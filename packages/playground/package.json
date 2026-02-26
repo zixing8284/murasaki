@@ -14,7 +14,7 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "murasaki-react98": "workspace:*",
-    "remark-gfm": "^4.0.1",
+    "remark-gfm": "catalog:",
     "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:",
     "zustand": "catalog:"

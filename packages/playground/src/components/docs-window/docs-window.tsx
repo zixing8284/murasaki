@@ -1,8 +1,8 @@
-import type { AppWindowProps } from '../../stores/app-registry'
+import type { ProcessComponentProps } from '../../contexts/process'
 import { WindowApp } from '../window-app'
 import { DocsLayout } from './docs-layout'
 
-export function DocsWindow({ windowId }: AppWindowProps): React.ReactElement | null {
+export function DocsWindow({ windowId }: ProcessComponentProps): React.ReactElement | null {
   return (
     <WindowApp
       windowId={windowId}

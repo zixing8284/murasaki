@@ -1,25 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { DocsWindow } from './components/docs-window/docs-window'
-import { MyComputerWindow } from './components/my-computer-window'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Taskbar } from './components/taskbar'
 import { WindowRenderer } from './components/window-renderer'
-import { registerApp } from './stores/app-registry'
-import { useWindowManager } from './stores/window-manager'
-
-// Register all application types
-registerApp({ appId: 'mycomputer', component: MyComputerWindow, defaultTitle: 'My Computer', defaultIcon: '/img/desktop/MyComputer.png' })
-registerApp({ appId: 'docs', component: DocsWindow, defaultTitle: 'Component Docs', defaultIcon: '/img/desktop/MyComputer.png' })
+import { ProcessProvider, useProcessActions } from './contexts/process'
 
 function formatTime(): string {
   return new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
 }
 
-export function App(): React.ReactElement {
+function AppInner(): React.ReactElement {
   const [time, setTime] = useState(formatTime)
   const [showStartMenu, setShowStartMenu] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const { openWindow, deactivateAll, setContainer, setWindowContainer } = useWindowManager()
+  const { open, deactivateAll, setContainer, linkElement } = useProcessActions()
 
   // Set container ref to store on mount
   const setContainerRef = useCallback((el: HTMLDivElement | null) => {
@@ -28,13 +21,13 @@ export function App(): React.ReactElement {
   }, [setContainer])
 
   const setDocsContainerRef = useCallback((el: HTMLDivElement | null) => {
-    setWindowContainer('docs', el)
-  }, [setWindowContainer])
+    linkElement('docs', el)
+  }, [linkElement])
 
   // Open default windows on mount
   useEffect(() => {
-    openWindow({ id: 'mycomputer', appId: 'mycomputer', title: 'My Computer', icon: '/img/desktop/MyComputer.png' })
-    openWindow({ id: 'docs', appId: 'docs', title: 'Component Docs', icon: '/img/desktop/MyComputer.png' })
+    open('mycomputer')
+    open('docs')
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -62,7 +55,9 @@ export function App(): React.ReactElement {
           />
 
           {/* All managed windows */}
-          <WindowRenderer />
+          <Suspense>
+            <WindowRenderer />
+          </Suspense>
         </div>
       </div>
 
@@ -111,5 +106,13 @@ export function App(): React.ReactElement {
         time={time}
       />
     </div>
+  )
+}
+
+export function App(): React.ReactElement {
+  return (
+    <ProcessProvider>
+      <AppInner />
+    </ProcessProvider>
   )
 }

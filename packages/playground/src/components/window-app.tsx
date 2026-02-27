@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useDraggable, Window } from 'murasaki-react98'
-import { useWindow, useWindowActions, useWindowManager } from '../stores/window-manager'
+import { useProcess, useProcessActions, useProcesses } from '../contexts/process'
 
 interface WindowAppProps {
   windowId: string
@@ -17,40 +17,41 @@ export function WindowApp({
   titleIcon,
   disableMaximize = false,
 }: WindowAppProps): React.ReactElement | null {
-  const win = useWindow(windowId)
-  const actions = useWindowActions()
-  const container = useWindowManager(s => s.windowContainers[windowId] ?? s.container)
+  const win = useProcess(windowId)
+  const actions = useProcessActions()
+  const { processes, container } = useProcesses()
+  const portalContainer = processes[windowId]?.componentWindow ?? container
   const { setTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
-    container,
+    container: portalContainer,
     draggable: true,
   })
 
   if (!win)
     return null
 
-  const { record, isActive, zIndex } = win
+  const { process: proc, isActive, zIndex } = win
 
   return (
-    <Window.Provider active={isActive} minimized={record.minimized} positioning="absolute">
-      <Window.Portal container={container}>
+    <Window.Provider active={isActive} minimized={proc.minimized} positioning="absolute">
+      <Window.Portal container={portalContainer}>
         <Window.Frame
           ref={setTargetRef}
           className={className}
           style={{ zIndex }}
           onPointerDown={(e) => {
             e.stopPropagation()
-            actions.activateWindow(windowId)
+            actions.activate(windowId)
           }}
         >
           <Window.TitleBar ref={setDragRef} className="cursor-move">
-            <Window.Title icon={titleIcon}>{record.title}</Window.Title>
+            <Window.Title icon={titleIcon}>{proc.title}</Window.Title>
             <Window.Buttons>
-              <Window.MinimizeButton onClick={() => actions.minimizeWindow(windowId)} />
+              <Window.MinimizeButton onClick={() => actions.minimize(windowId)} />
               <Window.MaximizeButton
                 onClick={() => actions.toggleMaximize(windowId)}
                 disabled={disableMaximize}
               />
-              <Window.CloseButton onClick={() => actions.closeWindow(windowId)} />
+              <Window.CloseButton onClick={() => actions.close(windowId)} />
             </Window.Buttons>
           </Window.TitleBar>
           <Window.Content>{children}</Window.Content>

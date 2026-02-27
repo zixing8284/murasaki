@@ -1,9 +1,9 @@
-import type { AppWindowProps } from '../stores/app-registry'
+import type { ProcessComponentProps } from '../contexts/process'
 import { OptionButton, OptionGroup } from 'murasaki-react98'
 import { useState } from 'react'
 import { WindowApp } from './window-app'
 
-export function MyComputerWindow({ windowId }: AppWindowProps): React.ReactElement | null {
+export function MyComputerWindow({ windowId }: ProcessComponentProps): React.ReactElement | null {
   const [selected, setSelected] = useState('option1')
 
   return (

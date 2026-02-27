@@ -1,19 +1,17 @@
-import { getAppDefinition } from '../stores/app-registry'
-import { useWindowManager } from '../stores/window-manager'
+import { processDirectory, useProcesses } from '../contexts/process'
 
 export function WindowRenderer(): React.ReactElement {
-  const windows = useWindowManager(s => s.windows)
-  const windowIds = Object.keys(windows)
+  const { processes } = useProcesses()
 
   return (
     <>
-      {windowIds.map((id) => {
-        const record = windows[id]
-        const def = getAppDefinition(record.appId)
-        if (!def)
+      {Object.keys(processes).map((pid) => {
+        const proc = processes[pid]
+        const entry = processDirectory[proc.appId]
+        if (!entry)
           return null
-        const Component = def.component
-        return <Component key={id} windowId={id} />
+        const { Component } = entry
+        return <Component key={pid} windowId={pid} />
       })}
     </>
   )

@@ -1,6 +1,6 @@
 import { Button } from 'murasaki-react98'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { useWindowList, useWindowManager } from '../stores/window-manager'
+import { useProcessActions, useProcesses, useProcessList } from '../contexts/process'
 
 // Network status store using useSyncExternalStore
 function subscribeToNetworkStatus(callback: () => void): () => void {
@@ -61,9 +61,9 @@ const NETWORK_ONLINE_ICONS = [
 const NETWORK_OFFLINE_ICON = '/img/conn_pcs_no_network.png'
 
 export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps): React.ReactElement {
-  const windows = useWindowList()
-  const activeId = useWindowManager(s => s.activeId)
-  const handleTaskbarClick = useWindowManager(s => s.handleTaskbarClick)
+  const windows = useProcessList()
+  const { foregroundId } = useProcesses()
+  const { handleTaskbarClick } = useProcessActions()
   const isOnline = useNetworkStatus()
   const [networkIconIndex, setNetworkIconIndex] = useState(0)
   const networkIconIndexRef = useRef(0)
@@ -279,7 +279,7 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
         {windows.map(win => (
           <Button
             key={win.id}
-            active={activeId === win.id && !win.minimized}
+            active={foregroundId === win.id && !win.minimized}
             onClick={() => handleTaskbarClick(win.id)}
             className="max-w-40 min-w-10 w-full flex items-center gap-1 text-left px-1! truncate h-5.5! min-h-0!"
           >

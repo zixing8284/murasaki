@@ -16,8 +16,7 @@
     "murasaki-react98": "workspace:*",
     "remark-gfm": "catalog:",
     "tailwind-merge": "catalog:",
-    "tw-animate-css": "catalog:",
-    "zustand": "catalog:"
+    "tw-animate-css": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:cli",

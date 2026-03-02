@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { DesktopIcon } from './components/desktop-icon'
 import { Taskbar } from './components/taskbar'
 import { WindowRenderer } from './components/window-renderer'
 import { ProcessProvider, useProcessActions } from './contexts/process'
+
+const DESKTOP_ICONS = [
+  { appId: 'notepad', label: 'Notepad', icon: '/img/desktop/Notepad.png' },
+]
 
 function formatTime(): string {
   return new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
@@ -10,6 +15,7 @@ function formatTime(): string {
 function AppInner(): React.ReactElement {
   const [time, setTime] = useState(formatTime)
   const [showStartMenu, setShowStartMenu] = useState(false)
+  const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const { open, deactivateAll, setContainer, linkElement } = useProcessActions()
@@ -34,6 +40,7 @@ function AppInner(): React.ReactElement {
   const handleDesktopClick = (): void => {
     deactivateAll()
     setShowStartMenu(false)
+    setSelectedIconId(null)
   }
 
   useEffect(() => {
@@ -47,21 +54,19 @@ function AppInner(): React.ReactElement {
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full relative" ref={setContainerRef} onPointerDown={handleDesktopClick}>
           {/* Desktop Icons */}
-          <div className="absolute top-2 left-2 flex flex-col gap-4">
-            <div
-              className="flex flex-col items-center gap-0.5 w-16 cursor-pointer select-none group"
-              onDoubleClick={() => open('notepad')}
-            >
-              <img
-                src="/img/desktop/Notepad.png"
-                alt="Notepad"
-                className="w-8 h-8 pixelated group-focus-within:brightness-75"
-                draggable={false}
+          <div
+            className="absolute top-2 left-2 flex flex-col gap-4"
+            onPointerDown={e => e.stopPropagation()}
+          >
+            {DESKTOP_ICONS.map(iconConfig => (
+              <DesktopIcon
+                key={iconConfig.appId}
+                {...iconConfig}
+                selected={selectedIconId === iconConfig.appId}
+                onSelect={setSelectedIconId}
+                onOpen={appId => open(appId)}
               />
-              <span className="text-white text-[11px] text-center leading-tight px-0.5 group-hover:underline">
-                Notepad
-              </span>
-            </div>
+            ))}
           </div>
           {/* Desktop content goes here */}
 

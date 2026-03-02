@@ -70,6 +70,7 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
   }
 
   const close: ProcessContextActions['close'] = (id) => {
+    // remove current process from processes and stackOrder, and pick new foreground if needed
     setState((prev) => {
       if (!prev.processes[id])
         return prev

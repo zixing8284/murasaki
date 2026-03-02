@@ -214,7 +214,7 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
       {hasHiddenIcons && (
         <button
           type="button"
-          className="flex items-center justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-[#d4d0c8] active:bg-[#a0a0a0]"
+          className="flex items-start justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-[#d4d0c8] active:bg-[#a0a0a0]"
           onClick={handleExpandQuickLaunch}
           title="Show all Quick Launch icons"
           style={{ imageRendering: 'pixelated' }}

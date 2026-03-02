@@ -30,6 +30,8 @@ Other key commands: `pnpm play` (dev server), `pnpm ui:test` (Vitest + Playwrigh
 ## Styling
 
 - **Tailwind CSS v4** with Windows 98 design tokens (colors like `btn-face`, `btn-text`, `btn-shadow`, `btn-hilight`; shadows like `shadow-raised`, `shadow-sunken`) defined in `src/globals.css`.
+- **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
+- **Theme-first colors**: Use CSS variable-backed Tailwind tokens (e.g., `bg-selection`, `text-desktop-text`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables in `src/globals.css` so styles adapt automatically when switching themes.
 - Custom utilities: `sunken-panel`, `bgi-icon-*`, `pixelated`.
 - Build outputs a single `dist/globals.css`; all assets (fonts, icons) are inlined as base64.
 

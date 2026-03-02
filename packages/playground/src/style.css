@@ -108,11 +108,3 @@ body {
   padding: 0;
   border: none;
 }
-
-/* Windows 98 desktop icon selection: checkerboard dither overlay */
-.desktop-icon-dither {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgb(10,36,106)'/%3E%3Crect x='1' y='1' width='1' height='1' fill='rgb(10,36,106)'/%3E%3C/svg%3E");
-  background-size: 2px 2px;
-  image-rendering: pixelated;
-  pointer-events: none;
-}

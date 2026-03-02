@@ -20,23 +20,18 @@ export function DesktopIcon({ appId, label, icon, selected, onSelect, onOpen }: 
         onOpen(appId)
       }}
     >
-      <div className="relative w-8 h-8">
-        <img
-          src={icon}
-          alt={label}
-          className="w-8 h-8 pixelated"
-          draggable={false}
-        />
-        {selected && (
-          <div className="absolute inset-0 desktop-icon-dither" />
-        )}
-      </div>
+      <img
+        src={icon}
+        alt={label}
+        className={`w-8 h-8 pixelated ${selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}`}
+        draggable={false}
+      />
 
       <span
         className={
           selected
-            ? 'text-[11px] text-center leading-tight px-0.5 bg-[rgb(10,36,106)] text-white outline-dotted outline-1 outline-white'
-            : 'text-[11px] text-center leading-tight px-0.5 text-white'
+            ? 'text-[11px] text-center leading-tight px-0.5 bg-selection text-selection-text outline-dotted outline-1 outline-selection-text'
+            : 'text-[11px] text-center leading-tight px-0.5 text-desktop-text'
         }
       >
         {label}

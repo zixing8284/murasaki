@@ -57,6 +57,10 @@ Components live in `src/components/`, one directory per component. The key conve
 
 Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tokens defined in `src/globals.css`. Custom utilities include `sunken-panel`, `bgi-icon-*`, and `pixelated`.
 
+**Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
+
+**Theme-first colors**: Use CSS variable-backed Tailwind tokens (e.g., `bg-selection`, `text-desktop-text`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables in `src/globals.css` so styles adapt automatically when switching themes.
+
 The **`useDraggable`** hook (`src/hooks/use-draggable.ts`) handles CSS-transform-based drag with viewport/container boundary clamping.
 
 ### packages/playground — Showcase App

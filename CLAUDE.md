@@ -63,8 +63,12 @@ The **`useDraggable`** hook (`src/hooks/use-draggable.ts`) handles CSS-transform
 
 The playground simulates a Windows 98 desktop. Key pieces:
 
-- **Window Manager** (`src/stores/window-manager.ts`) — Zustand store managing window z-order, active state, minimize/maximize. Use `useWindowList()`, `useWindow(id)`, and `useWindowActions()` instead of the full store to avoid unnecessary re-renders.
-- **App Registry** (`src/stores/app-registry.ts`) — Registry of openable "apps"
+- **Process Context** (`src/contexts/process/`) — React Context system managing window lifecycle (z-order, active state, minimize/maximize). Use the granular hooks to avoid unnecessary re-renders:
+  - `useProcesses()` — full state + actions
+  - `useProcess(id)` — single process state with `isActive` and `zIndex`
+  - `useProcessActions()` — memoized actions only
+  - `useProcessList()` — flat array of running processes
+- **Process Directory** (`src/contexts/process/directory.ts`) — Static registry of openable apps (keyed by `appId`)
 - **Docs system** — MDX files under `src/docs/` rendered in a docs window. Each component folder has a `.mdx` file and one or more `demo-*.tsx` demo files. MDX support is via `@mdx-js/rollup` + `remark-gfm`.
 
 ### Module Structure
@@ -76,3 +80,44 @@ Fonts and small assets are inlined as base64 in the compiled CSS. The CSS output
 ## File Naming
 
 All source files use **kebab-case** (e.g., `my-component.tsx`, `use-draggable.ts`). This applies to both packages.
+
+## Commit Messages
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) with **lowercase** type and description in imperative tense:
+
+```
+feat: add slider component
+fix: correct tab focus order
+refactor: migrate to process context for window management
+chore(lint): enforce catalog specifier
+```
+
+Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`. Scope is optional.
+
+A pre-commit hook (`simple-git-hooks` + `lint-staged`) automatically runs ESLint fix on staged files.
+
+## PR Workflow
+
+- **Branch naming**: `type/description` (e.g., `feat/add-slider`, `fix/button-focus`)
+- **Squash merge** into `main`
+- Require at least **one review approval**
+- `pnpm lint` and `pnpm ui:test` must pass before merge
+
+## Publishing (`packages/ui`)
+
+Publishing is manual — no automated release tooling.
+
+1. Bump `version` in `packages/ui/package.json`
+2. `pnpm ui:build`
+3. `cd packages/ui && npm publish`
+
+## Maintaining AI Instruction Files
+
+Update both `CLAUDE.md` and `.github/copilot-instructions.md` when:
+
+- Adding, removing, or renaming components or hooks
+- Changing build commands, scripts, or workflow
+- Modifying architectural patterns (e.g., state management, context structure)
+- Adding new conventions (file naming, export patterns, etc.)
+
+Keep both files in sync — they cover the same content for different AI agents.

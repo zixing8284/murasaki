@@ -39,6 +39,7 @@
   --active-border: rgb(212, 208, 200);
   --app-workspace: rgb(128, 128, 128);
   --background: rgb(58, 110, 165);
+  --desktop-text: rgb(255, 255, 255);
   --inactive-border: rgb(212, 208, 200);
   --scrollbar: rgb(212, 208, 200);
   --window: rgb(255, 255, 255);
@@ -141,6 +142,7 @@
 
   /* Desktop */
   --color-desktop: var(--background);
+  --color-desktop-text: var(--desktop-text);
   --color-workspace: var(--app-workspace);
 
   /* Selection */

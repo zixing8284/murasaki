@@ -51,6 +51,7 @@ const QUICK_LAUNCH_ICONS: QuickLaunchIcon[] = [
 
 // Icon width including margin (icon ~16px + margins ~4px)
 const ICON_STEP_WIDTH = 24
+const DEFAULT_VISIBLE_COUNT = 2
 
 // Network status icons for online state cycling
 const NETWORK_ONLINE_ICONS = [
@@ -68,8 +69,7 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
   const [networkIconIndex, setNetworkIconIndex] = useState(0)
   const networkIconIndexRef = useRef(0)
   const [quickLaunchWidth, setQuickLaunchWidth] = useState(() => {
-    // Default to showing 2 icons
-    return ICON_STEP_WIDTH * 2
+    return ICON_STEP_WIDTH * DEFAULT_VISIBLE_COUNT
   })
   const [isDragging, setIsDragging] = useState(false)
   const dividerRef = useRef<HTMLDivElement>(null)
@@ -119,7 +119,8 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
 
       // Allow dragging beyond max width by a small amount (elastic effect)
       const elasticMax = maxQuickLaunchWidth + ICON_STEP_WIDTH
-      const clampedWidth = Math.max(0, Math.min(snappedWidth, elasticMax))
+      const minQuickLaunchWidth = ICON_STEP_WIDTH * DEFAULT_VISIBLE_COUNT
+      const clampedWidth = Math.max(minQuickLaunchWidth, Math.min(snappedWidth, elasticMax))
 
       setQuickLaunchWidth(clampedWidth)
     }

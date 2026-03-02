@@ -22,6 +22,11 @@ export const INITIAL_PROCESS_STATE: ProcessState = {
 
 type SetState = Dispatch<SetStateAction<ProcessState>>
 
+let pidCounter = 0
+function generatePid(appId: string): string {
+  return `${appId}__${pidCounter++}`
+}
+
 /**
  * Pick the top-most non-minimized PID from the stack.
  * Returns null if none qualifies.
@@ -167,7 +172,8 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     if (!entry)
       return
 
-    const pid = appId // singleton — PID equals appId
+    // Singleton: PID = appId; Non-singleton: generate unique PID
+    const pid = entry.singleton !== false ? appId : generatePid(appId)
 
     setState((prev) => {
       // If singleton and already running, activate it

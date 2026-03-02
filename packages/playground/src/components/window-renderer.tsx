@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { processDirectory, useProcesses } from '../contexts/process'
 
 export function WindowRenderer(): React.ReactElement {
@@ -11,7 +12,11 @@ export function WindowRenderer(): React.ReactElement {
         if (!entry)
           return null
         const { Component } = entry
-        return <Component key={pid} windowId={pid} />
+        return (
+          <Suspense key={pid}>
+            <Component windowId={pid} />
+          </Suspense>
+        )
       })}
     </>
   )

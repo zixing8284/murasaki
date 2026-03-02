@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Taskbar } from './components/taskbar'
 import { WindowRenderer } from './components/window-renderer'
 import { ProcessProvider, useProcessActions } from './contexts/process'
@@ -46,6 +46,23 @@ function AppInner(): React.ReactElement {
       {/* Window Area */}
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full relative" ref={setContainerRef} onPointerDown={handleDesktopClick}>
+          {/* Desktop Icons */}
+          <div className="absolute top-2 left-2 flex flex-col gap-4">
+            <div
+              className="flex flex-col items-center gap-0.5 w-16 cursor-pointer select-none group"
+              onDoubleClick={() => open('notepad')}
+            >
+              <img
+                src="/img/desktop/Notepad.png"
+                alt="Notepad"
+                className="w-8 h-8 pixelated group-focus-within:brightness-75"
+                draggable={false}
+              />
+              <span className="text-white text-[11px] text-center leading-tight px-0.5 group-hover:underline">
+                Notepad
+              </span>
+            </div>
+          </div>
           {/* Desktop content goes here */}
 
           {/* Docs Window 专属容器（实验用） */}
@@ -55,9 +72,7 @@ function AppInner(): React.ReactElement {
           />
 
           {/* All managed windows */}
-          <Suspense>
-            <WindowRenderer />
-          </Suspense>
+          <WindowRenderer />
         </div>
       </div>
 

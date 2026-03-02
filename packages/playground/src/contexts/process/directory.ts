@@ -27,6 +27,15 @@ const directory: ProcessDirectory = {
     defaultIcon: '/img/desktop/MyComputer.png',
     singleton: true,
   },
+  notepad: {
+    appId: 'notepad',
+    Component: lazy(() =>
+      import('../../components/notepad-window').then(m => ({ default: m.NotepadWindow })),
+    ),
+    defaultTitle: 'Untitled - Notepad',
+    defaultIcon: '/img/desktop/Notepad.png',
+    singleton: false,
+  },
 }
 
 export default directory

@@ -3,6 +3,7 @@ import { DesktopIcon } from './components/desktop-icon'
 import { Taskbar } from './components/taskbar'
 import { WindowRenderer } from './components/window-renderer'
 import { ProcessProvider, useProcessActions } from './contexts/process'
+import { useClickAway } from './hooks/use-click-away'
 
 const DESKTOP_ICONS = [
   { appId: 'notepad', label: 'Notepad', icon: '/img/desktop/Notepad.png' },
@@ -17,6 +18,9 @@ function AppInner(): React.ReactElement {
   const [showStartMenu, setShowStartMenu] = useState(false)
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const iconContainerRef = useClickAway<HTMLDivElement>(() => {
+    setSelectedIconId(null)
+  })
 
   const { open, deactivateAll, setContainer, linkElement } = useProcessActions()
 
@@ -40,7 +44,6 @@ function AppInner(): React.ReactElement {
   const handleDesktopClick = (): void => {
     deactivateAll()
     setShowStartMenu(false)
-    setSelectedIconId(null)
   }
 
   useEffect(() => {
@@ -55,8 +58,8 @@ function AppInner(): React.ReactElement {
         <div className="h-full relative" ref={setContainerRef} onPointerDown={handleDesktopClick}>
           {/* Desktop Icons */}
           <div
+            ref={iconContainerRef}
             className="absolute top-2 left-2 flex flex-col gap-4"
-            onPointerDown={e => e.stopPropagation()}
           >
             {DESKTOP_ICONS.map(iconConfig => (
               <DesktopIcon

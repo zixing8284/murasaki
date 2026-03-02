@@ -81,6 +81,18 @@ The playground simulates a Windows 98 desktop. Key pieces:
 
 Fonts and small assets are inlined as base64 in the compiled CSS. The CSS output is a single `dist/globals.css`.
 
+## React Compiler & Hooks Conventions
+
+React Compiler is enabled in both packages. All code must satisfy its rules:
+
+- **Never mutate refs during render** — `ref.current = value` must be inside `useEffect`, `useLayoutEffect`, or an event handler, never at the top level of a component/hook body.
+- **Latest-callback ref pattern** — To keep a stable ref pointing to the latest callback without re-subscribing effects:
+  ```ts
+  const callbackRef = useRef(callback)
+  useLayoutEffect(() => { callbackRef.current = callback })   // sync before paint
+  ```
+  Use `useLayoutEffect` (no deps) in client-only code. Fall back to `useEffect` if SSR compatibility is needed.
+
 ## File Naming
 
 All source files use **kebab-case** (e.g., `my-component.tsx`, `use-draggable.ts`). This applies to both packages.

@@ -53,9 +53,21 @@ Other key commands: `pnpm play` (dev server), `pnpm ui:test` (Vitest + Playwrigh
 
 - **pnpm catalogs** (`pnpm-workspace.yaml`) centralize dependency versions — use `catalog:` specifiers in `package.json`.
 - **ESLint**: `@antfu/eslint-config` with `type: 'lib'`, `react: true`.
-- **React Compiler** (`babel-plugin-react-compiler`) is enabled in the UI library's Vite config.
+- **React Compiler** (`babel-plugin-react-compiler`) is enabled in **both** `packages/ui` and `packages/playground` Vite configs.
 - **Testing**: Vitest with Playwright browser provider; test files live in `packages/ui/tests/`. Run a single test: `pnpm --filter murasaki-react98 test -- path/to/test.ts`.
 - Build uses `preserveModules: true` for tree-shaking by consumers.
+
+## React Compiler & Hooks Conventions
+
+React Compiler is enabled in both packages. All code must satisfy its rules:
+
+- **Never mutate refs during render** — `ref.current = value` must be inside `useEffect`, `useLayoutEffect`, or an event handler, never at the top level of a component/hook body.
+- **Latest-callback ref pattern** — To keep a stable ref pointing to the latest callback without re-subscribing effects:
+  ```ts
+  const callbackRef = useRef(callback)
+  useLayoutEffect(() => { callbackRef.current = callback })   // sync before paint
+  ```
+  Use `useLayoutEffect` (no deps) in client-only code. Fall back to `useEffect` if SSR compatibility is needed.
 
 ## Commit Messages
 

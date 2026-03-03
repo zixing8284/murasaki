@@ -29,6 +29,9 @@ export type { WindowPortalProps } from './window-portal'
 export { WindowProvider } from './window-provider'
 export type { WindowProviderProps } from './window-provider'
 
+export { WindowResizeGrip } from './window-resize-grip'
+export type { WindowResizeGripProps } from './window-resize-grip'
+
 export { WindowTitle } from './window-title'
 export type { WindowTitleProps } from './window-title'
 

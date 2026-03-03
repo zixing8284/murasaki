@@ -324,6 +324,13 @@
   background-image: url("./assets/icons/radio-dot-disabled.svg");
 }
 
+@utility bgi-resize-grip {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAN0lEQVR4Ae3MgQUAMBRDwU5fFF05lb/CARTBw2Ulof0DxPtcwp3hNuEYnjbcEW4TjuFpwx3h9gMWGgZ2Y/PT2gAAAABJRU5ErkJggg==");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  image-rendering: pixelated;
+}
+
 /* ==========================================================================
    Icon Utilities (GroupBox)
    ========================================================================== */
@@ -394,4 +401,14 @@
 ::-webkit-scrollbar-button:horizontal:end {
   width: 16px;
   background-image: url("./assets/icons/button-right.svg");
+}
+
+::-webkit-resizer {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAN0lEQVR4Ae3MgQUAMBRDwU5fFF05lb/CARTBw2Ulof0DxPtcwp3hNuEYnjbcEW4TjuFpwx3h9gMWGgZ2Y/PT2gAAAABJRU5ErkJggg==");
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
 }

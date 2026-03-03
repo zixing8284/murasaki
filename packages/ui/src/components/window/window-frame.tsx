@@ -9,7 +9,8 @@ const frameVariants = cva([
   'bg-btn-face',
   'flex',
   'flex-col',
-  'min-w-[200px]',
+  'min-w-50',
+  'min-h-30',
   'p-1',
 ])
 

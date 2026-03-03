@@ -76,6 +76,7 @@ export {
   WindowOverlay,
   WindowPortal,
   WindowProvider,
+  WindowResizeGrip,
   WindowTitle,
   WindowTitleBar,
 } from './components/window/window'
@@ -90,6 +91,7 @@ export type {
   WindowOverlayProps,
   WindowPortalProps,
   WindowProviderProps,
+  WindowResizeGripProps,
   WindowTitleBarProps,
   WindowTitleProps,
 } from './components/window/window'
@@ -105,3 +107,5 @@ export { Window } from './components/window/window-namespace'
 // Hooks
 export { useDraggable } from './hooks/use-draggable'
 export type { UseDraggableOptions } from './hooks/use-draggable'
+export { useResizable } from './hooks/use-resizable'
+export type { UseResizableOptions } from './hooks/use-resizable'

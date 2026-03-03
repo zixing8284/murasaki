@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { useDraggable, Window } from 'murasaki-react98'
+import { useDraggable, useResizable, Window } from 'murasaki-react98'
+import { useCallback } from 'react'
 import { useProcess, useProcessActions, useProcesses } from '../contexts/process'
 
 interface WindowAppProps {
@@ -8,6 +9,7 @@ interface WindowAppProps {
   className?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
+  disableResize?: boolean
 }
 
 export function WindowApp({
@@ -16,15 +18,26 @@ export function WindowApp({
   className,
   titleIcon,
   disableMaximize = false,
+  disableResize = false,
 }: WindowAppProps): React.ReactElement | null {
   const win = useProcess(windowId)
   const actions = useProcessActions()
   const { processes, container } = useProcesses()
   const portalContainer = processes[windowId]?.componentWindow ?? container
-  const { setTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
+  const { setTargetRef: setDragTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     draggable: true,
   })
+  const { setTargetRef: setResizeTargetRef, setResizeRef } = useResizable<HTMLDivElement, HTMLDivElement>({
+    container: portalContainer,
+    resizable: !disableResize,
+  })
+
+  // Merge two target refs into a single callback ref
+  const setTargetRef = useCallback((el: HTMLDivElement | null) => {
+    setDragTargetRef(el)
+    setResizeTargetRef(el)
+  }, [setDragTargetRef, setResizeTargetRef])
 
   if (!win)
     return null
@@ -55,6 +68,7 @@ export function WindowApp({
             </Window.Buttons>
           </Window.TitleBar>
           <Window.Content>{children}</Window.Content>
+          {!disableResize && <Window.ResizeGrip ref={setResizeRef} />}
         </Window.Frame>
       </Window.Portal>
     </Window.Provider>

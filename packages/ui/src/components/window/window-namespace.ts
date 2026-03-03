@@ -10,6 +10,7 @@ import { WindowFrame } from './window-frame'
 import { WindowOverlay } from './window-overlay'
 import { WindowPortal } from './window-portal'
 import { WindowProvider } from './window-provider'
+import { WindowResizeGrip } from './window-resize-grip'
 import { WindowTitle } from './window-title'
 import { WindowTitleBar } from './window-title-bar'
 
@@ -26,4 +27,5 @@ export const Window = {
   MaximizeButton: WindowMaximizeButton,
   HelpButton: WindowHelpButton,
   Content: WindowContent,
+  ResizeGrip: WindowResizeGrip,
 }

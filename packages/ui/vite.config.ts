@@ -46,6 +46,7 @@ export default defineConfig({
   },
   test: {
     include: ['tests/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+    setupFiles: ['tests/setup.ts'],
     browser: {
       enabled: true,
       provider: playwright(),

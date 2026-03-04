@@ -17,6 +17,26 @@ pnpm ui:build          # vite build + tsc --emitDeclarationOnly → packages/ui/
 
 Other key commands: `pnpm play` (dev server), `pnpm ui:test` (Vitest + Playwright browser), `pnpm lint` (ESLint).
 
+## UI Component Update Workflow
+
+After modifying component code or styles under `packages/ui/`, follow these steps in order:
+
+1. **Lint** — `pnpm lint` (ensure code style and React Compiler rules pass)
+2. **Test** — `pnpm ui:test` (runs in real Chromium; includes screenshot comparison)
+   - Screenshot tests compare current renders against baseline images in `tests/__screenshots__/`
+   - If a screenshot comparison **fails**:
+     - **Intentional change** → update baselines: `pnpm --filter murasaki-react98 test -- --update`
+     - **Unintentional change** → fix the code and re-run tests
+   - On failure, diff images (`*-diff.png`) and actual images (`*-actual.png`) are generated alongside the baselines in `tests/__screenshots__/` to highlight pixel-level differences
+3. **Build** — `pnpm ui:build` (⚠️ required — playground consumes `dist/`, not source)
+
+> Steps 4–7 are **manual** — hand off to the developer for confirmation.
+
+4. **Verify in playground** — `pnpm play` (manually check the component in the browser)
+5. **Commit** — use Conventional Commits (e.g., `feat: update button hover style`)
+6. **Push & PR** — branch naming `type/description`, squash merge into `main`
+7. **Publish** *(optional)* — bump version, `pnpm ui:build`, `cd packages/ui && npm publish`
+
 ## Component Conventions (`packages/ui`)
 
 - One directory per component under `src/components/` (e.g., `button/button.tsx`).
@@ -56,6 +76,25 @@ Other key commands: `pnpm play` (dev server), `pnpm ui:test` (Vitest + Playwrigh
 - **React Compiler** (`babel-plugin-react-compiler`) is enabled in **both** `packages/ui` and `packages/playground` Vite configs.
 - **Testing**: Vitest with Playwright browser provider; test files live in `packages/ui/tests/`. Run a single test: `pnpm --filter murasaki-react98 test -- path/to/test.ts`.
 - Build uses `preserveModules: true` for tree-shaking by consumers.
+
+## Testing Conventions
+
+Tests run in **real Chromium** via Vitest + Playwright browser mode (`vitest-browser-react`). Test files live in `packages/ui/tests/`.
+
+- **File naming**: `tests/{component-name}.test.tsx` (e.g., `button.test.tsx`, `tabs.test.tsx`)
+- **Setup file**: `tests/setup.ts` imports `globals.css` so Tailwind classes are available in tests
+- **Test helpers**: `tests/utils.tsx` provides context wrappers for compound components (e.g., `TabsWrapper`)
+- **Structure per component**:
+  ```ts
+  describe('component-name', () => {
+    // Rendering: default render, variant application, className/ref forwarding
+    // Interaction: click, keyboard (via userEvent from 'vitest/browser')
+    // State: controlled vs uncontrolled
+    // Edge cases: disabled, readOnly, empty props
+  })
+  ```
+- **Behavioral assertions over snapshots**: Use `getByRole`, `toHaveAttribute`, `toBeVisible` instead of inline snapshots for interactive components
+- **Disabled/hidden elements**: Playwright refuses to click disabled or invisible elements. Use native DOM `.element().click()` or `userEvent.keyboard()` for these cases
 
 ## React Compiler & Hooks Conventions
 

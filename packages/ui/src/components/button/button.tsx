@@ -34,6 +34,9 @@ const buttonVariants = cva(
       active: {
         true: ['shadow-sunken', 'bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'],
       },
+      primary: {
+        true: ['shadow-raised-primary'],
+      },
     },
   },
 )
@@ -42,11 +45,12 @@ export function Button({
   children,
   className,
   active,
+  primary,
   ...props
 }: React.ComponentProps<'button'>
   & VariantProps<typeof buttonVariants>): React.ReactElement {
   return (
-    <button className={cn(buttonVariants({ active, className }))} {...props}>
+    <button className={cn(buttonVariants({ active, primary, className }))} {...props}>
       {children}
     </button>
   )

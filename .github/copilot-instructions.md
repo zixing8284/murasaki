@@ -40,12 +40,12 @@ After modifying component code or styles under `packages/ui/`, follow these step
 ## Component Conventions (`packages/ui`)
 
 - One directory per component under `src/components/` (e.g., `button/button.tsx`).
-- **Compound components** use namespace files (`*-namespace.ts`):
-  - `Object.assign` when the root is callable: `export const Tabs = Object.assign(TabsRoot, { List, Tab, Panel })`
-  - Plain object when it's purely a namespace: `export const Window = { Provider, Portal, Frame, ... }`
+- **Compound components** — Two export styles are used:
+  - **Namespace (callable root)**: `Object.assign` with namespace files (`*-namespace.ts`): `export const Tabs = Object.assign(TabsRoot, { List, Tab, Panel })`
+  - **Flat exports (shadcn/ui style)**: Individual named exports (e.g., `WindowFrame`, `WindowTitleBar`, `TreeViewRoot`, `TreeViewItem`) — no namespace wrapper
 - **CVA** (`class-variance-authority`) for variant-based styling. Define variants via `cva()`, derive props with `VariantProps<typeof variants>`.
 - **`cn()`** (`src/lib/utils.ts`) wraps `clsx` + `tailwind-merge` and auto-injects an 11px base font. Use **`cnPure()`** to skip the font injection.
-- All public exports go through `src/index.ts` — export both the namespace and the individual sub-components/types.
+- All public exports go through `src/index.ts`.
 
 ## Styling
 

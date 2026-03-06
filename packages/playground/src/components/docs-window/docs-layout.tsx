@@ -1,5 +1,5 @@
 import type { NavNode } from './docs-nav'
-import { TreeView } from 'murasaki-react98'
+import { TreeViewItem, TreeViewRoot } from 'murasaki-react98'
 import { Suspense, useState } from 'react'
 import { DemoViewer } from './demo-viewer'
 import { docsNavTree } from './docs-nav'
@@ -25,14 +25,14 @@ export function DocsLayout(): React.ReactElement {
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
       <div className="w-45 shrink-0 overflow-y-auto overflow-x-hidden bg-white">
-        <TreeView className="border-none! shadow-none! bg-transparent! h-full">
-          <TreeView.Item
+        <TreeViewRoot className="border-none! shadow-none! bg-transparent! h-full">
+          <TreeViewItem
             label="Welcome"
             selected={selectedId === 'welcome'}
             onClick={() => setSelectedId('welcome')}
           />
           {docsNavTree.map(node => (
-            <TreeView.Item
+            <TreeViewItem
               key={node.id}
               label={node.label}
               defaultExpanded
@@ -41,16 +41,16 @@ export function DocsLayout(): React.ReactElement {
               onClick={() => setSelectedId(node.id)}
             >
               {node.children?.map(child => (
-                <TreeView.Item
+                <TreeViewItem
                   key={child.id}
                   label={child.label}
                   selected={selectedId === child.id}
                   onClick={() => setSelectedId(child.id)}
                 />
               ))}
-            </TreeView.Item>
+            </TreeViewItem>
           ))}
-        </TreeView>
+        </TreeViewRoot>
       </div>
 
       {/* Vertical divider */}

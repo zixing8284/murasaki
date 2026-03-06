@@ -1,5 +1,19 @@
 import type { ReactNode } from 'react'
-import { useDraggable, useResizable, Window } from 'murasaki-react98'
+import {
+  useDraggable,
+  useResizable,
+  WindowButtons,
+  WindowCloseButton,
+  WindowContent,
+  WindowFrame,
+  WindowMaximizeButton,
+  WindowMinimizeButton,
+  WindowPortal,
+  WindowProvider,
+  WindowResizeGrip,
+  WindowTitle,
+  WindowTitleBar,
+} from 'murasaki-react98'
 import { useCallback } from 'react'
 import { useProcess, useProcessActions, useProcesses } from '../contexts/process'
 
@@ -45,9 +59,9 @@ export function WindowApp({
   const { process: proc, isActive, zIndex } = win
 
   return (
-    <Window.Provider active={isActive} minimized={proc.minimized} positioning="absolute">
-      <Window.Portal container={portalContainer}>
-        <Window.Frame
+    <WindowProvider active={isActive} minimized={proc.minimized} positioning="absolute">
+      <WindowPortal container={portalContainer}>
+        <WindowFrame
           ref={setTargetRef}
           className={className}
           style={{ zIndex }}
@@ -56,21 +70,21 @@ export function WindowApp({
             actions.activate(windowId)
           }}
         >
-          <Window.TitleBar ref={setDragRef} className="cursor-move">
-            <Window.Title icon={titleIcon}>{proc.title}</Window.Title>
-            <Window.Buttons>
-              <Window.MinimizeButton onClick={() => actions.minimize(windowId)} />
-              <Window.MaximizeButton
+          <WindowTitleBar ref={setDragRef} className="cursor-move">
+            <WindowTitle icon={titleIcon}>{proc.title}</WindowTitle>
+            <WindowButtons>
+              <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />
+              <WindowMaximizeButton
                 onClick={() => actions.toggleMaximize(windowId)}
                 disabled={disableMaximize}
               />
-              <Window.CloseButton onClick={() => actions.close(windowId)} />
-            </Window.Buttons>
-          </Window.TitleBar>
-          <Window.Content>{children}</Window.Content>
-          {!disableResize && <Window.ResizeGrip ref={setResizeRef} />}
-        </Window.Frame>
-      </Window.Portal>
-    </Window.Provider>
+              <WindowCloseButton onClick={() => actions.close(windowId)} />
+            </WindowButtons>
+          </WindowTitleBar>
+          <WindowContent>{children}</WindowContent>
+          {!disableResize && <WindowResizeGrip ref={setResizeRef} />}
+        </WindowFrame>
+      </WindowPortal>
+    </WindowProvider>
   )
 }

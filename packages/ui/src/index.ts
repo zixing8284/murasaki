@@ -62,7 +62,6 @@ export type {
   TreeViewItemProps,
   TreeViewProps,
 } from './components/tree-view/tree-view'
-export { TreeView } from './components/tree-view/tree-view-namespace'
 
 // Window compound components
 export {
@@ -102,7 +101,6 @@ export type {
   WindowMeta,
   WindowState,
 } from './components/window/window-context'
-export { Window } from './components/window/window-namespace'
 
 // Hooks
 export { useDraggable } from './hooks/use-draggable'

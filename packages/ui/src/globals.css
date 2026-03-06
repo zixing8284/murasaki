@@ -172,6 +172,12 @@
     inset 2px 2px var(--color-btn-shadow);
   --shadow-sunken: var(--shadow-sunken-outer), var(--shadow-sunken-inner);
 
+  --shadow-raised-primary: inset -2px -2px var(--color-window-frame),
+    inset 1px 1px var(--color-window-frame),
+    inset 2px 2px var(--color-btn-hilight),
+    inset -3px -3px var(--color-btn-shadow),
+    inset 3px 3px var(--color-btn-light);
+
   --shadow-border-field: inset -1px -1px var(--color-btn-hilight),
     inset 1px 1px var(--color-btn-shadow),
     inset -2px -2px var(--color-btn-light),

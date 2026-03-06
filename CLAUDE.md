@@ -67,10 +67,9 @@ After modifying component code or styles under `packages/ui/`, follow these step
 
 Components live in `src/components/`, one directory per component. The key conventions:
 
-- **Compound components** are exposed via a namespace object. Two patterns are used:
-  - `Object.assign`: `export const Tabs = Object.assign(TabsRoot, { List: TabList, Tab, Panel: TabPanel })`
-  - Plain object: `export const Window = { Provider, Portal, Frame, TitleBar, ... }`
-  - Namespace files are named `*-namespace.ts`
+- **Compound components** — Two export styles are used:
+  - **Namespace (callable root)**: `export const Tabs = Object.assign(TabsRoot, { List: TabList, Tab, Panel: TabPanel })` — namespace files named `*-namespace.ts`
+  - **Flat exports (shadcn/ui style)**: Individual named exports (e.g., `WindowFrame`, `WindowTitleBar`, `TreeViewRoot`, `TreeViewItem`) — no namespace wrapper
 - **CVA (class-variance-authority)** is used for variant-based styling
 - **`cn()` utility** (`src/lib/utils.ts`) wraps `clsx` + `tailwind-merge` and automatically injects an 11px base font size. Use `cnPure()` when you don't want the base font injection
 - **`#/*`** is a path alias for `./src/*` (configured in both tsconfig and vite)

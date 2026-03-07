@@ -12,7 +12,7 @@ const directory: ProcessDirectory = {
   mycomputer: {
     appId: 'mycomputer',
     Component: lazy(() =>
-      import('../../components/my-computer-window').then(m => ({ default: m.MyComputerWindow })),
+      import('../../apps/my-computer').then(m => ({ default: m.MyComputer })),
     ),
     defaultTitle: 'My Computer',
     defaultIcon: '/img/desktop/MyComputer.png',
@@ -21,7 +21,7 @@ const directory: ProcessDirectory = {
   docs: {
     appId: 'docs',
     Component: lazy(() =>
-      import('../../components/docs-window/docs-window').then(m => ({ default: m.DocsWindow })),
+      import('../../apps/docs/docs-app').then(m => ({ default: m.DocsApp })),
     ),
     defaultTitle: 'Component Docs',
     defaultIcon: '/img/desktop/MyComputer.png',
@@ -30,7 +30,7 @@ const directory: ProcessDirectory = {
   notepad: {
     appId: 'notepad',
     Component: lazy(() =>
-      import('../../components/notepad-window').then(m => ({ default: m.NotepadWindow })),
+      import('../../apps/notepad').then(m => ({ default: m.Notepad })),
     ),
     defaultTitle: 'Untitled - Notepad',
     defaultIcon: '/img/desktop/Notepad.png',

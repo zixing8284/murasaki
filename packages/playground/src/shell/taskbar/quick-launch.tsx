@@ -1,44 +1,10 @@
-import { Button } from 'murasaki-react98'
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { useProcessActions, useProcesses, useProcessList } from '../contexts/process'
-
-// Network status store using useSyncExternalStore
-function subscribeToNetworkStatus(callback: () => void): () => void {
-  window.addEventListener('online', callback)
-  window.addEventListener('offline', callback)
-  return () => {
-    window.removeEventListener('online', callback)
-    window.removeEventListener('offline', callback)
-  }
-}
-
-function getNetworkSnapshot(): boolean {
-  return navigator.onLine
-}
-
-function getServerNetworkSnapshot(): boolean {
-  return true // Assume online during SSR
-}
-
-function useNetworkStatus(): boolean {
-  return useSyncExternalStore(
-    subscribeToNetworkStatus,
-    getNetworkSnapshot,
-    getServerNetworkSnapshot,
-  )
-}
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface QuickLaunchIcon {
   src: string
   alt: string
   title: string
   onClick?: () => void
-}
-
-interface TaskbarProps {
-  showStartMenu: boolean
-  onStartMenuToggle: () => void
-  time: string
 }
 
 // Quick Launch icons configuration
@@ -53,21 +19,7 @@ const QUICK_LAUNCH_ICONS: QuickLaunchIcon[] = [
 const ICON_STEP_WIDTH = 24
 const DEFAULT_VISIBLE_COUNT = 2
 
-// Network status icons for online state cycling
-const NETWORK_ONLINE_ICONS = [
-  '/img/conn_pcs_on_off.png',
-  '/img/conn_pcs_off_on.png',
-  '/img/conn_pcs_on_on.png',
-]
-const NETWORK_OFFLINE_ICON = '/img/conn_pcs_no_network.png'
-
-export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps): React.ReactElement {
-  const windows = useProcessList()
-  const { foregroundId } = useProcesses()
-  const { handleTaskbarClick } = useProcessActions()
-  const isOnline = useNetworkStatus()
-  const [networkIconIndex, setNetworkIconIndex] = useState(0)
-  const networkIconIndexRef = useRef(0)
+export function QuickLaunch(): React.ReactElement {
   const [quickLaunchWidth, setQuickLaunchWidth] = useState(() => {
     return ICON_STEP_WIDTH * DEFAULT_VISIBLE_COUNT
   })
@@ -140,27 +92,6 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
     }
   }, [isDragging, maxQuickLaunchWidth])
 
-  // Reset network icon index when going offline
-  useEffect(() => {
-    if (!isOnline) {
-      networkIconIndexRef.current = 0
-    }
-  }, [isOnline])
-
-  // Cycle through network icons when online
-  useEffect(() => {
-    if (!isOnline) {
-      return
-    }
-
-    const interval = setInterval(() => {
-      networkIconIndexRef.current = (networkIconIndexRef.current + 1) % NETWORK_ONLINE_ICONS.length
-      setNetworkIconIndex(networkIconIndexRef.current)
-    }, 3000)
-
-    return () => clearInterval(interval)
-  }, [isOnline])
-
   // Change cursor during drag
   useEffect(() => {
     if (isDragging) {
@@ -176,24 +107,8 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
   }, [isDragging])
 
   return (
-    <footer className="flex flex-row items-center bg-[silver] p-0.75 shadow-[inset_-1px_-1px_#000,inset_1px_1px_#d4d0c8,inset_-2px_-2px_#808080,inset_2px_2px_#fff] z-2 overflow-hidden mt-auto select-none">
-      {/* Start Button */}
-      <div>
-        <Button
-          active={showStartMenu}
-          onClick={onStartMenuToggle}
-        >
-          Hello
-        </Button>
-      </div>
-
-      {/* Divider (static) */}
-      <div className="flex items-center mx-0.5 gap-px">
-        <div className="h-5.5 w-px border-l border-l-[#808080] border-r border-r-white shadow-[1px_0_0_0_rgba(255,255,255,0.3)]" />
-        <div className="shadow-[inset_-1px_-1px_#0a0a0a,inset_1px_1px_#dfdfdf,inset_-2px_-2px_grey,inset_2px_2px_#fff] h-5 w-1" />
-      </div>
-
-      {/* Quick Launcher */}
+    <>
+      {/* Quick Launch Icons */}
       <div
         ref={quickLaunchRef}
         className="flex flex-row items-center overflow-hidden [&>img]:my-0 [&>img]:mx-0.5 [&>img]:cursor-pointer [&>img]:p-0.5 [&>img]:hover:shadow-[-1px_-1px_#dfdfdf,1px_1px_grey] [&>img]:active:shadow-[1px_1px_#dfdfdf,-1px_-1px_grey]"
@@ -274,42 +189,6 @@ export function Taskbar({ showStartMenu, onStartMenuToggle, time }: TaskbarProps
           )}
         </div>
       </div>
-
-      {/* Running Tasks */}
-      <div className="flex flex-1 overflow-hidden gap-0.5 px-0.5">
-        {windows.map(win => (
-          <Button
-            key={win.id}
-            active={foregroundId === win.id && !win.minimized}
-            onClick={() => handleTaskbarClick(win.id)}
-            className="max-w-40 min-w-10 w-full flex items-center gap-1 text-left px-1! truncate h-5.5! min-h-0!"
-          >
-            <img src={win.icon} alt="" className="w-4 h-4 shrink-0 pixelated" draggable={false} />
-            <span className={`truncate text-[11px] ${win.minimized ? 'opacity-70' : ''}`}>{win.title}</span>
-          </Button>
-        ))}
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center mx-0.5 gap-px">
-        <div className="h-5.5 w-px border-l border-l-[#808080] border-r border-r-white shadow-[1px_0_0_0_rgba(255,255,255,0.3)]" />
-      </div>
-
-      {/* System Tray, Notification Area */}
-      <div className="h-5.5 px-0.5 flex flex-row items-center border-l border-l-[#7b7b7b] border-t border-t-[#7b7b7b] border-r border-r-white border-b border-b-white mt-px pointer-events-none truncate">
-        <img
-          className="mx-px"
-          src={isOnline ? NETWORK_ONLINE_ICONS[networkIconIndex] : NETWORK_OFFLINE_ICON}
-          alt={isOnline ? 'Network connected' : 'Network disconnected'}
-          title={isOnline ? 'Connected' : 'Disconnected'}
-        />
-        <img
-          className="mx-px"
-          src="/img/computer.png"
-          alt="computer"
-        />
-        <span className="mx-1 antialiased">{time}</span>
-      </div>
-    </footer>
+    </>
   )
 }

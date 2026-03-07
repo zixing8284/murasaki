@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { processDirectory, useProcesses } from '../contexts/process'
+import { processDirectory, useProcesses } from '../../contexts/process'
 
 export function WindowRenderer(): React.ReactElement {
   const { processes } = useProcesses()

@@ -15,9 +15,9 @@ import {
   WindowTitleBar,
 } from 'murasaki-react98'
 import { useCallback } from 'react'
-import { useProcess, useProcessActions, useProcesses } from '../contexts/process'
+import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
 
-interface WindowAppProps {
+interface AppWindowProps {
   windowId: string
   children: ReactNode
   className?: string
@@ -26,14 +26,14 @@ interface WindowAppProps {
   disableResize?: boolean
 }
 
-export function WindowApp({
+export function AppWindow({
   windowId,
   children,
   className,
   titleIcon,
   disableMaximize = false,
   disableResize = false,
-}: WindowAppProps): React.ReactElement | null {
+}: AppWindowProps): React.ReactElement | null {
   const win = useProcess(windowId)
   const actions = useProcessActions()
   const { processes, container } = useProcesses()

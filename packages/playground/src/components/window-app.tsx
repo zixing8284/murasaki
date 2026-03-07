@@ -70,7 +70,11 @@ export function WindowApp({
             actions.activate(windowId)
           }}
         >
-          <WindowTitleBar ref={setDragRef} className="cursor-move">
+          <WindowTitleBar
+            ref={setDragRef}
+            className="cursor-move"
+            onDoubleClick={disableMaximize ? undefined : () => actions.toggleMaximize(windowId)}
+          >
             <WindowTitle icon={titleIcon}>{proc.title}</WindowTitle>
             <WindowButtons>
               <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />

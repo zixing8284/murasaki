@@ -35,9 +35,15 @@ export function WindowTitleBar({
   children,
   className,
   ref,
+  onDoubleClick,
   ...props
 }: WindowTitleBarProps): React.ReactElement {
-  const { state } = useWindowContext()
+  const { state, actions } = useWindowContext()
+
+  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    actions.toggleMaximized()
+    onDoubleClick?.(e)
+  }
 
   return (
     <div
@@ -46,6 +52,7 @@ export function WindowTitleBar({
         titleBarVariants({ active: state.active }),
         className,
       )}
+      onDoubleClick={handleDoubleClick}
       {...props}
     >
       {children}

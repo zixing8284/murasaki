@@ -56,6 +56,16 @@ export { Tabs } from './components/tabs/tabs-namespace'
 // TextBox
 export { TextBox } from './components/text-box/text-box'
 
+// Theme
+export { useTheme } from './components/theme-provider/theme-context'
+export type { ThemeContextValue } from './components/theme-provider/theme-context'
+
+// Theme
+export { themeIds } from './components/theme-provider/theme-context'
+export type { ThemeId } from './components/theme-provider/theme-context'
+
+export { ThemeProvider } from './components/theme-provider/theme-provider'
+export type { ThemeProviderProps } from './components/theme-provider/theme-provider'
 // TreeView
 export { TreeViewItem, TreeViewRoot } from './components/tree-view/tree-view'
 export type {
@@ -94,6 +104,7 @@ export type {
   WindowTitleBarProps,
   WindowTitleProps,
 } from './components/window/window'
+
 export { useWindowContext } from './components/window/window-context'
 export type {
   WindowActions,
@@ -101,9 +112,9 @@ export type {
   WindowMeta,
   WindowState,
 } from './components/window/window-context'
-
 // Hooks
 export { useDraggable } from './hooks/use-draggable'
 export type { UseDraggableOptions } from './hooks/use-draggable'
+
 export { useResizable } from './hooks/use-resizable'
 export type { UseResizableOptions } from './hooks/use-resizable'

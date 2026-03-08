@@ -40,6 +40,16 @@ const directory = {
     singleton: false,
     showOnDesktop: true,
   },
+  displayproperties: {
+    appId: 'displayproperties',
+    name: 'Display Properties',
+    Component: lazy(() =>
+      import('../../apps/display-properties').then(m => ({ default: m.DisplayProperties })),
+    ),
+    defaultTitle: 'Display Properties',
+    defaultIcon: '/img/desktop.png',
+    singleton: true,
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory

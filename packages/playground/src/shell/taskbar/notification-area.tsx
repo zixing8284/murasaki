@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useProcessActions } from '../../contexts/process'
 
 // Network status store using useSyncExternalStore
 function subscribeToNetworkStatus(callback: () => void): () => void {
@@ -42,6 +43,7 @@ export function NotificationArea({ time }: NotificationAreaProps): React.ReactEl
   const isOnline = useNetworkStatus()
   const [networkIconIndex, setNetworkIconIndex] = useState(0)
   const networkIconIndexRef = useRef(0)
+  const { open } = useProcessActions()
 
   // Reset network icon index when going offline
   useEffect(() => {
@@ -65,7 +67,7 @@ export function NotificationArea({ time }: NotificationAreaProps): React.ReactEl
   }, [isOnline])
 
   return (
-    <div className="h-5.5 px-0.5 flex flex-row items-center border-l border-l-[#7b7b7b] border-t border-t-[#7b7b7b] border-r border-r-white border-b border-b-white mt-px pointer-events-none truncate">
+    <div className="h-5.5 px-0.5 flex flex-row items-center border-l border-l-[#7b7b7b] border-t border-t-[#7b7b7b] border-r border-r-white border-b border-b-white mt-px truncate">
       <img
         className="mx-px"
         src={isOnline ? NETWORK_ONLINE_ICONS[networkIconIndex] : NETWORK_OFFLINE_ICON}
@@ -73,9 +75,14 @@ export function NotificationArea({ time }: NotificationAreaProps): React.ReactEl
         title={isOnline ? 'Connected' : 'Disconnected'}
       />
       <img
-        className="mx-px"
+        className="mx-px cursor-pointer"
         src="/img/computer.png"
-        alt="computer"
+        alt="Display Properties"
+        title="Display Properties"
+        onClick={(e) => {
+          e.stopPropagation()
+          open('displayproperties')
+        }}
       />
       <span className="mx-1 antialiased">{time}</span>
     </div>

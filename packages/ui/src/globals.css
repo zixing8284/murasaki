@@ -96,6 +96,57 @@
 }
 
 /* ==========================================================================
+   Theme Overrides — activate via data-theme attribute
+   e.g. <html data-theme="solarized-dark">
+   ========================================================================== */
+
+[data-theme="solarized-dark"] {
+  /* Button */
+  --button-alternate-face: rgb(0, 43, 54);
+  --button-dk-shadow: rgb(0, 43, 54);
+  --button-face: rgb(7, 54, 66);
+  --button-hilight: rgb(0, 43, 54);
+  --button-light: rgb(0, 43, 54);
+  --button-shadow: rgb(0, 43, 54);
+  --button-text: rgb(131, 148, 150);
+
+  /* Window */
+  --active-border: rgb(0, 43, 54);
+  --app-workspace: rgb(0, 43, 54);
+  --background: rgb(0, 43, 54);
+  --desktop-text: rgb(131, 148, 150);
+  --inactive-border: rgb(7, 54, 66);
+  --scrollbar: rgb(0, 43, 54);
+  --window: rgb(0, 43, 54);
+  --window-frame: rgb(0, 43, 54);
+  --window-text: rgb(131, 148, 150);
+
+  /* Title Bar */
+  --active-title: rgb(0, 43, 54);
+  --gradient-active-title: rgb(0, 43, 54);
+  --gradient-inactive-title: rgb(7, 54, 66);
+  --inactive-title: rgb(7, 54, 66);
+  --inactive-title-text: rgb(131, 148, 150);
+  --title-text: rgb(108, 113, 196);
+
+  /* Menu */
+  --menu: rgb(7, 54, 66);
+  --menu-bar: rgb(131, 148, 150);
+  --menu-hilight: rgb(211, 54, 130);
+  --menu-text: rgb(131, 148, 150);
+  --gray-text: rgb(88, 110, 117);
+
+  /* Highlight / Selection */
+  --hilight: rgb(211, 54, 130);
+  --hilight-text: rgb(238, 232, 213);
+  --hot-tracking-color: rgb(38, 139, 210);
+
+  /* Tooltip */
+  --info-text: rgb(181, 137, 0);
+  --info-window: rgb(253, 246, 227);
+}
+
+/* ==========================================================================
    Tailwind Theme Extension
    ========================================================================== */
 

@@ -75,7 +75,7 @@ export function AppWindow({
             className="cursor-move"
             onDoubleClick={disableMaximize ? undefined : () => actions.toggleMaximize(windowId)}
           >
-            <WindowTitle icon={titleIcon}>{proc.title}</WindowTitle>
+            <WindowTitle icon={titleIcon ?? <img src={proc.icon} alt="" className="w-4 h-4 pixelated" />}>{proc.title}</WindowTitle>
             <WindowButtons>
               <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />
               <WindowMaximizeButton

@@ -38,11 +38,9 @@
   /* Window */
   --active-border: rgb(212, 208, 200);
   --app-workspace: rgb(128, 128, 128);
-  --background: rgb(58, 110, 165);
   --desktop-text: rgb(255, 255, 255);
   --inactive-border: rgb(212, 208, 200);
   --scrollbar: rgb(212, 208, 200);
-  --window: rgb(255, 255, 255);
   --window-frame: rgb(0, 0, 0);
   --window-text: rgb(0, 0, 0);
 
@@ -93,6 +91,9 @@
   --checkmark-width: 7px;
   --checkmark-top: 3px;
   --checkmark-left: 3px;
+
+  /* Desktop */
+  --background: rgb(58, 110, 165);
 }
 
 /* ==========================================================================
@@ -113,11 +114,9 @@
   /* Window */
   --active-border: rgb(0, 43, 54);
   --app-workspace: rgb(0, 43, 54);
-  --background: rgb(0, 43, 54);
   --desktop-text: rgb(131, 148, 150);
   --inactive-border: rgb(7, 54, 66);
   --scrollbar: rgb(0, 43, 54);
-  --window: rgb(0, 43, 54);
   --window-frame: rgb(0, 43, 54);
   --window-text: rgb(131, 148, 150);
 
@@ -161,7 +160,7 @@
   --color-btn-alternate: var(--button-alternate-face);
 
   /* Window */
-  --color-window-bg: var(--window);
+  --color-window-bg: var(--button-face);
   --color-window-text: var(--window-text);
   --color-window-frame: var(--window-frame);
   --color-window-border-active: var(--active-border);

@@ -24,7 +24,7 @@ export function DocsLayout(): React.ReactElement {
   return (
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
-      <div className="w-45 shrink-0 overflow-y-auto overflow-x-hidden bg-white">
+      <div className="w-45 shrink-0 overflow-y-auto overflow-x-hidden bg-white shadow-sunken">
         <TreeViewRoot className="border-none! shadow-none! bg-transparent! h-full">
           <TreeViewItem
             label="Welcome"
@@ -52,9 +52,6 @@ export function DocsLayout(): React.ReactElement {
           ))}
         </TreeViewRoot>
       </div>
-
-      {/* Vertical divider */}
-      <div className="w-px bg-(--color-btn-shadow) shadow-[1px_0_0_var(--color-btn-hilight)]" />
 
       {/* Right panel - Content area */}
       <div className="flex-1 min-w-0 min-h-0 overflow-hidden">

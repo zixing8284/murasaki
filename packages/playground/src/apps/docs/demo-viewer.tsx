@@ -23,7 +23,7 @@ export function DemoViewer({ Demo, source }: DemoViewerProps): React.ReactElemen
       <div className="h-px shrink-0 bg-(--color-btn-shadow) shadow-[0_1px_0_var(--color-btn-hilight)]" />
 
       {/* Source code area */}
-      <div className="flex-1 min-h-0 shadow-border-field bg-white p-[2px] [&>.docs-code-block]:h-full">
+      <div className="flex-1 min-h-0 shadow-sunken bg-white p-[2px] [&>.docs-code-block]:h-full">
         <CodeBlock code={source} lang="tsx" />
       </div>
     </div>

@@ -140,13 +140,13 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
       className="w-[420px] top-[12%] left-[25%]"
       disableMaximize
       disableResize
-      titleIcon={(
-        <img
-          src="/img/desktop.png"
-          alt=""
-          className="w-4 h-4 pixelated mr-1"
-        />
-      )}
+      // titleIcon={(
+      //   <img
+      //     src="/img/desktop.png"
+      //     alt=""
+      //     className="w-4 h-4 pixelated mr-1"
+      //   />
+      // )}
     >
       <div className="flex flex-col gap-2">
         <Tabs defaultValue="theme" className="w-full">

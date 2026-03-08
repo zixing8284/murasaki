@@ -1,6 +1,8 @@
 import type { ProcessDirectoryEntry } from './types'
 import { lazy } from 'react'
 
+export const DEFAULT_ICON = '/img/desktop/ProgMan.png'
+
 /**
  * Process Directory — static registry of all available applications.
  *
@@ -47,7 +49,7 @@ const directory = {
       import('../../apps/display-properties').then(m => ({ default: m.DisplayProperties })),
     ),
     defaultTitle: 'Display Properties',
-    defaultIcon: '/img/desktop.png',
+    defaultIcon: '/img/computer.png',
     singleton: true,
   },
 } satisfies Record<string, ProcessDirectoryEntry>

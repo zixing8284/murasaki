@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { ProcessContextActions, Processes } from './types'
-import directory from './directory'
+import directory, { DEFAULT_ICON } from './directory'
 
 // ---------------------------------------------------------------------------
 // Consolidated state — avoids separate refs / cross-atom reads
@@ -191,7 +191,7 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
       const process: Processes[string] = {
         appId,
         title: overrides?.title ?? entry.defaultTitle,
-        icon: overrides?.icon ?? entry.defaultIcon,
+        icon: overrides?.icon ?? entry.defaultIcon ?? DEFAULT_ICON,
         minimized: false,
         maximized: false,
         componentWindow: null,

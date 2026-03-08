@@ -18,8 +18,8 @@ export interface ProcessDirectoryEntry {
   Component: ComponentType<ProcessComponentProps>
   /** Default window title */
   defaultTitle: string
-  /** Default icon path */
-  defaultIcon: string
+  /** Default icon path (falls back to DEFAULT_ICON when omitted) */
+  defaultIcon?: string
   /** When true only one instance may run at a time (default: true) */
   singleton?: boolean
   /** Show as a desktop icon */

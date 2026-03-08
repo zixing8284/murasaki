@@ -18,7 +18,7 @@ function findNode(nodes: NavNode[], id: string): NavNode | undefined {
 }
 
 export function DocsLayout(): React.ReactElement {
-  const [selectedId, setSelectedId] = useState<string>(docsNavTree[0]?.id ?? '')
+  const [selectedId, setSelectedId] = useState<string>('welcome')
   const selectedNode = findNode(docsNavTree, selectedId)
 
   return (

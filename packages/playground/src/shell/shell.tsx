@@ -31,8 +31,7 @@ export function Shell(): React.ReactElement {
   useEffect(() => {
     open('mycomputer')
     open('docs')
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [open])
 
   const handleDesktopClick = (): void => {
     deactivateAll()

@@ -1,13 +1,19 @@
+import type { AppId } from '../../contexts/process'
 import { useState } from 'react'
+import { processDirectory } from '../../contexts/process'
 import { useClickAway } from '../../hooks/use-click-away'
 import { DesktopIcon } from './desktop-icon'
 
-const DESKTOP_ICONS = [
-  { appId: 'notepad', label: 'Notepad', icon: '/img/desktop/Notepad.png' },
-]
+const desktopIcons = Object.entries(processDirectory)
+  .filter(([, entry]) => entry.showOnDesktop)
+  .map(([appId, entry]) => ({
+    appId: appId as AppId,
+    label: entry.name,
+    icon: entry.defaultIcon,
+  }))
 
 interface DesktopProps {
-  onOpen: (appId: string) => void
+  onOpen: (appId: AppId) => void
 }
 
 export function Desktop({ onOpen }: DesktopProps): React.ReactElement {
@@ -21,7 +27,7 @@ export function Desktop({ onOpen }: DesktopProps): React.ReactElement {
       ref={iconContainerRef}
       className="absolute top-2 left-2 flex flex-col gap-4"
     >
-      {DESKTOP_ICONS.map(iconConfig => (
+      {desktopIcons.map(iconConfig => (
         <DesktopIcon
           key={iconConfig.appId}
           {...iconConfig}

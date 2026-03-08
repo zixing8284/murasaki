@@ -1,4 +1,4 @@
-import type { ProcessDirectory } from './types'
+import type { ProcessDirectoryEntry } from './types'
 import { lazy } from 'react'
 
 /**
@@ -8,9 +8,10 @@ import { lazy } from 'react'
  * Each entry defines what an app *is* (component, default title/icon, etc.).
  * Running state is tracked separately in the ProcessProvider.
  */
-const directory: ProcessDirectory = {
+const directory = {
   mycomputer: {
     appId: 'mycomputer',
+    name: 'My Computer',
     Component: lazy(() =>
       import('../../apps/my-computer').then(m => ({ default: m.MyComputer })),
     ),
@@ -20,6 +21,7 @@ const directory: ProcessDirectory = {
   },
   docs: {
     appId: 'docs',
+    name: 'Component Docs',
     Component: lazy(() =>
       import('../../apps/docs/docs-app').then(m => ({ default: m.DocsApp })),
     ),
@@ -29,13 +31,17 @@ const directory: ProcessDirectory = {
   },
   notepad: {
     appId: 'notepad',
+    name: 'Notepad',
     Component: lazy(() =>
       import('../../apps/notepad').then(m => ({ default: m.Notepad })),
     ),
     defaultTitle: 'Untitled - Notepad',
     defaultIcon: '/img/desktop/Notepad.png',
     singleton: false,
+    showOnDesktop: true,
   },
-}
+} satisfies Record<string, ProcessDirectoryEntry>
 
-export default directory
+export type AppId = keyof typeof directory
+
+export default directory as Record<AppId, ProcessDirectoryEntry>

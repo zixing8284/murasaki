@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import type { AppId } from './directory'
 
 // ---------------------------------------------------------------------------
 // Process Directory — static definition of what an app *is*
@@ -11,6 +12,8 @@ export interface ProcessComponentProps {
 export interface ProcessDirectoryEntry {
   /** Unique identifier for this app type */
   appId: string
+  /** App display name (for desktop icons, start menu, etc.) */
+  name: string
   /** React component rendered inside the window */
   Component: ComponentType<ProcessComponentProps>
   /** Default window title */
@@ -19,6 +22,8 @@ export interface ProcessDirectoryEntry {
   defaultIcon: string
   /** When true only one instance may run at a time (default: true) */
   singleton?: boolean
+  /** Show as a desktop icon */
+  showOnDesktop?: boolean
 }
 
 /** Static registry keyed by appId */
@@ -30,7 +35,7 @@ export type ProcessDirectory = Record<string, ProcessDirectoryEntry>
 
 export interface Process {
   /** The appId this process was spawned from */
-  appId: string
+  appId: AppId
   /** Current window title (may differ from directory default) */
   title: string
   /** Current icon path */
@@ -63,7 +68,7 @@ export interface ProcessContextState {
 
 export interface ProcessContextActions {
   /** Open a process by appId. Overrides let you customise title/icon. */
-  open: (appId: string, overrides?: { title?: string, icon?: string }) => void
+  open: (appId: AppId, overrides?: { title?: string, icon?: string }) => void
   /** Close (terminate) a process */
   close: (id: string) => void
   /** Activate a process — bring to front & un-minimize */

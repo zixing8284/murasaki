@@ -1,10 +1,12 @@
+import type { AppId } from '../../contexts/process'
+
 interface DesktopIconProps {
-  appId: string
+  appId: AppId
   label: string
   icon: string
   selected: boolean
   onSelect: (appId: string) => void
-  onOpen: (appId: string) => void
+  onOpen: (appId: AppId) => void
 }
 
 export function DesktopIcon({ appId, label, icon, selected, onSelect, onOpen }: DesktopIconProps): React.ReactElement {

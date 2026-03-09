@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { ProcessContextActions, Processes } from './types'
 import directory from './directory'
+import ephemeralDirectory from './ephemeral-directory'
 
 // ---------------------------------------------------------------------------
 // Consolidated state — avoids separate refs / cross-atom reads
@@ -183,6 +184,7 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         minimized: false,
         maximized: false,
         componentWindow: null,
+        ephemeral: false,
       }
       return {
         ...prev,
@@ -235,6 +237,56 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     })
   }
 
+  // Dynamic escape hatch — caller provides Component + options at call site.
+  // Use for runtime-determined windows (e.g. plugin system, user-generated dialogs).
+  const openEphemeral: ProcessContextActions['openEphemeral'] = (Component, options) => {
+    const { id: baseId, title: ephTitle, icon, singleton: isSingleton = true } = options
+    const pid = isSingleton ? baseId : generatePid(baseId)
+
+    setState((prev) => {
+      // If singleton and already running, activate it
+      if (isSingleton && prev.processes[pid]) {
+        return {
+          ...prev,
+          processes: { ...prev.processes, [pid]: { ...prev.processes[pid], minimized: false } },
+          stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
+          foregroundId: pid,
+        }
+      }
+
+      const process: Processes[string] = {
+        appId: baseId,
+        title: ephTitle,
+        minimized: false,
+        maximized: false,
+        componentWindow: null,
+        ephemeral: true,
+        Component,
+        icon,
+      }
+      return {
+        ...prev,
+        processes: { ...prev.processes, [pid]: process },
+        stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
+        foregroundId: pid,
+      }
+    })
+  }
+
+  // Registry-based — resolves Component / title / icon from ephemeral-directory.ts.
+  // Preferred for known system dialogs; guarantees type-safe IDs with `eph:` prefix.
+  const openEphemeralApp: ProcessContextActions['openEphemeralApp'] = (ephemeralAppId) => {
+    const entry = ephemeralDirectory[ephemeralAppId]
+    if (!entry)
+      return
+    openEphemeral(entry.Component, {
+      id: ephemeralAppId,
+      title: entry.defaultTitle,
+      icon: entry.icon,
+      singleton: entry.singleton,
+    })
+  }
+
   return {
     open,
     close,
@@ -247,5 +299,7 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     setContainer,
     linkElement,
     title,
+    openEphemeral,
+    openEphemeralApp,
   }
 }

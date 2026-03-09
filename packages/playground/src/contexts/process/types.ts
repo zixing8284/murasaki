@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import type { AppId } from './directory'
+import type { EphemeralAppId } from './ephemeral-directory'
 
 // ---------------------------------------------------------------------------
 // Process Directory — static definition of what an app *is*
@@ -42,7 +43,7 @@ export type ProcessDirectory = Record<string, ProcessDirectoryEntry>
 
 export interface Process {
   /** The appId this process was spawned from */
-  appId: AppId
+  appId: AppId | (string & {})
   /** Current window title (may differ from directory default) */
   title: string
   /** Whether the window is minimized */
@@ -51,6 +52,12 @@ export interface Process {
   maximized: boolean
   /** Per-window portal container element override */
   componentWindow: HTMLElement | null
+  /** Ephemeral windows participate in z-index / focus but are hidden from taskbar */
+  ephemeral: boolean
+  /** Component for ephemeral windows (not looked up from directory) */
+  Component?: ComponentType<ProcessComponentProps>
+  /** Icon for ephemeral windows (not looked up from directory) */
+  icon?: AppIcon
 }
 
 /** Dictionary of running processes keyed by PID */
@@ -94,6 +101,21 @@ export interface ProcessContextActions {
   linkElement: (id: string, el: HTMLElement | null) => void
   /** Update a process's title */
   title: (id: string, newTitle: string) => void
+  /**
+   * Dynamic escape hatch — open an ephemeral window with an inline Component.
+   * Use when the component is determined at runtime and not pre-registered.
+   * Caller is responsible for providing id / title / icon.
+   */
+  openEphemeral: (
+    Component: ComponentType<ProcessComponentProps>,
+    options: { id: string, title: string, icon?: AppIcon, singleton?: boolean },
+  ) => void
+  /**
+   * Registry-based — open a pre-registered ephemeral window by its `eph:*` ID.
+   * Preferred for known system dialogs; Component / title / icon are resolved
+   * from `ephemeral-directory.ts` automatically.
+   */
+  openEphemeralApp: (ephemeralAppId: EphemeralAppId) => void
 }
 
 export type ProcessContextValue = ProcessContextState & ProcessContextActions

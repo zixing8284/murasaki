@@ -1,7 +1,5 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import {
-  useDraggable,
-  useResizable,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -14,56 +12,56 @@ import {
   WindowTitle,
   WindowTitleBar,
 } from 'murasaki-react98'
-import { useCallback } from 'react'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
 import { AppIcon } from '../app-icon'
 
-interface AppWindowProps {
+export interface BaseWindowProps {
   windowId: string
   children: ReactNode
   className?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
+  disableMinimize?: boolean
   disableResize?: boolean
+  /** Callback ref for the window frame element (used by RndWindow for drag/resize targeting) */
+  frameRef?: Ref<HTMLDivElement>
+  /** Callback ref for the title bar element (used by RndWindow as drag handle) */
+  dragRef?: Ref<HTMLDivElement>
+  /** Callback ref for the resize grip element (used by RndWindow for resize handle) */
+  resizeRef?: Ref<HTMLDivElement>
 }
 
-export function AppWindow({
+export function BaseWindow({
   windowId,
   children,
   className,
   titleIcon,
   disableMaximize = false,
+  disableMinimize = false,
   disableResize = false,
-}: AppWindowProps): React.ReactElement | null {
+  frameRef,
+  dragRef,
+  resizeRef,
+}: BaseWindowProps): React.ReactElement | null {
   const win = useProcess(windowId)
   const actions = useProcessActions()
   const { processes, container } = useProcesses()
   const portalContainer = processes[windowId]?.componentWindow ?? container
-  const { setTargetRef: setDragTargetRef, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>({
-    container: portalContainer,
-    draggable: true,
-  })
-  const { setTargetRef: setResizeTargetRef, setResizeRef } = useResizable<HTMLDivElement, HTMLDivElement>({
-    container: portalContainer,
-    resizable: !disableResize,
-  })
-
-  // Merge two target refs into a single callback ref
-  const setTargetRef = useCallback((el: HTMLDivElement | null) => {
-    setDragTargetRef(el)
-    setResizeTargetRef(el)
-  }, [setDragTargetRef, setResizeTargetRef])
 
   if (!win)
     return null
 
   const { process: proc, isActive, zIndex } = win
 
+  const defaultIcon = proc.icon
+    ? <img src={proc.icon.sm} alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
+    : <AppIcon appId={proc.appId} size="sm" />
+
   return (
     <WindowProvider active={isActive} minimized={proc.minimized} positioning="absolute">
       <WindowPortal container={portalContainer}>
         <WindowFrame
-          ref={setTargetRef}
+          ref={frameRef}
           className={className}
           style={{ zIndex }}
           onPointerDown={(e) => {
@@ -72,13 +70,12 @@ export function AppWindow({
           }}
         >
           <WindowTitleBar
-            ref={setDragRef}
-            className="cursor-move"
+            ref={dragRef}
             onDoubleClick={disableMaximize ? undefined : () => actions.toggleMaximize(windowId)}
           >
-            <WindowTitle icon={titleIcon ?? <AppIcon appId={proc.appId} size="sm" />}>{proc.title}</WindowTitle>
+            <WindowTitle icon={titleIcon ?? defaultIcon}>{proc.title}</WindowTitle>
             <WindowButtons>
-              <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />
+              {!disableMinimize && <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />}
               <WindowMaximizeButton
                 onClick={() => actions.toggleMaximize(windowId)}
                 disabled={disableMaximize}
@@ -87,7 +84,7 @@ export function AppWindow({
             </WindowButtons>
           </WindowTitleBar>
           <WindowContent>{children}</WindowContent>
-          {!disableResize && <WindowResizeGrip ref={setResizeRef} />}
+          {!disableResize && <WindowResizeGrip ref={resizeRef} />}
         </WindowFrame>
       </WindowPortal>
     </WindowProvider>

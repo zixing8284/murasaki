@@ -43,7 +43,7 @@ export function NotificationArea({ time }: NotificationAreaProps): React.ReactEl
   const isOnline = useNetworkStatus()
   const [networkIconIndex, setNetworkIconIndex] = useState(0)
   const networkIconIndexRef = useRef(0)
-  const { open } = useProcessActions()
+  const { openEphemeralApp } = useProcessActions()
 
   // Reset network icon index when going offline
   useEffect(() => {
@@ -81,7 +81,7 @@ export function NotificationArea({ time }: NotificationAreaProps): React.ReactEl
         title="Display Properties"
         onClick={(e) => {
           e.stopPropagation()
-          open('displayproperties')
+          openEphemeralApp('eph:displayproperties')
         }}
       />
       <span className="mx-1 antialiased">{time}</span>

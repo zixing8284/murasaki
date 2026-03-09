@@ -1,13 +1,13 @@
 import type { ProcessComponentProps } from '../contexts/process'
 import { OptionButton, OptionGroup } from 'murasaki-react98'
 import { useState } from 'react'
-import { AppWindow } from '../shell/window/app-window'
+import { RndWindow } from '../shell/window/rnd-window'
 
 export function MyComputer({ windowId }: ProcessComponentProps): React.ReactElement | null {
   const [selected, setSelected] = useState('option1')
 
   return (
-    <AppWindow windowId={windowId} className="w-[520px] top-[10%] left-[10%]">
+    <RndWindow windowId={windowId} className="w-[520px] top-[10%] left-[10%]">
       <div className="p-2">
         <p>Window content here...</p>
         <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>
@@ -18,6 +18,6 @@ export function MyComputer({ windowId }: ProcessComponentProps): React.ReactElem
           </div>
         </OptionGroup>
       </div>
-    </AppWindow>
+    </RndWindow>
   )
 }

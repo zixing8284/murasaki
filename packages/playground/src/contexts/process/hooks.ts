@@ -20,7 +20,6 @@ export function useProcesses(): ProcessContextValue {
 
 /**
  * Get a single process's state plus derived active/zIndex info.
- * Replaces the old `useWindow(id)` selector.
  */
 export function useProcess(id: string): {
   process: Process
@@ -41,7 +40,6 @@ export function useProcess(id: string): {
 /**
  * Get just the action functions — avoids re-renders when only
  * calling actions without reading state.
- * Replaces the old `useWindowActions()`.
  */
 export function useProcessActions(): ProcessContextActions {
   const {
@@ -56,6 +54,8 @@ export function useProcessActions(): ProcessContextActions {
     setContainer,
     linkElement,
     title,
+    openEphemeral,
+    openEphemeralApp,
   } = useProcesses()
 
   return useMemo(() => ({
@@ -70,6 +70,8 @@ export function useProcessActions(): ProcessContextActions {
     setContainer,
     linkElement,
     title,
+    openEphemeral,
+    openEphemeralApp,
   }), [
     open,
     close,
@@ -82,17 +84,20 @@ export function useProcessActions(): ProcessContextActions {
     setContainer,
     linkElement,
     title,
+    openEphemeral,
+    openEphemeralApp,
   ])
 }
 
 /**
  * Get a flat list of running processes (with PID attached).
- * Replaces the old `useWindowList()`.
  */
 export function useProcessList(): (Process & { id: string })[] {
   const { processes } = useProcesses()
   return useMemo(
-    () => Object.entries(processes).map(([id, proc]) => ({ ...proc, id })),
+    () => Object.entries(processes)
+      .filter(([, proc]) => !proc.ephemeral)
+      .map(([id, proc]) => ({ ...proc, id })),
     [processes],
   )
 }

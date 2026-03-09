@@ -1,5 +1,5 @@
 import type { ThemeId } from 'murasaki-react98'
-import type { ProcessComponentProps } from '../contexts/process'
+import type { ProcessComponentProps } from '../../contexts/process'
 import {
   Button,
   DropdownNative,
@@ -8,8 +8,8 @@ import {
   useTheme,
 } from 'murasaki-react98'
 import { useState } from 'react'
-import { useProcessActions } from '../contexts/process'
-import { AppWindow } from '../shell/window/app-window'
+import { useProcessActions } from '../../contexts/process'
+import { RndWindow } from '../window/rnd-window'
 
 const themeLabels: Record<ThemeId, string> = {
   'windows-98': 'Windows 98',
@@ -135,18 +135,19 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   }
 
   return (
-    <AppWindow
+    <RndWindow
       windowId={windowId}
       className="w-[420px] top-[12%] left-[25%]"
       disableMaximize
+      disableMinimize
       disableResize
-      // titleIcon={(
-      //   <img
-      //     src="/img/desktop.png"
-      //     alt=""
-      //     className="w-4 h-4 pixelated mr-1"
-      //   />
-      // )}
+      titleIcon={(
+        <img
+          src="/img/computer.png"
+          alt=""
+          className="w-4 h-4 pixelated mr-1"
+        />
+      )}
     >
       <div className="flex flex-col gap-2">
         <Tabs defaultValue="theme" className="w-full">
@@ -203,6 +204,6 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
           <Button onClick={handleApply} className="min-w-[75px]">Apply</Button>
         </div>
       </div>
-    </AppWindow>
+    </RndWindow>
   )
 }

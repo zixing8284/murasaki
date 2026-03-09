@@ -7,13 +7,13 @@ const sizeClass = {
 } as const
 
 interface AppIconProps {
-  appId: AppId
+  appId: AppId | (string & {})
   size: 'sm' | 'lg'
   className?: string
 }
 
 export function AppIcon({ appId, size, className }: AppIconProps): React.ReactElement {
-  const entry = processDirectory[appId]
+  const entry = processDirectory[appId as AppId]
   const icon = entry?.icon ?? DEFAULT_ICON
   const src = icon[size]
 

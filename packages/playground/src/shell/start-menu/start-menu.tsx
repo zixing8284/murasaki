@@ -22,17 +22,21 @@ export function StartMenu({ onClose }: StartMenuProps): React.ReactElement {
           </div>
           {/* Menu Items */}
           <div className="flex-1 flex flex-col-reverse items-stretch">
-            <div className="flex flex-row items-center p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+            <div className="flex flex-row items-center gap-2 p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+              <img src="/img/startmenu/Programs.png" alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
               <span className="flex-1">Programs</span>
             </div>
-            <div className="flex flex-row items-center p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+            <div className="flex flex-row items-center gap-2 p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+              <img src="/img/startmenu/Documents.png" alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
               <span className="flex-1">Documents</span>
             </div>
-            <div className="flex flex-row items-center p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+            <div className="flex flex-row items-center gap-2 p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+              <img src="/img/startmenu/Settings.png" alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
               <span className="flex-1">Settings</span>
             </div>
             <div className="border-b border-white border-t border-t-gray-500 m-0.5" />
-            <div className="flex flex-row items-center p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+            <div className="flex flex-row items-center gap-2 p-[4px_6px] m-[1px_0] cursor-pointer hover:bg-[navy] hover:text-white">
+              <img src="/img/startmenu/ShutDown.png" alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
               <span className="flex-1">Shut Down...</span>
             </div>
           </div>

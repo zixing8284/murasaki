@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { ProcessContextActions, Processes } from './types'
-import directory, { DEFAULT_ICON } from './directory'
+import directory from './directory'
 
 // ---------------------------------------------------------------------------
 // Consolidated state — avoids separate refs / cross-atom reads
@@ -129,17 +129,6 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     })
   }
 
-  const icon: ProcessContextActions['icon'] = (id, newIcon) => {
-    setState((prev) => {
-      if (!prev.processes[id])
-        return prev
-      return {
-        ...prev,
-        processes: { ...prev.processes, [id]: { ...prev.processes[id], icon: newIcon } },
-      }
-    })
-  }
-
   const linkElement: ProcessContextActions['linkElement'] = (id, el) => {
     setState((prev) => {
       if (!prev.processes[id])
@@ -191,7 +180,6 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
       const process: Processes[string] = {
         appId,
         title: overrides?.title ?? entry.defaultTitle,
-        icon: overrides?.icon ?? entry.defaultIcon ?? DEFAULT_ICON,
         minimized: false,
         maximized: false,
         componentWindow: null,
@@ -259,6 +247,5 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     setContainer,
     linkElement,
     title,
-    icon,
   }
 }

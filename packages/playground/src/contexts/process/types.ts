@@ -9,6 +9,13 @@ export interface ProcessComponentProps {
   windowId: string
 }
 
+export interface AppIcon {
+  /** Small icon path (16×16, used in taskbar / title bar) */
+  sm: string
+  /** Large icon path (32×32, used on desktop) */
+  lg: string
+}
+
 export interface ProcessDirectoryEntry {
   /** Unique identifier for this app type */
   appId: string
@@ -18,8 +25,8 @@ export interface ProcessDirectoryEntry {
   Component: ComponentType<ProcessComponentProps>
   /** Default window title */
   defaultTitle: string
-  /** Default icon path (falls back to DEFAULT_ICON when omitted) */
-  defaultIcon?: string
+  /** Icon paths for small (16px) and large (32px) sizes */
+  icon: AppIcon
   /** When true only one instance may run at a time (default: true) */
   singleton?: boolean
   /** Show as a desktop icon */
@@ -38,8 +45,6 @@ export interface Process {
   appId: AppId
   /** Current window title (may differ from directory default) */
   title: string
-  /** Current icon path */
-  icon: string
   /** Whether the window is minimized */
   minimized: boolean
   /** Whether the window is maximized */
@@ -67,8 +72,8 @@ export interface ProcessContextState {
 }
 
 export interface ProcessContextActions {
-  /** Open a process by appId. Overrides let you customise title/icon. */
-  open: (appId: AppId, overrides?: { title?: string, icon?: string }) => void
+  /** Open a process by appId. Overrides let you customise the title. */
+  open: (appId: AppId, overrides?: { title?: string }) => void
   /** Close (terminate) a process */
   close: (id: string) => void
   /** Activate a process — bring to front & un-minimize */
@@ -89,8 +94,6 @@ export interface ProcessContextActions {
   linkElement: (id: string, el: HTMLElement | null) => void
   /** Update a process's title */
   title: (id: string, newTitle: string) => void
-  /** Update a process's icon */
-  icon: (id: string, newIcon: string) => void
 }
 
 export type ProcessContextValue = ProcessContextState & ProcessContextActions

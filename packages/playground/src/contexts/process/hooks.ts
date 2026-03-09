@@ -56,7 +56,6 @@ export function useProcessActions(): ProcessContextActions {
     setContainer,
     linkElement,
     title,
-    icon,
   } = useProcesses()
 
   return useMemo(() => ({
@@ -71,7 +70,6 @@ export function useProcessActions(): ProcessContextActions {
     setContainer,
     linkElement,
     title,
-    icon,
   }), [
     open,
     close,
@@ -84,7 +82,6 @@ export function useProcessActions(): ProcessContextActions {
     setContainer,
     linkElement,
     title,
-    icon,
   ])
 }
 

@@ -1,7 +1,6 @@
 import type { AppId } from '../../contexts/process'
 import { useState } from 'react'
 import { processDirectory } from '../../contexts/process'
-import { DEFAULT_ICON } from '../../contexts/process/directory'
 import { useClickAway } from '../../hooks/use-click-away'
 import { DesktopIcon } from './desktop-icon'
 
@@ -10,7 +9,6 @@ const desktopIcons = Object.entries(processDirectory)
   .map(([appId, entry]) => ({
     appId: appId as AppId,
     label: entry.name,
-    icon: entry.defaultIcon ?? DEFAULT_ICON,
   }))
 
 interface DesktopProps {

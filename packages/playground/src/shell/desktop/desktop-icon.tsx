@@ -1,15 +1,15 @@
 import type { AppId } from '../../contexts/process'
+import { AppIcon } from '../app-icon'
 
 interface DesktopIconProps {
   appId: AppId
   label: string
-  icon: string
   selected: boolean
   onSelect: (appId: string) => void
   onOpen: (appId: AppId) => void
 }
 
-export function DesktopIcon({ appId, label, icon, selected, onSelect, onOpen }: DesktopIconProps): React.ReactElement {
+export function DesktopIcon({ appId, label, selected, onSelect, onOpen }: DesktopIconProps): React.ReactElement {
   return (
     <div
       className="flex flex-col items-center gap-0.5 w-16 cursor-pointer select-none"
@@ -22,11 +22,10 @@ export function DesktopIcon({ appId, label, icon, selected, onSelect, onOpen }: 
         onOpen(appId)
       }}
     >
-      <img
-        src={icon}
-        alt={label}
-        className={`w-8 h-8 pixelated ${selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}`}
-        draggable={false}
+      <AppIcon
+        appId={appId}
+        size="lg"
+        className={selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}
       />
 
       <span

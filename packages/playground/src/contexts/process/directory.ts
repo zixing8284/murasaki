@@ -1,7 +1,10 @@
-import type { ProcessDirectoryEntry } from './types'
+import type { AppIcon, ProcessDirectoryEntry } from './types'
 import { lazy } from 'react'
 
-export const DEFAULT_ICON = '/img/desktop/ProgMan.png'
+export const DEFAULT_ICON: AppIcon = {
+  sm: '/img/desktop/ProgMan.png',
+  lg: '/img/desktop/ProgMan.png',
+}
 
 /**
  * Process Directory — static registry of all available applications.
@@ -18,7 +21,7 @@ const directory = {
       import('../../apps/my-computer').then(m => ({ default: m.MyComputer })),
     ),
     defaultTitle: 'My Computer',
-    defaultIcon: '/img/desktop/MyComputer.png',
+    icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
   },
   docs: {
@@ -28,7 +31,7 @@ const directory = {
       import('../../apps/docs/docs-app').then(m => ({ default: m.DocsApp })),
     ),
     defaultTitle: 'Component Docs',
-    defaultIcon: '/img/desktop/MyComputer.png',
+    icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
   },
   notepad: {
@@ -38,7 +41,7 @@ const directory = {
       import('../../apps/notepad').then(m => ({ default: m.Notepad })),
     ),
     defaultTitle: 'Untitled - Notepad',
-    defaultIcon: '/img/desktop/Notepad.png',
+    icon: { sm: '/img/desktop/Notepad.png', lg: '/img/desktop/Notepad.png' },
     singleton: false,
     showOnDesktop: true,
   },
@@ -49,7 +52,7 @@ const directory = {
       import('../../apps/display-properties').then(m => ({ default: m.DisplayProperties })),
     ),
     defaultTitle: 'Display Properties',
-    defaultIcon: '/img/computer.png',
+    icon: { sm: '/img/computer.png', lg: '/img/computer.png' },
     singleton: true,
   },
 } satisfies Record<string, ProcessDirectoryEntry>

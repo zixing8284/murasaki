@@ -16,6 +16,7 @@ import {
 } from 'murasaki-react98'
 import { useCallback } from 'react'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
+import { AppIcon } from '../app-icon'
 
 interface AppWindowProps {
   windowId: string
@@ -75,7 +76,7 @@ export function AppWindow({
             className="cursor-move"
             onDoubleClick={disableMaximize ? undefined : () => actions.toggleMaximize(windowId)}
           >
-            <WindowTitle icon={titleIcon ?? <img src={proc.icon} alt="" className="w-4 h-4 pixelated" />}>{proc.title}</WindowTitle>
+            <WindowTitle icon={titleIcon ?? <AppIcon appId={proc.appId} size="sm" />}>{proc.title}</WindowTitle>
             <WindowButtons>
               <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />
               <WindowMaximizeButton

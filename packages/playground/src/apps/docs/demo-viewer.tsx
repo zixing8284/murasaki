@@ -11,7 +11,7 @@ export function DemoViewer({ Demo, source }: DemoViewerProps): React.ReactElemen
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Demo preview area */}
-      <div className="basis-[55%] shrink-0 overflow-hidden bg-[#c0c0c0]">
+      <div className="basis-[55%] shrink-0 overflow-hidden">
         <div className="p-3">
           <Suspense fallback={<div className="p-2 text-[11px]">Loading demo...</div>}>
             <Demo />

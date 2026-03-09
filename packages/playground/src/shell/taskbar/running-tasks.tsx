@@ -1,5 +1,6 @@
 import { Button } from 'murasaki-react98'
 import { useProcessActions, useProcesses, useProcessList } from '../../contexts/process'
+import { AppIcon } from '../app-icon'
 
 export function RunningTasks(): React.ReactElement {
   const windows = useProcessList()
@@ -15,7 +16,7 @@ export function RunningTasks(): React.ReactElement {
           onClick={() => handleTaskbarClick(win.id)}
           className="max-w-40 min-w-10 w-full flex items-center gap-1 text-left px-1! truncate h-5.5! min-h-0!"
         >
-          <img src={win.icon} alt="" className="w-4 h-4 shrink-0 pixelated" draggable={false} />
+          <AppIcon appId={win.appId} size="sm" />
           <span className={`truncate text-[11px] ${win.minimized ? 'opacity-70' : ''}`}>{win.title}</span>
         </Button>
       ))}

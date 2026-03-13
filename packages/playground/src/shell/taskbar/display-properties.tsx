@@ -150,7 +150,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
       )}
     >
       <div className="flex flex-col gap-2">
-        <Tabs defaultValue="theme" className="w-full">
+        <Tabs defaultValue="theme" className="w-full" keepMounted>
           <Tabs.List>
             <Tabs.Tab value="theme">Theme</Tabs.Tab>
             <Tabs.Tab value="wallpaper">Wallpaper</Tabs.Tab>

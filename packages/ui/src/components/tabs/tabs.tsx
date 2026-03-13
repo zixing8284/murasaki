@@ -1,4 +1,4 @@
-import { cn } from '#/lib/utils'
+import { cn, cnPure } from '#/lib/utils'
 
 import { cva } from 'class-variance-authority'
 
@@ -15,6 +15,8 @@ interface TabsContextValue {
   setSelectedValue: (value: string) => void
   /** Base ID for generating unique IDs for tabs and panels */
   baseId: string
+  /** Whether non-selected panels stay mounted in the DOM */
+  keepMounted: boolean
 }
 
 const TabsContext = createContext<TabsContextValue | undefined>(undefined)
@@ -117,6 +119,8 @@ interface TabsRootProps extends React.ComponentProps<'div'> {
   value?: string
   /** Callback when the selected tab changes */
   onValueChange?: (value: string) => void
+  /** Keep all panels mounted in the DOM to preserve a stable height */
+  keepMounted?: boolean
 }
 
 function TabsRoot({
@@ -125,6 +129,7 @@ function TabsRoot({
   defaultValue = '',
   value,
   onValueChange,
+  keepMounted = false,
   ...props
 }: TabsRootProps): React.ReactElement {
   const [internalValue, setInternalValue] = useState(defaultValue)
@@ -141,8 +146,14 @@ function TabsRoot({
   }
 
   return (
-    <TabsContext value={{ selectedValue, setSelectedValue, baseId }}>
-      <div className={cn(tabsRootVariants(), className)} {...props}>
+    <TabsContext value={{ selectedValue, setSelectedValue, baseId, keepMounted }}>
+      <div
+        className={cnPure(
+          keepMounted ? 'grid grid-rows-[auto_1fr]' : tabsRootVariants(),
+          className,
+        )}
+        {...props}
+      >
         {children}
       </div>
     </TabsContext>
@@ -218,13 +229,13 @@ interface TabPanelProps extends Omit<React.ComponentProps<'div'>, 'role'> {
 }
 
 function TabPanel({ children, className, value, ...props }: TabPanelProps): React.ReactElement | null {
-  const { selectedValue, baseId } = useTabsContext()
+  const { selectedValue, baseId, keepMounted } = useTabsContext()
   const isSelected = selectedValue === value
 
   const tabId = `${baseId}-tab-${value}`
   const panelId = `${baseId}-panel-${value}`
 
-  if (!isSelected) {
+  if (!isSelected && !keepMounted) {
     return null
   }
 
@@ -233,7 +244,13 @@ function TabPanel({ children, className, value, ...props }: TabPanelProps): Reac
       role="tabpanel"
       id={panelId}
       aria-labelledby={tabId}
-      className={cn(tabPanelVariants(), className)}
+      className={cn(
+        tabPanelVariants(),
+        keepMounted && 'col-start-1 row-start-2',
+        !isSelected && keepMounted && 'invisible',
+        className,
+      )}
+      {...((!isSelected && keepMounted) ? { inert: true } : {})}
       {...props}
     >
       {children}

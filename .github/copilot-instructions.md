@@ -58,9 +58,16 @@ After modifying component code or styles under `packages/ui/`, follow these step
 
 ## Styling
 
-- **Tailwind CSS v4** with Windows 98 design tokens (colors like `btn-face`, `btn-text`, `btn-shadow`, `btn-hilight`; shadows like `shadow-raised`, `shadow-sunken`) defined in `src/globals.css`.
+- **Tailwind CSS v4** with Windows 98 design tokens (colors like `btn-face`, `btn-text`, `btn-shadow`, `btn-hilight`; shadows like `shadow-raised`, `shadow-sunken`). The CSS is split into three source files:
+  - **`src/theme-variables.css`** — CSS custom properties (`:root` and `[data-theme]` overrides). Consumer template — consumers copy and customize. Exported as `murasaki-react98/theme-variables.css`.
+  - **`src/theme-config.css`** — `@theme inline`, `@utility`, `@layer base`, scrollbar styles. Library-owned — consumers import, never copy. Exported as `murasaki-react98/theme-config.css`.
+  - **`src/globals.css`** — Aggregator importing both. Exported as `murasaki-react98/theme.css` (source) and compiled to `dist/globals.css` (non-Tailwind consumers).
+- **Consumer usage patterns:**
+  - **Quick-start**: `@import "murasaki-react98/theme.css"` — imports everything.
+  - **shadcn/ui pattern** (recommended): `@import "murasaki-react98/theme-config.css"` + define `:root { ... }` with variables copied from `theme-variables.css`.
+- **Key theme tokens:** `bg-btn-face`, `bg-window` (content area), `bg-window-bg` (chrome/ButtonFace), `bg-selection`, `shadow-raised`, `shadow-sunken`, etc.
 - **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
-- **Theme-first colors**: Use CSS variable-backed Tailwind tokens (e.g., `bg-selection`, `text-desktop-text`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables in `src/globals.css` so styles adapt automatically when switching themes.
+- **Theme-first colors**: Use CSS variable-backed Tailwind tokens (e.g., `bg-selection`, `text-desktop-text`, `bg-window`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables so styles adapt automatically when switching themes. Use `bg-window` for content area backgrounds (white in Win98) and `bg-window-bg` for window chrome (silver/ButtonFace).
 - Custom utilities: `sunken-panel`, `bgi-icon-*`, `pixelated`.
 - Build outputs a single `dist/globals.css`; all assets (fonts, icons) are inlined as base64.
 

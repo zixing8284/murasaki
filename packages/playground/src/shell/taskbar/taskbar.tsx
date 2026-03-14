@@ -11,7 +11,7 @@ interface TaskbarProps {
 
 export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
   return (
-    <footer className="flex flex-row items-center bg-[silver] p-0.75 shadow-[inset_-1px_-1px_#000,inset_1px_1px_#d4d0c8,inset_-2px_-2px_#808080,inset_2px_2px_#fff] z-2 overflow-hidden mt-auto select-none">
+    <footer className="flex flex-row items-center bg-btn-face p-0.75 shadow-raised z-2 overflow-hidden mt-auto select-none">
       {/* Start Button */}
       <div>
         <Button
@@ -33,7 +33,7 @@ export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): Rea
 
       {/* Divider */}
       <div className="flex items-center mx-0.5 gap-px">
-        <div className="h-5.5 w-px border-l border-l-[#808080] border-r border-r-white shadow-[1px_0_0_0_rgba(255,255,255,0.3)]" />
+        <div className="h-5.5 w-px border-l border-l-btn-shadow border-r border-r-btn-hilight" />
       </div>
 
       {/* Notification Area (System Tray) */}

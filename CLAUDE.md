@@ -83,11 +83,24 @@ Components live in `src/components/`, one directory per component. The key conve
 - **`cn()` utility** (`src/lib/utils.ts`) wraps `clsx` + `tailwind-merge` and automatically injects an 11px base font size. Use `cnPure()` when you don't want the base font injection
 - **`#/*`** is a path alias for `./src/*` (configured in both tsconfig and vite)
 
-Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tokens defined in `src/globals.css`. Custom utilities include `sunken-panel`, `bgi-icon-*`, and `pixelated`.
+Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tokens. The CSS is split into three source files under `src/`:
+
+- **`theme-variables.css`** — CSS custom properties (`:root` and `[data-theme]` overrides). This is the **consumer template** — consumers copy these variables into their own CSS and customize values. Exported as `murasaki-react98/theme-variables.css`.
+- **`theme-config.css`** — `@theme inline` (Tailwind token mappings), `@utility` definitions, `@layer base` (fonts, box-sizing), and scrollbar styles. This is **library-owned** — consumers import it, never copy. Exported as `murasaki-react98/theme-config.css`.
+- **`globals.css`** — Aggregator that imports both files above. Exported as `murasaki-react98/theme.css` (source, for Tailwind consumers) and compiled to `dist/globals.css` (for non-Tailwind consumers).
+
+**Consumer usage patterns:**
+
+- **Quick-start**: `@import "murasaki-react98/theme.css"` — imports everything.
+- **shadcn/ui pattern** (recommended): `@import "murasaki-react98/theme-config.css"` + define `:root { ... }` with variables copied from `theme-variables.css`. This gives the consumer full ownership over theme values.
+
+**Key theme tokens:** `bg-btn-face`, `bg-window` (content area, white), `bg-window-bg` (chrome, silver/ButtonFace), `bg-selection`, `shadow-raised`, `shadow-sunken`, etc.
+
+Custom utilities include `sunken-panel`, `bgi-icon-*`, and `pixelated`.
 
 **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
 
-**Theme-first colors**: Use CSS variable-backed Tailwind tokens (e.g., `bg-selection`, `text-desktop-text`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables in `src/globals.css` so styles adapt automatically when switching themes.
+**Theme-first colors**: Use CSS variable-backed Tailwind tokens (e.g., `bg-selection`, `text-desktop-text`, `bg-window`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables so styles adapt automatically when switching themes. Use `bg-window` for content area backgrounds (white in Win98) and `bg-window-bg` for window chrome (silver/ButtonFace).
 
 The **`useDraggable`** hook (`src/hooks/use-draggable.ts`) handles CSS-transform-based drag with viewport/container boundary clamping.
 

@@ -1,32 +1,29 @@
 /*
- * @source scans the library's dist JS files to detect Tailwind class names,
- * but it does NOT import any CSS definitions (@theme, @utility, @layer base, etc.).
+ * murasaki-react98 — Theme Variables (Consumer Template)
  *
- * The compiled globals.css loses all Tailwind directives (@theme inline → plain
- * :root variables, @utility → removed entirely). So the consumer's Tailwind
- * cannot generate utilities for custom theme tokens (bg-btn-face, shadow-raised)
- * or custom utilities (sunken-panel, pixelated, bgi-icon-*).
+ * This file contains all CSS custom properties that define the Win98 visual
+ * theme. Consumers following the shadcn/ui pattern should COPY these
+ * variables into their own CSS and customize values as needed.
  *
- * Solution: Import the library's theme-config.css which preserves @theme inline,
- * @utility, @custom-variant, @layer base, and scrollbar styles. Theme variables
- * are defined locally below (shadcn/ui pattern) for full theme ownership.
+ * Usage (shadcn/ui pattern — recommended):
+ *
+ *   // In your project's globals.css or app.css:
+ *   @import "murasaki-react98/theme-config.css";  // library core (do NOT copy)
+ *
+ *   :root {
+ *     // paste variables from this file, customize as needed
+ *     --button-face: rgb(212, 208, 200);
+ *     --window: rgb(255, 255, 255);
+ *     ...
+ *   }
+ *
+ * Usage (quick-start — import as-is):
+ *
+ *   @import "murasaki-react98/theme.css";   // imports everything including these variables
  */
 
-/* Scan the murasaki-react98 component library to detect Tailwind class names */
-/* Attention: @source must use relative path because node_modules is ignored by Tailwind by default */
-@source "../node_modules/murasaki-react98/dist";
-
-@import "tailwindcss";
-@import "tw-animate-css";
-
-/* Import library core: @theme inline, @utility definitions, @layer base
-   (fonts, box-sizing), and scrollbar styles. Does NOT include CSS variables. */
-@import "murasaki-react98/theme-config.css";
-
-
 /* ==========================================================================
-   Theme Variables (copied from murasaki-react98/theme-variables.css)
-   Customize values here for playground-specific theming.
+   CSS Variables — Windows 98 Color Palette
    ========================================================================== */
 
 :root {
@@ -97,24 +94,13 @@
   --checkmark-top: 3px;
   --checkmark-left: 3px;
 
-  /* Desktop — playground uses classic teal instead of library default blue */
-  --background: rgb(0, 128, 128);
-
-  /* Scanline CRT effect (decorative, not themed) */
-  --scan-line-dot: linear-gradient(rgba(18, 16, 16, 0) 50%,
-    rgba(0, 0, 0, 0.25) 50%),
-  linear-gradient(90deg,
-    rgba(255, 0, 0, 0.06),
-    rgba(0, 255, 0, 0.02),
-    rgba(0, 0, 255, 0.06));
-  --scan-line-solid: radial-gradient(at center center, transparent 0px,
-    transparent 60%, rgba(0, 0, 0, 0.15) 100%),
-  repeating-linear-gradient(0deg, transparent, transparent 1px,
-    rgba(0, 0, 0, 0.35) 3px);
+  /* Desktop */
+  --background: rgb(58, 110, 165);
 }
 
 /* ==========================================================================
-   Theme Overrides — Solarized Dark
+   Theme Overrides — activate via data-theme attribute
+   e.g. <html data-theme="solarized-dark">
    ========================================================================== */
 
 [data-theme="solarized-dark"] {
@@ -160,76 +146,4 @@
   /* Tooltip */
   --info-text: rgb(181, 137, 0);
   --info-window: rgb(253, 246, 227);
-}
-
-
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-body {
-  background: var(--color-desktop);
-  cursor: url("data:image/gif;base64,R0lGODlhCwATAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAALABMAAAIrhI4JlhrcBAgvSlrbxPBs7mAU9IlMaV7mwo6jY2zk+Xphh8iWint1tDgUAAA7"), auto;
-  width: clamp(460px, 100%, 100%);
-  font-size: 11px;
-}
-
-/* Scanline CRT effect overlay */
-.scanline-overlay::after {
-  content: "";
-  z-index: 9999;
-  display: block;
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  /* background-image: var(--scan-line-dot); */
-  background-size: 100% 1px, 2px 100%;
-  background-color: #a4979721;
-  pointer-events: none;
-  opacity: 0.9;
-}
-
-/* ===== Docs MDX Content Styles ===== */
-.docs-mdx-content h1 {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 8px 0;
-  color: var(--color-window-text);
-  border-bottom: 1px solid var(--color-btn-shadow);
-  padding-bottom: 4px;
-}
-
-.docs-mdx-content h2 {
-  font-size: 13px;
-  font-weight: bold;
-  margin: 12px 0 6px 0;
-  color: var(--color-window-text);
-}
-
-.docs-mdx-content h3 {
-  font-size: 12px;
-  font-weight: bold;
-  margin: 10px 0 4px 0;
-}
-
-
-.docs-mdx-content pre {
-  margin: 8px 0;
-  padding: 6px;
-  background: var(--color-window);
-  border: none;
-  overflow-x: auto;
-  box-shadow: inset -1px -1px var(--color-btn-hilight),
-              inset 1px 1px var(--color-btn-shadow),
-              inset -2px -2px var(--color-btn-light),
-              inset 2px 2px var(--color-btn-dk-shadow);
-}
-
-.docs-mdx-content pre code {
-  background: none;
-  padding: 0;
-  border: none;
 }

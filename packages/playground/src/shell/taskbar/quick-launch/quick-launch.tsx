@@ -112,7 +112,7 @@ export function QuickLaunch(): React.ReactElement {
       {/* Quick Launch Icons */}
       <div
         ref={quickLaunchRef}
-        className="flex flex-row items-center overflow-hidden [&>img]:my-0 [&>img]:mx-0.5 [&>img]:cursor-pointer [&>img]:p-0.5 [&>img]:hover:shadow-[-1px_-1px_#dfdfdf,1px_1px_grey] [&>img]:active:shadow-[1px_1px_#dfdfdf,-1px_-1px_grey]"
+        className="flex flex-row items-center overflow-hidden [&>img]:my-0 [&>img]:mx-0.5 [&>img]:cursor-pointer [&>img]:p-0.5 [&>img]:hover:shadow-[-1px_-1px_var(--color-btn-light),1px_1px_var(--color-btn-shadow)] [&>img]:active:shadow-[1px_1px_var(--color-btn-light),-1px_-1px_var(--color-btn-shadow)]"
         style={{ width: quickLaunchWidth, minWidth: 0 }}
       >
         {visibleIcons.map(icon => (

@@ -4,7 +4,7 @@ import { SystemClock } from './system-clock'
 
 export function NotificationArea(): React.ReactElement {
   return (
-    <div className="h-5.5 px-0.5 flex flex-row items-center border-l border-l-[#7b7b7b] border-t border-t-[#7b7b7b] border-r border-r-white border-b border-b-white mt-px truncate">
+    <div className="h-5.5 px-0.5 flex flex-row items-center border-l border-l-btn-shadow border-t border-t-btn-shadow border-r border-r-btn-hilight border-b border-b-btn-hilight mt-px truncate">
       <NetworkIcon />
       <DisplayPropertiesIcon />
       <SystemClock />

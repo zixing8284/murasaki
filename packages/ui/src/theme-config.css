@@ -1,0 +1,345 @@
+/*
+ * murasaki-react98 — Theme Configuration (Library Core)
+ *
+ * This file contains the Tailwind theme extension (@theme inline), base
+ * styles, custom utilities, and scrollbar styles that power the component
+ * library. Consumers should IMPORT this file — never copy or modify it.
+ *
+ * It depends on CSS custom properties defined in theme-variables.css.
+ * Those variables must be present (either via import or consumer-defined)
+ * for the tokens below to resolve correctly.
+ *
+ * Usage (shadcn/ui pattern):
+ *   @import "murasaki-react98/theme-config.css";
+ *   // then define your own :root variables (copied from theme-variables.css)
+ *
+ * Usage (quick-start):
+ *   @import "murasaki-react98/theme.css";  // imports both files
+ */
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Tailwind Theme Extension
+   ========================================================================== */
+
+@theme inline {
+  /* Button */
+  --color-btn-face: var(--button-face);
+  --color-btn-text: var(--button-text);
+  --color-btn-shadow: var(--button-shadow);
+  --color-btn-hilight: var(--button-hilight);
+  --color-btn-dk-shadow: var(--button-dk-shadow);
+  --color-btn-light: var(--button-light);
+  --color-btn-alternate: var(--button-alternate-face);
+
+  /* Window */
+  --color-window: var(--window);
+  --color-window-bg: var(--button-face);
+  --color-window-text: var(--window-text);
+  --color-window-frame: var(--window-frame);
+  --color-window-border-active: var(--active-border);
+  --color-window-border-inactive: var(--inactive-border);
+
+  /* TitleBar */
+  --color-title-active: var(--active-title);
+  --color-title-active-text: var(--title-text);
+  --color-title-active-gradient: var(--gradient-active-title);
+  --color-title-inactive: var(--inactive-title);
+  --color-title-inactive-text: var(--inactive-title-text);
+  --color-title-inactive-gradient: var(--gradient-inactive-title);
+
+  /* Menu */
+  --color-menu-bg: var(--menu);
+  --color-menu-text: var(--menu-text);
+  --color-menu-bar: var(--menu-bar);
+  --color-menu-hilight: var(--menu-hilight);
+  --color-menu-hilight-text: var(--hilight-text);
+  --color-menu-disabled: var(--gray-text);
+  --color-menu-hottrack: var(--hot-tracking-color);
+
+  /* Scrollbar */
+  --color-scrollbar: var(--scrollbar);
+
+  /* Tooltip */
+  --color-tooltip-bg: var(--info-window);
+  --color-tooltip-text: var(--info-text);
+
+  /* Desktop */
+  --color-desktop: var(--background);
+  --color-desktop-text: var(--desktop-text);
+  --color-workspace: var(--app-workspace);
+
+  /* Selection */
+  --color-selection: var(--hilight);
+  --color-selection-text: var(--hilight-text);
+
+  /* Font */
+  --font-pixel: "Pixelated MS Sans Serif", sans-serif;
+
+  /* Spacing */
+  --spacing-element: var(--element-spacing);
+  --spacing-grouped-btn: var(--grouped-button-spacing);
+  --spacing-grouped-el: var(--grouped-element-spacing);
+  --spacing-label: var(--label-spacing);
+  --spacing-range: var(--range-spacing);
+
+  /* Shadows */
+  --shadow-raised-outer: inset -1px -1px var(--color-btn-dk-shadow),
+    inset 1px 1px var(--color-btn-hilight);
+  --shadow-raised-inner: inset -2px -2px var(--color-btn-shadow),
+    inset 2px 2px var(--color-btn-light);
+  --shadow-raised: var(--shadow-raised-outer), var(--shadow-raised-inner);
+
+  --shadow-sunken-outer: inset -1px -1px var(--color-btn-hilight),
+    inset 1px 1px var(--color-btn-dk-shadow);
+  --shadow-sunken-inner: inset -2px -2px var(--color-btn-light),
+    inset 2px 2px var(--color-btn-shadow);
+  --shadow-sunken: var(--shadow-sunken-outer), var(--shadow-sunken-inner);
+
+  --shadow-raised-primary: inset -2px -2px var(--color-window-frame),
+    inset 1px 1px var(--color-window-frame),
+    inset 2px 2px var(--color-btn-hilight),
+    inset -3px -3px var(--color-btn-shadow),
+    inset 3px 3px var(--color-btn-light);
+
+  --shadow-border-field: inset -1px -1px var(--color-btn-hilight),
+    inset 1px 1px var(--color-btn-shadow),
+    inset -2px -2px var(--color-btn-light),
+    inset 2px 2px var(--color-btn-dk-shadow);
+}
+
+/* ==========================================================================
+   Base Styles & Font Faces
+   ========================================================================== */
+
+@layer base {
+  @font-face {
+    font-family: "Pixelated MS Sans Serif";
+    src: url("./assets/fonts/ms_sans_serif.woff2") format("woff2"),
+      url("./assets/fonts/ms_sans_serif.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pixelated MS Sans Serif";
+    src: url("./assets/fonts/ms_sans_serif_bold.woff2") format("woff2"),
+      url("./assets/fonts/ms_sans_serif_bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply pixelated font-pixel;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ==========================================================================
+   Custom Utilities
+   ========================================================================== */
+
+@utility pixelated {
+  image-rendering: pixelated;
+}
+
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+
+@utility flex-center-column {
+  @apply flex flex-col items-center justify-center;
+}
+
+@utility break-line {
+  @apply text-wrap wrap-break-word break-all whitespace-pre-line;
+}
+
+@utility sunken-panel {
+  @apply bg-window-bg overflow-auto border-2 border-transparent;
+  border-style: groove;
+  border-image: url("./assets/icons/sunken-panel-border.svg") 2;
+}
+
+/* ==========================================================================
+   Icon Utilities (Window Title Bar Buttons)
+   Vite will inline these SVGs as base64 during build
+   ========================================================================== */
+
+@utility bgi-icon-close {
+  background-image: url("./assets/icons/close.svg");
+  background-repeat: no-repeat;
+  background-position: top 3px left 4px;
+}
+
+@utility bgi-icon-help {
+  background-image: url("./assets/icons/help.svg");
+  background-repeat: no-repeat;
+  background-position: top 2px left 5px;
+}
+
+@utility bgi-icon-maximize {
+  background-image: url("./assets/icons/maximize.svg");
+  background-repeat: no-repeat;
+  background-position: top 2px left 3px;
+}
+
+@utility bgi-icon-maximize-disabled {
+  background-image: url("./assets/icons/maximize-disabled.svg");
+  background-repeat: no-repeat;
+  background-position: top 2px left 3px;
+}
+
+@utility bgi-icon-minimize {
+  background-image: url("./assets/icons/minimize.svg");
+  background-repeat: no-repeat;
+  background-position: bottom 3px left 4px;
+}
+
+@utility bgi-icon-restore {
+  background-image: url("./assets/icons/restore.svg");
+  background-repeat: no-repeat;
+  background-position: top 2px left 3px;
+}
+
+/* ==========================================================================
+   Icon Utilities (Dropdown Buttons)
+   ========================================================================== */
+
+@utility bgi-icon-button-down {
+  background-image: url("./assets/icons/button-down.svg");
+}
+
+@utility bgi-icon-button-down-active {
+  background-image: url("./assets/icons/button-down-active.svg");
+}
+
+/* ==========================================================================
+   Icon Utilities (Checkbox)
+   ========================================================================== */
+
+@utility bgi-icon-checkmark {
+  background-image: url("./assets/icons/checkmark.svg");
+}
+
+@utility bgi-icon-checkmark-disabled {
+  background-image: url("./assets/icons/checkmark-disabled.svg");
+}
+
+/* ==========================================================================
+   Icon Utilities (Radio/Option Button)
+   ========================================================================== */
+
+@utility bgi-icon-radio-border {
+  background-image: url("./assets/icons/radio-border.svg");
+}
+
+@utility bgi-icon-radio-border-disabled {
+  background-image: url("./assets/icons/radio-border-disabled.svg");
+}
+
+@utility bgi-icon-radio-dot {
+  background-image: url("./assets/icons/radio-dot.svg");
+}
+
+@utility bgi-icon-radio-dot-disabled {
+  background-image: url("./assets/icons/radio-dot-disabled.svg");
+}
+
+@utility bgi-resize-grip {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAN0lEQVR4Ae3MgQUAMBRDwU5fFF05lb/CARTBw2Ulof0DxPtcwp3hNuEYnjbcEW4TjuFpwx3h9gMWGgZ2Y/PT2gAAAABJRU5ErkJggg==");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  image-rendering: pixelated;
+}
+
+/* ==========================================================================
+   Icon Utilities (GroupBox)
+   ========================================================================== */
+
+@utility bgi-border-image-groupbox {
+  border-image: url("./assets/icons/groupbox-border.svg") 2;
+}
+
+/* ==========================================================================
+   Icon Utilities (Slider)
+   ========================================================================== */
+
+@utility bgi-indicator-horizontal {
+  background-image: url("./assets/icons/indicator-horizontal.svg");
+}
+
+@utility bgi-indicator-rectangle-horizontal {
+  background-image: url("./assets/icons/indicator-rectangle-horizontal.svg");
+}
+
+/* ==========================================================================
+   Scrollbar Styles (Windows 98 Style)
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 17px;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--button-face);
+}
+
+::-webkit-scrollbar-track {
+  background-image: url("./assets/icons/scrollbar-background.svg");
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--button-face);
+  box-shadow: var(--shadow-raised);
+}
+
+::-webkit-scrollbar-button:horizontal:start:decrement,
+::-webkit-scrollbar-button:horizontal:end:increment,
+::-webkit-scrollbar-button:vertical:start:decrement,
+::-webkit-scrollbar-button:vertical:end:increment {
+  display: block;
+}
+
+::-webkit-scrollbar-button:vertical:start {
+  height: 17px;
+  background-image: url("./assets/icons/button-up.svg");
+}
+
+::-webkit-scrollbar-button:vertical:end {
+  height: 17px;
+  background-image: url("./assets/icons/button-down.svg");
+}
+
+::-webkit-scrollbar-button:horizontal:start {
+  width: 16px;
+  background-image: url("./assets/icons/button-left.svg");
+}
+
+::-webkit-scrollbar-button:horizontal:end {
+  width: 16px;
+  background-image: url("./assets/icons/button-right.svg");
+}
+
+::-webkit-resizer {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAN0lEQVR4Ae3MgQUAMBRDwU5fFF05lb/CARTBw2Ulof0DxPtcwp3hNuEYnjbcEW4TjuFpwx3h9gMWGgZ2Y/PT2gAAAABJRU5ErkJggg==");
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}

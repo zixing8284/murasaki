@@ -10,12 +10,12 @@ export function QuickLaunchDivider({ isDragging, onMouseDown }: QuickLaunchDivid
 
   return (
     <div className="flex items-center mx-0.5 gap-px">
-      <div className="h-5.5 w-px border-l border-l-[#808080] border-r border-r-white shadow-[1px_0_0_0_rgba(255,255,255,0.3)]" />
+      <div className="h-5.5 w-px border-l border-l-btn-shadow border-r border-r-btn-hilight" />
       <div
         ref={dividerRef}
-        className={`shadow-[inset_-1px_-1px_#0a0a0a,inset_1px_1px_#dfdfdf,inset_-2px_-2px_grey,inset_2px_2px_#fff] h-5 cursor-ew-resize ${
+        className={`shadow-raised h-5 cursor-ew-resize ${
           isDragging
-            ? 'w-1.5 bg-[#a0a0a0] flex items-center justify-center'
+            ? 'w-1.5 bg-btn-shadow flex items-center justify-center'
             : 'w-1'
         }`}
         onMouseDown={onMouseDown}
@@ -24,9 +24,9 @@ export function QuickLaunchDivider({ isDragging, onMouseDown }: QuickLaunchDivid
         {/* Grip dots pattern - only visible when dragging */}
         {isDragging && (
           <div className="flex flex-col gap-0.5">
-            <div className="w-px h-0.5 bg-[#808080]" />
-            <div className="w-px h-0.5 bg-[#808080]" />
-            <div className="w-px h-0.5 bg-[#808080]" />
+            <div className="w-px h-0.5 bg-btn-shadow" />
+            <div className="w-px h-0.5 bg-btn-shadow" />
+            <div className="w-px h-0.5 bg-btn-shadow" />
           </div>
         )}
       </div>

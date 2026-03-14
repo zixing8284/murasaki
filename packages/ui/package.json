@@ -20,6 +20,8 @@
     ".": "./dist/index.js",
     "./globals.css": "./dist/globals.css",
     "./theme.css": "./src/globals.css",
+    "./theme-config.css": "./src/theme-config.css",
+    "./theme-variables.css": "./src/theme-variables.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -29,7 +31,9 @@
   "files": [
     "dist",
     "src/assets",
-    "src/globals.css"
+    "src/globals.css",
+    "src/theme-config.css",
+    "src/theme-variables.css"
   ],
   "publishConfig": {
     "access": "public"

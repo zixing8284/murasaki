@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ExpandArrowButton } from './expand-arrow-button'
+import { QuickLaunchDivider } from './quick-launch-divider'
 
 interface QuickLaunchIcon {
   src: string
@@ -24,7 +26,6 @@ export function QuickLaunch(): React.ReactElement {
     return ICON_STEP_WIDTH * DEFAULT_VISIBLE_COUNT
   })
   const [isDragging, setIsDragging] = useState(false)
-  const dividerRef = useRef<HTMLDivElement>(null)
   const quickLaunchRef = useRef<HTMLDivElement>(null)
 
   // Calculate max width based on number of icons
@@ -128,67 +129,11 @@ export function QuickLaunch(): React.ReactElement {
 
       {/* Expand Arrow - shown when there are hidden icons */}
       {hasHiddenIcons && (
-        <button
-          type="button"
-          className="flex items-start justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-[#d4d0c8] active:bg-[#a0a0a0]"
-          onClick={handleExpandQuickLaunch}
-          title="Show all Quick Launch icons"
-          style={{ imageRendering: 'pixelated' }}
-        >
-          <svg
-            width="6"
-            height="8"
-            viewBox="0 0 7 9"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ imageRendering: 'pixelated' }}
-          >
-            {/* First arrow >> pixel style */}
-            <rect x="0" y="0" width="1" height="1" fill="#000" />
-            <rect x="1" y="1" width="1" height="1" fill="#000" />
-            <rect x="2" y="2" width="1" height="1" fill="#000" />
-            <rect x="3" y="3" width="1" height="1" fill="#000" />
-            <rect x="4" y="4" width="1" height="1" fill="#000" />
-            <rect x="3" y="5" width="1" height="1" fill="#000" />
-            <rect x="2" y="6" width="1" height="1" fill="#000" />
-            <rect x="1" y="7" width="1" height="1" fill="#000" />
-            <rect x="0" y="8" width="1" height="1" fill="#000" />
-            {/* Second arrow */}
-            <rect x="3" y="0" width="1" height="1" fill="#000" />
-            <rect x="4" y="1" width="1" height="1" fill="#000" />
-            <rect x="5" y="2" width="1" height="1" fill="#000" />
-            <rect x="6" y="3" width="1" height="1" fill="#000" />
-            <rect x="6" y="5" width="1" height="1" fill="#000" />
-            <rect x="5" y="6" width="1" height="1" fill="#000" />
-            <rect x="4" y="7" width="1" height="1" fill="#000" />
-            <rect x="3" y="8" width="1" height="1" fill="#000" />
-          </svg>
-        </button>
+        <ExpandArrowButton onClick={handleExpandQuickLaunch} />
       )}
 
       {/* Draggable Divider */}
-      <div className="flex items-center mx-0.5 gap-px">
-        <div className="h-5.5 w-px border-l border-l-[#808080] border-r border-r-white shadow-[1px_0_0_0_rgba(255,255,255,0.3)]" />
-        <div
-          ref={dividerRef}
-          className={`shadow-[inset_-1px_-1px_#0a0a0a,inset_1px_1px_#dfdfdf,inset_-2px_-2px_grey,inset_2px_2px_#fff] h-5 cursor-ew-resize ${
-            isDragging
-              ? 'w-1.5 bg-[#a0a0a0] flex items-center justify-center'
-              : 'w-1'
-          }`}
-          onMouseDown={handleMouseDown}
-          title="Drag to resize Quick Launch"
-        >
-          {/* Grip dots pattern - only visible when dragging */}
-          {isDragging && (
-            <div className="flex flex-col gap-0.5">
-              <div className="w-px h-0.5 bg-[#808080]" />
-              <div className="w-px h-0.5 bg-[#808080]" />
-              <div className="w-px h-0.5 bg-[#808080]" />
-            </div>
-          )}
-        </div>
-      </div>
+      <QuickLaunchDivider isDragging={isDragging} onMouseDown={handleMouseDown} />
     </>
   )
 }

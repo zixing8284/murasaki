@@ -77,7 +77,7 @@ export function WindowMinimizeButton({
   )
 }
 
-/** Maximize button */
+/** Maximize / Restore button. Toggles maximized state via WindowContext internally; `onClick` is forwarded as a notification after the state change. */
 export interface WindowMaximizeButtonProps extends React.ComponentProps<'button'> {
   /** Disable the maximize button */
   disabled?: boolean

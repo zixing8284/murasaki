@@ -55,7 +55,6 @@ export function useProcessActions(): ProcessContextActions {
     linkElement,
     title,
     openEphemeral,
-    openEphemeralApp,
   } = useProcesses()
 
   return useMemo(() => ({
@@ -71,7 +70,6 @@ export function useProcessActions(): ProcessContextActions {
     linkElement,
     title,
     openEphemeral,
-    openEphemeralApp,
   }), [
     open,
     close,
@@ -85,7 +83,6 @@ export function useProcessActions(): ProcessContextActions {
     linkElement,
     title,
     openEphemeral,
-    openEphemeralApp,
   ])
 }
 

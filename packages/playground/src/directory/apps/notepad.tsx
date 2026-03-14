@@ -1,5 +1,5 @@
-import type { ProcessComponentProps } from '../contexts/process'
-import { RndWindow } from '../shell/window/rnd-window'
+import type { ProcessComponentProps } from '../../contexts/process'
+import { RndWindow } from '../../shell/window/rnd-window'
 
 export function Notepad({ windowId }: ProcessComponentProps): React.ReactElement | null {
   return (

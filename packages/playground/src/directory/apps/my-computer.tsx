@@ -1,7 +1,7 @@
-import type { ProcessComponentProps } from '../contexts/process'
+import type { ProcessComponentProps } from '../../contexts/process'
 import { OptionButton, OptionGroup } from 'murasaki-react98'
 import { useState } from 'react'
-import { RndWindow } from '../shell/window/rnd-window'
+import { RndWindow } from '../../shell/window/rnd-window'
 
 export function MyComputer({ windowId }: ProcessComponentProps): React.ReactElement | null {
   const [selected, setSelected] = useState('option1')

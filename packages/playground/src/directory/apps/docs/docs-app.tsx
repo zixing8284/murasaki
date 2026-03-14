@@ -1,5 +1,5 @@
-import type { ProcessComponentProps } from '../../contexts/process'
-import { RndWindow } from '../../shell/window/rnd-window'
+import type { ProcessComponentProps } from '../../../contexts/process'
+import { RndWindow } from '../../../shell/window/rnd-window'
 import { DocsLayout } from './docs-layout'
 
 export function DocsApp({ windowId }: ProcessComponentProps): React.ReactElement | null {

@@ -1,10 +1,10 @@
 import type { AppId } from '../../contexts/process'
 import { useState } from 'react'
-import { processDirectory } from '../../contexts/process'
+import { appDirectory } from '../../contexts/process'
 import { useClickAway } from '../../hooks/use-click-away'
 import { DesktopIcon } from './desktop-icon'
 
-const desktopIcons = Object.entries(processDirectory)
+const desktopIcons = Object.entries(appDirectory)
   .filter(([, entry]) => entry.showOnDesktop)
   .map(([appId, entry]) => ({
     appId: appId as AppId,

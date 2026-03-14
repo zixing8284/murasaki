@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react'
 import type { AppId } from './directory'
-import type { EphemeralAppId } from './ephemeral-directory'
 
 // ---------------------------------------------------------------------------
 // Process Directory — static definition of what an app *is*
@@ -18,8 +17,6 @@ export interface AppIcon {
 }
 
 export interface ProcessDirectoryEntry {
-  /** Unique identifier for this app type */
-  appId: string
   /** App display name (for desktop icons, start menu, etc.) */
   name: string
   /** React component rendered inside the window */
@@ -32,6 +29,8 @@ export interface ProcessDirectoryEntry {
   singleton?: boolean
   /** Show as a desktop icon */
   showOnDesktop?: boolean
+  /** Ephemeral windows participate in z-index / focus but are hidden from taskbar */
+  ephemeral?: boolean
 }
 
 /** Static registry keyed by appId */
@@ -110,12 +109,6 @@ export interface ProcessContextActions {
     Component: ComponentType<ProcessComponentProps>,
     options: { id: string, title: string, icon?: AppIcon, singleton?: boolean },
   ) => void
-  /**
-   * Registry-based — open a pre-registered ephemeral window by its `eph:*` ID.
-   * Preferred for known system dialogs; Component / title / icon are resolved
-   * from `ephemeral-directory.ts` automatically.
-   */
-  openEphemeralApp: (ephemeralAppId: EphemeralAppId) => void
 }
 
 export type ProcessContextValue = ProcessContextState & ProcessContextActions

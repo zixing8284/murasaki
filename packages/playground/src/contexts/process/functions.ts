@@ -1,7 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { ProcessContextActions, Processes } from './types'
 import directory from './directory'
-import ephemeralDirectory from './ephemeral-directory'
 
 // ---------------------------------------------------------------------------
 // Consolidated state — avoids separate refs / cross-atom reads
@@ -184,7 +183,9 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         minimized: false,
         maximized: false,
         componentWindow: null,
-        ephemeral: false,
+        ephemeral: entry.ephemeral ?? false,
+        Component: entry.ephemeral ? entry.Component : undefined,
+        icon: entry.ephemeral ? entry.icon : undefined,
       }
       return {
         ...prev,
@@ -273,20 +274,6 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     })
   }
 
-  // Registry-based — resolves Component / title / icon from ephemeral-directory.ts.
-  // Preferred for known system dialogs; guarantees type-safe IDs with `eph:` prefix.
-  const openEphemeralApp: ProcessContextActions['openEphemeralApp'] = (ephemeralAppId) => {
-    const entry = ephemeralDirectory[ephemeralAppId]
-    if (!entry)
-      return
-    openEphemeral(entry.Component, {
-      id: ephemeralAppId,
-      title: entry.defaultTitle,
-      icon: entry.icon,
-      singleton: entry.singleton,
-    })
-  }
-
   return {
     open,
     close,
@@ -300,6 +287,5 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     linkElement,
     title,
     openEphemeral,
-    openEphemeralApp,
   }
 }

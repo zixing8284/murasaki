@@ -1,6 +1,6 @@
 import { Button } from 'murasaki-react98'
-import { useProcessActions, useProcesses, useProcessList } from '../../contexts/process'
-import { AppIcon } from '../app-icon'
+import { useProcessActions, useProcesses, useProcessList } from '../../../contexts/process'
+import { AppIcon } from '../../app-icon'
 
 export function RunningTasks(): React.ReactElement {
   const windows = useProcessList()

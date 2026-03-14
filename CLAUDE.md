@@ -61,6 +61,15 @@ After modifying component code or styles under `packages/ui/`, follow these step
 6. **Push & PR** — branch naming `type/description`, squash merge into `main`
 7. **Publish** *(optional)* — bump version, `pnpm ui:build`, `cd packages/ui && npm publish`
 
+## Component Design Principles
+
+**Component autonomy** — When a component can fully own its data and behavior, it should. Avoid prop-drilling state through intermediaries that don't use it. Specifically:
+
+- If data is only consumed by a single leaf component (e.g., a clock displaying the current time), that component should manage the data internally rather than receiving it as a prop from a distant ancestor.
+- Parent components should only pass data that they themselves produce or that coordinates multiple children.
+- Prefer local state, local effects, and custom hooks within the component that needs them over threading props through layers of wrappers.
+- This improves reusability (the component works standalone), reduces coupling (intermediary components don't carry irrelevant props), and limits unnecessary re-renders.
+
 ## Architecture
 
 ### packages/ui — Component Library

@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useProcessActions } from '../contexts/process'
+import { APP_ID, useProcessActions } from '../contexts/process'
 import { Desktop } from './desktop/desktop'
 import { StartMenu } from './start-menu/start-menu'
 import { Taskbar } from './taskbar/taskbar'
 import { WindowRenderer } from './window/renderer'
 
-function formatTime(): string {
-  return new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-}
+const DEFAULT_STARTUP_APPS = [APP_ID.MY_COMPUTER, APP_ID.DOCS] as const
 
 export function Shell(): React.ReactElement {
-  const [time, setTime] = useState(formatTime)
   const [showStartMenu, setShowStartMenu] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -29,19 +26,13 @@ export function Shell(): React.ReactElement {
 
   // Open default windows on mount
   useEffect(() => {
-    open('mycomputer')
-    open('docs')
+    DEFAULT_STARTUP_APPS.forEach(appId => open(appId))
   }, [open])
 
   const handleDesktopClick = (): void => {
     deactivateAll()
     setShowStartMenu(false)
   }
-
-  useEffect(() => {
-    const interval = setInterval(() => setTime(formatTime()), 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   return (
     <div className="h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-[#0000a2] selection:text-white scanline-overlay bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed">
@@ -71,7 +62,6 @@ export function Shell(): React.ReactElement {
       <Taskbar
         showStartMenu={showStartMenu}
         onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
-        time={time}
       />
     </div>
   )

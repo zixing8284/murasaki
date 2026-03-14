@@ -1,5 +1,5 @@
 import type { AppId } from '../contexts/process'
-import { DEFAULT_ICON, processDirectory } from '../contexts/process'
+import { appDirectory, DEFAULT_ICON } from '../contexts/process'
 
 const sizeClass = {
   sm: 'w-4 h-4',
@@ -13,7 +13,7 @@ interface AppIconProps {
 }
 
 export function AppIcon({ appId, size, className }: AppIconProps): React.ReactElement {
-  const entry = processDirectory[appId as AppId]
+  const entry = appDirectory[appId as AppId]
   const icon = entry?.icon ?? DEFAULT_ICON
   const src = icon[size]
 

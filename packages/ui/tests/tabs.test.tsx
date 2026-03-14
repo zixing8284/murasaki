@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { Tabs } from '../src'
+import { Tab, TabList, TabPanel, Tabs } from '../src'
 
 describe('tabs', () => {
   // Helper: renders a basic 2-tab setup
@@ -12,12 +12,12 @@ describe('tabs', () => {
   }) {
     return render(
       <Tabs {...props}>
-        <Tabs.List>
-          <Tabs.Tab value="one">Tab One</Tabs.Tab>
-          <Tabs.Tab value="two">Tab Two</Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value="one">Content One</Tabs.Panel>
-        <Tabs.Panel value="two">Content Two</Tabs.Panel>
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two">Tab Two</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
       </Tabs>,
     )
   }
@@ -129,12 +129,12 @@ describe('tabs', () => {
   it('does not select a disabled tab on click', async () => {
     const screen = await render(
       <Tabs defaultValue="one">
-        <Tabs.List>
-          <Tabs.Tab value="one">Tab One</Tabs.Tab>
-          <Tabs.Tab value="two" disabled>Tab Two</Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value="one">Content One</Tabs.Panel>
-        <Tabs.Panel value="two">Content Two</Tabs.Panel>
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two" disabled>Tab Two</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
       </Tabs>,
     )
 
@@ -150,12 +150,12 @@ describe('tabs', () => {
   it('sets aria-disabled on disabled tabs', async () => {
     const screen = await render(
       <Tabs defaultValue="one">
-        <Tabs.List>
-          <Tabs.Tab value="one">Tab One</Tabs.Tab>
-          <Tabs.Tab value="two" disabled>Tab Two</Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value="one">Content One</Tabs.Panel>
-        <Tabs.Panel value="two">Content Two</Tabs.Panel>
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two" disabled>Tab Two</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
       </Tabs>,
     )
 

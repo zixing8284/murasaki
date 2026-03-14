@@ -1,7 +1,7 @@
 # Tabs
 
-The `Tabs` component provides a Windows 98 styled tabbed interface using a compound component pattern.
-It supports both controlled and uncontrolled modes.
+The Tabs components provide a Windows 98 styled tabbed interface using a compound component pattern.
+They support both controlled and uncontrolled modes.
 
 ## Compound Components
 
@@ -17,19 +17,19 @@ import { CodeBlock } from '../../apps/docs/code-block'
   </TableHeader>
   <TableBody>
     <TableRow>
-      <TableCell>`Tabs.Root`</TableCell>
+      <TableCell>`Tabs`</TableCell>
       <TableCell>Root container, manages tab state</TableCell>
     </TableRow>
     <TableRow>
-      <TableCell>`Tabs.List`</TableCell>
+      <TableCell>`TabList`</TableCell>
       <TableCell>Container for tab buttons</TableCell>
     </TableRow>
     <TableRow>
-      <TableCell>`Tabs.Tab`</TableCell>
+      <TableCell>`Tab`</TableCell>
       <TableCell>Individual tab button</TableCell>
     </TableRow>
     <TableRow>
-      <TableCell>`Tabs.Panel`</TableCell>
+      <TableCell>`TabPanel`</TableCell>
       <TableCell>Content panel associated with a tab</TableCell>
     </TableRow>
   </TableBody>
@@ -70,13 +70,13 @@ import { CodeBlock } from '../../apps/docs/code-block'
 
 ## Usage
 
-<CodeBlock code={`import { Tabs } from 'murasaki-react98'
+<CodeBlock code={`import { Tab, TabList, TabPanel, Tabs } from 'murasaki-react98'
 
 <Tabs defaultValue="tab1">
-  <Tabs.List>
-    <Tabs.Tab value="tab1">General</Tabs.Tab>
-    <Tabs.Tab value="tab2">Advanced</Tabs.Tab>
-  </Tabs.List>
-  <Tabs.Panel value="tab1">General content</Tabs.Panel>
-  <Tabs.Panel value="tab2">Advanced content</Tabs.Panel>
+  <TabList>
+    <Tab value="tab1">General</Tab>
+    <Tab value="tab2">Advanced</Tab>
+  </TabList>
+  <TabPanel value="tab1">General content</TabPanel>
+  <TabPanel value="tab2">Advanced content</TabPanel>
 </Tabs>`} />

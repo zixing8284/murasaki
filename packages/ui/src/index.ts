@@ -44,14 +44,16 @@ export {
 } from './components/table/table'
 
 // Tabs
-export { Tab, TabList, TabPanel, TabsRoot } from './components/tabs/tabs'
+export { Tab, TabList, TabPanel, Tabs } from './components/tabs/tabs'
 export type {
   TabListProps,
   TabPanelProps,
   TabProps,
-  TabsRootProps,
+  TabsProps,
 } from './components/tabs/tabs'
-export { Tabs } from './components/tabs/tabs-namespace'
+
+export { useTabsContext } from './components/tabs/tabs-context'
+export type { TabsContextValue } from './components/tabs/tabs-context'
 
 // TextBox
 export { TextBox } from './components/text-box/text-box'

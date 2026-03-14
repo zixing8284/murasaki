@@ -3,6 +3,9 @@ import type { ProcessComponentProps } from '../../contexts/process'
 import {
   Button,
   DropdownNative,
+  Tab,
+  TabList,
+  TabPanel,
   Tabs,
   themeIds,
   useTheme,
@@ -151,13 +154,13 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     >
       <div className="flex flex-col gap-2">
         <Tabs defaultValue="theme" className="w-full" keepMounted>
-          <Tabs.List>
-            <Tabs.Tab value="theme">Theme</Tabs.Tab>
-            <Tabs.Tab value="wallpaper">Wallpaper</Tabs.Tab>
-            <Tabs.Tab value="appearance">Appearance</Tabs.Tab>
-          </Tabs.List>
+          <TabList>
+            <Tab value="theme">Theme</Tab>
+            <Tab value="wallpaper">Wallpaper</Tab>
+            <Tab value="appearance">Appearance</Tab>
+          </TabList>
 
-          <Tabs.Panel value="theme" className="flex flex-col gap-2">
+          <TabPanel value="theme" className="flex flex-col gap-2">
             <p className="text-btn-text leading-snug">
               A theme is a set of icons, visual styles, and sounds to alter the
               core experience of the user interface.
@@ -186,15 +189,15 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
               <span className="text-btn-text">Sample:</span>
               <ThemePreview themeId={selectedTheme} />
             </div>
-          </Tabs.Panel>
+          </TabPanel>
 
-          <Tabs.Panel value="wallpaper">
+          <TabPanel value="wallpaper">
             <p className="text-btn-text">Wallpaper settings are not available.</p>
-          </Tabs.Panel>
+          </TabPanel>
 
-          <Tabs.Panel value="appearance">
+          <TabPanel value="appearance">
             <p className="text-btn-text">Appearance settings are not available.</p>
-          </Tabs.Panel>
+          </TabPanel>
         </Tabs>
 
         {/* Bottom buttons */}

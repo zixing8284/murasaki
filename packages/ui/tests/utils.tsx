@@ -13,7 +13,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { Tabs } from '../src'
 
 // ---------------------------------------------------------------------------
-// Tabs wrapper — wraps children in Tabs root context (alias for TabsRoot)
+// Tabs wrapper — wraps children in Tabs root context (alias for Tabs)
 // ---------------------------------------------------------------------------
 
 interface TabsWrapperProps {

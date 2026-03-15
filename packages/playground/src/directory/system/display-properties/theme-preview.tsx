@@ -1,13 +1,13 @@
 import type { ThemeId } from 'murasaki-react98'
 
 function PreviewTitleButton(): React.ReactElement {
-  return <div className="w-[14px] h-[14px] shadow-raised bg-btn-face" />
+  return <div className="w-[14px] h-[14px] shadow-raised bg-(--button-face)" />
 }
 
 export function ThemePreview({ themeId }: { themeId: ThemeId }): React.ReactElement {
   return (
     <div
-      className="relative h-[220px] overflow-hidden border border-btn-dk-shadow bg-desktop"
+      className="relative h-[220px] overflow-hidden border border-(--button-dk-shadow) bg-(--background)"
       data-theme={themeId === 'windows-98' ? undefined : themeId}
     >
       {/* Desktop icon */}
@@ -17,14 +17,14 @@ export function ThemePreview({ themeId }: { themeId: ThemeId }): React.ReactElem
           alt="Trash"
           className="w-8 h-8 pixelated"
         />
-        <span className="text-[10px] text-center text-desktop-text">
+        <span className="text-[10px] text-center text-(--desktop-text)">
           Trash
         </span>
       </div>
 
       {/* Inactive window */}
-      <div className="absolute top-[35px] left-[70px] w-[260px] shadow-raised bg-btn-face">
-        <div className="h-[18px] flex items-center px-1 text-[10px] font-bold bg-linear-to-r from-title-inactive to-title-inactive-gradient text-title-inactive-text">
+      <div className="absolute top-[35px] left-[70px] w-[260px] shadow-raised bg-(--button-face)">
+        <div className="h-[18px] flex items-center px-1 text-[10px] font-bold bg-linear-to-r from-(--inactive-title) to-(--gradient-inactive-title) text-(--inactive-title-text)">
           <span>Inactive Window</span>
           <div className="ml-auto flex gap-px">
             <PreviewTitleButton />
@@ -35,9 +35,9 @@ export function ThemePreview({ themeId }: { themeId: ThemeId }): React.ReactElem
       </div>
 
       {/* Active window */}
-      <div className="absolute top-[60px] left-[110px] w-[260px] shadow-raised bg-btn-face">
+      <div className="absolute top-[60px] left-[110px] w-[260px] shadow-raised bg-(--button-face)">
         {/* Active title bar */}
-        <div className="h-[18px] flex items-center px-1 text-[10px] font-bold bg-linear-to-r from-title-active to-title-active-gradient text-title-active-text">
+        <div className="h-[18px] flex items-center px-1 text-[10px] font-bold bg-linear-to-r from-(--active-title) to-(--gradient-active-title) text-(--title-text)">
           <span className="font-bold">Active Window</span>
           <div className="ml-auto flex gap-px">
             <PreviewTitleButton />
@@ -47,7 +47,7 @@ export function ThemePreview({ themeId }: { themeId: ThemeId }): React.ReactElem
         </div>
 
         {/* Menu bar */}
-        <div className="h-[16px] flex items-center gap-2 px-1 text-[10px] bg-menu-bg text-menu-text">
+        <div className="h-[16px] flex items-center gap-2 px-1 text-[10px] bg-(--menu) text-(--menu-text)">
           <span>File</span>
           <span>Edit</span>
           <span>View</span>
@@ -56,33 +56,33 @@ export function ThemePreview({ themeId }: { themeId: ThemeId }): React.ReactElem
 
         {/* Content area with scrollbar */}
         <div className="p-0.5">
-          <div className="h-[72px] flex border border-btn-shadow">
-            <div className="flex-1 p-1 text-[10px] bg-window-bg text-window-text">
+          <div className="h-[72px] flex border border-(--button-shadow)">
+            <div className="flex-1 p-1 text-[10px] bg-(--button-face) text-(--window-text)">
               Window Text
             </div>
             {/* Vertical scrollbar */}
-            <div className="w-[14px] flex flex-col bg-scrollbar">
-              <div className="h-[14px] shadow-raised bg-btn-face" />
+            <div className="w-[14px] flex flex-col bg-(--scrollbar)">
+              <div className="h-[14px] shadow-raised bg-(--button-face)" />
               <div className="flex-1" />
-              <div className="h-[14px] shadow-raised bg-btn-face" />
+              <div className="h-[14px] shadow-raised bg-(--button-face)" />
             </div>
           </div>
           {/* Horizontal scrollbar */}
-          <div className="h-[14px] flex mt-px bg-scrollbar">
-            <div className="w-[14px] shadow-raised bg-btn-face" />
+          <div className="h-[14px] flex mt-px bg-(--scrollbar)">
+            <div className="w-[14px] shadow-raised bg-(--button-face)" />
             <div className="flex-1" />
-            <div className="w-[14px] shadow-raised bg-btn-face" />
+            <div className="w-[14px] shadow-raised bg-(--button-face)" />
           </div>
         </div>
       </div>
 
       {/* Taskbar */}
-      <div className="absolute bottom-0 left-0 right-0 h-[24px] flex items-center px-0.5 shadow-raised bg-btn-face">
-        <div className="h-[18px] px-1 flex items-center text-[10px] shadow-raised bg-btn-face text-btn-text">
+      <div className="absolute bottom-0 left-0 right-0 h-[24px] flex items-center px-0.5 shadow-raised bg-(--button-face)">
+        <div className="h-[18px] px-1 flex items-center text-[10px] shadow-raised bg-(--button-face) text-(--button-text)">
           <span>Start</span>
         </div>
         <div className="flex-1" />
-        <div className="h-[18px] px-2 flex items-center text-[10px] text-btn-text">
+        <div className="h-[18px] px-2 flex items-center text-[10px] text-(--button-text)">
           12:56
         </div>
       </div>

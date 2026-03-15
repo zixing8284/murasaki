@@ -14,7 +14,7 @@ const treeViewItemStyles = cva(
     'select-none',
     'focus-visible:ring-2',
     'focus-visible:outline-none',
-    'focus-visible:ring-(--color-menu-hilight)',
+    'focus-visible:ring-(--menu-hilight)',
   ],
   {
     variants: {
@@ -27,10 +27,10 @@ const treeViewItemStyles = cva(
           'before:leading-[11px]',
           'before:pl-px',
           'before:border',
-          'before:border-(--color-btn-shadow)',
+          'before:border-(--button-shadow)',
           'before:text-center',
-          'before:bg-(--color-btn-hilight)',
-          'before:text-(--color-window-text)',
+          'before:bg-(--button-hilight)',
+          'before:text-(--window-text)',
           'before:flex',
           'before:cursor-pointer',
           'before:items-center',
@@ -50,13 +50,13 @@ const treeViewItemStyles = cva(
         false: '',
       },
       interactive: {
-        true: 'hover:bg-(--color-menu-hottrack-light)',
+        true: 'hover:bg-(--menu-hottrack-light)',
         false: 'hover:bg-transparent',
       },
       selected: {
         true: [
-          'bg-(--color-menu-hilight)',
-          'text-(--color-menu-hilight-text)',
+          'bg-(--menu-hilight)',
+          'text-(--hilight-text)',
         ],
         false: [],
       },
@@ -65,7 +65,7 @@ const treeViewItemStyles = cva(
       {
         selected: true,
         interactive: true,
-        className: 'hover:bg-(--color-menu-hilight)',
+        className: 'hover:bg-(--menu-hilight)',
       },
     ],
     defaultVariants: {
@@ -156,7 +156,7 @@ export function TreeViewItem({
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>
               </summary>
-              <ul className="list-none pl-4 ml-4 border-l border-dotted border-(--color-btn-shadow) [&>li]:relative [&>li]:before:content-[''] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--color-btn-shadow)">
+              <ul className="list-none pl-4 ml-4 border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[''] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)">
                 {children}
               </ul>
             </details>
@@ -209,11 +209,11 @@ function TreeViewRoot({
     <ul
       className={cn(
         'block',
-        'bg-(--color-btn-hilight)',
+        'bg-(--button-hilight)',
         'm-0',
         'p-1.5',
         'shadow-(--shadow-border-field)',
-        'text-(--color-window-text)',
+        'text-(--window-text)',
         className,
       )}
     >

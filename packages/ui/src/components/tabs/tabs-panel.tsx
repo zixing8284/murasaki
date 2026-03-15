@@ -11,7 +11,7 @@ import { useTabsContext } from './tabs-context'
 const tabPanelVariants = cva([
   'relative',
   'z-2',
-  'bg-btn-face',
+  'bg-(--button-face)',
   'p-2',
   'shadow-raised',
 ])

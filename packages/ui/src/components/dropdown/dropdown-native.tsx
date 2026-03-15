@@ -17,8 +17,8 @@ const selectVariants = cva([
   'pl-1',
   'pr-8',
   // Colors
-  'bg-btn-hilight',
-  'text-window-text',
+  'bg-(--button-hilight)',
+  'text-(--window-text)',
   // Border effect
   'shadow-border-field',
   // Arrow icon
@@ -29,11 +29,11 @@ const selectVariants = cva([
   'active:bgi-icon-button-down-active',
   // Focus state
   'focus:outline-none',
-  'focus:text-btn-hilight',
-  'focus:bg-menu-hilight',
+  'focus:text-(--button-hilight)',
+  'focus:bg-(--menu-hilight)',
   // Disabled state
-  'disabled:bg-btn-face',
-  'disabled:text-btn-shadow',
+  'disabled:bg-(--button-face)',
+  'disabled:text-(--button-shadow)',
   'disabled:cursor-not-allowed',
 ])
 

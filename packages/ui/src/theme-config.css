@@ -1,13 +1,18 @@
 /*
  * murasaki-react98 — Theme Configuration (Library Core)
  *
- * This file contains the Tailwind theme extension (@theme inline), base
- * styles, custom utilities, and scrollbar styles that power the component
- * library. Consumers should IMPORT this file — never copy or modify it.
+ * This file contains base styles, custom utilities (including shadow
+ * utilities), and scrollbar styles that power the component library.
+ * Consumers should IMPORT this file — never copy or modify it.
+ *
+ * Components use Tailwind v4's arbitrary CSS variable syntax directly
+ * (e.g. bg-(--button-face)) instead of theme tokens.
+ * Shadow utilities (shadow-raised, shadow-sunken, etc.) are provided
+ * as @utility definitions backed by CSS custom properties.
  *
  * It depends on CSS custom properties defined in theme-variables.css.
  * Those variables must be present (either via import or consumer-defined)
- * for the tokens below to resolve correctly.
+ * for the styles below to resolve correctly.
  *
  * Usage (shadcn/ui pattern):
  *   @import "murasaki-react98/theme-config.css";
@@ -20,93 +25,32 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   Tailwind Theme Extension
+   Shadow CSS Custom Properties (library-computed, not user-customizable)
    ========================================================================== */
 
-@theme inline {
-  /* Button */
-  --color-btn-face: var(--button-face);
-  --color-btn-text: var(--button-text);
-  --color-btn-shadow: var(--button-shadow);
-  --color-btn-hilight: var(--button-hilight);
-  --color-btn-dk-shadow: var(--button-dk-shadow);
-  --color-btn-light: var(--button-light);
-  --color-btn-alternate: var(--button-alternate-face);
-
-  /* Window */
-  --color-window: var(--window);
-  --color-window-bg: var(--button-face);
-  --color-window-text: var(--window-text);
-  --color-window-frame: var(--window-frame);
-  --color-window-border-active: var(--active-border);
-  --color-window-border-inactive: var(--inactive-border);
-
-  /* TitleBar */
-  --color-title-active: var(--active-title);
-  --color-title-active-text: var(--title-text);
-  --color-title-active-gradient: var(--gradient-active-title);
-  --color-title-inactive: var(--inactive-title);
-  --color-title-inactive-text: var(--inactive-title-text);
-  --color-title-inactive-gradient: var(--gradient-inactive-title);
-
-  /* Menu */
-  --color-menu-bg: var(--menu);
-  --color-menu-text: var(--menu-text);
-  --color-menu-bar: var(--menu-bar);
-  --color-menu-hilight: var(--menu-hilight);
-  --color-menu-hilight-text: var(--hilight-text);
-  --color-menu-disabled: var(--gray-text);
-  --color-menu-hottrack: var(--hot-tracking-color);
-
-  /* Scrollbar */
-  --color-scrollbar: var(--scrollbar);
-
-  /* Tooltip */
-  --color-tooltip-bg: var(--info-window);
-  --color-tooltip-text: var(--info-text);
-
-  /* Desktop */
-  --color-desktop: var(--background);
-  --color-desktop-text: var(--desktop-text);
-  --color-workspace: var(--app-workspace);
-
-  /* Selection */
-  --color-selection: var(--hilight);
-  --color-selection-text: var(--hilight-text);
-
-  /* Font */
-  --font-pixel: "Pixelated MS Sans Serif", sans-serif;
-
-  /* Spacing */
-  --spacing-element: var(--element-spacing);
-  --spacing-grouped-btn: var(--grouped-button-spacing);
-  --spacing-grouped-el: var(--grouped-element-spacing);
-  --spacing-label: var(--label-spacing);
-  --spacing-range: var(--range-spacing);
-
-  /* Shadows */
-  --shadow-raised-outer: inset -1px -1px var(--color-btn-dk-shadow),
-    inset 1px 1px var(--color-btn-hilight);
-  --shadow-raised-inner: inset -2px -2px var(--color-btn-shadow),
-    inset 2px 2px var(--color-btn-light);
+:root {
+  --shadow-raised-outer: inset -1px -1px var(--button-dk-shadow),
+    inset 1px 1px var(--button-hilight);
+  --shadow-raised-inner: inset -2px -2px var(--button-shadow),
+    inset 2px 2px var(--button-light);
   --shadow-raised: var(--shadow-raised-outer), var(--shadow-raised-inner);
 
-  --shadow-sunken-outer: inset -1px -1px var(--color-btn-hilight),
-    inset 1px 1px var(--color-btn-dk-shadow);
-  --shadow-sunken-inner: inset -2px -2px var(--color-btn-light),
-    inset 2px 2px var(--color-btn-shadow);
+  --shadow-sunken-outer: inset -1px -1px var(--button-hilight),
+    inset 1px 1px var(--button-dk-shadow);
+  --shadow-sunken-inner: inset -2px -2px var(--button-light),
+    inset 2px 2px var(--button-shadow);
   --shadow-sunken: var(--shadow-sunken-outer), var(--shadow-sunken-inner);
 
-  --shadow-raised-primary: inset -2px -2px var(--color-window-frame),
-    inset 1px 1px var(--color-window-frame),
-    inset 2px 2px var(--color-btn-hilight),
-    inset -3px -3px var(--color-btn-shadow),
-    inset 3px 3px var(--color-btn-light);
+  --shadow-raised-primary: inset -2px -2px var(--window-frame),
+    inset 1px 1px var(--window-frame),
+    inset 2px 2px var(--button-hilight),
+    inset -3px -3px var(--button-shadow),
+    inset 3px 3px var(--button-light);
 
-  --shadow-border-field: inset -1px -1px var(--color-btn-hilight),
-    inset 1px 1px var(--color-btn-shadow),
-    inset -2px -2px var(--color-btn-light),
-    inset 2px 2px var(--color-btn-dk-shadow);
+  --shadow-border-field: inset -1px -1px var(--button-hilight),
+    inset 1px 1px var(--button-shadow),
+    inset -2px -2px var(--button-light),
+    inset 2px 2px var(--button-dk-shadow);
 }
 
 /* ==========================================================================
@@ -135,7 +79,8 @@
   }
 
   body {
-    @apply pixelated font-pixel;
+    image-rendering: pixelated;
+    font-family: "Pixelated MS Sans Serif", sans-serif;
   }
 
   button:not(:disabled),
@@ -165,9 +110,46 @@
 }
 
 @utility sunken-panel {
-  @apply bg-window-bg overflow-auto border-2 border-transparent;
+  background-color: var(--button-face);
+  overflow: auto;
+  border-width: 2px;
+  border-color: transparent;
   border-style: groove;
   border-image: url("./assets/icons/sunken-panel-border.svg") 2;
+}
+
+/* Shadow utilities — class names match the CSS custom properties */
+
+@utility shadow-raised-outer {
+  box-shadow: var(--shadow-raised-outer);
+}
+
+@utility shadow-raised-inner {
+  box-shadow: var(--shadow-raised-inner);
+}
+
+@utility shadow-raised {
+  box-shadow: var(--shadow-raised);
+}
+
+@utility shadow-sunken-outer {
+  box-shadow: var(--shadow-sunken-outer);
+}
+
+@utility shadow-sunken-inner {
+  box-shadow: var(--shadow-sunken-inner);
+}
+
+@utility shadow-sunken {
+  box-shadow: var(--shadow-sunken);
+}
+
+@utility shadow-raised-primary {
+  box-shadow: var(--shadow-raised-primary);
+}
+
+@utility shadow-border-field {
+  box-shadow: var(--shadow-border-field);
 }
 
 /* ==========================================================================

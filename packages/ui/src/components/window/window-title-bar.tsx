@@ -19,8 +19,8 @@ const titleBarVariants = cva(
   {
     variants: {
       active: {
-        true: 'bg-linear-to-r from-title-active to-title-active-gradient text-title-active-text',
-        false: 'bg-linear-to-r from-title-inactive to-title-inactive-gradient text-title-inactive-text',
+        true: 'bg-linear-to-r from-(--active-title) to-(--gradient-active-title) text-(--title-text)',
+        false: 'bg-linear-to-r from-(--inactive-title) to-(--gradient-inactive-title) text-(--inactive-title-text)',
       },
     },
     defaultVariants: {

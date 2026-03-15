@@ -20,10 +20,10 @@ export function DemoViewer({ Demo, source }: DemoViewerProps): React.ReactElemen
       </div>
 
       {/* Resize divider */}
-      <div className="h-px shrink-0 bg-(--color-btn-shadow) shadow-[0_1px_0_var(--color-btn-hilight)]" />
+      <div className="h-px shrink-0 bg-(--button-shadow) shadow-[0_1px_0_var(--button-hilight)]" />
 
       {/* Source code area */}
-      <div className="flex-1 min-h-0 shadow-sunken bg-window p-[2px] [&>.docs-code-block]:h-full">
+      <div className="flex-1 min-h-0 shadow-sunken bg-(--window) p-[2px] [&>.docs-code-block]:h-full">
         <CodeBlock code={source} lang="tsx" />
       </div>
     </div>

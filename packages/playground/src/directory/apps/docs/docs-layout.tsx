@@ -24,7 +24,7 @@ export function DocsLayout(): React.ReactElement {
   return (
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
-      <div className="w-45 shrink-0 overflow-y-auto overflow-x-hidden bg-window shadow-sunken">
+      <div className="w-45 shrink-0 overflow-y-auto overflow-x-hidden bg-(--window) shadow-sunken">
         <TreeViewRoot className="border-none! shadow-none! bg-transparent! h-full">
           <TreeViewItem
             label="Welcome"
@@ -65,7 +65,7 @@ export function DocsLayout(): React.ReactElement {
             <DemoViewer Demo={selectedNode.component} source={selectedNode.source} />
           )}
           {!selectedNode && (
-            <div className="p-3 text-[11px] text-menu-disabled">
+            <div className="p-3 text-[11px] text-(--gray-text)">
               Select a component from the tree to view its documentation.
             </div>
           )}

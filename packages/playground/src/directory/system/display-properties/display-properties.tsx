@@ -18,6 +18,7 @@ import { ThemePreview } from './theme-preview'
 const themeLabels: Record<ThemeId, string> = {
   'windows-98': 'Windows 98',
   'solarized-dark': 'Solarized Dark',
+  'windows-95': 'Windows 95',
 }
 
 export function DisplayProperties({ windowId }: ProcessComponentProps): React.ReactElement | null {
@@ -62,13 +63,13 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
           </TabList>
 
           <TabPanel value="theme" className="flex flex-col gap-2">
-            <p className="text-btn-text leading-snug">
+            <p className="text-(--button-text) leading-snug">
               A theme is a set of icons, visual styles, and sounds to alter the
               core experience of the user interface.
             </p>
 
             <div className="flex flex-col gap-1">
-              <label className="text-btn-text" htmlFor="theme-select">
+              <label className="text-(--button-text)" htmlFor="theme-select">
                 Selected Theme:
               </label>
               <DropdownNative
@@ -87,22 +88,22 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-btn-text">Sample:</span>
+              <span className="text-(--button-text)">Sample:</span>
               <ThemePreview themeId={selectedTheme} />
             </div>
           </TabPanel>
 
           <TabPanel value="wallpaper">
-            <p className="text-btn-text">Wallpaper settings are not available.</p>
+            <p className="text-(--button-text)">Wallpaper settings are not available.</p>
           </TabPanel>
 
           <TabPanel value="appearance">
-            <p className="text-btn-text">Appearance settings are not available.</p>
+            <p className="text-(--button-text)">Appearance settings are not available.</p>
           </TabPanel>
         </Tabs>
 
         {/* Bottom buttons */}
-        <div className="flex justify-end gap-grouped-btn">
+        <div className="flex justify-end gap-(--grouped-button-spacing)">
           <Button onClick={handleOk} className="min-w-[75px]">OK</Button>
           <Button onClick={handleCancel} className="min-w-[75px]">Cancel</Button>
           <Button onClick={handleApply} className="min-w-[75px]">Apply</Button>

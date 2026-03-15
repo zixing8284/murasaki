@@ -23,7 +23,7 @@ const labelVariants = cva([
   'before:inline-block',
   'before:w-(--option-size)',
   'before:h-(--option-size)',
-  'before:mr-label',
+  'before:mr-(--label-spacing)',
   'before:bgi-icon-radio-border',
   // label::after — radio dot placeholder (background set by input state)
   'after:content-[\'\']',
@@ -45,7 +45,7 @@ const optionButtonVariants = cva([
   // input:focus + label { outline: 1px dotted var(--button-text); }
   'focus:[&+label]:outline-dotted',
   'focus:[&+label]:outline-1',
-  'focus:[&+label]:outline-btn-text',
+  'focus:[&+label]:outline-(--button-text)',
   // input:active + label::before { background: url(radio-border-disabled.svg); }
   'active:[&+label::before]:bgi-icon-radio-border-disabled',
   // input:checked + label::after { background: url(radio-dot.svg); }

@@ -21,14 +21,14 @@ const textBoxWrapperVariants = cva(['flex'], {
   },
   variants: {
     labelPosition: {
-      left: ['flex-row', 'items-center', 'gap-grouped-el'],
+      left: ['flex-row', 'items-center', 'gap-(--grouped-element-spacing)'],
       top: ['flex-col', 'gap-1'],
     },
   },
 })
 
 const labelVariants = cva([
-  'text-btn-text',
+  'text-(--button-text)',
   'select-none',
   'whitespace-nowrap',
 ])
@@ -37,13 +37,13 @@ const labelVariants = cva([
 const baseFieldStyles = [
   'appearance-none',
   'rounded-none',
-  'bg-window-bg',
-  'text-window-text',
+  'bg-(--button-face)',
+  'text-(--window-text)',
   'outline-none',
   // Disabled & readonly states
-  'disabled:bg-btn-face',
-  'read-only:bg-btn-face',
-  'read-only:text-btn-shadow',
+  'disabled:bg-(--button-face)',
+  'read-only:bg-(--button-face)',
+  'read-only:text-(--button-shadow)',
   'px-1',
   'py-[3px]',
 ]
@@ -154,7 +154,7 @@ export function TextBox({
       <label
         className={cn(
           labelVariants(),
-          (disabled ?? readOnly) && 'text-btn-shadow',
+          (disabled ?? readOnly) && 'text-(--button-shadow)',
         )}
         htmlFor={inputId}
       >

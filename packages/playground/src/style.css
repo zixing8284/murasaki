@@ -1,15 +1,14 @@
 /*
  * @source scans the library's dist JS files to detect Tailwind class names,
- * but it does NOT import any CSS definitions (@theme, @utility, @layer base, etc.).
+ * but it does NOT import any CSS definitions (@utility, @layer base, etc.).
  *
- * The compiled globals.css loses all Tailwind directives (@theme inline → plain
- * :root variables, @utility → removed entirely). So the consumer's Tailwind
- * cannot generate utilities for custom theme tokens (bg-btn-face, shadow-raised)
- * or custom utilities (sunken-panel, pixelated, bgi-icon-*).
+ * The compiled globals.css loses all Tailwind directives (@utility → removed
+ * entirely). So the consumer's Tailwind cannot generate custom utilities
+ * (shadow-raised, sunken-panel, pixelated, bgi-icon-*).
  *
- * Solution: Import the library's theme-config.css which preserves @theme inline,
- * @utility, @custom-variant, @layer base, and scrollbar styles. Theme variables
- * are defined locally below (shadcn/ui pattern) for full theme ownership.
+ * Solution: Import the library's theme-config.css which preserves @utility,
+ * @custom-variant, @layer base, and scrollbar styles. Theme variables are
+ * defined locally below (shadcn/ui pattern) for full theme ownership.
  */
 
 /* Scan the murasaki-react98 component library to detect Tailwind class names */
@@ -19,9 +18,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Import library core: @theme inline, @utility definitions, @layer base
-   (fonts, box-sizing), and scrollbar styles. Does NOT include CSS variables. */
+/* Import library core: @utility definitions, @layer base (fonts, box-sizing),
+   and scrollbar styles. Does NOT include CSS variables. */
 @import "murasaki-react98/theme-config.css";
+
+/* Local styles for the playground, including CSS variables */
+@import "./playground.css";
 
 
 /* ==========================================================================
@@ -162,74 +164,50 @@
   --info-window: rgb(253, 246, 227);
 }
 
+[data-theme="windows-95"] {
+  /* Button */
+  --button-alternate-face: rgb(192, 192, 192);
+  --button-dk-shadow: rgb(0, 0, 0);
+  --button-face: rgb(192, 192, 192);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(223, 223, 223);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(0, 0, 0);
 
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
+  /* Window */
+  --active-border: rgb(192, 192, 192);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(192, 192, 192);
+  --scrollbar: rgb(192, 192, 192);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(0, 0, 0);
+  --window-text: rgb(0, 0, 0);
 
-body {
-  background: var(--color-desktop);
-  cursor: url("data:image/gif;base64,R0lGODlhCwATAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAALABMAAAIrhI4JlhrcBAgvSlrbxPBs7mAU9IlMaV7mwo6jY2zk+Xphh8iWint1tDgUAAA7"), auto;
-  width: clamp(460px, 100%, 100%);
-  font-size: 11px;
-}
+  /* Title Bar */
+  --active-title: rgb(0, 0, 128);
+  --gradient-active-title: rgb(0, 0, 128);
+  --gradient-inactive-title: rgb(128, 128, 128);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(192, 192, 192);
+  --title-text: rgb(255, 255, 255);
 
-/* Scanline CRT effect overlay */
-.scanline-overlay::after {
-  content: "";
-  z-index: 9999;
-  display: block;
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  /* background-image: var(--scan-line-dot); */
-  background-size: 100% 1px, 2px 100%;
-  background-color: #a4979721;
-  pointer-events: none;
-  opacity: 0.9;
-}
+  /* Menu */
+  --menu: rgb(192, 192, 192);
+  --menu-bar: rgb(192, 192, 192);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
 
-/* ===== Docs MDX Content Styles ===== */
-.docs-mdx-content h1 {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 8px 0;
-  color: var(--color-window-text);
-  border-bottom: 1px solid var(--color-btn-shadow);
-  padding-bottom: 4px;
-}
+  /* Highlight / Selection */
+  --hilight: rgb(0, 0, 128);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 128);
 
-.docs-mdx-content h2 {
-  font-size: 13px;
-  font-weight: bold;
-  margin: 12px 0 6px 0;
-  color: var(--color-window-text);
-}
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
 
-.docs-mdx-content h3 {
-  font-size: 12px;
-  font-weight: bold;
-  margin: 10px 0 4px 0;
-}
-
-
-.docs-mdx-content pre {
-  margin: 8px 0;
-  padding: 6px;
-  background: var(--color-window);
-  border: none;
-  overflow-x: auto;
-  box-shadow: inset -1px -1px var(--color-btn-hilight),
-              inset 1px 1px var(--color-btn-shadow),
-              inset -2px -2px var(--color-btn-light),
-              inset 2px 2px var(--color-btn-dk-shadow);
-}
-
-.docs-mdx-content pre code {
-  background: none;
-  padding: 0;
-  border: none;
+  /* Desktop */
+  --background: rgb(0, 128, 128);
 }

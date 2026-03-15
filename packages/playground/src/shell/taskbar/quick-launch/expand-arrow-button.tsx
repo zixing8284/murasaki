@@ -6,7 +6,7 @@ export function ExpandArrowButton({ onClick }: ExpandArrowButtonProps): React.Re
   return (
     <button
       type="button"
-      className="flex items-start justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-btn-face active:bg-btn-shadow text-btn-text"
+      className="flex items-start justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-(--button-face) active:bg-(--button-shadow) text-(--button-text)"
       onClick={onClick}
       title="Show all Quick Launch icons"
       style={{ imageRendering: 'pixelated' }}

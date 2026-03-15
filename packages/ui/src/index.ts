@@ -17,6 +17,10 @@ export type { DropdownOption } from './components/dropdown/use-dropdown-state'
 // GroupBox
 export { GroupBox } from './components/group-box/group-box'
 
+// Menu
+export { Menu, MenuItem, MenuSeparator } from './components/menu/menu'
+export type { MenuItemProps, MenuProps, MenuSeparatorProps } from './components/menu/menu'
+
 // NumberBox
 export { NumberBox } from './components/number-box/number-box'
 

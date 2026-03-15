@@ -11,14 +11,14 @@ const wrapperVariants = cva(['inline-flex'], {
   },
   variants: {
     labelPosition: {
-      left: ['flex-row', 'items-center', 'gap-grouped-el'],
+      left: ['flex-row', 'items-center', 'gap-(--grouped-element-spacing)'],
       top: ['flex-col', 'gap-1'],
     },
   },
 })
 
 const labelVariants = cva([
-  'text-btn-text',
+  'text-(--button-text)',
   'select-none',
   'whitespace-nowrap',
 ])
@@ -32,9 +32,9 @@ const inputWrapperVariants = cva([
 const inputVariants = cva([
   'appearance-none',
   'rounded-none',
-  'bg-window-bg',
+  'bg-(--button-face)',
   'shadow-border-field',
-  'text-window-text',
+  'text-(--window-text)',
   'outline-none',
   'border-none',
   'px-1',
@@ -47,9 +47,9 @@ const inputVariants = cva([
   '[&::-webkit-inner-spin-button]:appearance-none',
   '[&::-webkit-outer-spin-button]:appearance-none',
   // Disabled & readonly states
-  'disabled:bg-btn-face',
-  'read-only:bg-btn-face',
-  'read-only:text-btn-shadow',
+  'disabled:bg-(--button-face)',
+  'read-only:bg-(--button-face)',
+  'read-only:text-(--button-shadow)',
 ])
 
 const spinnerContainerVariants = cva([
@@ -64,7 +64,7 @@ const spinnerButtonVariants = cva(
     'flex',
     'items-center',
     'justify-center',
-    'bg-btn-face',
+    'bg-(--button-face)',
     'border-none',
     'p-0',
     'relative',
@@ -119,22 +119,22 @@ const arrowVariants = cva(
     },
     compoundVariants: [
       {
-        className: 'border-t-btn-shadow drop-shadow-[1px_1px_0_var(--color-btn-hilight)]',
+        className: 'border-t-(--button-shadow) drop-shadow-[1px_1px_0_var(--button-hilight)]',
         direction: 'down',
         disabled: true,
       },
       {
-        className: 'border-t-btn-text',
+        className: 'border-t-(--button-text)',
         direction: 'down',
         disabled: false,
       },
       {
-        className: 'border-b-btn-shadow drop-shadow-[1px_1px_0_var(--color-btn-hilight)]',
+        className: 'border-b-(--button-shadow) drop-shadow-[1px_1px_0_var(--button-hilight)]',
         direction: 'up',
         disabled: true,
       },
       {
-        className: 'border-b-btn-text',
+        className: 'border-b-(--button-text)',
         direction: 'up',
         disabled: false,
       },
@@ -340,7 +340,7 @@ export function NumberBox({
       <label
         className={cn(
           labelVariants(),
-          (disabled ?? readOnly) && 'text-btn-shadow',
+          (disabled ?? readOnly) && 'text-(--button-shadow)',
         )}
         htmlFor={inputId}
       >

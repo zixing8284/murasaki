@@ -31,8 +31,8 @@ export function DesktopIcon({ appId, label, selected, onSelect, onOpen }: Deskto
       <span
         className={
           selected
-            ? 'text-[11px] text-center leading-tight px-0.5 bg-selection text-selection-text outline-dotted outline-1 outline-selection-text'
-            : 'text-[11px] text-center leading-tight px-0.5 text-desktop-text'
+            ? 'text-[11px] text-center leading-tight px-0.5 bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
+            : 'text-[11px] text-center leading-tight px-0.5 text-(--desktop-text)'
         }
       >
         {label}

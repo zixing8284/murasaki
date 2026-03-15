@@ -1,0 +1,61 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  cursor: url("data:image/gif;base64,R0lGODlhCwATAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAALABMAAAIrhI4JlhrcBAgvSlrbxPBs7mAU9IlMaV7mwo6jY2zk+Xphh8iWint1tDgUAAA7"), auto;
+  width: clamp(460px, 100%, 100%);
+  font-size: 11px;
+}
+
+/* Scanline CRT effect overlay */
+.scanline-overlay::after {
+  content: "";
+  z-index: 9999;
+  display: block;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  /* background-image: var(--scan-line-dot); */
+  background-size: 100% 1px, 2px 100%;
+  background-color: #a4979721;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* ===== Docs MDX Content Styles ===== */
+.docs-mdx-content h1 {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  padding-bottom: 4px;
+}
+
+.docs-mdx-content h2 {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 12px 0 6px 0;
+}
+
+.docs-mdx-content h3 {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 10px 0 4px 0;
+}
+
+
+.docs-mdx-content pre {
+  margin: 8px 0;
+  padding: 6px;
+  border: none;
+  overflow-x: auto;
+}
+
+.docs-mdx-content pre code {
+  background: none;
+  padding: 0;
+  border: none;
+}

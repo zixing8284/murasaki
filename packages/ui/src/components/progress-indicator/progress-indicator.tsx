@@ -123,7 +123,7 @@ export function ProgressIndicator({
                 {Array.from({ length: tileCount }).map((_, index) => (
                   <span
                     key={`tile-${String(tileCount)}-${String(index)}`}
-                    className="border-btn-face bg-selection inline-block h-full w-4
+                    className="border-(--button-face) bg-(--hilight) inline-block h-full w-4
                   shrink-0 border-x will-change-auto"
                   />
                 ))}
@@ -133,7 +133,7 @@ export function ProgressIndicator({
               <>
                 {/* Bottom layer: light background with dark text */}
                 <div
-                  className="bg-window text-window-text relative flex h-full w-full
+                  className="bg-(--window) text-(--window-text) relative flex h-full w-full
                 items-center justify-center"
                 >
                   {!hideValue && (
@@ -145,7 +145,7 @@ export function ProgressIndicator({
                 </div>
                 {/* Top layer: progress bar with inverted text, clipped by progress value */}
                 <div
-                  className="bg-selection text-selection-text absolute inset-1 flex
+                  className="bg-(--hilight) text-(--hilight-text) absolute inset-1 flex
                 items-center justify-center will-change-[clip-path]"
                   style={{
                     clipPath: `polygon(0 0, ${String(clampedValue)}% 0, ${String(clampedValue)}% 100%, 0 100%)`,

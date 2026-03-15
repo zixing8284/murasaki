@@ -35,7 +35,7 @@ export function Shell(): React.ReactElement {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-selection selection:text-selection-text scanline-overlay bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed">
+    <div className="h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-(--hilight) selection:text-(--hilight-text) scanline-overlay bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed">
       {/* Desktop Area */}
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full relative" ref={setContainerRef} onPointerDown={handleDesktopClick}>

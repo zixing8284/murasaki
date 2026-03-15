@@ -8,7 +8,7 @@ const buttonVariants = cva([
   'w-4',
   'h-3.5',
   'flex-center',
-  'bg-btn-face',
+  'bg-(--button-face)',
   'shadow-raised',
   'active:shadow-sunken',
   'disabled:pointer-events-none',

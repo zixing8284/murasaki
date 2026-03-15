@@ -5,8 +5,8 @@ import { cva } from 'class-variance-authority'
 import { useWindowContext } from './window-context'
 
 const frameVariants = cva([
-  'shadow-[inset_-1px_-1px_var(--color-window-frame),inset_1px_1px_var(--color-btn-hilight),inset_-2px_-2px_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]',
-  'bg-btn-face',
+  'shadow-[inset_-1px_-1px_var(--window-frame),inset_1px_1px_var(--button-hilight),inset_-2px_-2px_var(--button-shadow),inset_2px_2px_var(--button-light)]',
+  'bg-(--button-face)',
   'flex',
   'flex-col',
   'min-w-50',

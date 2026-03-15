@@ -22,8 +22,8 @@ const triggerVariants = cva([
   'pl-1',
   'pr-8',
   // Colors
-  'bg-btn-hilight',
-  'text-window-text',
+  'bg-(--button-hilight)',
+  'text-(--window-text)',
   'text-left',
   // Border effect
   'shadow-border-field',
@@ -36,8 +36,8 @@ const triggerVariants = cva([
   // Focus state
   'focus:outline-none',
   // Disabled state
-  'disabled:bg-btn-face',
-  'disabled:text-btn-shadow',
+  'disabled:bg-(--button-face)',
+  'disabled:text-(--button-shadow)',
   'disabled:cursor-not-allowed',
   // Text overflow
   'overflow-hidden',
@@ -53,9 +53,9 @@ const menuVariants = cva([
   'w-full',
   'max-h-40',
   'overflow-y-auto',
-  'bg-btn-hilight',
+  'bg-(--button-hilight)',
   'border',
-  'border-btn-shadow',
+  'border-(--button-shadow)',
   'list-none',
   'm-0',
   'p-0',
@@ -80,8 +80,8 @@ const menuItemVariants = cva(
     },
     variants: {
       active: {
-        false: ['bg-transparent', 'text-window-text'],
-        true: ['bg-menu-hilight', 'text-menu-hilight-text'],
+        false: ['bg-transparent', 'text-(--window-text)'],
+        true: ['bg-(--menu-hilight)', 'text-(--hilight-text)'],
       },
     },
   },

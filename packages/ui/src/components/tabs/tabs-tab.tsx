@@ -14,10 +14,10 @@ const tabVariants = cva(
     'z-1',
     'pb-0.5',
     'rounded-t-[3px]',
-    'bg-btn-face',
+    'bg-(--button-face)',
     'cursor-pointer',
     // Border styles mimicking Windows 98 tab
-    'shadow-[inset_-1px_0_var(--color-btn-dk-shadow),inset_1px_1px_var(--color-btn-hilight),inset_-2px_0_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]',
+    'shadow-[inset_-1px_0_var(--button-dk-shadow),inset_1px_1px_var(--button-hilight),inset_-2px_0_var(--button-shadow),inset_2px_2px_var(--button-light)]',
   ],
   {
     variants: {
@@ -28,7 +28,7 @@ const tabVariants = cva(
           '-ml-0.75',
           'first:ml-0',
           // Active tab has bottom border matching background
-          'shadow-[inset_-1px_0_var(--color-btn-dk-shadow),inset_1px_1px_var(--color-btn-hilight),inset_-2px_0_var(--color-btn-shadow),inset_2px_2px_var(--color-btn-light)]',
+          'shadow-[inset_-1px_0_var(--button-dk-shadow),inset_1px_1px_var(--button-hilight),inset_-2px_0_var(--button-shadow),inset_2px_2px_var(--button-light)]',
         ],
         false: [],
       },
@@ -43,12 +43,12 @@ const tabLabelVariants = cva(
   [
     'block',
     'm-1.5',
-    'text-btn-text',
+    'text-(--button-text)',
     'select-none',
     'outline-none',
     'focus-visible:outline-1',
     'focus-visible:outline-dotted',
-    'focus-visible:outline-btn-text',
+    'focus-visible:outline-(--button-text)',
   ],
   {
     variants: {

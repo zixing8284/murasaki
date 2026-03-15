@@ -1,0 +1,70 @@
+; Created with the Windows Classic Theme Designer: https://tpenguinltg.github.io/winclassic/
+
+
+[Theme]
+DisplayName=My Theme
+
+[Control Panel\Colors]
+ButtonAlternateFace=192 192 192
+ButtonDkShadow=64 64 64
+ButtonFace=212 208 200
+ButtonHilight=255 255 255
+ButtonLight=212 208 200
+ButtonShadow=128 128 128
+ButtonText=0 0 0
+ActiveBorder=212 208 200
+AppWorkspace=128 128 128
+Background=58 110 165
+InactiveBorder=212 208 200
+Scrollbar=212 208 200
+Window=255 255 255
+WindowFrame=0 0 0
+WindowText=0 0 0
+ActiveTitle=10 36 106
+GradientActiveTitle=166 202 240
+GradientInactiveTitle=192 192 192
+InactiveTitle=128 128 128
+InactiveTitleText=212 208 200
+TitleText=255 255 255
+Menu=212 208 200
+MenuBar=192 192 192
+MenuHilight=0 0 128
+MenuText=0 0 0
+GrayText=128 128 128
+Hilight=10 36 106
+HilightText=255 255 255
+HotTrackingColor=0 0 128
+InfoText=0 0 0
+InfoWindow=255 255 225
+
+
+[Control Panel\Desktop]
+Wallpaper=
+TileWallpaper=0
+WallpaperStyle=2
+Pattern=
+ScreenSaveActive=0
+
+[Control Panel\Desktop\WindowMetrics]
+
+[Metrics]
+IconMetrics=76 0 0 0 75 0 0 0 75 0 0 0 1 0 0 0 245 255 255 255 0 0 0 0 0 0 0 0 0 0 0 0 144 1 0 0 0 0 0 1 0 0 0 0 84 97 104 111 109 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+NonclientMetrics=84 1 0 0 1 0 0 0 16 0 0 0 16 0 0 0 18 0 0 0 18 0 0 0 245 255 255 255 0 0 0 0 0 0 0 0 0 0 0 0 188 2 0 0 0 0 0 1 0 0 0 0 84 97 104 111 109 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 0 0 0 15 0 0 0 245 255 255 255 0 0 0 0 0 0 0 0 0 0 0 0 188 2 0 0 0 0 0 1 0 0 0 0 84 97 104 111 109 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 18 0 0 0 18 0 0 0 245 255 255 255 0 0 0 0 0 0 0 0 0 0 0 0 144 1 0 0 0 0 0 1 0 0 0 0 84 97 104 111 109 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 245 255 255 255 0 0 0 0 0 0 0 0 0 0 0 0 144 1 0 0 0 0 0 1 0 0 0 0 84 97 104 111 109 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 245 255 255 255 0 0 0 0 0 0 0 0 0 0 0 0 144 1 0 0 0 0 0 1 0 0 0 0 84 97 104 111 109 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+[MasterThemeSelector]
+MTSM=DABJDKT
+ThemeColorBPP=4
+
+
+
+[VisualStyles]
+Path=
+ColorStyle=@themeui.dll,-854
+Size=@themeui.dll,-2019
+Transparency=0
+ColorizationColor=0XEC0A246A
+Composition=0
+VisualStyleVersion=10
+
+[boot]
+SCRNSAVE.EXE=

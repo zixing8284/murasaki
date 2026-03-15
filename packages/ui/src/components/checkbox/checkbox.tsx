@@ -20,9 +20,9 @@ const labelVariants = cva([
   'before:inline-block',
   'before:w-(--checkbox-width)',
   'before:h-(--checkbox-width)',
-  'before:bg-window-bg',
+  'before:bg-(--button-face)',
   'before:shadow-border-field',
-  'before:mr-label',
+  'before:mr-(--label-spacing)',
   // label::after — checkmark placeholder (background set by input state)
   'after:content-[\'\']',
   'after:block',
@@ -43,13 +43,13 @@ const checkboxVariants = cva([
   // input:focus + label { outline: 1px dotted var(--button-text); }
   'focus:[&+label]:outline-dotted',
   'focus:[&+label]:outline-1',
-  'focus:[&+label]:outline-btn-text',
+  'focus:[&+label]:outline-(--button-text)',
   // input:active + label::before { background: var(--button-face); }
-  'active:[&+label::before]:bg-btn-face',
+  'active:[&+label::before]:bg-(--button-face)',
   // input:checked + label::after { background: url(checkmark.svg); }
   'checked:[&+label::after]:bgi-icon-checkmark',
   // input[disabled] + label::before { background: var(--button-face); }
-  'disabled:[&+label::before]:bg-btn-face',
+  'disabled:[&+label::before]:bg-(--button-face)',
   // input[disabled]:checked + label::after { background: url(checkmark-disabled.svg); }
   'disabled:checked:[&+label::after]:bgi-icon-checkmark-disabled',
 ])

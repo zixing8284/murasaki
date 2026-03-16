@@ -3,6 +3,7 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { useCallback, useId, useRef, useState } from 'react'
+import { BoxIndicatorIcon, TriangleIndicatorIcon } from './slider-icons'
 
 // Container variants
 const containerVariants = cva(['relative', 'flex'], {
@@ -85,21 +86,20 @@ const trackVariants = cva(
   },
 )
 
+// Thumb dimensions (constant)
+const THUMB_WIDTH = 11
+const THUMB_HEIGHT = 21
+
 // Thumb styles
-const thumbVariants = cva(['absolute', 'pixelated', 'pointer-events-none'], {
+const thumbVariants = cva(['absolute', 'pixelated', 'pointer-events-none', 'w-[11px]', 'h-[21px]'], {
   variants: {
     vertical: {
       true: 'left-1/2',
       false: 'top-1/2',
     },
-    boxIndicator: {
-      true: 'w-[11px] h-[21px] bgi-indicator-rectangle-horizontal',
-      false: 'w-[11px] h-[21px] bgi-indicator-horizontal',
-    },
   },
   defaultVariants: {
     vertical: false,
-    boxIndicator: false,
   },
 })
 
@@ -160,10 +160,6 @@ interface SliderProps extends Omit<React.ComponentProps<'input'>, 'type'> {
   /** Tick marks with optional labels */
   ticks?: TickMark[]
 }
-
-// Thumb dimensions (constant)
-const THUMB_WIDTH = 11
-const THUMB_HEIGHT = 21
 
 export function Slider({
   className,
@@ -273,7 +269,7 @@ export function Slider({
 
         {/* Custom thumb */}
         <div
-          className={cn(thumbVariants({ vertical, boxIndicator }))}
+          className={cn(thumbVariants({ vertical }))}
           style={getThumbStyle()}
         />
 

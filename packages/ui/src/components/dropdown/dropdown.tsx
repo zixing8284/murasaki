@@ -20,19 +20,27 @@ const triggerVariants = cva([
   'w-full',
   'py-[3px]',
   'pl-1',
-  'pr-8',
+  'pr-[18px]',
   // Colors
   'bg-(--button-hilight)',
   'text-(--window-text)',
   'text-left',
   // Border effect
   'shadow-border-field',
-  // Arrow icon (embedded in button)
-  'bgi-icon-button-down',
-  'bg-no-repeat',
-  'bg-position-[right_2px_top_2px]',
-  // Active state
-  'active:bgi-icon-button-down-active',
+  // Position context for ::after arrow
+  'relative',
+  // Arrow button area via ::after
+  'after:content-[\'\']',
+  'after:absolute',
+  'after:right-0',
+  'after:top-0',
+  'after:w-4',
+  'after:h-full',
+  'after:bg-(--button-face)',
+  'after:shadow-raised',
+  'after:bgi-icon-arrow-down',
+  // Active: sunken arrow
+  'active:after:shadow-sunken',
   // Focus state
   'focus:outline-none',
   // Disabled state

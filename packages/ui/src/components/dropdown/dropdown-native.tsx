@@ -13,20 +13,15 @@ const selectVariants = cva([
   // Sizing
   'box-border',
   'h-[21px]',
+  'w-full',
   'py-[3px]',
   'pl-1',
-  'pr-8',
+  'pr-[18px]',
   // Colors
   'bg-(--button-hilight)',
   'text-(--window-text)',
   // Border effect
   'shadow-border-field',
-  // Arrow icon
-  'bgi-icon-button-down',
-  'bg-no-repeat',
-  'bg-position-[right_2px_top_2px]',
-  // Active state
-  'active:bgi-icon-button-down-active',
   // Focus state
   'focus:outline-none',
   'focus:text-(--button-hilight)',
@@ -35,6 +30,22 @@ const selectVariants = cva([
   'disabled:bg-(--button-face)',
   'disabled:text-(--button-shadow)',
   'disabled:cursor-not-allowed',
+])
+
+const selectWrapperVariants = cva([
+  'relative',
+  'inline-block',
+  // Arrow button area via ::after
+  'after:content-[\'\']',
+  'after:absolute',
+  'after:right-0',
+  'after:top-0',
+  'after:w-4',
+  'after:h-full',
+  'after:bg-(--button-face)',
+  'after:shadow-raised',
+  'after:bgi-icon-arrow-down',
+  'after:pointer-events-none',
 ])
 
 const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])
@@ -79,15 +90,17 @@ export function DropdownNative({
   const selectId = id ?? (label ? generatedId : undefined)
 
   const selectElement = (
-    <select
-      className={cn(selectVariants({ className }))}
-      id={selectId}
-      name={name}
-      ref={ref}
-      {...props}
-    >
-      {children}
-    </select>
+    <div className={cn(selectWrapperVariants())}>
+      <select
+        className={cn(selectVariants({ className }))}
+        id={selectId}
+        name={name}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </select>
+    </div>
   )
 
   if (label) {

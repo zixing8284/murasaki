@@ -24,7 +24,9 @@ const labelVariants = cva([
   'before:w-(--option-size)',
   'before:h-(--option-size)',
   'before:mr-(--label-spacing)',
-  'before:bgi-icon-radio-border',
+  'before:rounded-full',
+  'before:bg-(--button-hilight)',
+  'before:shadow-border-field',
   // label::after — radio dot placeholder (background set by input state)
   'after:content-[\'\']',
   'after:block',
@@ -48,12 +50,13 @@ const optionButtonVariants = cva([
   'focus:[&+label]:outline-(--button-text)',
   // input:active + label::before { background: url(radio-border-disabled.svg); }
   'active:[&+label::before]:bgi-icon-radio-border-disabled',
-  // input:checked + label::after { background: url(radio-dot.svg); }
+  // input:checked + label::after { mask: radio-dot.svg, color: button-text }
   'checked:[&+label::after]:bgi-icon-radio-dot',
-  // input[disabled] + label::before { background: url(radio-border-disabled.svg); }
+  // input[disabled] + label::before { disabled radio border }
   'disabled:[&+label::before]:bgi-icon-radio-border-disabled',
-  // input[disabled]:checked + label::after { background: url(radio-dot-disabled.svg); }
-  'disabled:checked:[&+label::after]:bgi-icon-radio-dot-disabled',
+  // input[disabled]:checked + label::after { gray out radio dot }
+  'disabled:checked:[&+label::after]:bgi-icon-radio-dot',
+  'disabled:checked:[&+label::after]:!bg-(--gray-text)',
 ])
 
 interface OptionButtonProps

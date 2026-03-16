@@ -3,12 +3,17 @@ import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 
 import { useWindowContext } from './window-context'
+import { CloseIcon, HelpIcon, MaximizeIcon, MinimizeIcon, RestoreIcon } from './window-icons'
 
 const buttonVariants = cva([
   'w-4',
   'h-3.5',
-  'flex-center',
+  'inline-flex',
+  'items-center',
+  'justify-center',
+  'relative',
   'bg-(--button-face)',
+  'text-(--button-text)',
   'shadow-raised',
   'active:shadow-sunken',
   'disabled:pointer-events-none',
@@ -17,16 +22,6 @@ const buttonVariants = cva([
   'p-0',
   'border-none',
 ])
-
-// Icon classes using custom utilities defined in globals.css
-const buttonIcons = {
-  close: 'bgi-icon-close',
-  help: 'bgi-icon-help',
-  maximize: 'bgi-icon-maximize',
-  maximizeDisabled: 'bgi-icon-maximize-disabled',
-  minimize: 'bgi-icon-minimize',
-  restore: 'bgi-icon-restore',
-}
 
 /** Container for title bar buttons */
 export interface WindowButtonsProps extends React.ComponentProps<'div'> {}
@@ -53,10 +48,12 @@ export function WindowCloseButton({
   return (
     <button
       aria-label="Close"
-      className={cn(buttonVariants(), buttonIcons.close, className)}
+      className={cn(buttonVariants(), className)}
       type="button"
       {...props}
-    />
+    >
+      <CloseIcon />
+    </button>
   )
 }
 
@@ -70,10 +67,12 @@ export function WindowMinimizeButton({
   return (
     <button
       aria-label="Minimize"
-      className={cn(buttonVariants(), buttonIcons.minimize, className)}
+      className={cn(buttonVariants(), className)}
       type="button"
       {...props}
-    />
+    >
+      <MinimizeIcon className="absolute bottom-[3px] left-[4px]" />
+    </button>
   )
 }
 
@@ -91,12 +90,6 @@ export function WindowMaximizeButton({
 }: WindowMaximizeButtonProps): React.ReactElement {
   const { state, actions } = useWindowContext()
 
-  const icon = disabled
-    ? buttonIcons.maximizeDisabled
-    : state.maximized
-      ? buttonIcons.restore
-      : buttonIcons.maximize
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     actions.toggleMaximized()
     onClick?.(e)
@@ -105,12 +98,18 @@ export function WindowMaximizeButton({
   return (
     <button
       aria-label={state.maximized ? 'Restore' : 'Maximize'}
-      className={cn(buttonVariants(), icon, className)}
+      className={cn(buttonVariants(), className)}
       disabled={disabled}
       onClick={handleClick}
       type="button"
       {...props}
-    />
+    >
+      {disabled
+        ? <MaximizeIcon disabled />
+        : state.maximized
+          ? <RestoreIcon />
+          : <MaximizeIcon />}
+    </button>
   )
 }
 
@@ -124,9 +123,11 @@ export function WindowHelpButton({
   return (
     <button
       aria-label="Help"
-      className={cn(buttonVariants(), buttonIcons.help, className)}
+      className={cn(buttonVariants(), className)}
       type="button"
       {...props}
-    />
+    >
+      <HelpIcon />
+    </button>
   )
 }

@@ -46,12 +46,13 @@ const checkboxVariants = cva([
   'focus:[&+label]:outline-(--button-text)',
   // input:active + label::before { background: var(--button-face); }
   'active:[&+label::before]:bg-(--button-face)',
-  // input:checked + label::after { background: url(checkmark.svg); }
+  // input:checked + label::after { mask: checkmark.svg, color: button-text }
   'checked:[&+label::after]:bgi-icon-checkmark',
   // input[disabled] + label::before { background: var(--button-face); }
   'disabled:[&+label::before]:bg-(--button-face)',
-  // input[disabled]:checked + label::after { background: url(checkmark-disabled.svg); }
-  'disabled:checked:[&+label::after]:bgi-icon-checkmark-disabled',
+  // input[disabled]:checked + label::after { gray out checkmark }
+  'disabled:checked:[&+label::after]:bgi-icon-checkmark',
+  'disabled:checked:[&+label::after]:!bg-(--gray-text)',
 ])
 
 interface CheckboxProps

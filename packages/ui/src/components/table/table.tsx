@@ -18,7 +18,7 @@ export function Table({
       <table
         data-slot="table"
         className={cn(
-          'border-collapse relative text-left whitespace-nowrap bg-(--button-face) w-full',
+          'border-collapse relative text-left whitespace-nowrap bg-(--window) w-full',
           className,
         )}
         {...props}
@@ -34,7 +34,7 @@ export function TableHeader({
   return (
     <thead
       data-slot="table-header"
-      className={cn('[&_tr]:border-b [&_tr]:hover:bg-transparent [&_tr]:hover:text-inherit [&_tr]:cursor-default', className)}
+      className={cn('[&_tr]:hover:bg-transparent [&_tr]:hover:text-inherit [&_tr]:cursor-default', className)}
       {...props}
     />
   )
@@ -61,7 +61,7 @@ export function TableFooter({
     <tfoot
       data-slot="table-footer"
       className={cn(
-        'bg-(--button-face) font-medium [&>tr]:last:border-b-0',
+        'bg-(--window) font-medium [&>tr]:last:border-b-0',
         className,
       )}
       {...props}
@@ -80,7 +80,6 @@ export function TableRow({
       className={cn(
         'hover:bg-(--hot-tracking-color) hover:text-(--hilight-text) cursor-pointer transition-colors',
         selected && 'text-(--hilight-text) bg-(--hot-tracking-color)',
-        '[&_td]:border-b',
         className,
       )}
       {...props}
@@ -97,7 +96,7 @@ export function TableHead({
       data-slot="table-head"
       className={cn(
         'sticky top-0 h-4.25 px-(--grouped-element-spacing) box-border font-normal bg-(--button-face)',
-        '[box-shadow:var(--shadow-raised)]',
+        'shadow-raised',
         className,
       )}
       {...props}

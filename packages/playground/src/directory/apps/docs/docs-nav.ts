@@ -7,6 +7,7 @@ import demoBasicButtonSource from '../../../content/button/demo-basic.tsx?raw'
 import demoBasicSliderSource from '../../../content/slider/demo-basic.tsx?raw'
 import demoControlledSliderSource from '../../../content/slider/demo-controlled.tsx?raw'
 import demoVerticalSliderSource from '../../../content/slider/demo-vertical.tsx?raw'
+import demoBasicStatusBarSource from '../../../content/status-bar/demo-basic.tsx?raw'
 import demoBasicTabsSource from '../../../content/tabs/demo-basic.tsx?raw'
 
 export interface NavNode {
@@ -21,6 +22,7 @@ export interface NavNode {
 // Lazy-loaded MDX docs
 const ButtonDoc = lazy(() => import('../../../content/button/button.mdx'))
 const SliderDoc = lazy(() => import('../../../content/slider/slider.mdx'))
+const StatusBarDoc = lazy(() => import('../../../content/status-bar/status-bar.mdx'))
 const TabsDoc = lazy(() => import('../../../content/tabs/tabs.mdx'))
 
 // Lazy-loaded demo components
@@ -29,6 +31,7 @@ const DemoActiveButton = lazy(() => import('../../../content/button/demo-active'
 const DemoBasicSlider = lazy(() => import('../../../content/slider/demo-basic'))
 const DemoControlledSlider = lazy(() => import('../../../content/slider/demo-controlled'))
 const DemoVerticalSlider = lazy(() => import('../../../content/slider/demo-vertical'))
+const DemoBasicStatusBar = lazy(() => import('../../../content/status-bar/demo-basic'))
 const DemoBasicTabs = lazy(() => import('../../../content/tabs/demo-basic'))
 
 export const docsNavTree: NavNode[] = [
@@ -80,6 +83,21 @@ export const docsNavTree: NavNode[] = [
         type: 'demo',
         component: DemoVerticalSlider,
         source: demoVerticalSliderSource,
+      },
+    ],
+  },
+  {
+    id: 'status-bar',
+    label: 'Status Bar',
+    type: 'component',
+    component: StatusBarDoc,
+    children: [
+      {
+        id: 'status-bar-demo-basic',
+        label: 'Basic',
+        type: 'demo',
+        component: DemoBasicStatusBar,
+        source: demoBasicStatusBarSource,
       },
     ],
   },

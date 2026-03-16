@@ -1,0 +1,74 @@
+# Status Bar
+
+The `WindowStatusBar` component renders a Windows 98 styled status bar,
+typically placed at the bottom of a window to display contextual information
+such as status messages, cursor position, or keyboard state.
+
+Use `WindowStatusBarField` to define individual sections within the bar.
+
+## Components
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'murasaki-react98'
+import { CodeBlock } from '../../directory/apps/docs/code-block'
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Component</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`WindowStatusBar`</TableCell>
+      <TableCell>Container — horizontal flex layout with 1px gap</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`WindowStatusBarField`</TableCell>
+      <TableCell>Individual field with a thin sunken border effect</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Props (WindowStatusBarField)
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Prop</TableHead>
+      <TableHead>Type</TableHead>
+      <TableHead>Default</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`grow`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`true`</TableCell>
+      <TableCell>Whether the field stretches to fill available space</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`className`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Additional CSS classes</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`children`</TableCell>
+      <TableCell>`ReactNode`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Field content</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Usage
+
+<CodeBlock code={`import { WindowStatusBar, WindowStatusBarField } from 'murasaki-react98'
+
+<WindowStatusBar>
+  <WindowStatusBarField>Ready</WindowStatusBarField>
+  <WindowStatusBarField grow={false}>Ln 1, Col 1</WindowStatusBarField>
+  <WindowStatusBarField grow={false}>INS</WindowStatusBarField>
+</WindowStatusBar>`} />

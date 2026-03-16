@@ -96,6 +96,8 @@ export {
   WindowPortal,
   WindowProvider,
   WindowResizeGrip,
+  WindowStatusBar,
+  WindowStatusBarField,
   WindowTitle,
   WindowTitleBar,
 } from './components/window/window'
@@ -111,6 +113,8 @@ export type {
   WindowPortalProps,
   WindowProviderProps,
   WindowResizeGripProps,
+  WindowStatusBarFieldProps,
+  WindowStatusBarProps,
   WindowTitleBarProps,
   WindowTitleProps,
 } from './components/window/window'

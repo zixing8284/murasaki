@@ -14,6 +14,10 @@ export type { DropdownProps } from './components/dropdown/dropdown'
 export { DropdownNative } from './components/dropdown/dropdown-native'
 export type { DropdownOption } from './components/dropdown/use-dropdown-state'
 
+// FieldPanel
+export { FieldPanel } from './components/field-panel/field-panel'
+export type { FieldPanelProps } from './components/field-panel/field-panel'
+
 // GroupBox
 export { GroupBox } from './components/group-box/group-box'
 

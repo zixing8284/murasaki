@@ -173,8 +173,8 @@ describe('slider', () => {
     const trackWrapper = screen.container.querySelector('[class*="h-full w-"]') as HTMLElement
     const thumb = trackWrapper.querySelector('[class*="pointer-events-none"]') as HTMLElement
     expect(thumb).not.toBeNull()
-    // Should have the rectangle indicator class
-    expect(thumb.className).toContain('bgi-indicator-rectangle-horizontal')
+    // Box indicator should NOT have clip-path (triangle only has it)
+    expect(thumb.className).not.toContain('clip-path')
   })
 
   it('forwards className in vertical mode', async () => {

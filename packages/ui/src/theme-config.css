@@ -112,10 +112,7 @@
 @utility sunken-panel {
   background-color: var(--button-face);
   overflow: auto;
-  border-width: 2px;
-  border-color: transparent;
-  border-style: groove;
-  border-image: url("./assets/icons/sunken-panel-border.svg") 2;
+  box-shadow: var(--shadow-border-field);
 }
 
 /* Shadow utilities — class names match the CSS custom properties */
@@ -153,88 +150,17 @@
 }
 
 /* ==========================================================================
-   Icon Utilities (Window Title Bar Buttons)
-   Vite will inline these SVGs as base64 during build
+   Icon Utilities (Dropdown Arrow) — mask-image for theme color adaptation
    ========================================================================== */
 
-@utility bgi-icon-close {
-  background-image: url("./assets/icons/close.svg");
-  background-repeat: no-repeat;
-  background-position: top 3px left 4px;
-}
-
-@utility bgi-icon-help {
-  background-image: url("./assets/icons/help.svg");
-  background-repeat: no-repeat;
-  background-position: top 2px left 5px;
-}
-
-@utility bgi-icon-maximize {
-  background-image: url("./assets/icons/maximize.svg");
-  background-repeat: no-repeat;
-  background-position: top 2px left 3px;
-}
-
-@utility bgi-icon-maximize-disabled {
-  background-image: url("./assets/icons/maximize-disabled.svg");
-  background-repeat: no-repeat;
-  background-position: top 2px left 3px;
-}
-
-@utility bgi-icon-minimize {
-  background-image: url("./assets/icons/minimize.svg");
-  background-repeat: no-repeat;
-  background-position: bottom 3px left 4px;
-}
-
-@utility bgi-icon-restore {
-  background-image: url("./assets/icons/restore.svg");
-  background-repeat: no-repeat;
-  background-position: top 2px left 3px;
-}
-
-/* ==========================================================================
-   Icon Utilities (Dropdown Buttons)
-   ========================================================================== */
-
-@utility bgi-icon-button-down {
-  background-image: url("./assets/icons/button-down.svg");
-}
-
-@utility bgi-icon-button-down-active {
-  background-image: url("./assets/icons/button-down-active.svg");
-}
-
-/* ==========================================================================
-   Icon Utilities (Checkbox)
-   ========================================================================== */
-
-@utility bgi-icon-checkmark {
-  background-image: url("./assets/icons/checkmark.svg");
-}
-
-@utility bgi-icon-checkmark-disabled {
-  background-image: url("./assets/icons/checkmark-disabled.svg");
-}
-
-/* ==========================================================================
-   Icon Utilities (Radio/Option Button)
-   ========================================================================== */
-
-@utility bgi-icon-radio-border {
-  background-image: url("./assets/icons/radio-border.svg");
-}
-
-@utility bgi-icon-radio-border-disabled {
-  background-image: url("./assets/icons/radio-border-disabled.svg");
-}
-
-@utility bgi-icon-radio-dot {
-  background-image: url("./assets/icons/radio-dot.svg");
-}
-
-@utility bgi-icon-radio-dot-disabled {
-  background-image: url("./assets/icons/radio-dot-disabled.svg");
+@utility bgi-icon-arrow-down {
+  -webkit-mask-image: url("./assets/icons/arrow-down.svg");
+  mask-image: url("./assets/icons/arrow-down.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: var(--button-text);
 }
 
 @utility bgi-resize-grip {
@@ -250,18 +176,6 @@
 
 @utility bgi-border-image-groupbox {
   border-image: url("./assets/icons/groupbox-border.svg") 2;
-}
-
-/* ==========================================================================
-   Icon Utilities (Slider)
-   ========================================================================== */
-
-@utility bgi-indicator-horizontal {
-  background-image: url("./assets/icons/indicator-horizontal.svg");
-}
-
-@utility bgi-indicator-rectangle-horizontal {
-  background-image: url("./assets/icons/indicator-rectangle-horizontal.svg");
 }
 
 /* ==========================================================================
@@ -281,7 +195,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-image: url("./assets/icons/scrollbar-background.svg");
+  background-color: var(--button-hilight);
+  background-image: repeating-conic-gradient(
+    var(--button-face) 0% 25%,
+    transparent 0% 50%
+  );
+  background-size: 2px 2px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -296,24 +215,41 @@
   display: block;
 }
 
+::-webkit-scrollbar-button:vertical:start,
+::-webkit-scrollbar-button:vertical:end,
+::-webkit-scrollbar-button:horizontal:start,
+::-webkit-scrollbar-button:horizontal:end {
+  background-color: var(--button-face);
+  box-shadow: var(--shadow-raised);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+::-webkit-scrollbar-button:vertical:start:active,
+::-webkit-scrollbar-button:vertical:end:active,
+::-webkit-scrollbar-button:horizontal:start:active,
+::-webkit-scrollbar-button:horizontal:end:active {
+  box-shadow: var(--shadow-sunken);
+}
+
 ::-webkit-scrollbar-button:vertical:start {
   height: 17px;
-  background-image: url("./assets/icons/button-up.svg");
+  background-image: url("./assets/icons/arrow-up.svg");
 }
 
 ::-webkit-scrollbar-button:vertical:end {
   height: 17px;
-  background-image: url("./assets/icons/button-down.svg");
+  background-image: url("./assets/icons/arrow-down.svg");
 }
 
 ::-webkit-scrollbar-button:horizontal:start {
   width: 16px;
-  background-image: url("./assets/icons/button-left.svg");
+  background-image: url("./assets/icons/arrow-left.svg");
 }
 
 ::-webkit-scrollbar-button:horizontal:end {
   width: 16px;
-  background-image: url("./assets/icons/button-right.svg");
+  background-image: url("./assets/icons/arrow-right.svg");
 }
 
 ::-webkit-resizer {

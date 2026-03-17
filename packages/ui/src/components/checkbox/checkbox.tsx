@@ -4,6 +4,8 @@ import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
+import { CheckmarkIcon } from './checkbox-icons'
+
 const labelVariants = cva([
   'inline-flex',
   'items-center',
@@ -23,14 +25,6 @@ const labelVariants = cva([
   'before:bg-(--button-face)',
   'before:shadow-border-field',
   'before:mr-(--label-spacing)',
-  // label::after — checkmark placeholder (background set by input state)
-  'after:content-[\'\']',
-  'after:block',
-  'after:w-(--checkmark-width)',
-  'after:h-(--checkmark-width)',
-  'after:absolute',
-  'after:top-(--checkmark-top)',
-  'after:left-[calc(var(--checkbox-left)+var(--checkmark-left))]',
 ])
 
 const checkboxVariants = cva([
@@ -46,18 +40,25 @@ const checkboxVariants = cva([
   'focus:[&+label]:outline-(--button-text)',
   // input:active + label::before { background: var(--button-face); }
   'active:[&+label::before]:bg-(--button-face)',
-  // input:checked + label::after { mask: checkmark.svg, color: button-text }
-  'checked:[&+label::after]:bgi-icon-checkmark',
+  // input:checked + label svg { show checkmark }
+  'checked:[&+label_svg]:block',
   // input[disabled] + label::before { background: var(--button-face); }
   'disabled:[&+label::before]:bg-(--button-face)',
-  // input[disabled]:checked + label::after { gray out checkmark }
-  'disabled:checked:[&+label::after]:bgi-icon-checkmark',
-  'disabled:checked:[&+label::after]:!bg-(--gray-text)',
+  // input[disabled]:checked + label svg { gray out checkmark }
+  'disabled:checked:[&+label_svg]:text-(--gray-text)',
+])
+
+const checkmarkVariants = cva([
+  'absolute',
+  'hidden',
+  'text-(--button-text)',
+  'top-(--checkmark-top)',
+  'left-[calc(var(--checkbox-left)+var(--checkmark-left))]',
 ])
 
 interface CheckboxProps
   extends Omit<React.ComponentProps<'input'>, 'type'>,
-  VariantProps<typeof checkboxVariants> {}
+  VariantProps<typeof checkboxVariants> { }
 
 export function Checkbox({
   children,
@@ -90,6 +91,7 @@ export function CheckboxLabel({
   & VariantProps<typeof labelVariants>): React.ReactElement {
   return (
     <label className={cn(labelVariants({ className }))} {...props}>
+      <CheckmarkIcon className={cn(checkmarkVariants())} />
       {children}
     </label>
   )

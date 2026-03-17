@@ -4,6 +4,7 @@ import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
+import { RadioBorderIcon, RadioDotIcon } from './option-button-icons'
 import { useOptionButtonGroupContext } from './option-context'
 
 const labelVariants = cva([
@@ -15,26 +16,6 @@ const labelVariants = cva([
   'leading-[13px]',
   'relative',
   'ml-(--radio-total-width)',
-  // label::before — radio border circle
-  'before:content-[\'\']',
-  'before:absolute',
-  'before:top-0',
-  'before:left-(--radio-left)',
-  'before:inline-block',
-  'before:w-(--option-size)',
-  'before:h-(--option-size)',
-  'before:mr-(--label-spacing)',
-  'before:rounded-full',
-  'before:bg-(--button-hilight)',
-  'before:shadow-border-field',
-  // label::after — radio dot placeholder (background set by input state)
-  'after:content-[\'\']',
-  'after:block',
-  'after:w-(--radio-dot-width)',
-  'after:h-(--radio-dot-width)',
-  'after:absolute',
-  'after:top-(--radio-dot-top)',
-  'after:left-(--radio-dot-left)',
 ])
 
 const optionButtonVariants = cva([
@@ -48,15 +29,25 @@ const optionButtonVariants = cva([
   'focus:[&+label]:outline-dotted',
   'focus:[&+label]:outline-1',
   'focus:[&+label]:outline-(--button-text)',
-  // input:active + label::before { background: url(radio-border-disabled.svg); }
-  'active:[&+label::before]:bgi-icon-radio-border-disabled',
-  // input:checked + label::after { mask: radio-dot.svg, color: button-text }
-  'checked:[&+label::after]:bgi-icon-radio-dot',
-  // input[disabled] + label::before { disabled radio border }
-  'disabled:[&+label::before]:bgi-icon-radio-border-disabled',
-  // input[disabled]:checked + label::after { gray out radio dot }
-  'disabled:checked:[&+label::after]:bgi-icon-radio-dot',
-  'disabled:checked:[&+label::after]:!bg-(--gray-text)',
+  // input:checked + label .radio-dot { show dot }
+  'checked:[&+label_.radio-dot]:block',
+  // input[disabled]:checked + label .radio-dot { gray out dot }
+  'disabled:checked:[&+label_.radio-dot]:text-(--gray-text)',
+])
+
+const radioBorderVariants = cva([
+  'absolute',
+  'top-0',
+  'left-(--radio-left)',
+])
+
+const radioDotVariants = cva([
+  'radio-dot',
+  'absolute',
+  'hidden',
+  'text-(--button-text)',
+  'top-(--radio-dot-top)',
+  'left-(--radio-dot-left)',
 ])
 
 interface OptionButtonProps
@@ -71,6 +62,7 @@ interface OptionButtonProps
 export function OptionButton({
   children,
   className,
+  disabled,
   id,
   labelClassName,
   onChange,
@@ -100,6 +92,7 @@ export function OptionButton({
       <input
         checked={isChecked}
         className={cn(optionButtonVariants({ className }))}
+        disabled={disabled}
         id={inputId}
         name={name}
         onChange={handleChange}
@@ -107,21 +100,29 @@ export function OptionButton({
         value={value}
         {...props}
       />
-      <OptionButtonLabel className={labelClassName} htmlFor={inputId}>
+      <OptionButtonLabel className={labelClassName} disabled={disabled} htmlFor={inputId}>
         {children}
       </OptionButtonLabel>
     </>
   )
 }
 
+interface OptionButtonLabelProps
+  extends React.ComponentProps<'label'>,
+  VariantProps<typeof labelVariants> {
+  disabled?: boolean | undefined
+}
+
 function OptionButtonLabel({
   children,
   className,
+  disabled,
   ...props
-}: React.ComponentProps<'label'>
-  & VariantProps<typeof labelVariants>): React.ReactElement {
+}: OptionButtonLabelProps): React.ReactElement {
   return (
     <label className={cn(labelVariants({ className }))} {...props}>
+      <RadioBorderIcon className={cn(radioBorderVariants())} disabled={disabled} />
+      <RadioDotIcon className={cn(radioDotVariants())} />
       {children}
     </label>
   )

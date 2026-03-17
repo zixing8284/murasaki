@@ -3,7 +3,6 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { useCallback, useId, useRef, useState } from 'react'
-import { BoxIndicatorIcon, TriangleIndicatorIcon } from './slider-icons'
 
 // Container variants
 const containerVariants = cva(['relative', 'flex'], {
@@ -90,18 +89,35 @@ const trackVariants = cva(
 const THUMB_WIDTH = 11
 const THUMB_HEIGHT = 21
 
-// Thumb styles
-const thumbVariants = cva(['absolute', 'pixelated', 'pointer-events-none', 'w-[11px]', 'h-[21px]'], {
-  variants: {
-    vertical: {
-      true: 'left-1/2',
-      false: 'top-1/2',
+// Thumb styles — CSS-rendered Win98 3D bevel
+const thumbVariants = cva(
+  ['absolute', 'pointer-events-none', 'w-2.75', 'h-5.25'],
+  {
+    variants: {
+      vertical: {
+        true: 'left-1/2',
+        false: 'top-1/2',
+      },
+      boxIndicator: {
+        true: [
+          'bg-(--button-face)',
+          // Win98 4-color bevel for box indicator
+          'shadow-[inset_-1px_-1px_var(--button-dk-shadow),inset_1px_1px_var(--button-hilight),inset_-2px_-2px_var(--button-shadow),inset_2px_2px_var(--button-light)]',
+        ],
+        false: [
+          'bg-(--button-face)',
+          // Triangle shape via clip-path + 4-color bevel approximation
+          'shadow-[inset_-1px_-1px_var(--button-dk-shadow),inset_1px_1px_var(--button-hilight),inset_-2px_-2px_var(--button-shadow),inset_2px_2px_var(--button-light)]',
+          '[clip-path:polygon(0_0,100%_0,100%_76%,55%_76%,50%_100%,45%_76%,0_76%)]',
+        ],
+      },
+    },
+    defaultVariants: {
+      vertical: false,
+      boxIndicator: false,
     },
   },
-  defaultVariants: {
-    vertical: false,
-  },
-})
+)
 
 // Tick container styles - positioned relative to track wrapper
 const tickContainerVariants = cva(['absolute', 'pointer-events-none'], {
@@ -269,7 +285,7 @@ export function Slider({
 
         {/* Custom thumb */}
         <div
-          className={cn(thumbVariants({ vertical }))}
+          className={cn(thumbVariants({ vertical, boxIndicator }))}
           style={getThumbStyle()}
         />
 

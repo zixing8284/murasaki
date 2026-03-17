@@ -6,6 +6,7 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { useId, useMemo } from 'react'
+import { ButtonDownActiveIcon, ButtonDownIcon } from './dropdown-icons'
 import { useDropdownState } from './use-dropdown-state'
 
 // Trigger button variants - styled like DropdownNative's select
@@ -27,20 +28,9 @@ const triggerVariants = cva([
   'text-left',
   // Border effect
   'shadow-border-field',
-  // Position context for ::after arrow
+  // Position context for arrow icon
   'relative',
-  // Arrow button area via ::after
-  'after:content-[\'\']',
-  'after:absolute',
-  'after:right-0',
-  'after:top-0',
-  'after:w-4',
-  'after:h-full',
-  'after:bg-(--button-face)',
-  'after:shadow-raised',
-  'after:bgi-icon-arrow-down',
-  // Active: sunken arrow
-  'active:after:shadow-sunken',
+  'group',
   // Focus state
   'focus:outline-none',
   // Disabled state
@@ -253,6 +243,8 @@ export function Dropdown<T = string>({
         type="button"
       >
         {displayLabel}
+        <ButtonDownIcon className="absolute right-[2px] top-[2px] pointer-events-none group-active:hidden" />
+        <ButtonDownActiveIcon className="absolute right-[2px] top-[2px] pointer-events-none hidden group-active:block" />
       </button>
 
       {/* Dropdown menu */}

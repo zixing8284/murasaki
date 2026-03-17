@@ -5,6 +5,8 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 
+import { ButtonDownIcon } from './dropdown-icons'
+
 const selectVariants = cva([
   // Reset
   'appearance-none',
@@ -35,17 +37,6 @@ const selectVariants = cva([
 const selectWrapperVariants = cva([
   'relative',
   'inline-block',
-  // Arrow button area via ::after
-  'after:content-[\'\']',
-  'after:absolute',
-  'after:right-0',
-  'after:top-0',
-  'after:w-4',
-  'after:h-full',
-  'after:bg-(--button-face)',
-  'after:shadow-raised',
-  'after:bgi-icon-arrow-down',
-  'after:pointer-events-none',
 ])
 
 const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])
@@ -100,6 +91,7 @@ export function DropdownNative({
       >
         {children}
       </select>
+      <ButtonDownIcon className="absolute right-[2px] top-[2px] pointer-events-none" />
     </div>
   )
 

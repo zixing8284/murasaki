@@ -14,11 +14,11 @@ const labelVariants = cva([
   'gap-2',
   'leading-[13px]',
   'relative',
-  'ml-(--checkbox-total-width)',
+  'ml-[calc(var(--checkbox-width)+var(--label-spacing))]',
   // label::before — static box
   'before:content-[\'\']',
   'before:absolute',
-  'before:left-(--checkbox-left)',
+  'before:left-[calc(-1*(var(--checkbox-width)+var(--label-spacing)))]',
   'before:inline-block',
   'before:w-(--checkbox-width)',
   'before:h-(--checkbox-width)',
@@ -52,8 +52,8 @@ const checkmarkVariants = cva([
   'absolute',
   'hidden',
   'text-(--button-text)',
-  'top-(--checkmark-top)',
-  'left-[calc(var(--checkbox-left)+var(--checkmark-left))]',
+  'top-[3px]',
+  'left-[calc(-1*(var(--checkbox-width)+var(--label-spacing))+3px)]',
 ])
 
 interface CheckboxProps

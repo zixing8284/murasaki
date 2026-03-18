@@ -15,7 +15,7 @@ const labelVariants = cva([
   'gap-2',
   'leading-[13px]',
   'relative',
-  'ml-(--radio-total-width)',
+  'ml-[calc(var(--option-size)+var(--label-spacing))]',
 ])
 
 const optionButtonVariants = cva([
@@ -38,7 +38,7 @@ const optionButtonVariants = cva([
 const radioBorderVariants = cva([
   'absolute',
   'top-0',
-  'left-(--radio-left)',
+  'left-[calc(-1*(var(--option-size)+var(--label-spacing)))]',
 ])
 
 const radioDotVariants = cva([
@@ -46,8 +46,8 @@ const radioDotVariants = cva([
   'absolute',
   'hidden',
   'text-(--button-text)',
-  'top-(--radio-dot-top)',
-  'left-(--radio-dot-left)',
+  'top-1',
+  'left-[calc(-1*(var(--option-size)+var(--label-spacing))+4px)]',
 ])
 
 interface OptionButtonProps

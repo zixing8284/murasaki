@@ -85,20 +85,6 @@
   --range-track-height: 4px;
   --range-spacing: 10px;
 
-  /* Computed — Radio buttons */
-  --radio-total-width: calc(var(--option-size) + var(--label-spacing));
-  --radio-left: calc(-1 * var(--radio-total-width));
-  --radio-dot-width: 4px;
-  --radio-dot-top: var(--radio-dot-width);
-  --radio-dot-left: calc(var(--radio-left) + var(--radio-dot-top));
-
-  /* Computed — Checkboxes */
-  --checkbox-total-width: calc(var(--checkbox-width) + var(--label-spacing));
-  --checkbox-left: calc(-1 * var(--checkbox-total-width));
-  --checkmark-width: 7px;
-  --checkmark-top: 3px;
-  --checkmark-left: 3px;
-
   /* Desktop — playground uses classic teal instead of library default blue */
   --background: rgb(0, 128, 128);
 

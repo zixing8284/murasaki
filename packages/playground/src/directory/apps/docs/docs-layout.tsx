@@ -25,7 +25,7 @@ export function DocsLayout(): React.ReactElement {
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
       <div className="w-45 shrink-0 overflow-y-auto overflow-x-hidden bg-(--window) shadow-sunken">
-        <TreeViewRoot className="border-none! shadow-none! bg-transparent! h-full">
+        <TreeViewRoot className="h-full">
           <TreeViewItem
             label="Welcome"
             selected={selectedId === 'welcome'}

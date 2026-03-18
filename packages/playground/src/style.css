@@ -15,6 +15,10 @@
 /* Attention: @source must use relative path because node_modules is ignored by Tailwind by default */
 @source "../node_modules/murasaki-react98/dist";
 
+/* just for development */
+@source "../../ui/src";
+
+
 @import "tailwindcss";
 @import "tw-animate-css";
 

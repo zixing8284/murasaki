@@ -17,7 +17,8 @@
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./dist/index.js",
+    ".": "./src/index.ts",
+    "./dist": "./dist/index.js",
     "./globals.css": "./dist/globals.css",
     "./theme.css": "./src/globals.css",
     "./theme-config.css": "./src/theme-config.css",

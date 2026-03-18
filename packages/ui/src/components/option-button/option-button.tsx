@@ -40,8 +40,6 @@ const optionButtonVariants = cva([
   'disabled:[&+label]:cursor-default',
   'disabled:[&+label]:[text-shadow:1px_1px_0_var(--button-hilight)]',
   'disabled:[&+label]:[--radio-inner-bg:var(--button-face)]',
-  // input[disabled]:checked + label svg { gray dot }
-  'disabled:checked:[&+label_svg]:text-(--gray-text)',
 ])
 
 const radioBorderVariants = cva([
@@ -109,9 +107,9 @@ export function OptionButton({
         {...props}
       />
       <OptionButtonLabel
-        checked={isChecked === true}
+        checked={isChecked ?? false}
         className={labelClassName}
-        disabled={disabled === true}
+        disabled={disabled ?? false}
         htmlFor={inputId}
       >
         {children}

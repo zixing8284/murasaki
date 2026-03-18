@@ -8,6 +8,8 @@ import demoBasicCheckboxSource from '../../../content/checkbox/demo-basic.tsx?ra
 import demoControlledCheckboxSource from '../../../content/checkbox/demo-controlled.tsx?raw'
 import demoBasicDropdownSource from '../../../content/dropdown/demo-basic.tsx?raw'
 import demoNativeDropdownSource from '../../../content/dropdown/demo-native.tsx?raw'
+import demoBasicOptionButtonSource from '../../../content/option-button/demo-basic.tsx?raw'
+import demoDisabledOptionButtonSource from '../../../content/option-button/demo-disabled.tsx?raw'
 import demoBasicSliderSource from '../../../content/slider/demo-basic.tsx?raw'
 import demoControlledSliderSource from '../../../content/slider/demo-controlled.tsx?raw'
 import demoVerticalSliderSource from '../../../content/slider/demo-vertical.tsx?raw'
@@ -27,6 +29,7 @@ export interface NavNode {
 const ButtonDoc = lazy(() => import('../../../content/button/button.mdx'))
 const CheckboxDoc = lazy(() => import('../../../content/checkbox/checkbox.mdx'))
 const DropdownDoc = lazy(() => import('../../../content/dropdown/dropdown.mdx'))
+const OptionButtonDoc = lazy(() => import('../../../content/option-button/option-button.mdx'))
 const SliderDoc = lazy(() => import('../../../content/slider/slider.mdx'))
 const StatusBarDoc = lazy(() => import('../../../content/status-bar/status-bar.mdx'))
 const TabsDoc = lazy(() => import('../../../content/tabs/tabs.mdx'))
@@ -38,6 +41,8 @@ const DemoBasicCheckbox = lazy(() => import('../../../content/checkbox/demo-basi
 const DemoControlledCheckbox = lazy(() => import('../../../content/checkbox/demo-controlled'))
 const DemoBasicDropdown = lazy(() => import('../../../content/dropdown/demo-basic'))
 const DemoNativeDropdown = lazy(() => import('../../../content/dropdown/demo-native'))
+const DemoBasicOptionButton = lazy(() => import('../../../content/option-button/demo-basic'))
+const DemoDisabledOptionButton = lazy(() => import('../../../content/option-button/demo-disabled'))
 const DemoBasicSlider = lazy(() => import('../../../content/slider/demo-basic'))
 const DemoControlledSlider = lazy(() => import('../../../content/slider/demo-controlled'))
 const DemoVerticalSlider = lazy(() => import('../../../content/slider/demo-vertical'))
@@ -108,6 +113,28 @@ export const docsNavTree: NavNode[] = [
         type: 'demo',
         component: DemoNativeDropdown,
         source: demoNativeDropdownSource,
+      },
+    ],
+  },
+  {
+    id: 'option-button',
+    label: 'Option Button',
+    type: 'component',
+    component: OptionButtonDoc,
+    children: [
+      {
+        id: 'option-button-demo-basic',
+        label: 'Basic',
+        type: 'demo',
+        component: DemoBasicOptionButton,
+        source: demoBasicOptionButtonSource,
+      },
+      {
+        id: 'option-button-demo-disabled',
+        label: 'Disabled',
+        type: 'demo',
+        component: DemoDisabledOptionButton,
+        source: demoDisabledOptionButtonSource,
       },
     ],
   },

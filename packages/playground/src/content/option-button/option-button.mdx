@@ -1,0 +1,105 @@
+# Option Button
+
+The `OptionButton` component renders a Windows 98 styled radio button. Use it inside an `OptionGroup` to create a mutually exclusive selection group.
+
+## Props
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'murasaki-react98'
+import { CodeBlock } from '../../directory/apps/docs/code-block'
+
+### OptionGroup
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Prop</TableHead>
+      <TableHead>Type</TableHead>
+      <TableHead>Default</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`name`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Name attribute for each radio input in the group</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`selectedValue`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Currently selected value</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`onChange`</TableCell>
+      <TableCell>`(value: string) => void`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Callback fired when selection changes</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`children`</TableCell>
+      <TableCell>`ReactNode`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>OptionButton children</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+### OptionButton
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Prop</TableHead>
+      <TableHead>Type</TableHead>
+      <TableHead>Default</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`value`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Value of this option</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`disabled`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`false`</TableCell>
+      <TableCell>Disables the option button</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`children`</TableCell>
+      <TableCell>`ReactNode`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Label content</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`className`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Additional CSS classes for the input</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`labelClassName`</TableCell>
+      <TableCell>`string`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Additional CSS classes for the label</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Usage
+
+<CodeBlock code={`import { OptionButton, OptionGroup } from 'murasaki-react98'
+
+<OptionGroup name="size" selectedValue={size} onChange={setSize}>
+  <OptionButton value="small">Small</OptionButton>
+  <OptionButton value="medium">Medium</OptionButton>
+  <OptionButton value="large">Large</OptionButton>
+</OptionGroup>
+
+{/* Disabled */}
+<OptionButton value="off" disabled>Unavailable</OptionButton>`} />

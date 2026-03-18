@@ -35,7 +35,7 @@ const triggerVariants = cva([
   'focus:outline-none',
   // Disabled state
   'disabled:bg-(--button-face)',
-  'disabled:text-(--button-shadow)',
+  'disabled:text-(--gray-text)',
   'disabled:cursor-not-allowed',
   // Text overflow
   'overflow-hidden',

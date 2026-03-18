@@ -24,7 +24,7 @@ const buttonVariants = cva(
     'focus:outline-1',
     'focus:outline-(--button-text)',
     'focus:-outline-offset-4',
-    'disabled:text-(--button-shadow)',
+    'disabled:text-(--gray-text)',
     'disabled:[text-shadow:1px_1px_0_var(--button-hilight)]',
     'box-border',
     'border-none',

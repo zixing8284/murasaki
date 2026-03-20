@@ -208,11 +208,12 @@ function TreeViewRoot({
   return (
     <ul
       className={cn(
-        'block',
+        'flex',
+        'flex-col',
+        'min-h-full',
         'bg-(--button-hilight)',
         'm-0',
         'p-1.5',
-        'shadow-(--shadow-border-field)',
         'text-(--window-text)',
         className,
       )}

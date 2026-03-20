@@ -11,7 +11,7 @@ const groupBoxVariants = cva([
   'min-w-min',
   // Custom styles
   'm-0',
-  'p-[calc(2*1px+var(--spacing-element))]',
+  'p-[calc(2*1px+var(--element-spacing))]',
   'pt-(--element-spacing)',
   'border-2',
   'bgi-border-image-groupbox',

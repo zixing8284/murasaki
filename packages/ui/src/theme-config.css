@@ -164,6 +164,18 @@
   border-image: url("./assets/icons/groupbox-border.svg") 2;
 }
 
+
+::-webkit-resizer {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAN0lEQVR4Ae3MgQUAMBRDwU5fFF05lb/CARTBw2Ulof0DxPtcwp3hNuEYnjbcEW4TjuFpwx3h9gMWGgZ2Y/PT2gAAAABJRU5ErkJggg==");
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+
 /* ==========================================================================
    Scrollbar Styles (Windows 98 Style)
    ========================================================================== */
@@ -250,14 +262,4 @@
   background-size: 4px 7px;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-::-webkit-resizer {
-  width: 16px;
-  height: 16px;
-  background-color: transparent;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAN0lEQVR4Ae3MgQUAMBRDwU5fFF05lb/CARTBw2Ulof0DxPtcwp3hNuEYnjbcEW4TjuFpwx3h9gMWGgZ2Y/PT2gAAAABJRU5ErkJggg==");
-  background-position: bottom right;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
 }

@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { FieldPanel } from 'murasaki-react98'
 import { Suspense } from 'react'
 import { CodeBlock } from './code-block'
 
@@ -20,9 +21,9 @@ export function DemoViewer({ Demo, source }: DemoViewerProps): React.ReactElemen
       </div>
 
       {/* Source code area */}
-      <div className="flex-1 min-h-0 shadow-sunken bg-(--window) p-[2px] [&>.docs-code-block]:h-full">
+      <FieldPanel className="flex-1 min-h-0 p-0.5 [&>.docs-code-block]:h-full">
         <CodeBlock code={source} lang="tsx" />
-      </div>
+      </FieldPanel>
     </div>
   )
 }

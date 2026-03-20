@@ -77,7 +77,7 @@ export type { ThemeId } from './components/theme-provider/theme-context'
 export { ThemeProvider } from './components/theme-provider/theme-provider'
 export type { ThemeProviderProps } from './components/theme-provider/theme-provider'
 // TreeView
-export { TreeViewItem, TreeViewRoot } from './components/tree-view/tree-view'
+export { TreeView, TreeViewItem } from './components/tree-view/tree-view'
 export type {
   TreeViewItemProps,
   TreeViewProps,

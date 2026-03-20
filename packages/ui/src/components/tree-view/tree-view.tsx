@@ -201,7 +201,7 @@ interface TreeViewProps {
   className?: string
 }
 
-function TreeViewRoot({
+function TreeView({
   children,
   className,
 }: TreeViewProps): React.ReactElement {
@@ -223,6 +223,6 @@ function TreeViewRoot({
   )
 }
 
-export { TreeViewRoot }
+export { TreeView }
 
 export type { TreeViewItemProps, TreeViewProps }

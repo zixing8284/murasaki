@@ -8,6 +8,7 @@ const fieldPanelVariants = cva(
     'shadow-border-field',
     'bg-(--window)',
     'text-(--window-text)',
+    'p-0.5',
   ],
   {
     variants: {

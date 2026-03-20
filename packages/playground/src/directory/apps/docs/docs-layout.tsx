@@ -1,5 +1,5 @@
 import type { NavNode } from './docs-nav'
-import { TreeViewItem, TreeViewRoot } from 'murasaki-react98'
+import { FieldPanel, TreeView, TreeViewItem } from 'murasaki-react98'
 import { Suspense, useState } from 'react'
 import { DemoViewer } from './demo-viewer'
 import { docsNavTree } from './docs-nav'
@@ -24,34 +24,36 @@ export function DocsLayout(): React.ReactElement {
   return (
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
-      <div className="w-45 shrink-0 h-full overflow-y-auto overflow-x-hidden bg-(--window) shadow-sunken">
-        <TreeViewRoot>
-          <TreeViewItem
-            label="Welcome"
-            selected={selectedId === 'welcome'}
-            onClick={() => setSelectedId('welcome')}
-          />
-          {docsNavTree.map(node => (
+      <FieldPanel className="w-45 shrink-0 h-full overflow-hidden">
+        <div className="h-full overflow-y-auto overflow-x-hidden">
+          <TreeView>
             <TreeViewItem
-              key={node.id}
-              label={node.label}
-              defaultExpanded
-              preventCollapse={node.id !== selectedId}
-              selected={selectedId === node.id}
-              onClick={() => setSelectedId(node.id)}
-            >
-              {node.children?.map(child => (
-                <TreeViewItem
-                  key={child.id}
-                  label={child.label}
-                  selected={selectedId === child.id}
-                  onClick={() => setSelectedId(child.id)}
-                />
-              ))}
-            </TreeViewItem>
-          ))}
-        </TreeViewRoot>
-      </div>
+              label="Welcome"
+              selected={selectedId === 'welcome'}
+              onClick={() => setSelectedId('welcome')}
+            />
+            {docsNavTree.map(node => (
+              <TreeViewItem
+                key={node.id}
+                label={node.label}
+                defaultExpanded
+                preventCollapse={node.id !== selectedId}
+                selected={selectedId === node.id}
+                onClick={() => setSelectedId(node.id)}
+              >
+                {node.children?.map(child => (
+                  <TreeViewItem
+                    key={child.id}
+                    label={child.label}
+                    selected={selectedId === child.id}
+                    onClick={() => setSelectedId(child.id)}
+                  />
+                ))}
+              </TreeViewItem>
+            ))}
+          </TreeView>
+        </div>
+      </FieldPanel>
 
       {/* Right panel - Content area */}
       <div className="flex-1 min-w-0 min-h-0 overflow-hidden">

@@ -23,7 +23,7 @@ const triggerVariants = cva([
   'pl-1',
   'pr-[18px]',
   // Colors
-  'bg-(--button-hilight)',
+  'bg-(--window)',
   'text-(--window-text)',
   'text-left',
   // Border effect
@@ -51,7 +51,7 @@ const menuVariants = cva([
   'w-full',
   'max-h-40',
   'overflow-y-auto',
-  'bg-(--button-hilight)',
+  'bg-(--window)',
   'border',
   'border-(--button-shadow)',
   'list-none',

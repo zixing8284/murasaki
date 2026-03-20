@@ -20,14 +20,14 @@ const selectVariants = cva([
   'pl-1',
   'pr-[18px]',
   // Colors
-  'bg-(--button-hilight)',
+  'bg-(--window)',
   'text-(--window-text)',
   // Border effect
   'shadow-border-field',
   // Focus state
   'focus:outline-none',
-  'focus:text-(--button-hilight)',
-  'focus:bg-(--menu-hilight)',
+  'focus:text-(--hilight-text)',
+  'focus:bg-(--hilight)',
   // Disabled state
   'disabled:bg-(--button-face)',
   'disabled:text-(--gray-text)',

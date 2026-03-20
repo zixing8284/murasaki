@@ -14,7 +14,7 @@ const treeViewItemStyles = cva(
     'select-none',
     'focus-visible:ring-2',
     'focus-visible:outline-none',
-    'focus-visible:ring-(--menu-hilight)',
+    'focus-visible:ring-(--hilight)',
   ],
   {
     variants: {
@@ -29,7 +29,7 @@ const treeViewItemStyles = cva(
           'before:border',
           'before:border-(--button-shadow)',
           'before:text-center',
-          'before:bg-(--button-hilight)',
+          'before:bg-(--window)',
           'before:text-(--window-text)',
           'before:flex',
           'before:cursor-pointer',
@@ -50,12 +50,18 @@ const treeViewItemStyles = cva(
         false: '',
       },
       interactive: {
-        true: 'hover:bg-(--menu-hottrack-light)',
-        false: 'hover:bg-transparent',
+        true: [
+          'hover:text-(--hot-tracking-color)',
+          'active:bg-(--hilight)',
+          'active:text-(--hilight-text)',
+          'focus-visible:bg-(--hilight)',
+          'focus-visible:text-(--hilight-text)',
+        ],
+        false: '',
       },
       selected: {
         true: [
-          'bg-(--menu-hilight)',
+          'bg-(--hilight)',
           'text-(--hilight-text)',
         ],
         false: [],
@@ -65,7 +71,7 @@ const treeViewItemStyles = cva(
       {
         selected: true,
         interactive: true,
-        className: 'hover:bg-(--menu-hilight)',
+        className: 'hover:text-(--hilight-text) focus-visible:ring-(--hilight-text)',
       },
     ],
     defaultVariants: {
@@ -211,7 +217,7 @@ function TreeView({
         'flex',
         'flex-col',
         'min-h-full',
-        'bg-(--button-hilight)',
+        'bg-(--window)',
         'm-0',
         'p-1.5',
         'text-(--window-text)',

@@ -22,7 +22,7 @@ const labelVariants = cva([
   'before:inline-block',
   'before:w-(--checkbox-width)',
   'before:h-(--checkbox-width)',
-  'before:bg-(--button-hilight)',
+  'before:bg-(--window)',
   'before:shadow-border-field',
   'before:mr-(--label-spacing)',
 ])

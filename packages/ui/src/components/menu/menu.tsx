@@ -45,7 +45,7 @@ const menuItemVariants = cva(
     variants: {
       disabled: {
         true: ['text-(--gray-text)', 'cursor-default'],
-        false: ['cursor-pointer', 'hover:bg-(--hilight)', 'hover:text-(--hilight-text)'],
+        false: ['cursor-pointer', 'text-(--menu-text)', 'hover:bg-(--menu-hilight)', 'hover:text-(--hilight-text)'],
       },
     },
     defaultVariants: {

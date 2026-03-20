@@ -15,7 +15,7 @@ const fieldPanelVariants = cva(
       disabled: {
         true: [
           'bg-(--button-face)',
-          'text-(--button-shadow)',
+          'text-(--gray-text)',
         ],
       },
     },

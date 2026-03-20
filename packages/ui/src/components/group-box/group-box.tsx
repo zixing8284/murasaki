@@ -17,7 +17,7 @@ const groupBoxVariants = cva([
   'bgi-border-image-groupbox',
 ])
 
-const legendVariants = cva(['bg-(--button-alternate-face)', 'px-1'])
+const legendVariants = cva(['bg-(--button-face)', 'px-1'])
 
 interface GroupBoxProps
   extends React.ComponentProps<'fieldset'>,

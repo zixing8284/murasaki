@@ -32,7 +32,7 @@ const inputWrapperVariants = cva([
 const inputVariants = cva([
   'appearance-none',
   'rounded-none',
-  'bg-(--button-face)',
+  'bg-(--window)',
   'shadow-border-field',
   'text-(--window-text)',
   'outline-none',
@@ -49,7 +49,7 @@ const inputVariants = cva([
   // Disabled & readonly states
   'disabled:bg-(--button-face)',
   'read-only:bg-(--button-face)',
-  'read-only:text-(--button-shadow)',
+  'read-only:text-(--gray-text)',
 ])
 
 const spinnerContainerVariants = cva([
@@ -340,7 +340,7 @@ export function NumberBox({
       <label
         className={cn(
           labelVariants(),
-          (disabled ?? readOnly) && 'text-(--button-shadow)',
+          (disabled ?? readOnly) && 'text-(--gray-text)',
         )}
         htmlFor={inputId}
       >

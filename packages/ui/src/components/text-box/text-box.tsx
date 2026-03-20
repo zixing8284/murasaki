@@ -37,13 +37,13 @@ const labelVariants = cva([
 const baseFieldStyles = [
   'appearance-none',
   'rounded-none',
-  'bg-(--button-face)',
+  'bg-(--window)',
   'text-(--window-text)',
   'outline-none',
   // Disabled & readonly states
   'disabled:bg-(--button-face)',
   'read-only:bg-(--button-face)',
-  'read-only:text-(--button-shadow)',
+  'read-only:text-(--gray-text)',
   'px-1',
   'py-[3px]',
 ]
@@ -78,7 +78,8 @@ const textareaVariants = cva([
   ...baseFieldStyles,
   'resize-y',
   'min-h-[60px]',
-  'sunken-panel',
+  'shadow-border-field',
+  'overflow-auto',
 ])
 
 interface TextBoxProps
@@ -154,7 +155,7 @@ export function TextBox({
       <label
         className={cn(
           labelVariants(),
-          (disabled ?? readOnly) && 'text-(--button-shadow)',
+          (disabled ?? readOnly) && 'text-(--gray-text)',
         )}
         htmlFor={inputId}
       >

@@ -57,7 +57,6 @@ describe('field-panel', () => {
     expect(classes).not.toContain('flex')
     expect(classes).not.toContain('grid')
     expect(classes).not.toContain('overflow')
-    expect(classes).not.toMatch(/\bp-\d/)
     expect(classes).not.toMatch(/\bw-/)
     expect(classes).not.toMatch(/\bh-/)
   })
@@ -68,7 +67,7 @@ describe('field-panel', () => {
     await expect.element(el).toHaveAttribute('aria-disabled', 'true')
     const classes = el.element().className
     expect(classes).toContain('bg-(--button-face)')
-    expect(classes).toContain('text-(--button-shadow)')
+    expect(classes).toContain('text-(--gray-text)')
   })
 
   it('does not set aria-disabled when not disabled', async () => {

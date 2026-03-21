@@ -7,18 +7,12 @@ const NETWORK_ONLINE_ICONS = [
   '/img/conn_pcs_on_on.png',
 ]
 const NETWORK_OFFLINE_ICON = '/img/conn_pcs_no_network.png'
+const ALL_NETWORK_ICONS = [...NETWORK_ONLINE_ICONS, NETWORK_OFFLINE_ICON]
 
 export function NetworkIcon(): React.ReactElement {
   const isOnline = useNetworkStatus()
   const [networkIconIndex, setNetworkIconIndex] = useState(0)
   const networkIconIndexRef = useRef(0)
-
-  // Reset network icon index when going offline
-  useEffect(() => {
-    if (!isOnline) {
-      networkIconIndexRef.current = 0
-    }
-  }, [isOnline])
 
   // Cycle through network icons when online
   useEffect(() => {
@@ -35,11 +29,17 @@ export function NetworkIcon(): React.ReactElement {
   }, [isOnline])
 
   return (
-    <img
-      className="mx-px"
-      src={isOnline ? NETWORK_ONLINE_ICONS[networkIconIndex] : NETWORK_OFFLINE_ICON}
-      alt={isOnline ? 'Network connected' : 'Network disconnected'}
-      title={isOnline ? 'Connected' : 'Disconnected'}
-    />
+    <>
+      {/* Preload all network icons synchronously at render time so the offline icon is always available */}
+      {ALL_NETWORK_ICONS.map(src => (
+        <img key={src} src={src} alt="" aria-hidden="true" className="absolute pointer-events-none -z-10 opacity-0" />
+      ))}
+      <img
+        className="mx-px"
+        src={isOnline ? NETWORK_ONLINE_ICONS[networkIconIndex] : NETWORK_OFFLINE_ICON}
+        alt={isOnline ? 'Network connected' : 'Network disconnected'}
+        title={isOnline ? 'Connected' : 'Disconnected'}
+      />
+    </>
   )
 }

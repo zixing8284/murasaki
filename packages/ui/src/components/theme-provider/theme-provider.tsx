@@ -1,5 +1,6 @@
 import type { ThemeId } from '#/components/theme-provider/theme-context'
 import { ThemeContext, themeIds } from '#/components/theme-provider/theme-context'
+import { useScrollbarTheme } from '#/hooks/use-scrollbar-theme'
 import { useCallback, useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'murasaki-theme'
@@ -46,6 +47,9 @@ export function ThemeProvider({
     }
     return () => el.removeAttribute('data-theme')
   }, [themeId])
+
+  // Sync scrollbar arrow SVG colors with --button-text
+  useScrollbarTheme(themeId)
 
   return (
     <ThemeContext value={{ themeId, setTheme }}>

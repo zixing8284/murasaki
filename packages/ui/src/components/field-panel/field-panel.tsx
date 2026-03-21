@@ -9,6 +9,7 @@ const fieldPanelVariants = cva(
     'bg-(--window)',
     'text-(--window-text)',
     'p-0.5',
+    'overflow-auto',
   ],
   {
     variants: {

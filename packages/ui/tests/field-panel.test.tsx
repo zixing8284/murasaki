@@ -53,10 +53,10 @@ describe('field-panel', () => {
     const screen = await render(<FieldPanel data-testid="panel" />)
     const el = screen.getByTestId('panel').element()
     const classes = el.className
-    // Should not have flex, grid, overflow, padding, or width/height classes
+    // Should not have flex, grid, padding, or width/height classes
     expect(classes).not.toContain('flex')
     expect(classes).not.toContain('grid')
-    expect(classes).not.toContain('overflow')
+    expect(classes).toContain('overflow-auto')
     expect(classes).not.toMatch(/\bw-/)
     expect(classes).not.toMatch(/\bh-/)
   })

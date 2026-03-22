@@ -18,7 +18,7 @@ export function Table({
       <table
         data-slot="table"
         className={cn(
-          'border-collapse relative text-left whitespace-nowrap bg-(--window) w-full',
+          'border-collapse relative text-left whitespace-nowrap w-full',
           className,
         )}
         {...props}
@@ -78,7 +78,7 @@ export function TableRow({
     <tr
       data-slot="table-row"
       className={cn(
-        'hover:bg-(--hot-tracking-color) hover:text-(--hilight-text) cursor-pointer transition-colors',
+        'hover:bg-(--hot-tracking-color) hover:text-(--hilight-text) cursor-pointer',
         selected && 'text-(--hilight-text) bg-(--hot-tracking-color)',
         className,
       )}

@@ -83,6 +83,17 @@ Components live in `src/components/`, one directory per component. The key conve
 - **`cn()` utility** (`src/lib/utils.ts`) wraps `clsx` + `tailwind-merge` and automatically injects an 11px base font size. Use `cnPure()` when you don't want the base font injection
 - **`#/*`** is a path alias for `./src/*` (configured in both tsconfig and vite)
 
+**Inline SVG Icons**: For complex vector graphics (e.g., slider thumbs), create a separate `*-icons.tsx` file with inline SVG components. This enables pixel-perfect rendering while supporting theme adaptation via CSS variables. Follow the Win98 3D bevel pattern:
+
+| SVG Color | CSS Variable | Win98 Role |
+|-----------|--------------|------------|
+| White / Light | `var(--button-hilight)` | Top-left highlight edge |
+| ButtonFace | `var(--button-face)` | Main button background |
+| Medium Gray | `var(--button-shadow)` | Bottom-right shadow edge |
+| Black / Dark | `var(--button-dk-shadow)` | Outer dark border |
+
+Example: `packages/ui/src/components/slider/slider-icons.tsx`
+
 Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tokens. Components use Tailwind v4's **arbitrary CSS variable syntax** directly (e.g., `bg-(--button-face)`, `text-(--window-text)`) instead of `@theme inline` tokens. The CSS is split into three source files under `src/`:
 
 - **`theme-variables.css`** — CSS custom properties (`:root` and `[data-theme]` overrides). This is the **consumer template** — consumers copy these variables into their own CSS and customize values. Exported as `murasaki-react98/theme-variables.css`.
@@ -101,6 +112,8 @@ Custom utilities include `sunken-panel`, `bgi-icon-*`, `pixelated`, `shadow-rais
 **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
 
 **Theme-first colors**: Use CSS variable-backed Tailwind syntax (e.g., `bg-(--hilight)`, `text-(--desktop-text)`, `bg-(--window)`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables so styles adapt automatically when switching themes. Use `bg-(--window)` for content area backgrounds (white in Win98) and `bg-(--button-face)` for window chrome (silver/ButtonFace).
+
+**Theme reference**: When creating or updating component styles, follow `packages/ui/template-theme-explained.en.md` as the authoritative guide for Win98 visual patterns (button states, borders, 3D effects, color usage).
 
 The **`useDraggable`** hook (`src/hooks/use-draggable.ts`) handles CSS-transform-based drag with viewport/container boundary clamping.
 

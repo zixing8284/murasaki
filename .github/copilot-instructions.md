@@ -56,6 +56,23 @@ After modifying component code or styles under `packages/ui/`, follow these step
 - **`cn()`** (`src/lib/utils.ts`) wraps `clsx` + `tailwind-merge` and auto-injects an 11px base font. Use **`cnPure()`** to skip the font injection.
 - All public exports go through `src/index.ts`.
 
+### Inline SVG Icons
+
+For complex vector graphics (e.g., slider thumbs), create a separate `*-icons.tsx` file with inline SVG components. This approach:
+
+1. **Enables pixel-perfect rendering** — SVG paths match the original design exactly
+2. **Supports theme adaptation** — Use CSS variables instead of hardcoded colors
+3. **Follows the Win98 3D bevel pattern:**
+
+| SVG Color | CSS Variable | Win98 Role |
+|-----------|--------------|------------|
+| White / Light | `var(--button-hilight)` | Top-left highlight edge |
+| ButtonFace | `var(--button-face)` | Main button background |
+| Medium Gray | `var(--button-shadow)` | Bottom-right shadow edge |
+| Black / Dark | `var(--button-dk-shadow)` | Outer dark border |
+
+Example: `packages/ui/src/components/slider/slider-icons.tsx`
+
 ## Styling
 
 - **Tailwind CSS v4** with Windows 98 design tokens. Components use Tailwind v4's **arbitrary CSS variable syntax** directly (e.g., `bg-(--button-face)`, `text-(--window-text)`) instead of `@theme inline` tokens. Shadow utilities (`shadow-raised`, `shadow-sunken`, etc.) are provided as `@utility` definitions. The CSS is split into three source files:
@@ -68,6 +85,7 @@ After modifying component code or styles under `packages/ui/`, follow these step
 - **CSS variable syntax in components**: Use Tailwind v4 arbitrary value syntax with CSS variables: `bg-(--button-face)`, `text-(--window-text)`, `border-(--button-shadow)`, etc. For shadows, use the utility classes: `shadow-raised`, `shadow-sunken`, `shadow-border-field`, etc.
 - **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
 - **Theme-first colors**: Use CSS variable-backed Tailwind syntax (e.g., `bg-(--hilight)`, `text-(--desktop-text)`, `bg-(--window)`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables so styles adapt automatically when switching themes. Use `bg-(--window)` for content area backgrounds (white in Win98) and `bg-(--button-face)` for window chrome (silver/ButtonFace).
+- **Theme reference**: When creating or updating component styles, follow `packages/ui/template-theme-explained.en.md` as the authoritative guide for Win98 visual patterns (button states, borders, 3D effects, color usage).
 - Custom utilities: `sunken-panel`, `bgi-icon-*`, `pixelated`, `shadow-raised`, `shadow-sunken`, `shadow-border-field`, `shadow-raised-primary`.
 - Build outputs a single `dist/globals.css`; all assets (fonts, icons) are inlined as base64.
 

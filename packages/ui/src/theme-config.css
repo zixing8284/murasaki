@@ -164,15 +164,6 @@
   image-rendering: pixelated;
 }
 
-/* ==========================================================================
-   Icon Utilities (GroupBox)
-   ========================================================================== */
-
-@utility bgi-border-image-groupbox {
-  border-image: url("./assets/icons/groupbox-border.svg") 2;
-}
-
-
 ::-webkit-resizer {
   width: 16px;
   height: 16px;

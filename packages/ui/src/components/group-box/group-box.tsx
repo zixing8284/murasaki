@@ -13,8 +13,7 @@ const groupBoxVariants = cva([
   'm-0',
   'p-[calc(2*1px+var(--element-spacing))]',
   'pt-(--element-spacing)',
-  'border-2',
-  'bgi-border-image-groupbox',
+  '[box-shadow:inset_1px_1px_0_var(--button-shadow),1px_1px_0_var(--button-hilight)]',
 ])
 
 const legendVariants = cva(['bg-(--button-face)', 'px-1'])

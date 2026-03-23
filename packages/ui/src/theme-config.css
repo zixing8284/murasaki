@@ -117,10 +117,6 @@
   @apply text-wrap wrap-break-word break-all whitespace-pre-line;
 }
 
-@utility sunken-panel {
-  background-color: var(--button-face);
-  box-shadow: var(--shadow-border-field);
-}
 
 /* Shadow utilities — class names match the CSS custom properties */
 

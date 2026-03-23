@@ -243,8 +243,15 @@ export function Dropdown<T = string>({
         type="button"
       >
         {displayLabel}
-        <ButtonDownIcon className="absolute right-[2px] top-[2px] pointer-events-none group-active:hidden" />
-        <ButtonDownActiveIcon className="absolute right-[2px] top-[2px] pointer-events-none hidden group-active:block" />
+        <ButtonDownIcon
+          className={cn(
+            'absolute right-[2px] top-[2px] pointer-events-none',
+            !disabled && 'group-active:hidden',
+          )}
+        />
+        {!disabled && (
+          <ButtonDownActiveIcon className="absolute right-[2px] top-[2px] pointer-events-none hidden group-active:block" />
+        )}
       </button>
 
       {/* Dropdown menu */}

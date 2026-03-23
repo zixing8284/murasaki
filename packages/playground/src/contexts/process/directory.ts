@@ -54,6 +54,16 @@ const directory = {
     singleton: true,
     ephemeral: true,
   },
+  jspaint: {
+    name: 'JSPaint',
+    Component: lazy(() =>
+      import('../../directory/apps/jspaint').then(m => ({ default: m.JspaintApp })),
+    ),
+    defaultTitle: 'JSPaint',
+    icon: { sm: '/img/desktop/InternetExplorer.png', lg: '/img/desktop/InternetExplorer.png' },
+    singleton: false,
+    showOnDesktop: true,
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory
@@ -72,6 +82,7 @@ export const APP_ID = {
   DOCS: 'docs',
   NOTEPAD: 'notepad',
   DISPLAY_PROPERTIES: 'displayproperties',
+  JSPaintApp: 'jspaint',
 } as const satisfies Record<string, AppId>
 
 export default directory as Record<AppId, ProcessDirectoryEntry>

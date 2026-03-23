@@ -119,7 +119,6 @@
 
 @utility sunken-panel {
   background-color: var(--button-face);
-  overflow: auto;
   box-shadow: var(--shadow-border-field);
 }
 

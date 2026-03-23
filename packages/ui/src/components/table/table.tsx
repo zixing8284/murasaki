@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react'
 import { cn } from '#/lib/utils'
+import { SunkenPanel } from '../sunken-panel/sunken-panel'
 
 interface TableProps extends ComponentProps<'table'> {
   containerClassName?: string
@@ -11,19 +12,21 @@ export function Table({
   ...props
 }: TableProps): React.ReactElement {
   return (
-    <div
+    <SunkenPanel
       data-slot="table-container"
-      className={cn('sunken-panel relative overflow-auto', containerClassName)}
+      className={cn('relative bg-(--window)', containerClassName)}
     >
-      <table
-        data-slot="table"
-        className={cn(
-          'border-collapse relative text-left whitespace-nowrap w-full',
-          className,
-        )}
-        {...props}
-      />
-    </div>
+      <div className="overflow-auto">
+        <table
+          data-slot="table"
+          className={cn(
+            'border-collapse relative text-left whitespace-nowrap w-full',
+            className,
+          )}
+          {...props}
+        />
+      </div>
+    </SunkenPanel>
   )
 }
 

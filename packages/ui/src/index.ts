@@ -39,6 +39,10 @@ export { ProgressIndicator } from './components/progress-indicator/progress-indi
 export { Slider } from './components/slider/slider'
 export type { TickMark } from './components/slider/slider'
 
+// SunkenPanel
+export { SunkenPanel } from './components/sunken-panel/sunken-panel'
+export type { SunkenPanelProps } from './components/sunken-panel/sunken-panel'
+
 // Table
 export {
   Table,

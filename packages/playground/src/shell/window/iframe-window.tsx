@@ -66,8 +66,7 @@ export function IframeWindow({
        * so focus is only triggered via the wrapper's onPointerDown.
        */}
       <div
-        className={`w-full h-full relative ${iframeLoaded ? '' : 'opacity-0'}`}
-        style={{ pointerEvents: isInteractive ? 'auto' : 'none' }}
+        className={`w-full h-full relative ${iframeLoaded ? '' : 'opacity-0'} ${isInteractive ? 'pointer-events-auto' : 'pointer-events-none'}`}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)

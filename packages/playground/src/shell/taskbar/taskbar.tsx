@@ -11,7 +11,10 @@ interface TaskbarProps {
 
 export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
   return (
-    <footer className="flex flex-row items-center bg-(--button-face) p-0.75 shadow-raised z-2 overflow-hidden mt-auto select-none">
+    <footer
+      data-area="taskbar"
+      className="flex flex-row items-center bg-(--button-face) p-0.75 shadow-raised z-2 overflow-hidden mt-auto select-none"
+    >
       {/* Start Button */}
       <div>
         <Button

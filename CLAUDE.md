@@ -109,7 +109,7 @@ Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tok
 
 Custom utilities include `sunken-panel`, `bgi-icon-*`, `pixelated`, `shadow-raised`, `shadow-sunken`, `shadow-border-field`, and `shadow-raised-primary`.
 
-**Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS in stylesheets or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
+**Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS classes or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
 
 **Theme-first colors**: Use CSS variable-backed Tailwind syntax (e.g., `bg-(--hilight)`, `text-(--desktop-text)`, `bg-(--window)`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables so styles adapt automatically when switching themes. Use `bg-(--window)` for content area backgrounds (white in Win98) and `bg-(--button-face)` for window chrome (silver/ButtonFace).
 

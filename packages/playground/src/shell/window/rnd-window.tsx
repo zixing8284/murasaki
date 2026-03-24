@@ -14,6 +14,8 @@ interface RndWindowProps {
   disableResize?: boolean
   /** Called when dragging starts/stops — use to disable iframe pointer-events during drag */
   onDragChange?: (dragging: boolean) => void
+  /** Called when resize starts/stops — use to disable iframe pointer-events during resize */
+  onResizeChange?: (resizing: boolean) => void
 }
 
 export function RndWindow({
@@ -25,6 +27,7 @@ export function RndWindow({
   disableMinimize = false,
   disableResize = false,
   onDragChange,
+  onResizeChange,
 }: RndWindowProps): React.ReactElement | null {
   const { processes, container } = useProcesses()
   const portalContainer = processes[windowId]?.componentWindow ?? container
@@ -33,7 +36,7 @@ export function RndWindow({
     container: portalContainer,
     draggable: true,
   })
-  const { setTargetRef: setResizeTargetRef, setResizeRef } = useResizable<HTMLDivElement, HTMLDivElement>({
+  const { setTargetRef: setResizeTargetRef, setResizeRef, resizing } = useResizable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     resizable: !disableResize,
   })
@@ -48,6 +51,11 @@ export function RndWindow({
   useEffect(() => {
     onDragChange?.(dragging)
   }, [dragging, onDragChange])
+
+  // Notify consumers when resize state changes (used by IframeWindow to disable iframe pointer-events)
+  useEffect(() => {
+    onResizeChange?.(resizing)
+  }, [resizing, onResizeChange])
 
   return (
     <BaseWindow

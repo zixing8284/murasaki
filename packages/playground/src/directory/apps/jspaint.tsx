@@ -20,8 +20,6 @@ export function JspaintApp({ windowId }: ProcessComponentProps): React.ReactElem
       windowId={windowId}
       src={JSPaintApp_URL}
       className="w-[900px] h-[650px] top-[5%] left-[5%]"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-top-navigation-by-user-activation"
-      referrerPolicy="no-referrer-when-downgrade"
       titleIcon={<JspaintIcon />}
     />
   )

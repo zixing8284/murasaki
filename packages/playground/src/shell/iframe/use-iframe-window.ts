@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useProcessActions } from '../../contexts/process'
+import { IFRAME_CONFIG } from './iframe-config'
 
 export interface UseIframeWindowOptions {
   windowId: string
@@ -7,23 +8,30 @@ export interface UseIframeWindowOptions {
 
 export interface UseIframeWindowReturn {
   iframeRef: React.RefCallback<HTMLIFrameElement>
-  isLoading: boolean
+  iframeLoaded: boolean
   focusIframe: () => void
+  /** Sends a cancel interaction message to the iframe */
+  cancelIframeInteraction: () => void
+  sandbox: string
+  referrerPolicy: typeof IFRAME_CONFIG.referrerPolicy
 }
 
 /**
  * Attaches a focus listener to the iframe's contentWindow if accessible.
  * Cross-origin iframes may throw a SecurityError here — we guard with try-catch.
+ *
+ * When the iframe content receives focus (e.g., user clicks inside iframe),
+ * we activate the owning window and trigger delayed focus transfer.
  */
 function tryAttachContentWindowFocusListener(
   iframe: HTMLIFrameElement,
-  handler: () => void,
+  onContentFocus: () => void,
 ): () => void {
   try {
     const contentWindow = iframe.contentWindow
     if (contentWindow) {
-      contentWindow.addEventListener('focus', handler)
-      return () => contentWindow.removeEventListener('focus', handler)
+      contentWindow.addEventListener('focus', onContentFocus)
+      return () => contentWindow.removeEventListener('focus', onContentFocus)
     }
   }
   catch {
@@ -35,14 +43,14 @@ function tryAttachContentWindowFocusListener(
 
 /**
  * Encapsulates iframe window behavior:
- * - Tracks loading state via iframe load event
- * - Listens to contentWindow focus to activate the owning window (best-effort for cross-origin)
+ * - Tracks loading state via iframe load event (exposed as `iframeLoaded` = !isLoading)
+ * - Listens to contentWindow focus to activate the owning window and trigger delayed focus (same-origin only)
  * - Provides a ref callback to attach to the iframe element
- * - Provides focusIframe() to forward focus into the iframe content
+ * - Provides focusIframe() with delayed focus transfer (500ms) to prevent accidental interactions
  *
- * Note: contentWindow focus tracking may not work for cross-origin iframes
- * due to browser security restrictions. The iframe wrapper's onPointerDown
- * handles activation in that case.
+ * Note: contentWindow focus tracking only works for same-origin iframes
+ * due to browser security restrictions. For cross-origin iframes, the
+ * iframe wrapper's onPointerDown handles activation and focus.
  */
 export function useIframeWindow({
   windowId,
@@ -50,25 +58,37 @@ export function useIframeWindow({
   const actions = useProcessActions()
   const [isLoading, setIsLoading] = useState(true)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
-  // Keep latest focus handler in a ref so the effect doesn't need to re-run
-  const focusHandlerRef = useRef<() => void>(() => {
-    actions.activate(windowId)
-  })
+  // Keep latest callback in a ref so the effect doesn't need to re-run
+  const onContentFocusRef = useRef<() => void>(() => {})
 
-  // Keep focusHandlerRef in sync before paint
+  // Delayed focus transfer to prevent accidental interactions when switching windows
+  const focusIframe = useCallback(() => {
+    setTimeout(() => {
+      iframeRef.current?.contentWindow?.focus()
+    }, 500)
+  }, [])
+
+  // Handler called when iframe content receives focus (same-origin only)
+  const handleContentFocus = useCallback(() => {
+    // First: activate the window immediately so it comes to front
+    actions.activate(windowId)
+    // Then: trigger delayed focus transfer to iframe content
+    // (the contentWindow already has focus, but this ensures consistent timing)
+    focusIframe()
+  }, [actions, windowId, focusIframe])
+
+  // Keep onContentFocusRef in sync before paint
   useLayoutEffect(() => {
-    focusHandlerRef.current = () => {
-      actions.activate(windowId)
-    }
-  }, [actions, windowId])
+    onContentFocusRef.current = handleContentFocus
+  }, [handleContentFocus])
 
   const handleIframeLoad = useCallback(() => {
     setIsLoading(false)
 
     // Re-attach contentWindow listener after load (best-effort)
     const iframe = iframeRef.current
-    if (iframe && focusHandlerRef.current) {
-      tryAttachContentWindowFocusListener(iframe, focusHandlerRef.current)
+    if (iframe) {
+      tryAttachContentWindowFocusListener(iframe, onContentFocusRef.current)
     }
   }, [])
 
@@ -79,11 +99,8 @@ export function useIframeWindow({
 
     iframe.addEventListener('load', handleIframeLoad)
 
-    // Try to attach contentWindow listener immediately (best-effort)
-    let detach: () => void = () => {}
-    if (focusHandlerRef.current) {
-      detach = tryAttachContentWindowFocusListener(iframe, focusHandlerRef.current)
-    }
+    // Try to attach contentWindow listener immediately (best-effort for same-origin)
+    const detach = tryAttachContentWindowFocusListener(iframe, onContentFocusRef.current)
 
     return () => {
       iframe.removeEventListener('load', handleIframeLoad)
@@ -91,15 +108,48 @@ export function useIframeWindow({
     }
   }, [handleIframeLoad])
 
-  const focusIframe = useCallback(() => {
-    iframeRef.current?.contentWindow?.focus()
+  /**
+   * Cancel any ongoing interaction inside the iframe.
+   *
+   * Strategy:
+   * 1. Try sending a postMessage with 'cancel' command (works if iframe listens for messages)
+   * 2. Fall back to contentWindow.blur() (removes focus from iframe, may help in some cases)
+   *
+   * For same-origin iframes, you can implement a message listener:
+   *   window.addEventListener('message', (e) => {
+   *     if (e.data?.type === 'murasaki:cancel') { /* cancel drag/draw operation *\/ }
+   *   })
+   */
+  const cancelIframeInteraction = useCallback(() => {
+    const iframe = iframeRef.current
+    if (!iframe)
+      return
+
+    // 1. Try postMessage first (if iframe supports it)
+    try {
+      iframe.contentWindow?.postMessage({ type: 'murasaki:cancel' }, '*')
+    }
+    catch {
+      // Cross-origin postMessage may throw
+    }
+
+    // 2. Fall back to blur (helps in some browsers/cases)
+    try {
+      iframe.contentWindow?.blur()
+    }
+    catch {
+      // May fail for cross-origin
+    }
   }, [])
 
   return {
     iframeRef: (el) => {
       iframeRef.current = el
     },
-    isLoading,
+    iframeLoaded: !isLoading,
     focusIframe,
+    cancelIframeInteraction,
+    sandbox: IFRAME_CONFIG.sandbox,
+    referrerPolicy: IFRAME_CONFIG.referrerPolicy,
   }
 }

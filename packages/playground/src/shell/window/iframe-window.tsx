@@ -9,8 +9,6 @@ interface IframeWindowProps {
   src: string
   className?: string
   titleIcon?: ReactNode
-  sandbox?: string
-  referrerPolicy?: string
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
@@ -20,18 +18,16 @@ interface IframeWindowProps {
  * A window that embeds a web application in an iframe.
  *
  * Handles:
- * - Loading state display
- * - Focus management (click → activate + focus iframe)
- * - Pointer-events disabled during drag to prevent iframe interaction conflicts
- * - contentWindow focus/blur → activate owning window
+ * - Loading state display (iframeLoaded controls visibility with opacity-0 until loaded)
+ * - Focus management (click → activate + delayed focus iframe)
+ * - Pointer-events disabled during drag/resize and when window is inactive
+ * - contentWindow focus → activate owning window + delayed focus (same-origin iframes only)
  */
 export function IframeWindow({
   windowId,
   src,
   className,
   titleIcon,
-  sandbox = 'allow-scripts allow-same-origin allow-forms allow-pointer-lock',
-  referrerPolicy = 'no-referrer-when-downgrade',
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
@@ -39,15 +35,16 @@ export function IframeWindow({
   const actions = useProcessActions()
   const win = useProcess(windowId)
   const [isDragging, setIsDragging] = useState(false)
-  const { iframeRef, isLoading, focusIframe } = useIframeWindow({
+  const [isResizing, setIsResizing] = useState(false)
+  const { iframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
     windowId,
-    src,
-    sandbox,
-    referrerPolicy,
   })
 
   if (!win)
     return null
+
+  // Only active window's iframe can receive interactions
+  const isInteractive = !isDragging && !isResizing && win.isActive
 
   return (
     <RndWindow
@@ -58,21 +55,30 @@ export function IframeWindow({
       disableMinimize={disableMinimize}
       disableResize={disableResize}
       onDragChange={setIsDragging}
+      onResizeChange={setIsResizing}
     >
       {/*
-       * Iframe wrapper: clicking activates the window and focuses the iframe.
-       * pointer-events is disabled during drag to prevent iframe interaction conflicts.
+       * Iframe wrapper: clicking activates the window and triggers delayed focus.
+       * pointer-events is disabled during drag/resize or when window is inactive.
+       * For same-origin iframes, clicking inside content also triggers the
+       * contentWindow focus listener which calls activate() + focusIframe().
+       * For cross-origin iframes, clicking inside content doesn't bubble up,
+       * so focus is only triggered via the wrapper's onPointerDown.
        */}
       <div
-        className="w-full h-full relative"
-        style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+        className={`w-full h-full relative ${iframeLoaded ? '' : 'opacity-0'}`}
+        style={{ pointerEvents: isInteractive ? 'auto' : 'none' }}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)
           focusIframe()
         }}
+        onPointerLeave={() => {
+          // Cancel any iframe internal drag/draw behavior when pointer leaves the window
+          cancelIframeInteraction()
+        }}
       >
-        {isLoading && (
+        {!iframeLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-(--button-face)">
             <span className="text-xs text-(--window-text)">Loading...</span>
           </div>

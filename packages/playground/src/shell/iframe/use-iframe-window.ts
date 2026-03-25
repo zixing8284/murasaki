@@ -31,7 +31,14 @@ function tryAttachContentWindowFocusListener(
     const contentWindow = iframe.contentWindow
     if (contentWindow) {
       contentWindow.addEventListener('focus', onContentFocus)
-      return () => contentWindow.removeEventListener('focus', onContentFocus)
+      return () => {
+        try {
+          contentWindow?.removeEventListener('focus', onContentFocus)
+        }
+        catch {
+          // contentWindow may be inaccessible after iframe unmount or navigation
+        }
+      }
     }
   }
   catch {

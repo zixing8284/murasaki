@@ -35,10 +35,12 @@ export function RndWindow({
   const { setTargetRef: setDragTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     draggable: true,
+    onDragChange,
   })
   const { setTargetRef: setResizeTargetRef, setResizeRef, resizing } = useResizable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     resizable: !disableResize,
+    onResizeChange,
   })
 
   // Store target element ref for bounds clamping
@@ -96,16 +98,6 @@ export function RndWindow({
       return
     clampWindowToBounds()
   }, [dragging, resizing, clampWindowToBounds])
-
-  // Notify consumers when drag state changes (used by IframeWindow to disable iframe pointer-events)
-  useEffect(() => {
-    onDragChange?.(dragging)
-  }, [dragging, onDragChange])
-
-  // Notify consumers when resize state changes (used by IframeWindow to disable iframe pointer-events)
-  useEffect(() => {
-    onResizeChange?.(resizing)
-  }, [resizing, onResizeChange])
 
   return (
     <BaseWindow

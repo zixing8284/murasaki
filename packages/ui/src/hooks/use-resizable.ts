@@ -22,6 +22,8 @@ export interface UseResizableOptions {
   maxWidth?: number
   /** Maximum height in px (default: unlimited) */
   maxHeight?: number
+  /** Called when resize starts/stops — prefer over Effect-based onResizeChange in consuming components */
+  onResizeChange?: (resizing: boolean) => void
 }
 
 /**
@@ -65,6 +67,7 @@ export function useResizable<
     minHeight = 120,
     maxWidth,
     maxHeight,
+    onResizeChange,
   } = options
 
   const targetRef = useRef<TTarget | null>(null)
@@ -161,6 +164,7 @@ export function useResizable<
 
       const onMouseup = (): void => {
         setResizing(false)
+        onResizeChange?.(false)
         document.body.style.cursor = originalCursor
         document.removeEventListener('mousemove', onMousemove)
         document.removeEventListener('mouseup', onMouseup)
@@ -175,10 +179,11 @@ export function useResizable<
       }
 
       setResizing(true)
+      onResizeChange?.(true)
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },
-    [container, minWidth, minHeight, maxWidth, maxHeight],
+    [container, minWidth, minHeight, maxWidth, maxHeight, onResizeChange],
   )
 
   useEffect(() => {

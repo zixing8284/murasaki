@@ -120,7 +120,7 @@ export function useIframeWindow({
    *
    * Strategy:
    * 1. Try sending a postMessage with 'cancel' command (works if iframe listens for messages)
-   * 2. Fall back to contentWindow.blur() (removes focus from iframe, may help in some cases)
+   * 2. Fall back to focusing the parent document body (moves focus out of iframe)
    *
    * For same-origin iframes, you can implement a message listener:
    *   window.addEventListener('message', (e) => {
@@ -140,9 +140,9 @@ export function useIframeWindow({
       // Cross-origin postMessage may throw
     }
 
-    // 2. Fall back to blur (helps in some browsers/cases)
+    // 2. Fall back: move focus to parent document body (more reliable than contentWindow.blur())
     try {
-      iframe.contentWindow?.blur()
+      iframe.ownerDocument.body.focus()
     }
     catch {
       // May fail for cross-origin

@@ -1,0 +1,61 @@
+---
+title: TextBox
+---
+
+import DemoTextBoxBasic from './demo-basic.tsx'
+import DemoTextBoxMultiple from './demo-multiple.tsx'
+
+# TextBox
+
+The `TextBox` component is used for single-line or multi-line text input, styled in Windows 98 fashion.
+
+## Basic Usage
+
+<DemoTextBoxBasic />
+
+<CodeBlock language="tsx">{`
+import { TextBox } from 'murasaki-react98';
+
+function Example() {
+  const [value, setValue] = React.useState('Hello, world!');
+  return <TextBox value={value} onChange={e => setValue(e.target.value)} />;
+}
+`}</CodeBlock>
+
+
+## Multiline (Textarea)
+
+<DemoTextBoxMultiple />
+
+<CodeBlock language="tsx">{`
+import { TextBox } from 'murasaki-react98';
+
+function Example() {
+  const [value, setValue] = React.useState('Multiline\nText!');
+  return (
+    <TextBox
+      value={value}
+      onChange={e => setValue(e.target.value)}
+      multiline
+      rows={4}
+    />
+  );
+}
+`}</CodeBlock>
+
+## Props
+
+- `value`: Controlled input value
+- `defaultValue`: Uncontrolled initial value
+- `onChange`: Callback when input changes
+- `multiline`: If true, renders a textarea for multi-line input
+- `rows`: Number of rows for textarea (when `multiline`)
+- Other props are passed to the underlying `<input />` or `<textarea />`
+
+## Design Notes
+
+- Supports disabled, readOnly, autoFocus, etc.
+- Uses Win98 theme colors and 3D borders
+- Accepts custom `className` and `style`
+
+See the component library docs for more advanced usage.

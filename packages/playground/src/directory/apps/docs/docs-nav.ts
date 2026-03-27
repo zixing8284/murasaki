@@ -14,6 +14,8 @@ import demoControlledSliderSource from '../../../content/slider/demo-controlled.
 import demoVerticalSliderSource from '../../../content/slider/demo-vertical.tsx?raw'
 import demoBasicStatusBarSource from '../../../content/status-bar/demo-basic.tsx?raw'
 import demoBasicTabsSource from '../../../content/tabs/demo-basic.tsx?raw'
+import demoBasicTextBoxSource from '../../../content/text-box/demo-basic.tsx?raw'
+import demoMultipleTextBoxSource from '../../../content/text-box/demo-multiple.tsx?raw'
 
 export interface NavNode {
   id: string
@@ -32,6 +34,7 @@ const OptionButtonDoc = lazy(() => import('../../../content/option-button/option
 const SliderDoc = lazy(() => import('../../../content/slider/slider.mdx'))
 const StatusBarDoc = lazy(() => import('../../../content/status-bar/status-bar.mdx'))
 const TabsDoc = lazy(() => import('../../../content/tabs/tabs.mdx'))
+const TextBoxDoc = lazy(() => import('../../../content/text-box/text-box.mdx'))
 
 // Lazy-loaded demo components
 const DemoBasicButton = lazy(() => import('../../../content/button/demo-basic'))
@@ -46,8 +49,32 @@ const DemoControlledSlider = lazy(() => import('../../../content/slider/demo-con
 const DemoVerticalSlider = lazy(() => import('../../../content/slider/demo-vertical'))
 const DemoBasicStatusBar = lazy(() => import('../../../content/status-bar/demo-basic'))
 const DemoBasicTabs = lazy(() => import('../../../content/tabs/demo-basic'))
+const DemoBasicTextBox = lazy(() => import('../../../content/text-box/demo-basic'))
+const DemoMultipleTextBox = lazy(() => import('../../../content/text-box/demo-multiple'))
 
 export const docsNavTree: NavNode[] = [
+  {
+    id: 'text-box',
+    label: 'TextBox',
+    type: 'component',
+    component: TextBoxDoc,
+    children: [
+      {
+        id: 'text-box-demo-basic',
+        label: 'Basic',
+        type: 'demo',
+        component: DemoBasicTextBox,
+        source: demoBasicTextBoxSource,
+      },
+      {
+        id: 'text-box-demo-multiple',
+        label: 'Multiple (Textarea)',
+        type: 'demo',
+        component: DemoMultipleTextBox,
+        source: demoMultipleTextBoxSource,
+      },
+    ],
+  },
   {
     id: 'button',
     label: 'Button',

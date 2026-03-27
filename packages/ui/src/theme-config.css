@@ -59,6 +59,7 @@
   --scrollbar-arrow-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'%3E%3Cpath fill='%23000' d='M7 0H0V1H1V2H2V3H3V4H4V3H5V2H6V1H7V0Z'/%3E%3C/svg%3E");
   --scrollbar-arrow-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' viewBox='0 0 4 7'%3E%3Cpath fill='%23000' d='M0 3V4H1V5H2V6H3V7H4V0H3V1H2V2H1V3H0Z'/%3E%3C/svg%3E");
   --scrollbar-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' viewBox='0 0 4 7'%3E%3Cpath fill='%23000' d='M4 4V3H3V2H2V1H1V0H0V7H1V6H2V5H3V4H4Z'/%3E%3C/svg%3E");
+}
 
 /* ==========================================================================
    Base Styles & Font Faces
@@ -151,6 +152,7 @@
   box-shadow: var(--shadow-border-field);
 }
 
+/* fix: ensure ::-webkit-resizer matches Win98 style and is pixelated */
 ::-webkit-resizer {
   width: 16px;
   height: 16px;

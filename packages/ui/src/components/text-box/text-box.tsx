@@ -76,7 +76,7 @@ const inputVariants = cva(
 
 const textareaVariants = cva([
   ...baseFieldStyles,
-  'resize-y',
+  'resize-none',
   'min-h-[60px]',
   'shadow-border-field',
   'overflow-auto',

@@ -1,55 +1,23 @@
 import { useEffect, useRef } from 'react'
 
-// ─── Theme colors ────────────────────────────────────────────────────────────
+// ─── Style helpers (CSS variable-based, auto-responds to theme changes) ──────
 
-interface ScrollbarColors {
-  face: string
-  highlight: string
-  light: string
-  shadow: string
-  frame: string
-}
+const RAISED_SHADOW = [
+  'inset -1px -1px var(--button-dk-shadow)',
+  'inset 1px 1px var(--button-light)',
+  'inset -2px -2px var(--button-shadow)',
+  'inset 2px 2px var(--button-hilight)',
+].join(', ')
 
-function readThemeColors(): ScrollbarColors {
-  const s = getComputedStyle(document.documentElement)
-  const get = (v: string, fb: string): string => s.getPropertyValue(v).trim() || fb
-  return {
-    face: get('--button-face', '#d4d0c8'),
-    highlight: get('--button-hilight', '#ffffff'),
-    light: get('--button-light', '#dfdfdf'),
-    shadow: get('--button-shadow', '#808080'),
-    frame: get('--button-dk-shadow', '#0a0a0a'),
-  }
-}
+const SUNKEN_SHADOW = [
+  'inset -1px -1px var(--button-hilight)',
+  'inset 1px 1px var(--button-dk-shadow)',
+  'inset -2px -2px var(--button-light)',
+  'inset 2px 2px var(--button-shadow)',
+].join(', ')
 
-// ─── Style helpers ───────────────────────────────────────────────────────────
-
-function encodeSvgColor(c: string): string {
-  return c.replace('#', '%23')
-}
-
-function raisedShadow(c: ScrollbarColors): string {
-  return [
-    `inset -1px -1px ${c.frame}`,
-    `inset 1px 1px ${c.light}`,
-    `inset -2px -2px ${c.shadow}`,
-    `inset 2px 2px ${c.highlight}`,
-  ].join(', ')
-}
-
-function sunkenShadow(c: ScrollbarColors): string {
-  return [
-    `inset -1px -1px ${c.highlight}`,
-    `inset 1px 1px ${c.frame}`,
-    `inset -2px -2px ${c.light}`,
-    `inset 2px 2px ${c.shadow}`,
-  ].join(', ')
-}
-
-function checkerBg(c: ScrollbarColors): string {
-  const f = encodeSvgColor(c.face)
-  return `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect fill='${f}' x='0' y='0' width='1' height='1'/><rect fill='${f}' x='1' y='1' width='1' height='1'/></svg>")`
-}
+// 2×2 checker pattern using conic-gradient — supports CSS variables natively
+const CHECKER_BG = 'repeating-conic-gradient(var(--button-face) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px'
 
 // ─── DOM helpers ─────────────────────────────────────────────────────────────
 
@@ -66,7 +34,7 @@ const ARROW_PATHS: Record<string, string> = {
   right: 'M7,4h-1v7h1v-1h1v-1h1v-1h1v-1h-1v-1h-1v-1h-1v-1Z',
 }
 
-function createArrowSvg(dir: string, color: string): SVGSVGElement {
+function createArrowSvg(dir: string): SVGSVGElement {
   const ns = 'http://www.w3.org/2000/svg'
   const isVert = dir === 'up' || dir === 'down'
   const h = isVert ? 17 : 16
@@ -81,7 +49,7 @@ function createArrowSvg(dir: string, color: string): SVGSVGElement {
 
   const path = document.createElementNS(ns, 'path')
   path.setAttribute('d', ARROW_PATHS[dir] ?? '')
-  path.setAttribute('fill', color)
+  path.setAttribute('fill', 'currentColor')
   svg.appendChild(path)
   svg.setAttribute('data-murasaki-arrow', dir)
   return svg
@@ -116,18 +84,19 @@ interface ScrollbarState {
 
 // ── Build arrow button ──
 
-function buildButton(c: ScrollbarColors, dir: string): HTMLDivElement {
+function buildButton(dir: string): HTMLDivElement {
   const btn = createDiv({
     position: 'relative',
     width: `${BAR_SIZE}px`,
     height: `${BAR_SIZE}px`,
     cursor: 'default',
-    backgroundColor: c.face,
+    backgroundColor: 'var(--button-face)',
+    color: 'var(--button-dk-shadow)',
     boxSizing: 'border-box',
     flexShrink: '0',
   })
-  btn.style.boxShadow = raisedShadow(c)
-  btn.appendChild(createArrowSvg(dir, c.frame))
+  btn.style.boxShadow = RAISED_SHADOW
+  btn.appendChild(createArrowSvg(dir))
 
   const btnName = dir === 'up'
     ? 'vup'
@@ -143,8 +112,6 @@ function buildButton(c: ScrollbarColors, dir: string): HTMLDivElement {
 // ── Build all scrollbar DOM elements ──
 
 function buildScrollbarDom(target: HTMLElement): ScrollbarState {
-  const c = readThemeColors()
-
   // Vertical bar
   const vBar = createDiv({
     position: 'absolute',
@@ -158,7 +125,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   })
   vBar.setAttribute('data-murasaki-vbar', '')
 
-  const vUp = buildButton(c, 'up')
+  const vUp = buildButton('up')
 
   const vDown = createDiv({
     position: 'absolute',
@@ -167,12 +134,13 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     width: `${BAR_SIZE}px`,
     height: `${BAR_SIZE}px`,
     cursor: 'default',
-    backgroundColor: c.face,
+    backgroundColor: 'var(--button-face)',
+    color: 'var(--button-dk-shadow)',
     boxSizing: 'border-box',
     flexShrink: '0',
   })
-  vDown.style.boxShadow = raisedShadow(c)
-  vDown.appendChild(createArrowSvg('down', c.frame))
+  vDown.style.boxShadow = RAISED_SHADOW
+  vDown.appendChild(createArrowSvg('down'))
   vDown.setAttribute('data-murasaki-btn', 'vdown')
 
   const vTrack = createDiv({
@@ -181,9 +149,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     bottom: `${BAR_SIZE}px`,
     left: '0',
     right: '0',
-    backgroundColor: c.light,
-    backgroundImage: checkerBg(c),
-    backgroundRepeat: 'repeat',
+    backgroundColor: 'var(--button-light)',
+    background: CHECKER_BG,
     cursor: 'default',
   })
   vTrack.setAttribute('data-murasaki-track', 'v')
@@ -193,8 +160,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     left: '0',
     width: `${BAR_SIZE}px`,
     minHeight: `${BAR_SIZE}px`,
-    backgroundColor: c.face,
-    boxShadow: raisedShadow(c),
+    backgroundColor: 'var(--button-face)',
+    boxShadow: RAISED_SHADOW,
     cursor: 'default',
     boxSizing: 'border-box',
   })
@@ -218,7 +185,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   })
   hBar.setAttribute('data-murasaki-hbar', '')
 
-  const hLeft = buildButton(c, 'left')
+  const hLeft = buildButton('left')
   hLeft.style.position = 'absolute'
   hLeft.style.left = '0'
   hLeft.style.top = '0'
@@ -230,11 +197,12 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     width: `${BAR_SIZE}px`,
     height: `${BAR_SIZE}px`,
     cursor: 'default',
-    backgroundColor: c.face,
+    backgroundColor: 'var(--button-face)',
+    color: 'var(--button-dk-shadow)',
     boxSizing: 'border-box',
   })
-  hRight.style.boxShadow = raisedShadow(c)
-  hRight.appendChild(createArrowSvg('right', c.frame))
+  hRight.style.boxShadow = RAISED_SHADOW
+  hRight.appendChild(createArrowSvg('right'))
   hRight.setAttribute('data-murasaki-btn', 'hright')
 
   const hTrack = createDiv({
@@ -243,9 +211,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     right: `${BAR_SIZE}px`,
     top: '0',
     bottom: '0',
-    backgroundColor: c.light,
-    backgroundImage: checkerBg(c),
-    backgroundRepeat: 'repeat',
+    backgroundColor: 'var(--button-light)',
+    background: CHECKER_BG,
     cursor: 'default',
   })
   hTrack.setAttribute('data-murasaki-track', 'h')
@@ -255,8 +222,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     top: '0',
     height: `${BAR_SIZE}px`,
     minWidth: `${BAR_SIZE}px`,
-    backgroundColor: c.face,
-    boxShadow: raisedShadow(c),
+    backgroundColor: 'var(--button-face)',
+    boxShadow: RAISED_SHADOW,
     cursor: 'default',
     boxSizing: 'border-box',
   })
@@ -274,7 +241,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     right: '0',
     width: `${BAR_SIZE}px`,
     height: `${BAR_SIZE}px`,
-    backgroundColor: c.face,
+    backgroundColor: 'var(--button-face)',
     zIndex: '101',
     display: 'none',
   })
@@ -291,7 +258,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
   // Hide native scrollbar
   target.style.scrollbarWidth = 'none'
-  ;(target.style as unknown as Record<string, string>).msOverflowStyle = 'none'
+  target.style.setProperty('-ms-overflow-style', 'none')
   target.style.setProperty('scrollbar-width', 'none', 'important')
 
   const hideStyle = document.createElement('style')
@@ -404,8 +371,7 @@ function addButtonBehavior(
 
   const onDown = (e: MouseEvent): void => {
     e.preventDefault()
-    const c = readThemeColors()
-    btn.style.boxShadow = sunkenShadow(c)
+    btn.style.boxShadow = SUNKEN_SHADOW
 
     const arrow = btn.querySelector<SVGSVGElement>('[data-murasaki-arrow]')
     if (arrow) {
@@ -423,8 +389,7 @@ function addButtonBehavior(
     clearInterval(intervalId)
     intervalId = null
 
-    const c = readThemeColors()
-    btn.style.boxShadow = raisedShadow(c)
+    btn.style.boxShadow = RAISED_SHADOW
 
     const arrow = btn.querySelector<SVGSVGElement>('[data-murasaki-arrow]')
     if (arrow) {

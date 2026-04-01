@@ -78,9 +78,8 @@ const inputVariants = cva(
 const textareaVariants = cva([
   ...baseFieldStyles,
   'resize-none',
-  'min-h-[60px]',
   'overflow-auto',
-  'size-full',
+  'w-full',
 ])
 
 interface TextBoxProps
@@ -124,16 +123,18 @@ export function TextBox({
 
   const fieldElement = multiline
     ? (
-        <div className={cn('relative bg-(--window) shadow-border-field p-[2px] size-full', className)} style={{ minHeight: '60px' }}>
-          <textarea
-            ref={textareaRef}
-            className={cn(textareaVariants())}
-            disabled={disabled}
-            id={inputId}
-            readOnly={readOnly}
-            rows={rows}
-            {...(props as React.ComponentProps<'textarea'>)}
-          />
+        <div className={cn('bg-(--window) shadow-border-field p-[2px] size-full flex flex-col min-h-[60px]', className)}>
+          <div className="relative flex-1 flex flex-col overflow-hidden">
+            <textarea
+              ref={textareaRef}
+              className={cn(textareaVariants(), 'flex-1')}
+              disabled={disabled}
+              id={inputId}
+              readOnly={readOnly}
+              rows={rows}
+              {...(props as React.ComponentProps<'textarea'>)}
+            />
+          </div>
         </div>
       )
     : (

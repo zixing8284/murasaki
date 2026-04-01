@@ -52,13 +52,13 @@
     inset -2px -2px var(--button-light),
     inset 2px 2px var(--button-dk-shadow);
 
-  /* Scrollbar arrow SVG data URIs — default to black; ThemeProvider
-     overrides these at runtime via style.setProperty() so the arrow
-     color follows --button-text on theme switch. */
-  --scrollbar-arrow-up: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'%3E%3Cpath fill='%23000' d='M4 0H3V1H2V2H1V3H0V4H7V3H6V2H5V1H4V0Z'/%3E%3C/svg%3E");
-  --scrollbar-arrow-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'%3E%3Cpath fill='%23000' d='M7 0H0V1H1V2H2V3H3V4H4V3H5V2H6V1H7V0Z'/%3E%3C/svg%3E");
-  --scrollbar-arrow-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' viewBox='0 0 4 7'%3E%3Cpath fill='%23000' d='M0 3V4H1V5H2V6H3V7H4V0H3V1H2V2H1V3H0Z'/%3E%3C/svg%3E");
-  --scrollbar-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' viewBox='0 0 4 7'%3E%3Cpath fill='%23000' d='M4 4V3H3V2H2V1H1V0H0V7H1V6H2V5H3V4H4Z'/%3E%3C/svg%3E");
+  /* Scrollbar arrow SVG data URIs — COMMENTED OUT: replaced by ScrollArea
+     DOM-based scrollbar component. Kept for reference / easy revert.
+  --scrollbar-arrow-up: url("data:image/svg+xml,...");
+  --scrollbar-arrow-down: url("data:image/svg+xml,...");
+  --scrollbar-arrow-left: url("data:image/svg+xml,...");
+  --scrollbar-arrow-right: url("data:image/svg+xml,...");
+  */
 }
 
 /* ==========================================================================
@@ -154,8 +154,12 @@
 
 /* ==========================================================================
    Scrollbar Styles (Windows 98 Style)
+   COMMENTED OUT: replaced by ScrollArea DOM-based scrollbar component.
+   Use <ScrollArea> or useScrollbar() hook instead.
+   Kept for reference / easy revert.
    ========================================================================== */
 
+/*
 ::-webkit-scrollbar {
   width: 16px;
 }
@@ -224,3 +228,4 @@
 }
 
 ::-webkit-scrollbar-button:horizontal:end { background-image: var(--scrollbar-arrow-right); }
+*/

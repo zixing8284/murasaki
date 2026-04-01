@@ -4,6 +4,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '../../lib/utils'
+import { useScrollbar } from '../scroll-area/use-scrollbar'
 
 // Valid input types for TextBox
 type TextBoxInputType
@@ -78,8 +79,8 @@ const textareaVariants = cva([
   ...baseFieldStyles,
   'resize-none',
   'min-h-[60px]',
-  'shadow-border-field',
   'overflow-auto',
+  'size-full',
 ])
 
 interface TextBoxProps
@@ -115,20 +116,25 @@ export function TextBox({
 }: TextBoxProps): React.ReactElement {
   const generatedId = React.useId()
   const inputId = id ?? generatedId
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+  useScrollbar(textareaRef, { disabled: !multiline })
 
   // Label content: prefer children, fallback to label prop
   const labelContent = children ?? label
 
   const fieldElement = multiline
     ? (
-        <textarea
-          className={cn(textareaVariants({ className }))}
-          disabled={disabled}
-          id={inputId}
-          readOnly={readOnly}
-          rows={rows}
-          {...(props as React.ComponentProps<'textarea'>)}
-        />
+        <div className={cn('relative bg-(--window) shadow-border-field p-[2px] size-full', className)} style={{ minHeight: '60px' }}>
+          <textarea
+            ref={textareaRef}
+            className={cn(textareaVariants())}
+            disabled={disabled}
+            id={inputId}
+            readOnly={readOnly}
+            rows={rows}
+            {...(props as React.ComponentProps<'textarea'>)}
+          />
+        </div>
       )
     : (
         <input

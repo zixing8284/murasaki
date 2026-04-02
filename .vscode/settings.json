@@ -48,19 +48,5 @@
     "scss",
     "pcss",
     "postcss"
-  ],
-  "chat.tools.terminal.autoApprove": {
-    "/^cd /Users/lee/project/murasaki/murasaki-react98/packages/ui/dist && python3 -c \"\ncss = open\\('globals\\.css'\\)\\.read\\(\\)\n# Find what's inside @layer\nimport re\n# Look for @layer blocks\nm = re\\.search\\(r'@layer\\\\s\\+\\(\\\\w\\+\\)', css\\)\nif m:\n    print\\(f'Layer name: \\{m\\.group\\(1\\)\\}'\\)\n# Check if there are utility classes like \\.bg-, \\.text-, \\.flex, etc\\.\n# Find some class selectors\nclasses = re\\.findall\\(r'\\\\\\.\\(\\[a-zA-Z\\]\\[a-zA-Z0-9_-\\]\\*\\)', css\\[:5000\\]\\)\nprint\\(f'First classes found: \\{classes\\[:30\\]\\}'\\)\nprint\\(f'Total CSS size: \\{len\\(css\\)\\} bytes'\\)\n# Check if tw- prefixed properties exist \ntw_props = re\\.findall\\(r'--tw-\\[a-z-\\]\\+', css\\)\nprint\\(f'--tw- custom properties: \\{len\\(set\\(tw_props\\)\\)\\} unique'\\)\nprint\\(f'Examples: \\{list\\(set\\(tw_props\\)\\)\\[:10\\]\\}'\\)\n\"\n$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^cd /Users/lee/project/murasaki/murasaki-react98/packages/ui/dist && python3 -c \"\ncss = open\\('globals\\.css'\\)\\.read\\(\\)\nimport re\n# Find ALL class selectors throughout the file\nclasses = re\\.findall\\(r'\\\\\\.\\(\\[a-zA-Z\\]\\[a-zA-Z0-9_-\\]\\*\\)', css\\)\nprint\\(f'Total class selectors: \\{len\\(classes\\)\\}'\\)\nif classes:\n    print\\(f'Unique classes: \\{sorted\\(set\\(classes\\)\\)\\[:50\\]\\}'\\)\n# Check for any selectors at all - look for \\{ preceded by something\n# Let's look at the last 2000 chars\nprint\\('---LAST 2000 chars---'\\)\nprint\\(css\\[-2000:\\]\\)\n\"\n$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^wc -c dist/globals\\.css && grep -o '\\\\\\.bg-btn-face\\\\\\|\\\\\\.shadow-raised\\\\\\|\\\\\\.sunken-panel\\\\\\|\\\\\\.pixelated\\\\\\|\\\\\\.inline-flex\\\\\\|\\\\\\.flex\\\\b\\\\\\|\\\\\\.absolute\\\\\\|\\\\\\.relative\\\\\\|\\\\\\.min-h-\\\\\\|\\\\\\.bgi-icon-close' dist/globals\\.css \\| sort \\| uniq -c$/": {
-      "approve": true,
-      "matchCommandLine": true
-    }
-  }
+  ]
 }

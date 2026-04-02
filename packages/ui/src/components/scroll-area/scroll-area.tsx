@@ -3,10 +3,7 @@ import * as React from 'react'
 import { cn } from '../../lib/utils'
 import { useScrollbar } from './use-scrollbar'
 
-export interface ScrollAreaProps extends React.ComponentProps<'div'> {
-  /** Additional class for the inner scrollable viewport. */
-  viewportClassName?: string
-}
+export type ScrollAreaProps = React.ComponentProps<'div'>
 
 /**
  * A Windows 98-style scroll area wrapper.

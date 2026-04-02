@@ -74,8 +74,12 @@ const REPEAT_MS = 50
 
 // ─── Scrollbar instance (plain object + functions) ───────────────────────────
 
+// Module-level counter for unique per-element scrollbar IDs.
+let _scrollbarIdCounter = 0
+
 interface ScrollbarState {
   target: HTMLElement
+  scrollbarId: string
   vBar: HTMLDivElement
   hBar: HTMLDivElement
   corner: HTMLDivElement
@@ -270,19 +274,24 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   parent.appendChild(hBar)
   parent.appendChild(corner)
 
+  // Assign a unique attribute so the injected ::-webkit-scrollbar rule targets
+  // only this element and not all elements that happen to share the same class.
+  const scrollbarId = String(++_scrollbarIdCounter)
+  target.dataset.murasakiScrollbarId = scrollbarId
+
   // Hide native scrollbar
   target.style.scrollbarWidth = 'none'
   target.style.setProperty('-ms-overflow-style', 'none')
   target.style.setProperty('scrollbar-width', 'none', 'important')
 
   const hideStyle = document.createElement('style')
-  hideStyle.textContent = ''
+  hideStyle.textContent
+    = `[data-murasaki-scrollbar-id="${scrollbarId}"]::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}`
   document.head.appendChild(hideStyle)
-  // Keep selector generation separate so dynamic id/class changes can be reapplied.
-  updateHideSelector(target, hideStyle)
 
   return {
     target,
+    scrollbarId,
     vBar,
     hBar,
     corner,
@@ -298,34 +307,6 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     resizeObs: null,
     mutationObs: null,
     cleanups: [],
-  }
-}
-
-// ── Hide native ::-webkit-scrollbar via injected <style> ──
-
-const CLASS_SPLIT_REGEX = /\s+/
-
-function updateHideSelector(target: HTMLElement, styleEl: HTMLStyleElement): void {
-  // Prefer stable selectors (tag/id/class) to hide webkit scrollbars per element type.
-  const tag = target.tagName?.toLowerCase() ?? ''
-  let sel = ''
-
-  if (tag === 'body' || tag === 'html') {
-    sel = tag
-  }
-  else if (target.id) {
-    sel = `#${target.id}`
-  }
-  else if (target.className && typeof target.className === 'string') {
-    const first = target.className.trim().split(CLASS_SPLIT_REGEX)[0]
-    if (first) {
-      sel = `.${first}`
-    }
-  }
-
-  if (sel) {
-    styleEl.textContent
-      = `${sel}::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}`
   }
 }
 
@@ -596,6 +577,7 @@ function destroy(s: ScrollbarState): void {
   s.target.style.paddingRight = ''
   s.target.style.paddingBottom = ''
   s.target.style.scrollbarWidth = ''
+  delete s.target.dataset.murasakiScrollbarId
 }
 
 // ── Create scrollbar instance ──

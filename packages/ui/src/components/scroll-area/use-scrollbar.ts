@@ -94,6 +94,8 @@ interface ScrollbarState {
   hideStyle: HTMLStyleElement
   resizeObs: ResizeObserver | null
   mutationObs: MutationObserver | null
+  resizeRafId: number | null
+  mutationRafId: number | null
   cleanups: Array<() => void>
   // Original style values captured before mutation, for full restore in destroy()
   origPaddingRight: string
@@ -326,6 +328,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     hideStyle,
     resizeObs: null,
     mutationObs: null,
+    resizeRafId: null,
+    mutationRafId: null,
     cleanups: [],
     origPaddingRight,
     origPaddingBottom,
@@ -351,8 +355,8 @@ function syncLayout(s: ScrollbarState): void {
   s.corner.style.display = hasV && hasH ? 'block' : 'none'
 
   // Padding so content doesn't sit behind the scrollbar
-  t.style.paddingRight = hasV ? `${BAR_SIZE}px` : '0'
-  t.style.paddingBottom = hasH ? `${BAR_SIZE}px` : '0'
+  t.style.paddingRight = hasV ? `${BAR_SIZE}px` : s.origPaddingRight
+  t.style.paddingBottom = hasH ? `${BAR_SIZE}px` : s.origPaddingBottom
   t.style.boxSizing = 'border-box'
 
   if (hasV) {
@@ -504,10 +508,9 @@ function bindEvents(s: ScrollbarState): void {
 
   // ResizeObserver
   if (window.ResizeObserver) {
-    let rafId: number | null = null
     s.resizeObs = new ResizeObserver(() => {
-      rafId ??= requestAnimationFrame(() => {
-        rafId = null
+      s.resizeRafId ??= requestAnimationFrame(() => {
+        s.resizeRafId = null
         syncLayout(s)
       })
     })
@@ -521,11 +524,10 @@ function bindEvents(s: ScrollbarState): void {
   }
 
   // MutationObserver — content changes
-  let mutationRafId: number | null = null
   s.mutationObs = new MutationObserver(() => {
-    if (mutationRafId != null) return
-    mutationRafId = requestAnimationFrame(() => {
-      mutationRafId = null
+    if (s.mutationRafId != null) return
+    s.mutationRafId = requestAnimationFrame(() => {
+      s.mutationRafId = null
       syncLayout(s)
     })
   })
@@ -595,6 +597,16 @@ function destroy(s: ScrollbarState): void {
   // Reverse everything created by `createScrollbar` in deterministic order.
   s.resizeObs?.disconnect()
   s.mutationObs?.disconnect()
+
+  // Cancel any pending animation frames so syncLayout can't fire on torn-down state
+  if (s.resizeRafId != null) {
+    cancelAnimationFrame(s.resizeRafId)
+    s.resizeRafId = null
+  }
+  if (s.mutationRafId != null) {
+    cancelAnimationFrame(s.mutationRafId)
+    s.mutationRafId = null
+  }
 
   for (const fn of s.cleanups) {
     fn()

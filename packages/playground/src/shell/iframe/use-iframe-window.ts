@@ -67,12 +67,27 @@ export function useIframeWindow({
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   // Keep latest callback in a ref so the effect doesn't need to re-run
   const onContentFocusRef = useRef<() => void>(() => {})
+  // Track the pending focus timeout so it can be cancelled before rescheduling or on unmount
+  const focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Delayed focus transfer to prevent accidental interactions when switching windows
   const focusIframe = useCallback(() => {
-    setTimeout(() => {
+    if (focusTimeoutRef.current != null) {
+      clearTimeout(focusTimeoutRef.current)
+    }
+    focusTimeoutRef.current = setTimeout(() => {
+      focusTimeoutRef.current = null
       iframeRef.current?.contentWindow?.focus()
     }, 500)
+  }, [])
+
+  // Cancel any pending focus timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (focusTimeoutRef.current != null) {
+        clearTimeout(focusTimeoutRef.current)
+      }
+    }
   }, [])
 
   // Handler called when iframe content receives focus (same-origin only)

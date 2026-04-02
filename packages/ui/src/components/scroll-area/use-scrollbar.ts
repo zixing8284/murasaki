@@ -267,8 +267,15 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
   // Append to parent
   const parent = target.parentNode as HTMLElement
-  if (parent && getComputedStyle(parent).position === 'static') {
-    parent.style.position = 'relative'
+  if (parent) {
+    const parentComputedPosition = getComputedStyle(parent).position
+    const parentInlinePosition = parent.style.position
+    if (parentComputedPosition === 'static') {
+      if (!parent.dataset.murasakiOriginalPosition) {
+        parent.dataset.murasakiOriginalPosition = parentInlinePosition || ''
+      }
+      parent.style.position = 'relative'
+    }
   }
   parent.appendChild(vBar)
   parent.appendChild(hBar)

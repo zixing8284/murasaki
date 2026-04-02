@@ -5,7 +5,8 @@ import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
-import { useId, useMemo } from 'react'
+import { useEffect, useId, useMemo, useRef } from 'react'
+import { useScrollbar } from '../scroll-area/use-scrollbar'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './dropdown-icons'
 import { useDropdownState } from './use-dropdown-state'
 
@@ -43,17 +44,22 @@ const triggerVariants = cva([
   'text-ellipsis',
 ])
 
-// Dropdown menu
-const menuVariants = cva([
+// Dropdown menu wrapper (positioning context for scrollbar)
+const menuWrapperVariants = cva([
   'absolute',
   'left-0',
+  'right-[1px]',
   'z-50',
+  'border',
+  'border-(--button-shadow)',
+])
+
+// Dropdown menu
+const menuVariants = cva([
   'w-full',
   'max-h-40',
   'overflow-y-auto',
   'bg-(--window)',
-  'border',
-  'border-(--button-shadow)',
   'list-none',
   'm-0',
   'p-0',
@@ -199,6 +205,31 @@ export function Dropdown<T = string>({
     value,
   })
 
+  useScrollbar(dropdownRef, { disabled: !open })
+
+  const menuWrapperRef = useRef<HTMLDivElement>(null)
+
+  // Prevent scrollbar clicks from closing the dropdown.
+  // Scrollbar DOM is appended to the wrapper div (outside the <ul>),
+  // so clicks on it would otherwise trigger the click-outside handler.
+  useEffect(() => {
+    if (!open)
+      return
+    const wrapper = menuWrapperRef.current
+    if (!wrapper)
+      return
+
+    const handleMouseDown = (e: MouseEvent): void => {
+      const target = e.target as Node
+      if (!dropdownRef.current?.contains(target)) {
+        e.stopPropagation()
+      }
+    }
+
+    wrapper.addEventListener('mousedown', handleMouseDown)
+    return () => wrapper.removeEventListener('mousedown', handleMouseDown)
+  }, [open, dropdownRef])
+
   // Display label
   const displayLabel = useMemo(() => {
     if (!selectedOption)
@@ -256,44 +287,46 @@ export function Dropdown<T = string>({
 
       {/* Dropdown menu */}
       {open && (
-        <ul
-          className={cn(menuVariants())}
-          id={menuId}
-          ref={dropdownRef}
-          role="listbox"
-          style={menuStyle}
-          tabIndex={-1}
-        >
-          {options.map((option, index) => {
-            const isActive = index === activeIndex
-            const isSelected = option.value === selectedOption?.value
-            const optionLabel = option.label ?? String(option.value)
+        <div className={cn(menuWrapperVariants())} ref={menuWrapperRef}>
+          <ul
+            className={cn(menuVariants())}
+            id={menuId}
+            ref={dropdownRef}
+            role="listbox"
+            style={menuStyle}
+            tabIndex={-1}
+          >
+            {options.map((option, index) => {
+              const isActive = index === activeIndex
+              const isSelected = option.value === selectedOption?.value
+              const optionLabel = option.label ?? String(option.value)
 
-            return (
-              <li
-                aria-selected={isSelected}
-                className={cn(menuItemVariants({ active: isActive }))}
-                key={`${String(option.value)}-${String(index)}`}
-                onClick={() => {
-                  handleOptionClick(index)
-                }}
-                onKeyDown={(e) => {
-                  handleOptionKeyDown(e)
-                }}
-                onMouseEnter={() => {
-                  handleOptionMouseEnter(index)
-                }}
-                ref={(el) => {
-                  optionRef.current[index] = el
-                }}
-                role="option"
-                tabIndex={isActive ? 0 : -1}
-              >
-                {optionLabel}
-              </li>
-            )
-          })}
-        </ul>
+              return (
+                <li
+                  aria-selected={isSelected}
+                  className={cn(menuItemVariants({ active: isActive }))}
+                  key={`${String(option.value)}-${String(index)}`}
+                  onClick={() => {
+                    handleOptionClick(index)
+                  }}
+                  onKeyDown={(e) => {
+                    handleOptionKeyDown(e)
+                  }}
+                  onMouseEnter={() => {
+                    handleOptionMouseEnter(index)
+                  }}
+                  ref={(el) => {
+                    optionRef.current[index] = el
+                  }}
+                  role="option"
+                  tabIndex={isActive ? 0 : -1}
+                >
+                  {optionLabel}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       )}
     </div>
   )

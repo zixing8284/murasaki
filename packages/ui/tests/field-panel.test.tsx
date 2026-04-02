@@ -56,7 +56,7 @@ describe('field-panel', () => {
     // Should not have flex, grid, padding, or width/height classes
     expect(classes).not.toContain('flex')
     expect(classes).not.toContain('grid')
-    expect(classes).toContain('overflow-auto')
+    expect(classes).toContain('overflow-hidden')
     expect(classes).not.toMatch(/\bw-/)
     expect(classes).not.toMatch(/\bh-/)
   })

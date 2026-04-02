@@ -35,6 +35,12 @@ export { OptionGroup } from './components/option-button/option-group'
 // ProgressIndicator
 export { ProgressIndicator } from './components/progress-indicator/progress-indicator'
 
+// ScrollArea
+export { ScrollArea } from './components/scroll-area/scroll-area'
+export type { ScrollAreaProps } from './components/scroll-area/scroll-area'
+export { useScrollbar } from './components/scroll-area/use-scrollbar'
+export type { UseScrollbarOptions } from './components/scroll-area/use-scrollbar'
+
 // Slider
 export { Slider } from './components/slider/slider'
 export type { TickMark } from './components/slider/slider'

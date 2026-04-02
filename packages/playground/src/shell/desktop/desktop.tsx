@@ -24,6 +24,7 @@ export function Desktop({ onOpen }: DesktopProps): React.ReactElement {
   return (
     <div
       ref={iconContainerRef}
+      data-area="desktop"
       className="absolute top-2 left-2 flex flex-col gap-4"
     >
       {desktopIcons.map(iconConfig => (

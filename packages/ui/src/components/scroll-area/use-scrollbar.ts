@@ -300,7 +300,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   // Assign a unique attribute so the injected ::-webkit-scrollbar rule targets
   // only this element and not all elements that happen to share the same class.
   const scrollbarId = String(++_scrollbarIdCounter)
-  target.dataset['murasakiScrollbarId'] = scrollbarId
+  target.setAttribute('data-murasaki-scrollbar-id', scrollbarId)
 
   // Hide native scrollbar
   target.style.setProperty('-ms-overflow-style', 'none')
@@ -640,7 +640,7 @@ function destroy(s: ScrollbarState): void {
     s.parent.style.position = s.origParentPosition
   }
 
-  delete s.target.dataset['murasakiScrollbarId']
+  s.target.removeAttribute('data-murasaki-scrollbar-id')
 }
 
 // ── Create scrollbar instance ──

@@ -501,10 +501,15 @@ function bindEvents(s: ScrollbarState): void {
   }
 
   // MutationObserver — content changes
+  let mutationRafId: number | null = null
   s.mutationObs = new MutationObserver(() => {
-    syncLayout(s)
+    if (mutationRafId != null) return
+    mutationRafId = requestAnimationFrame(() => {
+      mutationRafId = null
+      syncLayout(s)
+    })
   })
-  s.mutationObs.observe(t, { childList: true, subtree: true, characterData: true })
+  s.mutationObs.observe(t, { childList: true, subtree: true })
 
   // Arrow buttons
   addButtonBehavior(s, s.vUp, () => {

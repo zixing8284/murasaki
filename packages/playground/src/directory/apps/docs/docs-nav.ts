@@ -8,6 +8,7 @@ import demoBasicCheckboxSource from '../../../content/checkbox/demo-basic.tsx?ra
 import demoControlledCheckboxSource from '../../../content/checkbox/demo-controlled.tsx?raw'
 import demoBasicDropdownSource from '../../../content/dropdown/demo-basic.tsx?raw'
 import demoNativeDropdownSource from '../../../content/dropdown/demo-native.tsx?raw'
+import demoScrollbarDropdownSource from '../../../content/dropdown/demo-scrollbar.tsx?raw'
 import demoBasicOptionButtonSource from '../../../content/option-button/demo-basic.tsx?raw'
 import demoBasicSliderSource from '../../../content/slider/demo-basic.tsx?raw'
 import demoControlledSliderSource from '../../../content/slider/demo-controlled.tsx?raw'
@@ -51,6 +52,7 @@ const DemoBasicStatusBar = lazy(() => import('../../../content/status-bar/demo-b
 const DemoBasicTabs = lazy(() => import('../../../content/tabs/demo-basic'))
 const DemoBasicTextBox = lazy(() => import('../../../content/text-box/demo-basic'))
 const DemoMultipleTextBox = lazy(() => import('../../../content/text-box/demo-multiple'))
+const DemoScrollbarDropdown = lazy(() => import('../../../content/dropdown/demo-scrollbar'))
 
 export const docsNavTree: NavNode[] = [
   {
@@ -138,6 +140,13 @@ export const docsNavTree: NavNode[] = [
         type: 'demo',
         component: DemoNativeDropdown,
         source: demoNativeDropdownSource,
+      },
+      {
+        id: 'dropdown-demo-scrollbar',
+        label: 'Scrollbar',
+        type: 'demo',
+        component: DemoScrollbarDropdown,
+        source: demoScrollbarDropdownSource,
       },
     ],
   },

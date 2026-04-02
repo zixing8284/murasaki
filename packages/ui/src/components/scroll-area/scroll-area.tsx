@@ -26,7 +26,6 @@ export interface ScrollAreaProps extends React.ComponentProps<'div'> {
 export function ScrollArea({
   children,
   className,
-  viewportClassName,
   ...props
 }: ScrollAreaProps): React.ReactElement {
   const viewportRef = React.useRef<HTMLDivElement>(null)
@@ -36,7 +35,7 @@ export function ScrollArea({
     <div className={cn('relative', className)} {...props}>
       <div
         ref={viewportRef}
-        className={cn('size-full overflow-auto', viewportClassName)}
+        className={cn('size-full overflow-auto')}
       >
         {children}
       </div>

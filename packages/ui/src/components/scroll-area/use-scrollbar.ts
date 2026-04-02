@@ -1,5 +1,14 @@
 import { useEffect, useRef } from 'react'
 
+// File flow (top to bottom):
+// 1) Define reusable style constants and tiny DOM builders.
+// 2) Build scrollbar DOM parts (bars, tracks, thumbs, arrow buttons, corner).
+// 3) Keep custom scrollbar geometry synced with native scroll state.
+// 4) Wire interactions (arrow hold-repeat, track page jump, thumb dragging).
+// 5) Observe size/content changes and re-sync when layout changes.
+// 6) Tear everything down on cleanup.
+// 7) Expose all of this through `useScrollbar`.
+
 // ─── Style helpers (CSS variable-based, auto-responds to theme changes) ──────
 
 const RAISED_SHADOW = [
@@ -22,6 +31,7 @@ const CHECKER_BG = 'repeating-conic-gradient(var(--button-face) 0% 25%, transpar
 // ─── DOM helpers ─────────────────────────────────────────────────────────────
 
 function createDiv(styles: Partial<CSSStyleDeclaration>): HTMLDivElement {
+  // Small helper to create and style elements in one place.
   const d = document.createElement('div')
   Object.assign(d.style, styles)
   return d
@@ -35,6 +45,7 @@ const ARROW_PATHS: Record<string, string> = {
 }
 
 function createArrowSvg(dir: string): SVGSVGElement {
+  // Build a pixel-style arrow icon and center it inside a 16px button.
   const ns = 'http://www.w3.org/2000/svg'
   const isVert = dir === 'up' || dir === 'down'
   const h = isVert ? 17 : 16
@@ -85,6 +96,7 @@ interface ScrollbarState {
 // ── Build arrow button ──
 
 function buildButton(dir: string): HTMLDivElement {
+  // Shared constructor for arrow buttons so v/h controls stay consistent.
   const btn = createDiv({
     position: 'relative',
     width: `${BAR_SIZE}px`,
@@ -112,6 +124,8 @@ function buildButton(dir: string): HTMLDivElement {
 // ── Build all scrollbar DOM elements ──
 
 function buildScrollbarDom(target: HTMLElement): ScrollbarState {
+  // Build visual structure first, then append everything beside the target.
+
   // Vertical bar
   const vBar = createDiv({
     position: 'absolute',
@@ -264,6 +278,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   const hideStyle = document.createElement('style')
   hideStyle.textContent = ''
   document.head.appendChild(hideStyle)
+  // Keep selector generation separate so dynamic id/class changes can be reapplied.
   updateHideSelector(target, hideStyle)
 
   return {
@@ -288,7 +303,10 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
 // ── Hide native ::-webkit-scrollbar via injected <style> ──
 
+const CLASS_SPLIT_REGEX = /\s+/
+
 function updateHideSelector(target: HTMLElement, styleEl: HTMLStyleElement): void {
+  // Prefer stable selectors (tag/id/class) to hide webkit scrollbars per element type.
   const tag = target.tagName?.toLowerCase() ?? ''
   let sel = ''
 
@@ -299,7 +317,7 @@ function updateHideSelector(target: HTMLElement, styleEl: HTMLStyleElement): voi
     sel = `#${target.id}`
   }
   else if (target.className && typeof target.className === 'string') {
-    const first = target.className.trim().split(/\s+/)[0]
+    const first = target.className.trim().split(CLASS_SPLIT_REGEX)[0]
     if (first) {
       sel = `.${first}`
     }
@@ -314,6 +332,8 @@ function updateHideSelector(target: HTMLElement, styleEl: HTMLStyleElement): voi
 // ── Sync scrollbar layout with scroll state ──
 
 function syncLayout(s: ScrollbarState): void {
+  // Source of truth: native scroll metrics from target.
+  // We only render custom visuals that mirror those metrics.
   const t = s.target
   const hasV = t.scrollHeight > t.clientHeight
   const hasH = t.scrollWidth > t.clientWidth
@@ -328,6 +348,7 @@ function syncLayout(s: ScrollbarState): void {
   t.style.boxSizing = 'border-box'
 
   if (hasV) {
+    // Vertical thumb size = viewport/content ratio, position = scroll progress.
     const vHeight = hasH ? t.clientHeight - BAR_SIZE : t.clientHeight
     s.vBar.style.height = `${vHeight}px`
     s.vBar.style.bottom = 'auto'
@@ -344,6 +365,7 @@ function syncLayout(s: ScrollbarState): void {
   }
 
   if (hasH) {
+    // Horizontal thumb uses the same ratio/progress mapping as vertical.
     const hWidth = hasV ? t.clientWidth - BAR_SIZE : t.clientWidth
     s.hBar.style.width = `${hWidth}px`
     s.hBar.style.right = 'auto'
@@ -367,6 +389,7 @@ function addButtonBehavior(
   btn: HTMLDivElement,
   action: () => void,
 ): void {
+  // Press behavior: immediate action + hold-to-repeat, with pressed visual state.
   let intervalId: ReturnType<typeof setInterval> | null = null
 
   const onDown = (e: MouseEvent): void => {
@@ -412,6 +435,7 @@ function addDragBehavior(
   thumb: HTMLDivElement,
   axis: 'h' | 'v',
 ): void {
+  // Drag behavior maps mouse delta in track space to native scroll delta.
   const t = s.target
 
   const onDown = (e: MouseEvent): void => {
@@ -460,6 +484,7 @@ function addDragBehavior(
 // ── Bind all events ──
 
 function bindEvents(s: ScrollbarState): void {
+  // Central wiring point for all runtime behaviors and observers.
   const t = s.target
 
   // Scroll → sync layout
@@ -473,12 +498,10 @@ function bindEvents(s: ScrollbarState): void {
   if (window.ResizeObserver) {
     let rafId: number | null = null
     s.resizeObs = new ResizeObserver(() => {
-      if (rafId == null) {
-        rafId = requestAnimationFrame(() => {
-          rafId = null
-          syncLayout(s)
-        })
-      }
+      rafId ??= requestAnimationFrame(() => {
+        rafId = null
+        syncLayout(s)
+      })
     })
     s.resizeObs.observe(t)
     if (t.parentNode instanceof HTMLElement) {
@@ -556,6 +579,7 @@ function bindEvents(s: ScrollbarState): void {
 // ── Destroy / cleanup ──
 
 function destroy(s: ScrollbarState): void {
+  // Reverse everything created by `createScrollbar` in deterministic order.
   s.resizeObs?.disconnect()
   s.mutationObs?.disconnect()
 
@@ -577,6 +601,7 @@ function destroy(s: ScrollbarState): void {
 // ── Create scrollbar instance ──
 
 function createScrollbar(target: HTMLElement): ScrollbarState {
+  // One-time setup pipeline used by the hook effect.
   const state = buildScrollbarDom(target)
   syncLayout(state)
   bindEvents(state)
@@ -617,6 +642,9 @@ export function useScrollbar(
   const stateRef = useRef<ScrollbarState | null>(null)
 
   useEffect(() => {
+    // Effect lifecycle:
+    // - mount/enabled: create custom scrollbar around current target
+    // - unmount/disable/deps change: destroy and restore native state
     if (disabled || !ref.current) {
       return
     }

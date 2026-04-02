@@ -2,6 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
+import { ScrollArea } from '../scroll-area/scroll-area'
 
 const fieldPanelVariants = cva(
   [
@@ -9,7 +10,7 @@ const fieldPanelVariants = cva(
     'bg-(--window)',
     'text-(--window-text)',
     'p-0.5',
-    'overflow-auto',
+    'overflow-hidden',
   ],
   {
     variants: {
@@ -39,7 +40,9 @@ export function FieldPanel({
       aria-disabled={disabled || undefined}
       {...props}
     >
-      {children}
+      <ScrollArea className="size-full">
+        {children}
+      </ScrollArea>
     </div>
   )
 }

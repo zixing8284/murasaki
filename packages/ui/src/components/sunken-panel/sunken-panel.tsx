@@ -2,13 +2,14 @@ import type { VariantProps } from 'class-variance-authority'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
+import { ScrollArea } from '../scroll-area/scroll-area'
 
 const sunkenPanelVariants = cva(
   [
     'shadow-border-field',
     'bg-(--button-face)',
     'p-0.5',
-    'overflow-auto',
+    'overflow-hidden',
   ],
   {
     variants: {
@@ -38,7 +39,9 @@ export function SunkenPanel({
       aria-disabled={disabled || undefined}
       {...props}
     >
-      {children}
+      <ScrollArea className="size-full">
+        {children}
+      </ScrollArea>
     </div>
   )
 }

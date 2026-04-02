@@ -14,6 +14,8 @@ export interface UseDraggableOptions {
   container?: HTMLElement | null
   /** Enable/disable dragging */
   draggable?: boolean
+  /** Called when drag starts/stops — prefer over Effect-based onDragChange in consuming components */
+  onDragChange?: (dragging: boolean) => void
 }
 
 /**
@@ -47,7 +49,7 @@ export function useDraggable<
   transformRef: React.RefObject<Transform>
   resetPosition: () => void
 } {
-  const { container = null, draggable = true } = options
+  const { container = null, draggable = true, onDragChange } = options
 
   const targetRef = useRef<null | TTarget>(null)
   // Use useState instead of useRef so that changes trigger useEffect re-run
@@ -144,6 +146,7 @@ export function useDraggable<
 
       const onMouseup = (): void => {
         setDragging(false)
+        onDragChange?.(false)
         document.removeEventListener('mousemove', onMousemove)
         document.removeEventListener('mouseup', onMouseup)
         cleanupRef.current = null
@@ -156,10 +159,11 @@ export function useDraggable<
       }
 
       setDragging(true)
+      onDragChange?.(true)
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },
-    [container],
+    [container, onDragChange],
   )
 
   useEffect(() => {

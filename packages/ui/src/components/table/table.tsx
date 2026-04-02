@@ -16,16 +16,14 @@ export function Table({
       data-slot="table-container"
       className={cn('relative bg-(--window)', containerClassName)}
     >
-      <div className="overflow-auto">
-        <table
-          data-slot="table"
-          className={cn(
-            'border-collapse relative text-left whitespace-nowrap w-full',
-            className,
-          )}
-          {...props}
-        />
-      </div>
+      <table
+        data-slot="table"
+        className={cn(
+          'border-collapse relative text-left whitespace-nowrap w-full',
+          className,
+        )}
+        {...props}
+      />
     </SunkenPanel>
   )
 }

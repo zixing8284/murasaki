@@ -95,6 +95,14 @@ interface ScrollbarState {
   resizeObs: ResizeObserver | null
   mutationObs: MutationObserver | null
   cleanups: Array<() => void>
+  // Original style values captured before mutation, for full restore in destroy()
+  origPaddingRight: string
+  origPaddingBottom: string
+  origBoxSizing: string
+  origMsOverflowStyle: string
+  origScrollbarWidth: string
+  parent: HTMLElement | null
+  origParentPosition: string | null
 }
 
 // ── Build arrow button ──
@@ -267,13 +275,19 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
   // Append to parent
   const parent = target.parentNode as HTMLElement
+
+  // Capture style originals before any mutation for full restore in destroy()
+  const origPaddingRight = target.style.paddingRight
+  const origPaddingBottom = target.style.paddingBottom
+  const origBoxSizing = target.style.boxSizing
+  const origMsOverflowStyle = target.style.getPropertyValue('-ms-overflow-style')
+  const origScrollbarWidth = target.style.getPropertyValue('scrollbar-width')
+
+  let origParentPosition: string | null = null
   if (parent) {
     const parentComputedPosition = getComputedStyle(parent).position
-    const parentInlinePosition = parent.style.position
     if (parentComputedPosition === 'static') {
-      if (!parent.dataset.murasakiOriginalPosition) {
-        parent.dataset.murasakiOriginalPosition = parentInlinePosition || ''
-      }
+      origParentPosition = parent.style.position
       parent.style.position = 'relative'
     }
   }
@@ -284,10 +298,9 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   // Assign a unique attribute so the injected ::-webkit-scrollbar rule targets
   // only this element and not all elements that happen to share the same class.
   const scrollbarId = String(++_scrollbarIdCounter)
-  target.dataset.murasakiScrollbarId = scrollbarId
+  target.dataset['murasakiScrollbarId'] = scrollbarId
 
   // Hide native scrollbar
-  target.style.scrollbarWidth = 'none'
   target.style.setProperty('-ms-overflow-style', 'none')
   target.style.setProperty('scrollbar-width', 'none', 'important')
 
@@ -314,6 +327,13 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     resizeObs: null,
     mutationObs: null,
     cleanups: [],
+    origPaddingRight,
+    origPaddingBottom,
+    origBoxSizing,
+    origMsOverflowStyle,
+    origScrollbarWidth,
+    parent,
+    origParentPosition,
   }
 }
 
@@ -586,10 +606,29 @@ function destroy(s: ScrollbarState): void {
   s.hBar.parentNode?.removeChild(s.hBar)
   s.corner.parentNode?.removeChild(s.corner)
 
-  s.target.style.paddingRight = ''
-  s.target.style.paddingBottom = ''
-  s.target.style.scrollbarWidth = ''
-  delete s.target.dataset.murasakiScrollbarId
+  // Restore all mutated target styles to their pre-scrollbar values
+  s.target.style.paddingRight = s.origPaddingRight
+  s.target.style.paddingBottom = s.origPaddingBottom
+  s.target.style.boxSizing = s.origBoxSizing
+  if (s.origScrollbarWidth) {
+    s.target.style.setProperty('scrollbar-width', s.origScrollbarWidth)
+  }
+  else {
+    s.target.style.removeProperty('scrollbar-width')
+  }
+  if (s.origMsOverflowStyle) {
+    s.target.style.setProperty('-ms-overflow-style', s.origMsOverflowStyle)
+  }
+  else {
+    s.target.style.removeProperty('-ms-overflow-style')
+  }
+
+  // Restore parent position if it was changed by this scrollbar instance
+  if (s.parent && s.origParentPosition !== null) {
+    s.parent.style.position = s.origParentPosition
+  }
+
+  delete s.target.dataset['murasakiScrollbarId']
 }
 
 // ── Create scrollbar instance ──

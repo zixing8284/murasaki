@@ -21,7 +21,7 @@ export function WindowResizeGrip({
       ref={ref}
       className={cn(
         'absolute right-0.5 bottom-0.5 size-4 cursor-nwse-resize overflow-hidden',
-        'before:content["\x07"] before:absolute before:bottom-0.5 before:right-1',
+        'before:content-["\x07"] before:absolute before:bottom-0.5 before:right-1',
         'before:text-(--button-shadow) before:text-base before:leading-none',
         'after:content-["\x6F"] after:absolute after:bottom-0.5 after:right-0.75',
         'after:text-(--button-hilight) after:text-base after:leading-none',

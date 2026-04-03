@@ -155,21 +155,10 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
   const vUp = buildButton('up')
 
-  const vDown = createDiv({
-    position: 'absolute',
-    bottom: '0',
-    left: '0',
-    width: `${BAR_SIZE}px`,
-    height: `${BAR_SIZE}px`,
-    cursor: 'default',
-    backgroundColor: 'var(--button-face)',
-    color: 'var(--button-dk-shadow)',
-    boxSizing: 'border-box',
-    flexShrink: '0',
-  })
-  vDown.style.boxShadow = RAISED_SHADOW
-  vDown.appendChild(createArrowSvg('down'))
-  vDown.setAttribute('data-murasaki-btn', 'vdown')
+  const vDown = buildButton('down')
+  vDown.style.position = 'absolute'
+  vDown.style.bottom = '0'
+  vDown.style.left = '0'
 
   const vTrack = createDiv({
     position: 'absolute',
@@ -218,20 +207,10 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   hLeft.style.left = '0'
   hLeft.style.top = '0'
 
-  const hRight = createDiv({
-    position: 'absolute',
-    right: '0',
-    top: '0',
-    width: `${BAR_SIZE}px`,
-    height: `${BAR_SIZE}px`,
-    cursor: 'default',
-    backgroundColor: 'var(--button-face)',
-    color: 'var(--button-dk-shadow)',
-    boxSizing: 'border-box',
-  })
-  hRight.style.boxShadow = RAISED_SHADOW
-  hRight.appendChild(createArrowSvg('right'))
-  hRight.setAttribute('data-murasaki-btn', 'hright')
+  const hRight = buildButton('right')
+  hRight.style.position = 'absolute'
+  hRight.style.right = '0'
+  hRight.style.top = '0'
 
   const hTrack = createDiv({
     position: 'absolute',
@@ -403,12 +382,12 @@ function addButtonBehavior(
 ): void {
   // Press behavior: immediate action + hold-to-repeat, with pressed visual state.
   let intervalId: ReturnType<typeof setInterval> | null = null
+  const arrow = btn.querySelector<SVGSVGElement>('[data-murasaki-arrow]')
 
   const onDown = (e: MouseEvent): void => {
     e.preventDefault()
     btn.style.boxShadow = SUNKEN_SHADOW
 
-    const arrow = btn.querySelector<SVGSVGElement>('[data-murasaki-arrow]')
     if (arrow) {
       arrow.style.transform = 'translate(calc(-50% + 1px), calc(-50% + 1px))'
     }
@@ -426,7 +405,6 @@ function addButtonBehavior(
 
     btn.style.boxShadow = RAISED_SHADOW
 
-    const arrow = btn.querySelector<SVGSVGElement>('[data-murasaki-arrow]')
     if (arrow) {
       arrow.style.transform = 'translate(-50%, -50%)'
     }
@@ -499,11 +477,11 @@ function bindEvents(s: ScrollbarState): void {
   // Central wiring point for all runtime behaviors and observers.
   const t = s.target
 
-  // Scroll → sync layout
+  // Scroll → sync layout (passive: handler only reads state, never preventDefault)
   const onScroll = (): void => {
     syncLayout(s)
   }
-  t.addEventListener('scroll', onScroll)
+  t.addEventListener('scroll', onScroll, { passive: true })
   s.cleanups.push(() => t.removeEventListener('scroll', onScroll))
 
   // ResizeObserver

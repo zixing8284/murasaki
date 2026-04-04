@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { cnPure } from '#/lib/utils'
 
+import { THUMB_BOX_SHADOW } from './scroll-area-constants'
 import { useScrollAreaContext } from './scroll-area-context'
 
 export interface ScrollAreaThumbProps extends React.ComponentProps<'div'> {
@@ -49,10 +50,9 @@ export function ScrollAreaThumb({
       className={cnPure(
         'absolute cursor-default box-border',
         'bg-(--button-face)',
-        'shadow-raised',
         className,
       )}
-      style={{ ...thumbStyle, minWidth: BAR_SIZE, minHeight: BAR_SIZE, ...style }}
+      style={{ ...thumbStyle, minWidth: BAR_SIZE, minHeight: BAR_SIZE, boxShadow: THUMB_BOX_SHADOW, ...style }}
       onMouseDown={onMouseDown}
       {...props}
     />

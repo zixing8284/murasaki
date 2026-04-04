@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { cnPure } from '#/lib/utils'
 
+import { TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scroll-area-constants'
 import { useScrollAreaContext } from './scroll-area-context'
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from './scroll-area-icons'
 import { ScrollAreaThumb } from './scroll-area-thumb'
@@ -236,9 +237,6 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
 
 // ─── Track ───────────────────────────────────────────────────────────────────
 
-// 2×2 checker background
-const CHECKER_BG = 'repeating-conic-gradient(var(--button-face) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px'
-
 interface TrackProps {
   axis: 'v' | 'h'
   children: React.ReactNode
@@ -281,7 +279,12 @@ const Track = React.forwardRef<HTMLDivElement, TrackProps>(
         ref={ref}
         data-murasaki-track={axis}
         className="absolute cursor-default"
-        style={{ background: CHECKER_BG, backgroundColor: 'var(--button-light)', ...positionStyle }}
+        style={{
+          backgroundImage: TRACK_BG_IMAGE,
+          backgroundSize: TRACK_BG_SIZE,
+          backgroundColor: TRACK_BG_COLOR,
+          ...positionStyle,
+        }}
         onMouseDown={onMouseDown}
       >
         {children}

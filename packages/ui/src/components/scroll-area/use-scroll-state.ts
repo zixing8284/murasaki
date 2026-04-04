@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
 
-export const BAR_SIZE = 16
-export const BTN_HEIGHT = 17
-const SCROLL_STEP = 40
-const REPEAT_MS = 50
+// ─── Re-export constants for consumers ───────────────────────────────────────
+
+export { BAR_SIZE, BTN_HEIGHT } from './scroll-area-constants'
 
 // ─── Scroll metrics (updated imperatively for performance) ───────────────────
 

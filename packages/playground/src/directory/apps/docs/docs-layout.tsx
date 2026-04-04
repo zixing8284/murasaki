@@ -24,8 +24,7 @@ export function DocsLayout(): React.ReactElement {
   return (
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
-      <FieldPanel className="w-45 shrink-0 h-full overflow-hidden">
-        <div className="h-full overflow-y-auto overflow-x-hidden">
+      <FieldPanel className="w-45 shrink-0 h-full">
           <TreeView>
             <TreeViewItem
               label="Welcome"
@@ -52,7 +51,6 @@ export function DocsLayout(): React.ReactElement {
               </TreeViewItem>
             ))}
           </TreeView>
-        </div>
       </FieldPanel>
 
       {/* Right panel - Content area */}

@@ -45,7 +45,7 @@ export function CodeBlock({ code, lang = 'tsx' }: CodeBlockProps): React.ReactEl
   return (
     <div
       ref={containerRef}
-      className="docs-code-block overflow-auto text-[11px] leading-[1.4] [&_pre]:m-0 [&_pre]:p-2 [&_code]:font-[Consolas,monospace] [&_code]:text-[11px]"
+      className="docs-code-block text-[11px] leading-[1.4] [&_pre]:m-0 [&_pre]:p-2 [&_code]:font-[Consolas,monospace] [&_code]:text-[11px]"
       // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
       dangerouslySetInnerHTML={{ __html: html }}
     />

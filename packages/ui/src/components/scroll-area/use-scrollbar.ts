@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 
+import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP, THUMB_BOX_SHADOW, TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scroll-area-constants'
+
 // File flow (top to bottom):
 // 1) Define reusable style constants and tiny DOM builders.
 // 2) Build scrollbar DOM parts (bars, tracks, thumbs, arrow buttons, corner).
@@ -11,15 +13,11 @@ import { useEffect, useRef } from 'react'
 
 // ─── Style helpers (CSS variable-based, auto-responds to theme changes) ──────
 
-const RAISED_SHADOW = [
-  'inset -1px -1px var(--button-dk-shadow)',
-  'inset 1px 1px var(--button-light)',
-  'inset -2px -2px var(--button-shadow)',
-  'inset 2px 2px var(--button-hilight)',
-].join(', ')
+// THUMB_BOX_SHADOW imported from scroll-area-constants
+const RAISED_SHADOW = THUMB_BOX_SHADOW
 
-// 2×2 checker pattern using conic-gradient — supports CSS variables natively
-const CHECKER_BG = 'repeating-conic-gradient(var(--button-face) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px'
+// 2×2 checker pattern — uses shared constants for theme-adaptive track background
+const CHECKER_BG = `${TRACK_BG_IMAGE} 0 0 / ${TRACK_BG_SIZE}`
 
 // ─── DOM helpers ─────────────────────────────────────────────────────────────
 
@@ -100,10 +98,7 @@ function createButtonSvg(dir: string): SVGSVGElement {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const BAR_SIZE = 16
-const BTN_HEIGHT = 17
-const SCROLL_STEP = 40
-const REPEAT_MS = 50
+// BAR_SIZE, BTN_HEIGHT, SCROLL_STEP, REPEAT_MS imported from scroll-area-constants
 
 // ─── Scrollbar instance (plain object + functions) ───────────────────────────
 
@@ -198,7 +193,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     bottom: `${BTN_HEIGHT}px`,
     left: '0',
     right: '0',
-    backgroundColor: 'var(--button-light)',
+    backgroundColor: TRACK_BG_COLOR,
     background: CHECKER_BG,
     cursor: 'default',
   })
@@ -250,7 +245,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     right: `${BAR_SIZE}px`,
     top: '0',
     bottom: '0',
-    backgroundColor: 'var(--button-light)',
+    backgroundColor: TRACK_BG_COLOR,
     background: CHECKER_BG,
     cursor: 'default',
   })

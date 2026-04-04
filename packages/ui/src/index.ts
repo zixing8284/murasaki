@@ -36,8 +36,14 @@ export { OptionGroup } from './components/option-button/option-group'
 export { ProgressIndicator } from './components/progress-indicator/progress-indicator'
 
 // ScrollArea
-export { ScrollArea } from './components/scroll-area/scroll-area'
+export { ScrollArea, ScrollAreaLegacy } from './components/scroll-area/scroll-area'
 export type { ScrollAreaProps } from './components/scroll-area/scroll-area'
+export { useScrollAreaContext } from './components/scroll-area/scroll-area'
+export type { ScrollAreaContextValue } from './components/scroll-area/scroll-area'
+export { ScrollAreaScrollbar } from './components/scroll-area/scroll-area-scrollbar'
+export { ScrollAreaThumb } from './components/scroll-area/scroll-area-thumb'
+export { ScrollAreaCorner } from './components/scroll-area/scroll-area-corner'
+export { ArrowUpIcon, ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon } from './components/scroll-area/scroll-area-icons'
 export { useScrollbar } from './components/scroll-area/use-scrollbar'
 export type { UseScrollbarOptions } from './components/scroll-area/use-scrollbar'
 

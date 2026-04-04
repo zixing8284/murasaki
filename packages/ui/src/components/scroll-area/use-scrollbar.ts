@@ -18,13 +18,6 @@ const RAISED_SHADOW = [
   'inset 2px 2px var(--button-hilight)',
 ].join(', ')
 
-const SUNKEN_SHADOW = [
-  'inset -1px -1px var(--button-hilight)',
-  'inset 1px 1px var(--button-dk-shadow)',
-  'inset -2px -2px var(--button-light)',
-  'inset 2px 2px var(--button-shadow)',
-].join(', ')
-
 // 2×2 checker pattern using conic-gradient — supports CSS variables natively
 const CHECKER_BG = 'repeating-conic-gradient(var(--button-face) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px'
 
@@ -37,38 +30,78 @@ function createDiv(styles: Partial<CSSStyleDeclaration>): HTMLDivElement {
   return d
 }
 
-const ARROW_PATHS: Record<string, string> = {
-  up: 'M8,6h-1v1h-1v1h-1v1h-1v1h7v-1h-1v-1h-1v-1h-1v-1Z',
-  down: 'M11,6h-7v1h1v1h1v1h1v1h1v-1h1v-1h1v-1h1v-1Z',
-  left: 'M9,4h-1v1h-1v1h-1v1h-1v1h1v1h1v1h1v1h1v-7Z',
-  right: 'M7,4h-1v7h1v-1h1v-1h1v-1h1v-1h-1v-1h-1v-1h-1v-1Z',
+// Arrow glyph paths extracted from the provided button-*.svg reference files.
+const BUTTON_ARROW_PATHS: Record<string, string> = {
+  up: 'M8 6H7V7H6V8H5V9H4V10H11V9H10V8H9V7H8V6Z',
+  down: 'M11 6H4V7H5V8H6V9H7V10H8V9H9V8H10V7H11V6Z',
+  left: 'M9 4H8V5H7V6H6V7H5V8H6V9H7V10H8V11H9V4Z',
+  right: 'M7 4H6V11H7V10H8V9H9V8H10V7H9V6H8V5H7V4Z',
 }
 
-function createArrowSvg(dir: string): SVGSVGElement {
-  // Build a pixel-style arrow icon and center it inside a 16px button.
+// Border paths shared by all four button SVGs (16×17).
+// Layer order matches the original SVG files exactly.
+const BORDER_PATHS = [
+  // tl-outer highlight
+  { d: 'M15 0H0V1V16H1V1H15V0Z', varNormal: '--button-light', varPressed: '--button-dk-shadow' },
+  // tl-inner highlight
+  { d: 'M2 1H1V15H2V2H14V1H2Z', varNormal: '--button-hilight', varPressed: '--button-shadow' },
+  // br-outer dark
+  { d: 'M16 17H15H0V16H15V0H16V17Z', varNormal: '--button-dk-shadow', varPressed: '--button-hilight' },
+  // br-inner shadow
+  { d: 'M15 1H14V15H1V16H14H15V1Z', varNormal: '--button-shadow', varPressed: '--button-light' },
+] as const
+
+function createButtonSvg(dir: string): SVGSVGElement {
+  // Build the complete button SVG: 3D border + face + arrow glyph.
+  // All colors reference CSS variables for automatic theme adaptation.
   const ns = 'http://www.w3.org/2000/svg'
-  const isVert = dir === 'up' || dir === 'down'
-  const h = isVert ? 17 : 16
 
   const svg = document.createElementNS(ns, 'svg')
   svg.setAttribute('width', '16')
-  svg.setAttribute('height', String(h))
-  svg.setAttribute('viewBox', `0 0 16 ${h}`)
+  svg.setAttribute('height', '17')
+  svg.setAttribute('viewBox', '0 0 16 17')
+  svg.setAttribute('fill', 'none')
   svg.setAttribute('shape-rendering', 'crispEdges')
-  svg.style.cssText
-    = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;display:block;overflow:visible;'
+  svg.style.cssText = 'display:block;pointer-events:none;'
 
-  const path = document.createElementNS(ns, 'path')
-  path.setAttribute('d', ARROW_PATHS[dir] ?? '')
-  path.setAttribute('fill', 'currentColor')
-  svg.appendChild(path)
-  svg.setAttribute('data-murasaki-arrow', dir)
+  // 1) Border paths (4 layers)
+  for (const bp of BORDER_PATHS) {
+    const p = document.createElementNS(ns, 'path')
+    p.setAttribute('fill-rule', 'evenodd')
+    p.setAttribute('clip-rule', 'evenodd')
+    p.setAttribute('d', bp.d)
+    p.setAttribute('fill', `var(${bp.varNormal})`)
+    p.setAttribute('data-murasaki-border', bp.varNormal)
+    p.setAttribute('data-murasaki-var-normal', bp.varNormal)
+    p.setAttribute('data-murasaki-var-pressed', bp.varPressed)
+    svg.appendChild(p)
+  }
+
+  // 2) Button face
+  const face = document.createElementNS(ns, 'rect')
+  face.setAttribute('x', '2')
+  face.setAttribute('y', '2')
+  face.setAttribute('width', '12')
+  face.setAttribute('height', '13')
+  face.setAttribute('fill', 'var(--button-face)')
+  svg.appendChild(face)
+
+  // 3) Arrow glyph
+  const arrow = document.createElementNS(ns, 'path')
+  arrow.setAttribute('fill-rule', 'evenodd')
+  arrow.setAttribute('clip-rule', 'evenodd')
+  arrow.setAttribute('d', BUTTON_ARROW_PATHS[dir] ?? '')
+  arrow.setAttribute('fill', 'var(--button-text)')
+  arrow.setAttribute('data-murasaki-arrow', dir)
+  svg.appendChild(arrow)
+
   return svg
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const BAR_SIZE = 16
+const BTN_HEIGHT = 17
 const SCROLL_STEP = 40
 const REPEAT_MS = 50
 
@@ -111,18 +144,17 @@ interface ScrollbarState {
 
 function buildButton(dir: string): HTMLDivElement {
   // Shared constructor for arrow buttons so v/h controls stay consistent.
+  // The SVG itself renders the full 3D border + face + arrow glyph.
   const btn = createDiv({
     position: 'relative',
     width: `${BAR_SIZE}px`,
-    height: `${BAR_SIZE}px`,
+    height: `${BTN_HEIGHT}px`,
     cursor: 'default',
-    backgroundColor: 'var(--button-face)',
-    color: 'var(--button-dk-shadow)',
     boxSizing: 'border-box',
     flexShrink: '0',
+    overflow: 'hidden',
   })
-  btn.style.boxShadow = RAISED_SHADOW
-  btn.appendChild(createArrowSvg(dir))
+  btn.appendChild(createButtonSvg(dir))
 
   const btnName = dir === 'up'
     ? 'vup'
@@ -162,8 +194,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
   const vTrack = createDiv({
     position: 'absolute',
-    top: `${BAR_SIZE}px`,
-    bottom: `${BAR_SIZE}px`,
+    top: `${BTN_HEIGHT}px`,
+    bottom: `${BTN_HEIGHT}px`,
     left: '0',
     right: '0',
     backgroundColor: 'var(--button-light)',
@@ -194,7 +226,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     position: 'absolute',
     bottom: '0',
     left: '0',
-    height: `${BAR_SIZE}px`,
+    height: `${BTN_HEIGHT}px`,
     right: `${BAR_SIZE}px`,
     zIndex: '100',
     display: 'none',
@@ -227,7 +259,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
   const hThumb = createDiv({
     position: 'absolute',
     top: '0',
-    height: `${BAR_SIZE}px`,
+    height: `${BTN_HEIGHT}px`,
     minWidth: `${BAR_SIZE}px`,
     backgroundColor: 'var(--button-face)',
     boxShadow: RAISED_SHADOW,
@@ -247,7 +279,7 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
     bottom: '0',
     right: '0',
     width: `${BAR_SIZE}px`,
-    height: `${BAR_SIZE}px`,
+    height: `${BTN_HEIGHT}px`,
     backgroundColor: 'var(--button-face)',
     zIndex: '101',
     display: 'none',
@@ -335,12 +367,12 @@ function syncLayout(s: ScrollbarState): void {
 
   // Padding so content doesn't sit behind the scrollbar
   t.style.paddingRight = hasV ? `${BAR_SIZE}px` : s.origPaddingRight
-  t.style.paddingBottom = hasH ? `${BAR_SIZE}px` : s.origPaddingBottom
+  t.style.paddingBottom = hasH ? `${BTN_HEIGHT}px` : s.origPaddingBottom
   t.style.boxSizing = 'border-box'
 
   if (hasV) {
     // Vertical thumb size = viewport/content ratio, position = scroll progress.
-    const vHeight = hasH ? t.clientHeight - BAR_SIZE : t.clientHeight
+    const vHeight = hasH ? t.clientHeight - BTN_HEIGHT : t.clientHeight
     s.vBar.style.height = `${vHeight}px`
     s.vBar.style.bottom = 'auto'
 
@@ -381,15 +413,25 @@ function addButtonBehavior(
   action: () => void,
 ): void {
   // Press behavior: immediate action + hold-to-repeat, with pressed visual state.
+  // Pressed state swaps border highlight ↔ shadow fills and shifts the arrow glyph 1px.
   let intervalId: ReturnType<typeof setInterval> | null = null
-  const arrow = btn.querySelector<SVGSVGElement>('[data-murasaki-arrow]')
+  const borderPaths = btn.querySelectorAll<SVGPathElement>('[data-murasaki-border]')
+  const arrow = btn.querySelector<SVGPathElement>('[data-murasaki-arrow]')
 
   const onDown = (e: MouseEvent): void => {
     e.preventDefault()
-    btn.style.boxShadow = SUNKEN_SHADOW
 
+    // Swap border fills to pressed state
+    borderPaths.forEach((p) => {
+      const pressedVar = p.getAttribute('data-murasaki-var-pressed')
+      if (pressedVar) {
+        p.setAttribute('fill', `var(${pressedVar})`)
+      }
+    })
+
+    // Shift arrow glyph 1px right + 1px down
     if (arrow) {
-      arrow.style.transform = 'translate(calc(-50% + 1px), calc(-50% + 1px))'
+      arrow.setAttribute('transform', 'translate(1,1)')
     }
 
     action()
@@ -403,10 +445,17 @@ function addButtonBehavior(
     clearInterval(intervalId)
     intervalId = null
 
-    btn.style.boxShadow = RAISED_SHADOW
+    // Restore border fills to normal state
+    borderPaths.forEach((p) => {
+      const normalVar = p.getAttribute('data-murasaki-var-normal')
+      if (normalVar) {
+        p.setAttribute('fill', `var(${normalVar})`)
+      }
+    })
 
+    // Restore arrow position
     if (arrow) {
-      arrow.style.transform = 'translate(-50%, -50%)'
+      arrow.removeAttribute('transform')
     }
   }
 
@@ -653,7 +702,11 @@ export interface UseScrollbarOptions {
  * function MyComponent() {
  *   const ref = useRef<HTMLDivElement>(null)
  *   useScrollbar(ref)
- *   return <div ref={ref} style={{ overflow: 'auto', height: 200 }}>…</div>
+ *   return (
+ *     <div ref={ref} style={{ height: 200, width: 300 }}>
+ *       <p>Long content that overflows…</p>
+ *     </div>
+ *   )
  * }
  * ```
  */

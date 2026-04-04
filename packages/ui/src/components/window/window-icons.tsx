@@ -15,14 +15,14 @@ export function CloseIcon(props: React.SVGProps<SVGSVGElement>): React.ReactElem
 export function MaximizeIcon({ disabled, ...props }: React.SVGProps<SVGSVGElement> & { disabled?: boolean }): React.ReactElement {
   if (disabled) {
     return (
-      <svg fill="none" height={10} viewBox="0 0 10 10" width={10} {...props}>
-        <path clipRule="evenodd" d="M10 1H1V3V9V10H2H9H10V9V3V1ZM9 3H2V9H9V3Z" fill="var(--button-hilight)" fillRule="evenodd" />
-        <path clipRule="evenodd" d="M9 0H0V2V8V9H1H8H9V8V2V0ZM8 2H1V8H8V2Z" fill="var(--gray-text)" fillRule="evenodd" />
+      <svg fill="none" height={9} viewBox="0 0 9 9" width={9} {...props}>
+        <path clipRule="evenodd" d="M9 1H1V3V9H2H8H9V3V1ZM8 3H2V8H8V3Z" fill="var(--button-hilight)" fillRule="evenodd" />
+        <path clipRule="evenodd" d="M8 0H0V2V8H1H7H8V2V0ZM7 2H1V7H7V2Z" fill="var(--gray-text)" fillRule="evenodd" />
       </svg>
     )
   }
   return (
-    <svg fill="none" height={9} viewBox="0 0 10 9" width={10} {...props}>
+    <svg fill="none" height={9} viewBox="0 0 9 9" width={9} {...props}>
       <path clipRule="evenodd" d="M9 0H0V2V8V9H1H8H9V8V2V0ZM8 2H1V8H8V2Z" fill="currentColor" fillRule="evenodd" />
     </svg>
   )

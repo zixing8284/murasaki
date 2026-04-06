@@ -23,7 +23,7 @@ const selectVariants = cva([
   'bg-(--window)',
   'text-(--window-text)',
   // Border effect
-  'shadow-border-field',
+  'shadow-(--shadow-border-field)',
   // Focus state
   'focus:outline-none',
   'focus:text-(--hilight-text)',

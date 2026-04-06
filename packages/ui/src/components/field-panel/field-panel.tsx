@@ -6,7 +6,7 @@ import { ScrollArea } from '../scroll-area/scroll-area'
 
 const fieldPanelVariants = cva(
   [
-    'shadow-border-field',
+    'shadow-(--shadow-border-field)',
     'bg-(--window)',
     'text-(--window-text)',
     'p-0.5',

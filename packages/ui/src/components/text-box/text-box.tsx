@@ -52,7 +52,7 @@ const baseFieldStyles = [
 const inputVariants = cva(
   [
     ...baseFieldStyles,
-    'shadow-border-field',
+    'shadow-(--shadow-border-field)',
     'border-none',
     'px-1',
     'leading-loose',
@@ -123,7 +123,7 @@ export function TextBox({
 
   const fieldElement = multiline
     ? (
-        <div className={cn('bg-(--window) shadow-border-field p-[2px] size-full flex flex-col min-h-[60px]', className)}>
+        <div className={cn('bg-(--window) shadow-(--shadow-border-field) p-[2px] size-full flex flex-col min-h-[60px]', className)}>
           <div className="relative flex-1 flex flex-col overflow-hidden">
             <textarea
               ref={textareaRef}

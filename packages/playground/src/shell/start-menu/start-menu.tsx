@@ -17,7 +17,7 @@ export function StartMenu({ onClose }: StartMenuProps): React.ReactElement {
       <div className="absolute bottom-7.5 left-0 z-247">
         <div className="min-h-25 w-43.5 flex flex-row items-stretch">
           {/* Stripe */}
-          <div className="bg-linear-to-b from-(--active-title) to-(--gradient-active-title) w-5.25 min-h-fit flex flex-col justify-end pb-4 shadow-raised">
+          <div className="bg-linear-to-b from-(--active-title) to-(--gradient-active-title) w-5.25 min-h-fit flex flex-col justify-end pb-4 shadow-(--shadow-raised)">
             <span className="text-(--title-text) -rotate-90 origin-center whitespace-nowrap text-xs">
               murasaki-react98
             </span>

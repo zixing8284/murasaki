@@ -13,7 +13,7 @@ export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): Rea
   return (
     <footer
       data-area="taskbar"
-      className="flex flex-row items-center bg-(--button-face) p-0.75 shadow-raised z-2 overflow-hidden mt-auto select-none"
+      className="flex flex-row items-center bg-(--button-face) p-0.75 shadow-(--shadow-raised) z-2 overflow-hidden mt-auto select-none"
     >
       {/* Start Button */}
       <div>

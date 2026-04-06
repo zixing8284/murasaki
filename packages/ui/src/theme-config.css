@@ -66,6 +66,14 @@
    ========================================================================== */
 
 @layer base {
+  /* used for resize grips */
+  @font-face {
+  font-family: "Marlett";
+  src: url(./assets/fonts/marlett.ttf) format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
   @font-face {
     font-family: "Pixelated MS Sans Serif";
     src: url("./assets/fonts/ms_sans_serif.woff2") format("woff2"),
@@ -87,8 +95,11 @@
   }
 
   body {
-    image-rendering: pixelated;
     font-family: "Pixelated MS Sans Serif", sans-serif;
+    image-rendering: pixelated;
+    text-rendering: optimizeSpeed;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
   }
 
   button:not(:disabled),
@@ -115,41 +126,6 @@
 
 @utility break-line {
   @apply text-wrap wrap-break-word break-all whitespace-pre-line;
-}
-
-
-/* Shadow utilities — class names match the CSS custom properties */
-
-@utility shadow-raised-outer {
-  box-shadow: var(--shadow-raised-outer);
-}
-
-@utility shadow-raised-inner {
-  box-shadow: var(--shadow-raised-inner);
-}
-
-@utility shadow-raised {
-  box-shadow: var(--shadow-raised);
-}
-
-@utility shadow-sunken-outer {
-  box-shadow: var(--shadow-sunken-outer);
-}
-
-@utility shadow-sunken-inner {
-  box-shadow: var(--shadow-sunken-inner);
-}
-
-@utility shadow-sunken {
-  box-shadow: var(--shadow-sunken);
-}
-
-@utility shadow-raised-primary {
-  box-shadow: var(--shadow-raised-primary);
-}
-
-@utility shadow-border-field {
-  box-shadow: var(--shadow-border-field);
 }
 
 /* ==========================================================================

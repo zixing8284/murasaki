@@ -68,16 +68,16 @@ describe('button', () => {
   it('applies active variant classes when active={true}', async () => {
     const screen = await render(<Button active>Active</Button>)
     const btn = screen.getByRole('button')
-    // The active variant adds shadow-sunken class
+    // The active variant adds shadow-(--shadow-sunken) class
     const classes = btn.element().className
-    expect(classes).toContain('shadow-sunken')
+    expect(classes).toContain('shadow-(--shadow-sunken)')
   })
 
   it('does not apply active classes by default', async () => {
     const screen = await render(<Button>Normal</Button>)
     const btn = screen.getByRole('button')
-    // Default button should have shadow-raised (the base raised look)
+    // Default button should have shadow-(--shadow-raised) (the base raised look)
     const classes = btn.element().className
-    expect(classes).toContain('shadow-raised')
+    expect(classes).toContain('shadow-(--shadow-raised)')
   })
 })

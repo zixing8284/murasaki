@@ -97,7 +97,7 @@ Example: `packages/ui/src/components/slider/slider-icons.tsx`
 Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tokens. Components use Tailwind v4's **arbitrary CSS variable syntax** directly (e.g., `bg-(--button-face)`, `text-(--window-text)`) instead of `@theme inline` tokens. The CSS is split into three source files under `src/`:
 
 - **`theme-variables.css`** — CSS custom properties (`:root` and `[data-theme]` overrides). This is the **consumer template** — consumers copy these variables into their own CSS and customize values. Exported as `murasaki-react98/theme-variables.css`.
-- **`theme-config.css`** — Shadow CSS custom properties (`:root`), `@utility` definitions (shadow utilities, `sunken-panel`, `pixelated`, etc.), `@layer base` (fonts, box-sizing), and scrollbar styles. This is **library-owned** — consumers import it, never copy. Exported as `murasaki-react98/theme-config.css`.
+- **`theme-config.css`** — Shadow CSS custom properties (`:root`), `@utility` definitions (`sunken-panel`, `pixelated`, etc.), `@layer base` (fonts, box-sizing), and scrollbar styles. This is **library-owned** — consumers import it, never copy. Exported as `murasaki-react98/theme-config.css`.
 - **`globals.css`** — Aggregator that imports both files above. Exported as `murasaki-react98/theme.css` (source, for Tailwind consumers) and compiled to `dist/globals.css` (for non-Tailwind consumers).
 
 **Consumer usage patterns:**
@@ -105,9 +105,9 @@ Styling uses Tailwind CSS v4 with a full Windows 98 color palette and shadow tok
 - **Quick-start**: `@import "murasaki-react98/theme.css"` — imports everything.
 - **shadcn/ui pattern** (recommended): `@import "murasaki-react98/theme-config.css"` + define `:root { ... }` with variables copied from `theme-variables.css`. This gives the consumer full ownership over theme values.
 
-**CSS variable syntax in components**: Use Tailwind v4 arbitrary value syntax with CSS variables: `bg-(--button-face)`, `text-(--window-text)`, `border-(--button-shadow)`, etc. For shadows, use the utility classes: `shadow-raised`, `shadow-sunken`, `shadow-border-field`, etc.
+**CSS variable syntax in components**: Use Tailwind v4 arbitrary value syntax with CSS variables: `bg-(--button-face)`, `text-(--window-text)`, `border-(--button-shadow)`, `shadow-(--shadow-raised)`, `shadow-(--shadow-sunken)`, `shadow-(--shadow-border-field)`, etc.
 
-Custom utilities include `sunken-panel`, `bgi-icon-*`, `pixelated`, `shadow-raised`, `shadow-sunken`, `shadow-border-field`, and `shadow-raised-primary`.
+Custom utilities include `sunken-panel`, `bgi-icon-*`, and `pixelated`.
 
 **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS classes or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
 

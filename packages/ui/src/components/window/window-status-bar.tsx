@@ -11,7 +11,7 @@ const statusBarVariants = cva([
 ])
 
 const statusBarFieldVariants = cva([
-  'shadow-sunken-outer',
+  'shadow-(--shadow-sunken-outer)',
   'py-[2px]',
   'px-[3px]',
 ], {

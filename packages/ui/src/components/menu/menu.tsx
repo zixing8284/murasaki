@@ -47,9 +47,13 @@ const menuItemVariants = cva(
         true: ['text-(--gray-text)', 'cursor-default'],
         false: ['cursor-pointer', 'text-(--menu-text)', 'hover:bg-(--menu-hilight)', 'hover:text-(--hilight-text)'],
       },
+      selected: {
+        true: ['bg-(--menu-hilight)', 'text-(--hilight-text)'],
+      },
     },
     defaultVariants: {
       disabled: false,
+      selected: false,
     },
   },
 )
@@ -57,12 +61,14 @@ const menuItemVariants = cva(
 export interface MenuItemProps extends React.ComponentProps<'li'> {
   icon?: React.ReactNode
   disabled?: boolean
+  selected?: boolean
 }
 
 export function MenuItem({
   className,
   icon,
   disabled = false,
+  selected = false,
   children,
   ref,
   ...props
@@ -72,7 +78,7 @@ export function MenuItem({
       ref={ref}
       role="menuitem"
       aria-disabled={disabled || undefined}
-      className={cn(menuItemVariants({ disabled }), className)}
+      className={cn(menuItemVariants({ disabled, selected }), className)}
       {...props}
     >
       {icon && <span className="w-4 h-4 shrink-0 flex-center">{icon}</span>}

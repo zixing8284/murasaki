@@ -58,7 +58,7 @@ export function BaseWindow({
     : <AppIcon appId={proc.appId} size="sm" />
 
   return (
-    <WindowProvider active={isActive} minimized={proc.minimized} positioning="absolute">
+    <WindowProvider active={isActive} minimized={proc.minimized} positioning="absolute" maximizable={!disableMaximize}>
       <WindowPortal container={portalContainer}>
         <WindowFrame
           ref={frameRef}
@@ -78,7 +78,6 @@ export function BaseWindow({
               {!disableMinimize && <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />}
               <WindowMaximizeButton
                 onClick={() => actions.toggleMaximize(windowId)}
-                disabled={disableMaximize}
               />
               <WindowCloseButton onClick={() => actions.close(windowId)} />
             </WindowButtons>

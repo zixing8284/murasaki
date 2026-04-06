@@ -14,6 +14,8 @@ export interface WindowActions {
 export interface WindowMeta {
   /** Whether the window is using fixed or absolute positioning */
   positioning: 'absolute' | 'fixed'
+  /** Whether the window can be maximized/restored */
+  maximizable: boolean
 }
 
 export interface WindowContextValue {

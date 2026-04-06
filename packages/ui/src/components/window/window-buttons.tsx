@@ -88,7 +88,9 @@ export function WindowMaximizeButton({
   onClick,
   ...props
 }: WindowMaximizeButtonProps): React.ReactElement {
-  const { state, actions } = useWindowContext()
+  const { state, actions, meta } = useWindowContext()
+
+  const isDisabled = disabled || !meta.maximizable
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     actions.toggleMaximized()
@@ -99,12 +101,12 @@ export function WindowMaximizeButton({
     <button
       aria-label={state.maximized ? 'Restore' : 'Maximize'}
       className={cn(buttonVariants(), className)}
-      disabled={disabled}
+      disabled={isDisabled}
       onClick={handleClick}
       type="button"
       {...props}
     >
-      {disabled
+      {isDisabled
         ? <MaximizeIcon disabled />
         : state.maximized
           ? <RestoreIcon />

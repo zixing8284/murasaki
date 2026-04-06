@@ -1,88 +1,113 @@
 import type { ThemeId } from 'murasaki-react98'
+import {
+  Button,
+  WindowButtons,
+  WindowCloseButton,
+  WindowContent,
+  WindowFrame,
+  WindowMaximizeButton,
+  WindowMinimizeButton,
+  WindowProvider,
+  WindowTitle,
+  WindowTitleBar,
+} from 'murasaki-react98'
 
-function PreviewTitleButton(): React.ReactElement {
-  return <div className="w-[14px] h-[14px] shadow-(--shadow-raised) bg-(--button-face)" />
+interface ThemePreviewProps {
+  themeId: ThemeId
+  gradientTitlebar?: boolean
 }
 
-export function ThemePreview({ themeId }: { themeId: ThemeId }): React.ReactElement {
+export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewProps): React.ReactElement {
   return (
     <div
-      className="relative h-[220px] overflow-hidden border border-(--button-dk-shadow) bg-(--background)"
+      className={`relative h-65 overflow-hidden border border-(--button-dk-shadow) bg-(--background) ${gradientTitlebar ? '' : 'no-gradient-titlebar'}`}
       data-theme={themeId === 'windows-98' ? undefined : themeId}
     >
       {/* Desktop icon */}
-      <div className="absolute top-3 left-3 flex flex-col items-center gap-0.5">
+      <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">
         <img
           src="/img/desktop/RecyclingBin.png"
           alt="Trash"
           className="w-8 h-8 pixelated"
         />
-        <span className="text-[10px] text-center text-(--desktop-text)">
+        <span className="text-center text-(--desktop-text)">
           Trash
         </span>
       </div>
 
-      {/* Inactive window */}
-      <div className="absolute top-[35px] left-[70px] w-[260px] shadow-(--shadow-raised) bg-(--button-face)">
-        <div className="h-[18px] flex items-center px-1 text-[10px] font-bold bg-linear-to-r from-(--inactive-title) to-(--gradient-inactive-title) text-(--inactive-title-text)">
-          <span>Inactive Window</span>
-          <div className="ml-auto flex gap-px">
-            <PreviewTitleButton />
-            <PreviewTitleButton />
-            <PreviewTitleButton />
-          </div>
-        </div>
-      </div>
-
-      {/* Active window */}
-      <div className="absolute top-[60px] left-[110px] w-[260px] shadow-(--shadow-raised) bg-(--button-face)">
-        {/* Active title bar */}
-        <div className="h-[18px] flex items-center px-1 text-[10px] font-bold bg-linear-to-r from-(--active-title) to-(--gradient-active-title) text-(--title-text)">
-          <span className="font-bold">Active Window</span>
-          <div className="ml-auto flex gap-px">
-            <PreviewTitleButton />
-            <PreviewTitleButton />
-            <PreviewTitleButton />
-          </div>
-        </div>
-
-        {/* Menu bar */}
-        <div className="h-[16px] flex items-center gap-2 px-1 text-[10px] bg-(--menu) text-(--menu-text)">
-          <span>File</span>
-          <span>Edit</span>
-          <span>View</span>
-          <span>Help</span>
-        </div>
-
-        {/* Content area with scrollbar */}
-        <div className="p-0.5">
-          <div className="h-[72px] flex border border-(--button-shadow)">
-            <div className="flex-1 p-1 text-[10px] bg-(--button-face) text-(--window-text)">
-              Window Text
+      {/* Inactive Window — with content area + scrollbar */}
+      <WindowProvider active={false} positioning="absolute" maximizable={false}>
+        <WindowFrame className="top-3 left-13 w-64 min-w-0! min-h-0!">
+          <WindowTitleBar>
+            <WindowTitle>Inactive Window</WindowTitle>
+            <WindowButtons>
+              <WindowMinimizeButton />
+              <WindowMaximizeButton />
+              <WindowCloseButton />
+            </WindowButtons>
+          </WindowTitleBar>
+          <WindowContent className="p-0.5">
+            <div className="flex h-28 shadow-(--shadow-border-field)">
+              <div className="flex-1 bg-(--window)" />
             </div>
-            {/* Vertical scrollbar */}
-            <div className="w-[14px] flex flex-col bg-(--scrollbar)">
-              <div className="h-[14px] shadow-(--shadow-raised) bg-(--button-face)" />
-              <div className="flex-1" />
-              <div className="h-[14px] shadow-(--shadow-raised) bg-(--button-face)" />
+          </WindowContent>
+        </WindowFrame>
+      </WindowProvider>
+
+      {/* Active Window — overlaps Inactive, offset down-right */}
+      <WindowProvider active positioning="absolute" maximizable={false}>
+        <WindowFrame className="top-9 left-14 w-64 min-w-0! min-h-0!">
+          <WindowTitleBar>
+            <WindowTitle>Active Window</WindowTitle>
+            <WindowButtons>
+              <WindowMinimizeButton />
+              <WindowMaximizeButton />
+              <WindowCloseButton />
+            </WindowButtons>
+          </WindowTitleBar>
+
+          {/* Menu bar: Normal | Disabled | Selected */}
+          <div className="h-4 flex items-center gap-0 px-px bg-(--menu) text-(--menu-text)">
+            <span className="px-1">Normal</span>
+            <span className="px-1 text-(--gray-text)">Disabled</span>
+            <span className="px-1 bg-(--menu-hilight) text-(--hilight-text)">Selected</span>
+          </div>
+
+          {/* Content area */}
+          <WindowContent className="p-0.5 bg-(--button-face)">
+            <div className="flex h-20 shadow-(--shadow-border-field)">
+              <div className="flex-1 p-1 bg-(--window) text-(--window-text)">
+                <span className="font-bold">Window Text</span>
+              </div>
             </div>
-          </div>
-          {/* Horizontal scrollbar */}
-          <div className="h-[14px] flex mt-px bg-(--scrollbar)">
-            <div className="w-[14px] shadow-(--shadow-raised) bg-(--button-face)" />
-            <div className="flex-1" />
-            <div className="w-[14px] shadow-(--shadow-raised) bg-(--button-face)" />
-          </div>
-        </div>
-      </div>
+          </WindowContent>
+        </WindowFrame>
+      </WindowProvider>
+
+      {/* Message Box — overlaps Active Window content area */}
+      <WindowProvider active positioning="absolute" maximizable={false}>
+        <WindowFrame className="top-26 left-18 w-46 min-w-0! min-h-0!">
+          <WindowTitleBar>
+            <WindowTitle>Message Box</WindowTitle>
+            <WindowButtons>
+              <WindowCloseButton />
+            </WindowButtons>
+          </WindowTitleBar>
+
+          <WindowContent className="flex flex-col items-center gap-2 bg-(--button-face)">
+            <span className="text-(--button-text)">Message Text</span>
+            <Button>OK</Button>
+          </WindowContent>
+        </WindowFrame>
+      </WindowProvider>
 
       {/* Taskbar */}
-      <div className="absolute bottom-0 left-0 right-0 h-[24px] flex items-center px-0.5 shadow-(--shadow-raised) bg-(--button-face)">
-        <div className="h-[18px] px-1 flex items-center text-[10px] shadow-(--shadow-raised) bg-(--button-face) text-(--button-text)">
+      <div className="absolute bottom-0 left-0 right-0 h-5.5 flex items-center px-0.5 shadow-(--shadow-raised) bg-(--button-face)">
+        <div className="h-4 px-1 flex items-center shadow-(--shadow-raised) bg-(--button-face) text-(--button-text)">
           <span>Start</span>
         </div>
         <div className="flex-1" />
-        <div className="h-[18px] px-2 flex items-center text-[10px] text-(--button-text)">
+        <div className="h-4 px-2 flex items-center text-(--button-text)">
           12:56
         </div>
       </div>

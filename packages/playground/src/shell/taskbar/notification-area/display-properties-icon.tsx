@@ -6,7 +6,7 @@ export function DisplayPropertiesIcon(): React.ReactElement {
   return (
     <img
       className="mx-px cursor-pointer"
-      src="/img/computer.png"
+      src="/img/display_16.png"
       alt="Display Properties"
       title="Display Properties"
       onClick={(e) => {

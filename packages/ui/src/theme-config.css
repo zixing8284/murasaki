@@ -28,7 +28,8 @@
    Shadow CSS Custom Properties (library-computed, not user-customizable)
    ========================================================================== */
 
-:root {
+:root,
+[data-theme] {
   --shadow-raised-outer: inset -1px -1px var(--button-dk-shadow),
     inset 1px 1px var(--button-hilight);
   --shadow-raised-inner: inset -2px -2px var(--button-shadow),

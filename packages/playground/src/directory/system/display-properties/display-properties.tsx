@@ -51,13 +51,6 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
       disableMaximize
       disableMinimize
       disableResize
-      titleIcon={(
-        <img
-          src="/img/computer.png"
-          alt=""
-          className="w-4 h-4 pixelated mr-1"
-        />
-      )}
     >
       <div className="flex flex-col gap-2">
         <Tabs defaultValue="theme" className="w-full" keepMounted>

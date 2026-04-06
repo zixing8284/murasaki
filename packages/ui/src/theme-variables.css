@@ -89,6 +89,64 @@
    e.g. <html data-theme="solarized-dark">
    ========================================================================== */
 
+[data-theme="windows-98"] {
+  /* Button */
+  --button-alternate-face: rgb(192, 192, 192);
+  --button-dk-shadow: rgb(64, 64, 64);
+  --button-face: rgb(212, 208, 200);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(212, 208, 200);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(34, 34, 34);
+
+  /* Window */
+  --active-border: rgb(212, 208, 200);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(212, 208, 200);
+  --scrollbar: rgb(212, 208, 200);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(0, 0, 0);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(10, 36, 106);
+  --gradient-active-title: rgb(166, 202, 240);
+  --gradient-inactive-title: rgb(192, 192, 192);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(212, 208, 200);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(212, 208, 200);
+  --menu-bar: rgb(192, 192, 192);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(10, 36, 106);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 128);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Spacing */
+  --element-spacing: 8px;
+  --label-spacing: 6px;
+  --grouped-button-spacing: 4px;
+  --grouped-element-spacing: 6px;
+  --checkbox-width: 13px;
+  --option-size: 12px;
+  --range-track-height: 4px;
+  --range-spacing: 10px;
+
+  /* Desktop */
+  --background: rgb(58, 110, 165);
+}
+
 [data-theme="solarized-dark"] {
   /* Button */
   --button-alternate-face: rgb(0, 43, 54);

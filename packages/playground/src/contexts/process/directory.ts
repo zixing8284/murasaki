@@ -50,7 +50,7 @@ const directory = {
       import('../../directory/system/display-properties/display-properties').then(m => ({ default: m.DisplayProperties })),
     ),
     defaultTitle: 'Display Properties',
-    icon: { sm: '/img/computer.png', lg: '/img/computer.png' },
+    icon: { sm: '/img/display_16.png', lg: '/img/display_16.png' },
     singleton: true,
     ephemeral: true,
   },

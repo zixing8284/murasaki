@@ -21,7 +21,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
   return (
     <div
       className={`relative h-65 overflow-hidden border border-(--button-dk-shadow) bg-(--background) ${gradientTitlebar ? '' : 'no-gradient-titlebar'}`}
-      data-theme={themeId === 'windows-98' ? undefined : themeId}
+      data-theme={themeId}
     >
       {/* Desktop icon */}
       <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">

@@ -38,10 +38,12 @@ export function WindowTitleBar({
   onDoubleClick,
   ...props
 }: WindowTitleBarProps): React.ReactElement {
-  const { state, actions } = useWindowContext()
+  const { state, actions, meta } = useWindowContext()
 
   const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    actions.toggleMaximized()
+    if (meta.maximizable) {
+      actions.toggleMaximized()
+    }
     onDoubleClick?.(e)
   }
 

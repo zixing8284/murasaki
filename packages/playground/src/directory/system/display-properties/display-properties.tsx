@@ -2,6 +2,7 @@ import type { ThemeId } from 'murasaki-react98'
 import type { ProcessComponentProps } from '../../../contexts/process'
 import {
   Button,
+  Checkbox,
   DropdownNative,
   Tab,
   TabList,
@@ -12,6 +13,8 @@ import {
 } from 'murasaki-react98'
 import { useState } from 'react'
 import { useProcessActions } from '../../../contexts/process'
+import { useCrtEffect } from '../../../hooks/use-crt-effect'
+import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'
 import { RndWindow } from '../../../shell/window/rnd-window'
 import { ThemePreview } from './theme-preview'
 
@@ -25,6 +28,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const { themeId: currentThemeId, setTheme } = useTheme()
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>(currentThemeId)
   const actions = useProcessActions()
+  const [crtEnabled, setCrtEnabled] = useCrtEffect()
+  const [gradientEnabled, setGradientEnabled] = useGradientTitlebar()
 
   const handleApply = (): void => {
     setTheme(selectedTheme)
@@ -89,7 +94,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
 
             <div className="flex flex-col gap-1">
               <span className="text-(--button-text)">Sample:</span>
-              <ThemePreview themeId={selectedTheme} />
+              <ThemePreview themeId={selectedTheme} gradientTitlebar={gradientEnabled} />
             </div>
           </TabPanel>
 
@@ -97,8 +102,19 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
             <p className="text-(--button-text)">Wallpaper settings are not available.</p>
           </TabPanel>
 
-          <TabPanel value="appearance">
-            <p className="text-(--button-text)">Appearance settings are not available.</p>
+          <TabPanel value="appearance" className="flex flex-col gap-3">
+            <Checkbox
+              checked={crtEnabled}
+              onChange={e => setCrtEnabled(e.target.checked)}
+            >
+              Enable CRT monitor effect
+            </Checkbox>
+            <Checkbox
+              checked={gradientEnabled}
+              onChange={e => setGradientEnabled(e.target.checked)}
+            >
+              Use gradient title bars
+            </Checkbox>
           </TabPanel>
         </Tabs>
 

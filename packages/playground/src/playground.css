@@ -26,6 +26,12 @@ body {
   opacity: 0.9;
 }
 
+/* Disable gradient on title bars — makes them solid color */
+.no-gradient-titlebar {
+  --gradient-active-title: var(--active-title);
+  --gradient-inactive-title: var(--inactive-title);
+}
+
 /* ===== Docs MDX Content Styles ===== */
 .docs-mdx-content h1 {
   font-size: 16px;

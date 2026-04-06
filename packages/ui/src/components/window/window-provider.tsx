@@ -13,6 +13,8 @@ export interface WindowProviderProps {
   defaultMaximized?: boolean
   /** Positioning mode. Default: 'fixed' */
   positioning?: 'absolute' | 'fixed'
+  /** Whether the window can be maximized. Default: true */
+  maximizable?: boolean
 }
 
 export function WindowProvider({
@@ -21,6 +23,7 @@ export function WindowProvider({
   minimized = false,
   defaultMaximized = false,
   positioning = 'fixed',
+  maximizable = true,
 }: WindowProviderProps): React.ReactElement {
   const [maximized, setMaximized] = useState(defaultMaximized)
 
@@ -37,6 +40,7 @@ export function WindowProvider({
 
   const meta: WindowMeta = {
     positioning,
+    maximizable,
   }
 
   const value: WindowContextValue = { state, actions, meta }

@@ -13,7 +13,7 @@ export function QuickLaunchDivider({ isDragging, onMouseDown }: QuickLaunchDivid
       <div className="h-5.5 w-px border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
       <div
         ref={dividerRef}
-        className={`shadow-raised h-5 cursor-ew-resize ${
+        className={`shadow-(--shadow-raised) h-5 cursor-ew-resize ${
           isDragging
             ? 'w-1.5 bg-(--button-shadow) flex items-center justify-center'
             : 'w-1'

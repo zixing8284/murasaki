@@ -151,7 +151,7 @@ const tabPanelVariants = cva([
   'z-2',
   'bg-(--button-face)',
   'p-2',
-  'shadow-raised',
+  'shadow-(--shadow-raised)',
 ])
 
 export interface TabPanelProps extends Omit<React.ComponentProps<'div'>, 'role'> {

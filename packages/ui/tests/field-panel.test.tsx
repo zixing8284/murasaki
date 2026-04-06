@@ -14,10 +14,10 @@ describe('field-panel', () => {
     await expect.element(screen.getByText('Content')).toBeInTheDocument()
   })
 
-  it('applies shadow-border-field class by default', async () => {
+  it('applies shadow-(--shadow-border-field) class by default', async () => {
     const screen = await render(<FieldPanel data-testid="panel" />)
     const el = screen.getByTestId('panel').element()
-    expect(el.className).toContain('shadow-border-field')
+    expect(el.className).toContain('shadow-(--shadow-border-field)')
   })
 
   it('forwards custom className', async () => {

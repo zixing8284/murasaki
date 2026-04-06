@@ -97,7 +97,7 @@ export function TableHead({
       data-slot="table-head"
       className={cn(
         'sticky top-0 h-4.25 px-(--grouped-element-spacing) box-border font-normal bg-(--button-face)',
-        'shadow-raised',
+        'shadow-(--shadow-raised)',
         className,
       )}
       {...props}

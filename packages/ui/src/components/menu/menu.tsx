@@ -7,7 +7,7 @@ import * as React from 'react'
 
 const menuVariants = cva([
   'bg-(--menu)',
-  'shadow-raised',
+  'shadow-(--shadow-raised)',
   'flex',
   'flex-col',
   'items-stretch',

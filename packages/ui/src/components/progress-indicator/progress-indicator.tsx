@@ -19,7 +19,7 @@ const containerVariants = cva(
   {
     variants: {
       shadow: {
-        true: 'shadow-sunken-inner',
+        true: 'shadow-(--shadow-sunken-inner)',
         false: '',
       },
     },

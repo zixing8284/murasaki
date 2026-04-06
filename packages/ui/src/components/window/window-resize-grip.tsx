@@ -21,10 +21,14 @@ export function WindowResizeGrip({
       ref={ref}
       className={cn(
         'absolute right-0.5 bottom-0.5 size-4 cursor-nwse-resize overflow-hidden',
-        'before:content-["\x07"] before:absolute before:bottom-0.5 before:right-1',
-        'before:text-(--button-shadow) before:text-base before:leading-none',
-        'after:content-["\x6F"] after:absolute after:bottom-0.5 after:right-0.75',
-        'after:text-(--button-hilight) after:text-base after:leading-none',
+        // Marlett "p" (\0070) — shadow dots, offset right 4px
+        'before:content-["p"] before:absolute before:bottom-0.5 before:right-1',
+        'before:font-["Marlett"] before:text-base before:leading-none',
+        'before:text-(--button-shadow)',
+        // Marlett "o" (\006F) — highlight dots, offset right 3px
+        'after:content-["o"] after:absolute after:bottom-0.5 after:right-[3px]',
+        'after:font-["Marlett"] after:text-base after:leading-none',
+        'after:text-(--button-hilight)',
         className,
       )}
       role="presentation"

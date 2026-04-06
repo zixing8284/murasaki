@@ -15,10 +15,10 @@ const buttonVariants = cva(
     'pr-3',
     'text-(--button-text)',
     'bg-(--button-face)',
-    'shadow-raised',
+    'shadow-(--shadow-raised)',
     'text-transparent',
     'text-shadow-[0_0_0_var(--button-text)]',
-    'active:not-disabled:shadow-sunken',
+    'active:not-disabled:shadow-(--shadow-sunken)',
     'active:not-disabled:text-shadow-[1px_1px_0_var(--button-text)]',
     'focus:outline-dotted',
     'focus:outline-1',
@@ -32,10 +32,10 @@ const buttonVariants = cva(
   {
     variants: {
       active: {
-        true: ['shadow-sunken', 'bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'],
+        true: ['shadow-(--shadow-sunken)', 'bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'],
       },
       primary: {
-        true: ['shadow-raised-primary'],
+        true: ['shadow-(--shadow-raised-primary)'],
       },
     },
   },

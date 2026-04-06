@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
+import { BAR_SIZE, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
 
 // ─── Re-export constants for consumers ───────────────────────────────────────
 

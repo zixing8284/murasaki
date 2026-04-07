@@ -115,7 +115,13 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         <div className="flex justify-end gap-(--grouped-button-spacing)">
           <Button onClick={handleOk} className="min-w-[75px]">OK</Button>
           <Button onClick={handleCancel} className="min-w-[75px]">Cancel</Button>
-          <Button onClick={handleApply} className="min-w-[75px]">Apply</Button>
+          <Button
+            onClick={handleApply}
+            className="min-w-[75px]"
+            disabled={selectedTheme === currentThemeId}
+          >
+            Apply
+          </Button>
         </div>
       </div>
     </RndWindow>

@@ -64,6 +64,16 @@ const directory = {
     singleton: false,
     showOnDesktop: true,
   },
+  themedesigner: {
+    name: 'Theme Designer',
+    Component: lazy(() =>
+      import('../../directory/apps/theme-designer/theme-designer').then(m => ({ default: m.ThemeDesigner })),
+    ),
+    defaultTitle: 'Windows Classic Theme Designer',
+    icon: { sm: '/img/display_16.png', lg: '/img/display_16.png' },
+    singleton: true,
+    showOnDesktop: true,
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory
@@ -83,6 +93,7 @@ export const APP_ID = {
   NOTEPAD: 'notepad',
   DISPLAY_PROPERTIES: 'displayproperties',
   JSPaintApp: 'jspaint',
+  THEME_DESIGNER: 'themedesigner',
 } as const satisfies Record<string, AppId>
 
 export default directory as Record<AppId, ProcessDirectoryEntry>

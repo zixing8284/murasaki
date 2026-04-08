@@ -6,7 +6,7 @@
 
 export function CloseIcon(props: React.SVGProps<SVGSVGElement>): React.ReactElement {
   return (
-    <svg fill="none" height={7} viewBox="0 0 8 7" width={8} {...props}>
+    <svg fill="none" height={8} viewBox="0 0 8 8" width={8} {...props}>
       <path clipRule="evenodd" d="M0 0H1H2V1H3V2H4H5V1H6V0H7H8V1H7V2H6V3H5V4H6V5H7V6H8V7H7H6V6H5V5H4H3V6H2V7H1H0V6H1V5H2V4H3V3H2V2H1V1H0V0Z" fill="currentColor" fillRule="evenodd" />
     </svg>
   )
@@ -15,14 +15,14 @@ export function CloseIcon(props: React.SVGProps<SVGSVGElement>): React.ReactElem
 export function MaximizeIcon({ disabled, ...props }: React.SVGProps<SVGSVGElement> & { disabled?: boolean }): React.ReactElement {
   if (disabled) {
     return (
-      <svg fill="none" height={9} viewBox="0 0 10 9" width={10} {...props}>
-        <path clipRule="evenodd" d="M9 1H1V3V9H2H8H9V3V1ZM8 3H2V8H8V3Z" fill="var(--button-hilight)" fillRule="evenodd" />
-        <path clipRule="evenodd" d="M8 0H0V2V8H1H7H8V2V0ZM7 2H1V7H7V2Z" fill="var(--gray-text)" fillRule="evenodd" />
+      <svg fill="none" height={10} viewBox="0 0 10 10" width={10} {...props}>
+        <path clipRule="evenodd" d="M10 1H1V3V9V10H2H9H10V9V3V1ZM9 3H2V9H9V3Z" fill="var(--button-hilight)" fillRule="evenodd" />
+        <path clipRule="evenodd" d="M9 0H0V2V8V9H1H8H9V8V2V0ZM8 2H1V8H8V2Z" fill="var(--gray-text)" fillRule="evenodd" />
       </svg>
     )
   }
   return (
-    <svg fill="none" height={9} viewBox="0 0 10 9" width={10} {...props}>
+    <svg fill="none" height={10} viewBox="0 0 10 10" width={10} {...props}>
       <path clipRule="evenodd" d="M9 0H0V2V8V9H1H8H9V8V2V0ZM8 2H1V8H8V2Z" fill="currentColor" fillRule="evenodd" />
     </svg>
   )
@@ -30,8 +30,8 @@ export function MaximizeIcon({ disabled, ...props }: React.SVGProps<SVGSVGElemen
 
 export function MinimizeIcon(props: React.SVGProps<SVGSVGElement>): React.ReactElement {
   return (
-    <svg fill="none" height={2} viewBox="0 0 6 2" width={6} {...props}>
-      <rect fill="currentColor" height={2} width={6} />
+    <svg fill="none" height={8} viewBox="0 0 8 8" width={8} {...props}>
+      <rect fill="currentColor" height={2} width={6} y={6} />
     </svg>
   )
 }

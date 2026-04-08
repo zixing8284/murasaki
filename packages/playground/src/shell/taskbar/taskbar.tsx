@@ -1,8 +1,22 @@
-import { Button } from 'murasaki-react98'
-import { NotificationArea } from './notification-area/notification-area'
-import { QuickLaunch } from './quick-launch/quick-launch'
+import type { TaskbarQuickLaunchIcon } from 'murasaki-react98'
+import {
+  Button,
+  Taskbar as TaskbarRoot,
+  TaskbarDivider,
+  TaskbarNotificationArea,
+  TaskbarQuickLaunch,
+  TaskbarSystemClock,
+} from 'murasaki-react98'
+import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
+import { NetworkIcon } from './notification-area/network-icon'
 import { RunningTasks } from './running-tasks/running-tasks'
-import { TaskbarDivider } from './taskbar-divider'
+
+const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = [
+  { src: '/img/desktop.png', alt: 'Show Desktop', title: 'Show Desktop' },
+  { src: '/img/express.png', alt: 'Email Me', title: 'Outlook Express' },
+  { src: '/img/world.png', alt: 'Internet', title: 'Internet Explorer' },
+  { src: '/img/computer.png', alt: 'Computer', title: 'My Computer' },
+]
 
 interface TaskbarProps {
   showStartMenu: boolean
@@ -11,10 +25,7 @@ interface TaskbarProps {
 
 export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
   return (
-    <footer
-      data-area="taskbar"
-      className="flex flex-row items-center bg-(--button-face) p-0.75 shadow-(--shadow-raised) z-2 overflow-hidden mt-auto select-none"
-    >
+    <TaskbarRoot className="mt-auto">
       {/* Start Button */}
       <div>
         <Button
@@ -29,7 +40,7 @@ export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): Rea
       <TaskbarDivider />
 
       {/* Quick Launch */}
-      <QuickLaunch />
+      <TaskbarQuickLaunch icons={QUICK_LAUNCH_ICONS} />
 
       {/* Running Tasks */}
       <RunningTasks />
@@ -40,7 +51,11 @@ export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): Rea
       </div>
 
       {/* Notification Area (System Tray) */}
-      <NotificationArea />
-    </footer>
+      <TaskbarNotificationArea>
+        <NetworkIcon />
+        <DisplayPropertiesIcon />
+        <TaskbarSystemClock />
+      </TaskbarNotificationArea>
+    </TaskbarRoot>
   )
 }

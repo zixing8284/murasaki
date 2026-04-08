@@ -16,6 +16,8 @@ export function WindowResizeGrip({
     return null
   }
 
+  // use Marlett font characters to create the grip dots pattern,
+  // which ensures it scales properly with font size and looks consistent with classic Windows UI
   return (
     <div
       ref={ref}

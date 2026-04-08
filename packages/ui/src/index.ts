@@ -67,6 +67,18 @@ export {
   TableRow,
 } from './components/table/table'
 
+// Taskbar
+export { Taskbar } from './components/taskbar/taskbar'
+export type { TaskbarProps } from './components/taskbar/taskbar'
+export { TaskbarDivider } from './components/taskbar/taskbar-divider'
+export type { TaskbarDividerProps } from './components/taskbar/taskbar-divider'
+export { TaskbarNotificationArea } from './components/taskbar/taskbar-notification-area'
+export type { TaskbarNotificationAreaProps } from './components/taskbar/taskbar-notification-area'
+export { TaskbarQuickLaunch } from './components/taskbar/taskbar-quick-launch'
+export type { TaskbarQuickLaunchIcon, TaskbarQuickLaunchProps } from './components/taskbar/taskbar-quick-launch'
+export { TaskbarSystemClock } from './components/taskbar/taskbar-system-clock'
+export type { TaskbarSystemClockProps } from './components/taskbar/taskbar-system-clock'
+
 // Tabs
 export { Tab, TabList, TabPanel, Tabs } from './components/tabs/tabs'
 export type {

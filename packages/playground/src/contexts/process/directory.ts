@@ -74,6 +74,16 @@ const directory = {
     singleton: true,
     showOnDesktop: true,
   },
+  mediaplayer: {
+    name: 'Media Player',
+    Component: lazy(() =>
+      import('../../directory/apps/media-player/media-player').then(m => ({ default: m.MediaPlayer })),
+    ),
+    defaultTitle: 'Media Player',
+    icon: { sm: '/img/desktop/ProgMan.png', lg: '/img/desktop/ProgMan.png' },
+    singleton: true,
+    showOnDesktop: true,
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory
@@ -94,6 +104,7 @@ export const APP_ID = {
   DISPLAY_PROPERTIES: 'displayproperties',
   JSPaintApp: 'jspaint',
   THEME_DESIGNER: 'themedesigner',
+  MEDIA_PLAYER: 'mediaplayer',
 } as const satisfies Record<string, AppId>
 
 export default directory as Record<AppId, ProcessDirectoryEntry>

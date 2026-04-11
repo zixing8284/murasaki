@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { useMemo } from 'react'
 import {
   Button,
+  Tooltip,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -113,8 +114,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Tooltip */}
       <div
-        className="absolute top-21 left-42 border border-(--window-frame) px-1 py-0.5 text-(--info-text)"
-        style={{ backgroundColor: 'var(--info-window)' }}
+        className="absolute top-21 left-42 border bg-(--info-window) border-(--window-frame) px-1 py-0.5 text-(--info-text)"
       >
         Tooltip
       </div>

@@ -8,6 +8,10 @@ export { Button } from './components/button/button'
 // Checkbox
 export { Checkbox, CheckboxLabel } from './components/checkbox/checkbox'
 
+// Divider
+export { Divider } from './components/divider/divider'
+export type { DividerProps } from './components/divider/divider'
+
 // Dropdown
 export { Dropdown } from './components/dropdown/dropdown'
 export type { DropdownProps } from './components/dropdown/dropdown'
@@ -93,6 +97,10 @@ export type { TabsContextValue } from './components/tabs/tabs-context'
 
 // TextBox
 export { TextBox } from './components/text-box/text-box'
+
+// Tooltip
+export { Tooltip } from './components/tooltip/tooltip'
+export type { TooltipProps } from './components/tooltip/tooltip'
 
 // Theme
 export { useTheme } from './components/theme-provider/theme-context'

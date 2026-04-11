@@ -1,6 +1,6 @@
 import type { ProcessComponentProps } from '../../../contexts/process'
 import { useProcessActions } from '../../../contexts/process'
-import { WindowStatusBar, WindowStatusBarField, SunkenPanel } from 'murasaki-react98'
+import { Divider, WindowStatusBar, WindowStatusBarField, SunkenPanel, Tooltip } from 'murasaki-react98'
 import { RndWindow } from '../../../shell/window/rnd-window'
 import { useMediaPlayer } from './use-media-player'
 import { useEffect, useRef, useCallback, useState } from 'react'
@@ -67,47 +67,32 @@ function SeekBar({
       >
         {/* Seek handle */}
         <div
-          className="absolute top-[-3px] pointer-events-none"
+          className="absolute top-[-4px] pointer-events-none"
           style={{
-            left: `calc(${displayProgress}% - 6px)`,
+            left: `calc(${displayProgress}% - 7.5px)`,
           }}
         >
-          {/* Top rectangle */}
-          <div
-            className="w-[12px] h-[18px] border-2 border-solid bg-(--button-face) box-border"
-            style={{
-              borderTopColor: 'var(--button-hilight)',
-              borderLeftColor: 'var(--button-hilight)',
-              borderRightColor: 'var(--button-shadow)',
-              borderBottomWidth: 0,
-            }}
-          />
-          {/* Bottom triangle */}
-          <div
-            className="w-[8px] h-[8px] border-2 border-solid bg-(--button-face) box-border relative"
-            style={{
-              borderTopWidth: 0,
-              borderLeftColor: 'var(--button-hilight)',
-              borderBottomColor: 'var(--button-shadow)',
-              borderRightWidth: 0,
-              transform: 'rotate(-45deg) translateX(-50%)',
-              left: 5,
-              top: -6,
-            }}
-          />
+          <SeekThumbIcon />
         </div>
       </div>
       {/* Tick ruler */}
-      <div className="relative h-[20px] flex items-start">
+      <div className="relative h-5 flex items-start">
         {Array.from({ length: 11 }).map((_, i) => (
           <div
             key={i}
-            className="absolute flex flex-col items-center"
-            style={{ left: `${i * 10}%`, transform: 'translateX(-50%)' }}
+            className="absolute flex flex-col items-start"
+            style={{ left: `${i * 10}%` }}
           >
-            <div className="w-px h-[6px] bg-(--button-text)" />
+            <div className="w-px h-1.5 bg-(--button-text)" />
             {i % 5 === 0 && duration > 0 && (
-              <span className="text-[9px] text-(--button-text) mt-px select-none">
+              <span
+                className="text-[9px] text-(--button-text) mt-px select-none whitespace-nowrap"
+                style={
+                  i === 0 ? undefined
+                  : i === 10 ? { transform: 'translateX(-100%)' }
+                  : { transform: 'translateX(-50%)' }
+                }
+              >
                 {formatTime((i / 10) * duration)}
               </span>
             )}
@@ -118,24 +103,30 @@ function SeekBar({
   )
 }
 
-// Transport button with Win95 styling
+// Transport button
 function TransportButton({
   children,
   onClick,
   disabled,
-  title,
+  active,
+  ...rest
 }: {
   children: React.ReactNode
   onClick?: () => void
   disabled?: boolean
-  title?: string
-}) {
+  active?: boolean
+} & React.ComponentProps<'button'>) {
   return (
     <button
-      className="min-w-[24px] h-[22px] flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:[&>*]:translate-x-px active:not-disabled:[&>*]:translate-y-px disabled:opacity-40 border-none box-border px-0.5"
+      className={`min-w-[24px] h-[22px] flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:[&>*]:translate-x-px active:not-disabled:[&>*]:translate-y-px disabled:opacity-40 border-none box-border px-0.5${
+        active
+          ? ' shadow-(--shadow-sunken) bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'
+          : ''
+      }`}
       onClick={onClick}
       disabled={disabled}
-      title={title}
+      aria-pressed={active}
+      {...rest}
     >
       {children}
     </button>
@@ -154,6 +145,17 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   useEffect(() => {
     title(windowId, currentTitle)
   }, [windowId, currentTitle, title])
+
+  // Cycle repeat mode to reach a target, using functional setState chaining
+  const cycleRepeatTo = useCallback((target: 'off' | 'one' | 'all') => {
+    const modes = ['off', 'one', 'all'] as const
+    // If already at target, toggle off; otherwise cycle to target
+    const dest = player.repeat === target ? 'off' : target
+    const fromIdx = modes.indexOf(player.repeat)
+    const toIdx = modes.indexOf(dest)
+    const count = (toIdx - fromIdx + 3) % 3
+    for (let i = 0; i < count; i++) player.cycleRepeat()
+  }, [player.repeat, player.cycleRepeat])
 
   return (
     <RndWindow windowId={windowId} className="w-[360px] h-[340px] top-[15%] left-[25%]">
@@ -182,50 +184,74 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           />
         </div>
 
+        <Divider />
+
         {/* Transport controls toolbar */}
         <div className="flex items-center gap-0 px-1 py-1">
           {/* Play/Pause */}
-          <TransportButton onClick={player.togglePlay} title={player.isPlaying ? 'Pause' : 'Play'}>
-            {player.isPlaying ? (
-              <PauseIcon />
-            ) : (
-              <PlayIcon />
-            )}
-          </TransportButton>
+          <Tooltip text={player.isPlaying ? 'Pause' : 'Play'} side="top">
+            <TransportButton onClick={player.togglePlay} disabled={!player.currentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
+              {player.isPlaying ? (
+                <PauseIcon />
+              ) : (
+                <PlayIcon />
+              )}
+            </TransportButton>
+          </Tooltip>
           {/* Stop */}
-          <TransportButton onClick={player.stop} title="Stop" disabled={!player.currentTrack}>
-            <StopIcon />
-          </TransportButton>
+          <Tooltip text="Stop" side="top">
+            <TransportButton onClick={player.stop} disabled={!player.currentTrack} aria-label="Stop">
+              <StopIcon />
+            </TransportButton>
+          </Tooltip>
 
           <div className="w-2" />
 
           {/* Previous */}
-          <TransportButton onClick={player.previous} title="Previous" disabled={!player.currentTrack}>
-            <PreviousIcon />
-          </TransportButton>
+          <Tooltip text="Previous" side="top">
+            <TransportButton onClick={player.previous} disabled={!player.currentTrack} aria-label="Previous">
+              <PreviousIcon />
+            </TransportButton>
+          </Tooltip>
           {/* Rewind - seek backward */}
-          <TransportButton onClick={() => player.seek(Math.max(0, player.currentTime - 5))} title="Rewind" disabled={!player.currentTrack}>
-            <RewindIcon />
-          </TransportButton>
+          <Tooltip text="Rewind" side="top">
+            <TransportButton onClick={() => player.seek(Math.max(0, player.currentTime - 5))} disabled={!player.currentTrack} aria-label="Rewind">
+              <RewindIcon />
+            </TransportButton>
+          </Tooltip>
           {/* Fast Forward - seek forward */}
-          <TransportButton onClick={() => player.seek(Math.min(player.duration, player.currentTime + 5))} title="Fast Forward" disabled={!player.currentTrack}>
-            <FastForwardIcon />
-          </TransportButton>
+          <Tooltip text="Fast Forward" side="top">
+            <TransportButton onClick={() => player.seek(Math.min(player.duration, player.currentTime + 5))} disabled={!player.currentTrack} aria-label="Fast Forward">
+              <FastForwardIcon />
+            </TransportButton>
+          </Tooltip>
           {/* Next */}
-          <TransportButton onClick={player.next} title="Next" disabled={!player.currentTrack}>
-            <NextIcon />
-          </TransportButton>
+          <Tooltip text="Next" side="top">
+            <TransportButton onClick={player.next} disabled={!player.currentTrack} aria-label="Next">
+              <NextIcon />
+            </TransportButton>
+          </Tooltip>
 
           <div className="w-2" />
 
           {/* Shuffle */}
-          <TransportButton onClick={player.toggleShuffle} title={`Shuffle: ${player.shuffle ? 'On' : 'Off'}`}>
-            <ShuffleIcon active={player.shuffle} />
-          </TransportButton>
-          {/* Repeat */}
-          <TransportButton onClick={player.cycleRepeat} title={`Repeat: ${player.repeat}`}>
-            <RepeatIcon mode={player.repeat} />
-          </TransportButton>
+          <Tooltip text="Shuffle" side="top">
+            <TransportButton onClick={player.toggleShuffle} active={player.shuffle} aria-label="Shuffle">
+              <ShuffleIcon />
+            </TransportButton>
+          </Tooltip>
+          {/* Repeat All */}
+          <Tooltip text="Repeat All" side="top">
+            <TransportButton onClick={() => cycleRepeatTo('all')} active={player.repeat === 'all'} aria-label="Repeat All">
+              <RepeatAllIcon />
+            </TransportButton>
+          </Tooltip>
+          {/* Repeat One */}
+          <Tooltip text="Repeat One" side="top">
+            <TransportButton onClick={() => cycleRepeatTo('one')} active={player.repeat === 'one'} aria-label="Repeat One">
+              <RepeatOneIcon />
+            </TransportButton>
+          </Tooltip>
 
           {/* Vertical divider */}
           <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
@@ -262,7 +288,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           <WindowStatusBarField className="truncate">
             {player.currentTrack ? player.currentTrack.title : 'Ready'}
           </WindowStatusBarField>
-          <WindowStatusBarField grow={false} className="w-20 text-right">
+          <WindowStatusBarField grow={false} className="w-20">
             {player.formattedCurrentTime} / {player.formattedDuration}
           </WindowStatusBarField>
         </WindowStatusBar>
@@ -271,7 +297,30 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   )
 }
 
-// ---- SVG Transport Icons (Win98 style, using theme variables) ----
+/**
+ * Seek bar thumb — hollow rectangle with Win98 3D bevel borders.
+ * 4-layer border frame: 2px outer (hilight TL / dk-shadow BR) +
+ * 2px inner (face TL / shadow BR). All four sides are equally 4px thick.
+ * Center is transparent. 15×21 pixels.
+ */
+function SeekThumbIcon() {
+  return (
+    <svg width={15} height={21} viewBox="0 0 15 21" fill="none">
+      {/* Outer Hilight — top + left (2px) */}
+      <rect x="0" y="0" width="13" height="2" fill="var(--button-hilight)" />
+      <rect x="0" y="0" width="2" height="21" fill="var(--button-hilight)" />
+      {/* Outer DkShadow — right + bottom (2px) */}
+      <rect x="13" y="0" width="2" height="21" fill="var(--button-dk-shadow)" />
+      <rect x="2" y="19" width="13" height="2" fill="var(--button-dk-shadow)" />
+      {/* Inner Face — top + left (2px) */}
+      <rect x="2" y="2" width="9" height="2" fill="var(--button-face)" />
+      <rect x="2" y="2" width="2" height="17" fill="var(--button-face)" />
+      {/* Inner Shadow — right + bottom (2px) */}
+      <rect x="11" y="2" width="2" height="17" fill="var(--button-shadow)" />
+      <rect x="2" y="17" width="9" height="2" fill="var(--button-shadow)" />
+    </svg>
+  )
+}
 
 function PlayIcon() {
   return (
@@ -334,36 +383,50 @@ function FastForwardIcon() {
   )
 }
 
-function ShuffleIcon({ active }: { active: boolean }) {
+function ShuffleIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path
         d="M1,4 L5,4 L9,10 L13,10 M1,10 L5,10 L9,4 L13,4"
-        stroke={active ? 'var(--hilight)' : 'var(--button-text)'}
+        stroke="var(--button-text)"
         strokeWidth="1.5"
         fill="none"
       />
-      <polygon points="11,2 13,4 11,6" fill={active ? 'var(--hilight)' : 'var(--button-text)'} />
-      <polygon points="11,8 13,10 11,12" fill={active ? 'var(--hilight)' : 'var(--button-text)'} />
+      <polygon points="11,2 13,4 11,6" fill="var(--button-text)" />
+      <polygon points="11,8 13,10 11,12" fill="var(--button-text)" />
     </svg>
   )
 }
 
-function RepeatIcon({ mode }: { mode: 'off' | 'one' | 'all' }) {
-  const color = mode !== 'off' ? 'var(--hilight)' : 'var(--button-text)'
+function RepeatAllIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path
         d="M2,5 L2,9 C2,10.5 3,11 4,11 L10,11 M12,9 L12,5 C12,3.5 11,3 10,3 L4,3"
-        stroke={color}
+        stroke="var(--button-text)"
         strokeWidth="1.5"
         fill="none"
       />
-      <polygon points="10,9 12,11 10,13" fill={color} />
-      <polygon points="4,1 2,3 4,5" fill={color} />
-      {mode === 'one' && (
-        <text x="6" y="9" fontSize="7" fill={color} textAnchor="middle" fontWeight="bold">1</text>
-      )}
+      <polygon points="10,9 12,11 10,13" fill="var(--button-text)" />
+      <polygon points="4,1 2,3 4,5" fill="var(--button-text)" />
     </svg>
+  )
+}
+
+function RepeatOneIcon() {
+  return (
+    <span className="inline-flex items-center gap-px">
+      <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
+        <path
+          d="M1,5 L1,9 C1,10.5 2,11 3,11 L7,11 M9,9 L9,5 C9,3.5 8,3 7,3 L3,3"
+          stroke="var(--button-text)"
+          strokeWidth="1.5"
+          fill="none"
+        />
+        <polygon points="7,9 9,11 7,13" fill="var(--button-text)" />
+        <polygon points="3,1 1,3 3,5" fill="var(--button-text)" />
+      </svg>
+      <span className="font-semibold leading-none text-(--button-text)">1</span>
+    </span>
   )
 }

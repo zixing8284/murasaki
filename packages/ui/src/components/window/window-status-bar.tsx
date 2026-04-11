@@ -7,13 +7,12 @@ import { cva } from 'class-variance-authority'
 const statusBarVariants = cva([
   'flex',
   'gap-px',
-  'mx-px',
 ])
 
 const statusBarFieldVariants = cva([
   'shadow-(--shadow-sunken-outer)',
-  'py-[2px]',
-  'px-[3px]',
+  'py-0.5',
+  'px-1.5',
 ], {
   variants: {
     grow: {

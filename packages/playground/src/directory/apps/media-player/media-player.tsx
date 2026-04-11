@@ -161,7 +161,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
       <div className="flex flex-col h-full">
 
         {/* Menu bar */}
-        <div className="flex gap-0 px-0.5">
+        <div className="flex gap-0">
           {['File', 'Edit', 'Device', 'Scale', 'Help'].map(menu => (
             <button
               key={menu}
@@ -181,10 +181,6 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             onSeek={player.seekByPercentage}
           />
         </div>
-
-        {/* Divider */}
-        <div className="h-0 border-b border-(--button-shadow) mx-0.5" />
-        <div className="h-0 border-b border-(--button-hilight) mx-0.5" />
 
         {/* Transport controls toolbar */}
         <div className="flex items-center gap-0 px-1 py-1">
@@ -232,16 +228,16 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           </TransportButton>
 
           {/* Vertical divider */}
-          <div className="w-0 self-stretch mx-1.5 border-l-2 border-l-(--button-shadow) border-r-2 border-r-(--button-hilight)" />
+          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
 
           {/* Time display - sunken field */}
-          <div className="flex-1 shadow-(--shadow-border-field) bg-(--window) px-1 py-px font-mono text-xs">
+          <div className="flex-1 shadow-(--shadow-border-field) bg-(--window) px-1 py-px">
             {player.formattedCurrentTime}
           </div>
         </div>
 
         {/* Playlist - fills remaining space */}
-        <SunkenPanel className="flex-1 min-h-0 mx-1 mb-1 bg-(--window)">
+        <SunkenPanel className="flex-1 min-h-0 mb-1 bg-(--window)">
           {player.playlist.map((track) => {
             const isActive = player.currentTrack?.id === track.id
             return (

@@ -7,10 +7,7 @@ const contentVariants = cva([
   'min-h-0',
   'bg-(--button-face)',
   'text-(--window-text)',
-  'p-2',
   'overflow-hidden',
-  // 'bg-(--button-face)',
-  // 'shadow-(--shadow-border-field)',
 ])
 
 export interface WindowContentProps extends React.ComponentProps<'div'> {}

@@ -173,6 +173,7 @@ export function Slider({
   value: controlledValue,
   onChange,
   ticks,
+  disabled,
   ...props
 }: SliderProps): React.ReactElement {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -244,7 +245,7 @@ export function Slider({
         <input
           ref={inputRef}
           type="range"
-          className={cn(nativeInputVariants({ vertical }))}
+          className={cn(nativeInputVariants({ vertical }), disabled && 'cursor-default')}
           min={min}
           max={max}
           step={step}
@@ -253,6 +254,7 @@ export function Slider({
           list={ticks ? datalistId : undefined}
           // Use dir attribute for RTL instead of CSS direction property (MDN recommendation)
           dir={vertical ? 'rtl' : undefined}
+          disabled={disabled}
           {...props}
         />
 
@@ -272,13 +274,13 @@ export function Slider({
         {boxIndicator
           ? (
               <RectThumbIcon
-                className={cn(thumbVariants({ vertical }))}
+                className={cn(thumbVariants({ vertical }), disabled && 'grayscale')}
                 style={getThumbStyle()}
               />
             )
           : (
               <TriangleThumbIcon
-                className={cn(thumbVariants({ vertical }))}
+                className={cn(thumbVariants({ vertical }), disabled && 'grayscale')}
                 style={getThumbStyle()}
               />
             )}
@@ -295,9 +297,9 @@ export function Slider({
                 )}
                 style={getTickStyle(tick.value)}
               >
-                <div className={cn(tickMarkVariants({ vertical }))} />
+                <div className={cn(tickMarkVariants({ vertical }), disabled && 'bg-(--gray-text)')} />
                 {tick.label && (
-                  <span className={cn(tickLabelVariants({ vertical }))}>
+                  <span className={cn(tickLabelVariants({ vertical }), disabled && 'text-(--gray-text) [text-shadow:1px_1px_0_var(--button-hilight)]')}>
                     {tick.label}
                   </span>
                 )}

@@ -4,9 +4,10 @@ export interface Track {
   url: string
   artist?: string
   duration?: number
+  type?: 'audio' | 'video'
 }
 
-export interface AudioState {
+export interface MediaState {
   currentTime: number
   duration: number
   isPlaying: boolean
@@ -14,15 +15,16 @@ export interface AudioState {
   currentTrack: Track | null
 }
 
-type StateChangeListener = (state: AudioState) => void
+type StateChangeListener = (state: MediaState) => void
 
-export class AudioManager {
+export class MediaManager {
   private isSeeking = false
   private pendingSeekTime: number | null = null
-  private audio: HTMLAudioElement
+  private mediaElement: HTMLMediaElement | null = null
   private currentSrc = ''
   private listeners: Set<StateChangeListener> = new Set()
-  private state: AudioState = {
+  private eventCleanup: (() => void) | null = null
+  private state: MediaState = {
     currentTime: 0,
     duration: 0,
     isPlaying: false,
@@ -32,10 +34,17 @@ export class AudioManager {
 
   onTrackEnded?: () => void
 
-  constructor() {
-    this.audio = new Audio()
-    this.audio.preload = 'none'
-    this.setupEventListeners()
+  attachElement(el: HTMLMediaElement) {
+    if (this.mediaElement === el) return
+    this.detachElement()
+    this.mediaElement = el
+    this.setupEventListeners(el)
+  }
+
+  detachElement() {
+    this.eventCleanup?.()
+    this.eventCleanup = null
+    this.mediaElement = null
   }
 
   subscribe(listener: StateChangeListener) {
@@ -46,7 +55,7 @@ export class AudioManager {
     }
   }
 
-  getState(): AudioState {
+  getState(): MediaState {
     return { ...this.state }
   }
 
@@ -56,72 +65,88 @@ export class AudioManager {
     }
   }
 
-  private updateState(updates: Partial<AudioState>) {
+  private updateState(updates: Partial<MediaState>) {
     this.state = { ...this.state, ...updates }
     this.notifyStateChange()
   }
 
-  private setupEventListeners() {
-    this.audio.addEventListener('loadstart', () => {
+  private setupEventListeners(el: HTMLMediaElement) {
+    const handlers: Array<[string, EventListener]> = []
+
+    const on = (event: string, handler: EventListener) => {
+      el.addEventListener(event, handler)
+      handlers.push([event, handler])
+    }
+
+    on('loadstart', () => {
       this.updateState({ loading: true })
     })
 
-    this.audio.addEventListener('loadedmetadata', () => {
-      this.updateState({ duration: this.audio.duration || 0 })
+    on('loadedmetadata', () => {
+      this.updateState({ duration: el.duration || 0 })
     })
 
-    this.audio.addEventListener('canplay', () => {
+    on('canplay', () => {
       this.updateState({ loading: false })
     })
 
-    this.audio.addEventListener('play', () => {
+    on('play', () => {
       this.updateState({ isPlaying: true })
     })
 
-    this.audio.addEventListener('pause', () => {
+    on('pause', () => {
       this.updateState({ isPlaying: false })
     })
 
-    this.audio.addEventListener('waiting', () => {
+    on('waiting', () => {
       this.updateState({ loading: true })
     })
 
-    this.audio.addEventListener('seeking', () => {
+    on('seeking', () => {
       this.isSeeking = true
       this.updateState({ loading: true })
     })
 
-    this.audio.addEventListener('seeked', () => {
+    on('seeked', () => {
       this.pendingSeekTime = null
       this.isSeeking = false
-      this.updateState({ loading: false, currentTime: this.audio.currentTime })
+      this.updateState({ loading: false, currentTime: el.currentTime })
     })
 
-    this.audio.addEventListener('timeupdate', () => {
+    on('timeupdate', () => {
       if (!this.isSeeking) {
-        this.updateState({ currentTime: this.audio.currentTime })
+        this.updateState({ currentTime: el.currentTime })
       }
     })
 
-    this.audio.addEventListener('ended', () => {
+    on('ended', () => {
       this.updateState({ isPlaying: false })
       this.onTrackEnded?.()
     })
 
-    this.audio.addEventListener('error', () => {
-      if (this.audio.error?.code === 4 && !this.currentSrc) return
+    on('error', () => {
+      if ((el as HTMLMediaElement).error?.code === 4 && !this.currentSrc) return
       this.updateState({ loading: false, isPlaying: false })
     })
+
+    this.eventCleanup = () => {
+      for (const [event, handler] of handlers) {
+        el.removeEventListener(event, handler)
+      }
+    }
   }
 
   loadTrack(track: Track) {
+    const el = this.mediaElement
+    if (!el) return
+
     const isNew = this.currentSrc !== track.url
     if (isNew) {
       this.currentSrc = track.url
-      this.audio.src = track.url
-      this.audio.preload = 'auto'
+      el.src = track.url
+      el.preload = 'auto'
     } else {
-      this.audio.currentTime = 0
+      el.currentTime = 0
     }
 
     this.updateState({
@@ -131,7 +156,7 @@ export class AudioManager {
       duration: isNew ? 0 : this.state.duration,
     })
 
-    if (isNew) this.audio.load()
+    if (isNew) el.load()
   }
 
   async loadAndPlay(track: Track) {
@@ -141,20 +166,21 @@ export class AudioManager {
 
   async play() {
     try {
-      await this.audio.play()
+      await this.mediaElement?.play()
     } catch {
       this.updateState({ isPlaying: false })
     }
   }
 
   pause() {
-    this.audio.pause()
+    this.mediaElement?.pause()
   }
 
   seek(time: number) {
-    if (this.audio.readyState < HTMLMediaElement.HAVE_METADATA) return
+    const el = this.mediaElement
+    if (!el || el.readyState < HTMLMediaElement.HAVE_METADATA) return
 
-    const duration = this.audio.duration
+    const duration = el.duration
     if (!duration || isNaN(duration) || duration <= 0) return
 
     const clampedTime = Math.max(0, Math.min(time, duration))
@@ -162,7 +188,7 @@ export class AudioManager {
     try {
       this.isSeeking = true
       this.pendingSeekTime = clampedTime
-      this.audio.currentTime = clampedTime
+      el.currentTime = clampedTime
       this.updateState({ loading: true, currentTime: clampedTime })
     } catch {
       this.isSeeking = false
@@ -171,9 +197,14 @@ export class AudioManager {
   }
 
   destroy() {
-    this.audio.pause()
-    this.audio.src = ''
+    const el = this.mediaElement
+    if (el) {
+      el.pause()
+      el.removeAttribute('src')
+      el.load()
+    }
     this.currentSrc = ''
+    this.detachElement()
     this.listeners.clear()
   }
 }

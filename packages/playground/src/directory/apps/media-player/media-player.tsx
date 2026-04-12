@@ -15,6 +15,7 @@ import {
   ShuffleIcon,
   RepeatAllIcon,
   RepeatOneIcon,
+  EjectIcon,
 } from './media-player-icons'
 import { useEffect, useRef, useCallback, useState } from 'react'
 
@@ -162,7 +163,20 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   return (
     <RndWindow windowId={windowId} className="top-[15%] left-[25%]">
 
-      <div className="flex flex-col h-full">
+      <div className="grid h-full grid-rows-[auto_minmax(80px,1fr)_auto_auto_auto_auto_auto]">
+
+        {/* Hidden file input for local media loading */}
+        <input
+          ref={player.fileInputRef}
+          type="file"
+          accept={player.acceptedMediaTypes}
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) player.addLocalFile(file)
+            e.target.value = ''
+          }}
+        />
 
         {/* Menu bar */}
         <div className="flex gap-0">
@@ -175,6 +189,16 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
               <span className="underline">{menu[0]}</span>{menu.slice(1)}
             </button>
           ))}
+        </div>
+
+        {/* Video display area — takes 1fr row, never collapses below 80px */}
+        <div className="bg-black shadow-(--shadow-sunken) flex items-center justify-center">
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <video
+            ref={player.mediaRefCallback}
+            className="max-w-full max-h-full p-1 object-contain"
+            playsInline
+          />
         </div>
 
         {/* Seek bar area */}
@@ -204,6 +228,12 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           <Tooltip text="Stop" side="top">
             <TransportButton onClick={player.stop} disabled={!player.currentTrack} aria-label="Stop">
               <StopIcon />
+            </TransportButton>
+          </Tooltip>
+          {/* Eject / Load file */}
+          <Tooltip text="Open File" side="top">
+            <TransportButton onClick={player.openFilePicker} aria-label="Open File">
+              <EjectIcon />
             </TransportButton>
           </Tooltip>
 
@@ -264,8 +294,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           </div>
         </div>
 
-        {/* Playlist - fills remaining space */}
-        <SunkenPanel className="flex-1 min-h-0 mb-1 bg-(--window)">
+        {/* Playlist - bounded height, scrollable */}
+        <SunkenPanel className="h-40 min-h-0 mb-1 bg-(--window) overflow-y-auto">
           {player.playlist.map((track) => {
             const isActive = player.currentTrack?.id === track.id
             return (
@@ -279,7 +309,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
                 onDoubleClick={() => player.playTrack(track)}
               >
                 {track.title}
-                {track.artist ? ` - ${track.artist}` : ''}
+                {track.artist ? ` - ${track.artist}` : ''}{track.type === 'video' ? ' (Video)' : ''}
               </div>
             )
           })}

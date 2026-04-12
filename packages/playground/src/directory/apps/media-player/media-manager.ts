@@ -13,6 +13,8 @@ export interface MediaState {
   isPlaying: boolean
   loading: boolean
   currentTrack: Track | null
+  volume: number
+  muted: boolean
 }
 
 type StateChangeListener = (state: MediaState) => void
@@ -30,6 +32,8 @@ export class MediaManager {
     isPlaying: false,
     loading: false,
     currentTrack: null,
+    volume: 100,
+    muted: false,
   }
 
   onTrackEnded?: () => void
@@ -129,6 +133,13 @@ export class MediaManager {
       this.updateState({ loading: false, isPlaying: false })
     })
 
+    on('volumechange', () => {
+      this.updateState({
+        volume: Math.round(el.volume * 100),
+        muted: el.muted,
+      })
+    })
+
     this.eventCleanup = () => {
       for (const [event, handler] of handlers) {
         el.removeEventListener(event, handler)
@@ -194,6 +205,16 @@ export class MediaManager {
       this.isSeeking = false
       this.pendingSeekTime = null
     }
+  }
+
+  setVolume(level: number) {
+    if (!this.mediaElement) return
+    this.mediaElement.volume = Math.max(0, Math.min(1, level / 100))
+  }
+
+  setMuted(muted: boolean) {
+    if (!this.mediaElement) return
+    this.mediaElement.muted = muted
   }
 
   destroy() {

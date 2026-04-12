@@ -47,7 +47,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   return (
     <RndWindow
       windowId={windowId}
-      className="w-[420px] top-[12%] left-[25%]"
+      className="top-[12%] left-[25%]"
       disableMaximize
       disableMinimize
       disableResize

@@ -19,7 +19,7 @@ export function JspaintApp({ windowId }: ProcessComponentProps): React.ReactElem
     <IframeWindow
       windowId={windowId}
       src={JSPaintApp_URL}
-      className="w-[900px] h-[650px] top-[5%] left-[5%]"
+      className="top-[5%] left-[5%]"
       titleIcon={<JspaintIcon />}
     />
   )

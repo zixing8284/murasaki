@@ -110,13 +110,19 @@ export function useMediaPlayer() {
     getAdjacentTrackRef.current = getAdjacentTrack
   })
 
-  const playTrack = useCallback(async (track: Track) => {
+  /** Play a track (from playlist double-click). Updates model index and starts playback. */
+  const playTrack = useCallback((track: Track) => {
     const manager = managerRef.current
     if (!manager) return
-    await manager.loadAndPlay(track)
-  }, [])
+    const index = model.playlist.findIndex((t) => t.id === track.id)
+    if (index !== -1) {
+      setModel((prev) => ({ ...prev, currentIndex: index }))
+    }
+    manager.loadAndPlay(track)
+  }, [model.playlist])
 
-  const setCurrentTrackByIndex = useCallback(
+  /** Switch to an adjacent track (next/previous). Loads or plays depending on current state. */
+  const switchTrack = useCallback(
     (track: Track) => {
       const index = model.playlist.findIndex((t) => t.id === track.id)
       if (index === -1) return
@@ -134,19 +140,6 @@ export function useMediaPlayer() {
     [model.playlist, audioState?.isPlaying],
   )
 
-  // Sync currentIndex when audio track changes
-  useEffect(() => {
-    const currentId = audioState?.currentTrack?.id ?? null
-    if (currentId === null) {
-      setModel((prev) => (prev.currentIndex === -1 ? prev : { ...prev, currentIndex: -1 }))
-      return
-    }
-    const newIndex = model.playlist.findIndex((t) => t.id === currentId)
-    if (newIndex !== model.currentIndex) {
-      setModel((prev) => ({ ...prev, currentIndex: newIndex }))
-    }
-  }, [audioState?.currentTrack, model.playlist, model.currentIndex])
-
   // Handle track ended
   useEffect(() => {
     const manager = managerRef.current
@@ -159,6 +152,11 @@ export function useMediaPlayer() {
       } else {
         const nextTrack = getAdjacentTrackRef.current?.(1, false)
         if (nextTrack) {
+          // Update model index before loading
+          setModel((prev) => {
+            const index = prev.playlist.findIndex((t) => t.id === nextTrack.id)
+            return index !== -1 ? { ...prev, currentIndex: index } : prev
+          })
           manager.loadAndPlay(nextTrack)
         }
       }
@@ -185,8 +183,8 @@ export function useMediaPlayer() {
   const next = useCallback(() => {
     if (!playOrder.length) return
     const nextTrack = getAdjacentTrack(1, true)
-    if (nextTrack) setCurrentTrackByIndex(nextTrack)
-  }, [playOrder.length, getAdjacentTrack, setCurrentTrackByIndex])
+    if (nextTrack) switchTrack(nextTrack)
+  }, [playOrder.length, getAdjacentTrack, switchTrack])
 
   const previous = useCallback(() => {
     if (!playOrder.length) return
@@ -195,8 +193,8 @@ export function useMediaPlayer() {
       return
     }
     const prevTrack = getAdjacentTrack(-1, true)
-    if (prevTrack) setCurrentTrackByIndex(prevTrack)
-  }, [playOrder.length, audioState?.currentTime, getAdjacentTrack, setCurrentTrackByIndex])
+    if (prevTrack) switchTrack(prevTrack)
+  }, [playOrder.length, audioState?.currentTime, getAdjacentTrack, switchTrack])
 
   const seek = useCallback((time: number) => {
     managerRef.current?.seek(time)
@@ -245,6 +243,10 @@ export function useMediaPlayer() {
     })
   }, [])
 
+  const setRepeat = useCallback((mode: 'off' | 'one' | 'all') => {
+    setModel((prev) => ({ ...prev, repeat: mode }))
+  }, [])
+
   const progress = audioState && audioState.duration > 0
     ? (audioState.currentTime / audioState.duration) * 100
     : 0
@@ -276,5 +278,6 @@ export function useMediaPlayer() {
     seekByPercentage,
     toggleShuffle,
     cycleRepeat,
+    setRepeat,
   }
 }

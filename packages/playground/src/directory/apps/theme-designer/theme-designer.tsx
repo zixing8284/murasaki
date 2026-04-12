@@ -12,7 +12,7 @@ export function ThemeDesigner({ windowId }: ProcessComponentProps): React.ReactE
   return (
     <RndWindow
       windowId={windowId}
-      className="w-180 h-146 top-[8%] left-[12%]"
+      className="top-[8%] left-[12%]"
       disableMaximize
       disableResize
     >

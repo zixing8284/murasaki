@@ -26,14 +26,24 @@ describe('tooltip', () => {
 
   // === Accessibility ===
 
-  it('sets aria-label on the trigger matching the tooltip text', async () => {
+  it('does not override aria-label on the trigger', async () => {
     const screen = await render(
       <Tooltip text="Save file">
         <button>Save</button>
       </Tooltip>,
     )
     const btn = screen.getByRole('button')
-    await expect.element(btn).toHaveAttribute('aria-label', 'Save file')
+    expect(btn.element().hasAttribute('aria-label')).toBe(false)
+  })
+
+  it('preserves consumer-set aria-label on the trigger', async () => {
+    const screen = await render(
+      <Tooltip text="Save file">
+        <button aria-label="Save document">Save</button>
+      </Tooltip>,
+    )
+    const btn = screen.getByRole('button')
+    await expect.element(btn).toHaveAttribute('aria-label', 'Save document')
   })
 
   it('tooltip popup has role="tooltip"', async () => {
@@ -47,22 +57,23 @@ describe('tooltip', () => {
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
   })
 
-  it('sets aria-describedby on trigger when tooltip is visible', async () => {
+  it('sets aria-describedby on wrapper when tooltip is visible', async () => {
     const screen = await render(
       <Tooltip text="Save file" delay={0}>
         <button>Save</button>
       </Tooltip>,
     )
     const btn = screen.getByRole('button')
+    const wrapper = btn.element().parentElement!
     // Before hover — no aria-describedby
-    expect(btn.element().getAttribute('aria-describedby')).toBeNull()
+    expect(wrapper.getAttribute('aria-describedby')).toBeNull()
 
     await userEvent.hover(btn.element())
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
 
-    // After hover — aria-describedby references the tooltip
+    // After hover — aria-describedby on wrapper references the tooltip
     const tooltipEl = screen.getByRole('tooltip').element()
-    expect(btn.element().getAttribute('aria-describedby')).toBe(tooltipEl.id)
+    expect(wrapper.getAttribute('aria-describedby')).toBe(tooltipEl.id)
   })
 
   // === Show / Hide ===

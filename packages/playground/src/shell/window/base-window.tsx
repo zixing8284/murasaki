@@ -23,6 +23,10 @@ export interface BaseWindowProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Default window dimensions — applied as inline style for initial size */
+  defaultSize?: { width?: number, height?: number }
+  /** Whether the window is currently being dragged or resized */
+  isInteracting?: boolean
   /** Callback ref for the window frame element (used by RndWindow for drag/resize targeting) */
   frameRef?: Ref<HTMLDivElement>
   /** Callback ref for the title bar element (used by RndWindow as drag handle) */
@@ -39,6 +43,8 @@ export function BaseWindow({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  defaultSize,
+  isInteracting = false,
   frameRef,
   dragRef,
   resizeRef,
@@ -62,8 +68,8 @@ export function BaseWindow({
       <WindowPortal container={portalContainer}>
         <WindowFrame
           ref={frameRef}
-          className={className}
-          style={{ zIndex }}
+          className={`${isInteracting ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0' : ''} ${className ?? ''}`}
+          style={{ zIndex, width: defaultSize?.width, height: defaultSize?.height }}
           onPointerDown={(e) => {
             e.stopPropagation()
             actions.activate(windowId)

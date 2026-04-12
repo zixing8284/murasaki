@@ -16,6 +16,12 @@ export interface UseDraggableOptions {
   draggable?: boolean
   /** Called when drag starts/stops — prefer over Effect-based onDragChange in consuming components */
   onDragChange?: (dragging: boolean) => void
+  /**
+   * When true, automatically re-clamp the target's position when the container
+   * (or viewport) resizes, ensuring the top edge of the target stays within bounds
+   * (i.e., the titlebar remains reachable). Only adjusts position, never size.
+   */
+  clampPositionOnResize?: boolean
 }
 
 /**
@@ -49,7 +55,7 @@ export function useDraggable<
   transformRef: React.RefObject<Transform>
   resetPosition: () => void
 } {
-  const { container = null, draggable = true, onDragChange } = options
+  const { container = null, draggable = true, onDragChange, clampPositionOnResize = false } = options
 
   const targetRef = useRef<null | TTarget>(null)
   // Use useState instead of useRef so that changes trigger useEffect re-run
@@ -178,6 +184,55 @@ export function useDraggable<
     }
     return undefined
   }, [draggable, dragElement, onMousedown])
+
+  // Clamp position on container/viewport resize so titlebar stays reachable.
+  // Only adjusts transform position — never touches size.
+  useEffect(() => {
+    if (!clampPositionOnResize)
+      return
+
+    const clampPosition = (): void => {
+      const target = targetRef.current
+      if (!target)
+        return
+
+      const targetRect = target.getBoundingClientRect()
+
+      // Skip minimized/hidden elements (all-zero rects)
+      if (targetRect.width === 0 && targetRect.height === 0)
+        return
+
+      let boundsTop: number
+
+      if (container) {
+        const containerRect = container.getBoundingClientRect()
+        boundsTop = containerRect.top
+      }
+      else {
+        boundsTop = 0
+      }
+
+      // Ensure targetRect.top >= boundsTop (titlebar stays visible)
+      if (targetRect.top < boundsTop) {
+        const deltaY = boundsTop - targetRect.top
+        transformRef.current = {
+          offsetX: transformRef.current.offsetX,
+          offsetY: transformRef.current.offsetY + deltaY,
+        }
+        target.style.transform = `translate(${transformRef.current.offsetX.toString()}px, ${transformRef.current.offsetY.toString()}px)`
+      }
+    }
+
+    if (container) {
+      const observer = new ResizeObserver(() => clampPosition())
+      observer.observe(container)
+      return () => observer.disconnect()
+    }
+    else {
+      window.addEventListener('resize', clampPosition)
+      return () => window.removeEventListener('resize', clampPosition)
+    }
+  }, [clampPositionOnResize, container])
 
   return {
     /** Whether the element is currently being dragged */

@@ -12,6 +12,7 @@ import demoScrollbarDropdownSource from '../../../content/dropdown/demo-scrollba
 import demoBasicOptionButtonSource from '../../../content/option-button/demo-basic.tsx?raw'
 import demoBasicSliderSource from '../../../content/slider/demo-basic.tsx?raw'
 import demoControlledSliderSource from '../../../content/slider/demo-controlled.tsx?raw'
+import demoDisabledSliderSource from '../../../content/slider/demo-disabled.tsx?raw'
 import demoVerticalSliderSource from '../../../content/slider/demo-vertical.tsx?raw'
 import demoBasicStatusBarSource from '../../../content/status-bar/demo-basic.tsx?raw'
 import demoBasicTabsSource from '../../../content/tabs/demo-basic.tsx?raw'
@@ -47,6 +48,7 @@ const DemoNativeDropdown = lazy(() => import('../../../content/dropdown/demo-nat
 const DemoBasicOptionButton = lazy(() => import('../../../content/option-button/demo-basic'))
 const DemoBasicSlider = lazy(() => import('../../../content/slider/demo-basic'))
 const DemoControlledSlider = lazy(() => import('../../../content/slider/demo-controlled'))
+const DemoDisabledSlider = lazy(() => import('../../../content/slider/demo-disabled'))
 const DemoVerticalSlider = lazy(() => import('../../../content/slider/demo-vertical'))
 const DemoBasicStatusBar = lazy(() => import('../../../content/status-bar/demo-basic'))
 const DemoBasicTabs = lazy(() => import('../../../content/tabs/demo-basic'))
@@ -191,6 +193,13 @@ export const docsNavTree: NavNode[] = [
         type: 'demo',
         component: DemoVerticalSlider,
         source: demoVerticalSliderSource,
+      },
+      {
+        id: 'slider-demo-disabled',
+        label: 'Disabled',
+        type: 'demo',
+        component: DemoDisabledSlider,
+        source: demoDisabledSliderSource,
       },
     ],
   },

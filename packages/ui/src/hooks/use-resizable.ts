@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+/** Minimum mouse movement (px) before a resize is considered started */
+const RESIZE_THRESHOLD = 3
+
 interface Size {
   width: number
   height: number
@@ -143,11 +146,30 @@ export function useResizable<
         maxAllowedHeight = Math.min(maxAllowedHeight, maxHeight)
       }
 
+      // Ensure minimum constraints always win over container limits.
+      // If the container is smaller than minWidth/minHeight the element is
+      // allowed to overflow rather than being forced below its minimum size.
+      if (maxAllowedWidth < minWidth) maxAllowedWidth = minWidth
+      if (maxAllowedHeight < minHeight) maxAllowedHeight = minHeight
+
       // Save original cursor and set resize cursor on body to prevent flicker
       const originalCursor = document.body.style.cursor
       document.body.style.cursor = 'nwse-resize'
 
+      let hasResizeStarted = false
+
       const onMousemove = (e: MouseEvent): void => {
+        if (!hasResizeStarted) {
+          const dx = e.clientX - downX
+          const dy = e.clientY - downY
+          if (Math.abs(dx) < RESIZE_THRESHOLD && Math.abs(dy) < RESIZE_THRESHOLD) {
+            return
+          }
+          hasResizeStarted = true
+          setResizing(true)
+          onResizeChange?.(true)
+        }
+
         const newWidth = Math.min(
           Math.max(initWidth + e.clientX - downX, minWidth),
           maxAllowedWidth,
@@ -163,8 +185,10 @@ export function useResizable<
       }
 
       const onMouseup = (): void => {
-        setResizing(false)
-        onResizeChange?.(false)
+        if (hasResizeStarted) {
+          setResizing(false)
+          onResizeChange?.(false)
+        }
         document.body.style.cursor = originalCursor
         document.removeEventListener('mousemove', onMousemove)
         document.removeEventListener('mouseup', onMouseup)
@@ -178,8 +202,6 @@ export function useResizable<
         document.removeEventListener('mouseup', onMouseup)
       }
 
-      setResizing(true)
-      onResizeChange?.(true)
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },

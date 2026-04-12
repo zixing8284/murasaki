@@ -27,8 +27,13 @@ const triggerVariants = cva([
   'bg-(--window)',
   'text-(--window-text)',
   'text-left',
-  // Border effect
-  'shadow-(--shadow-border-field)',
+  // Border effect (on pseudo-element to prevent child overlap)
+  'before:content-[\'\']',
+  'before:absolute',
+  'before:inset-0',
+  'before:shadow-(--shadow-border-field)',
+  'before:pointer-events-none',
+  'before:z-[1]',
   // Position context for arrow icon
   'relative',
   'group',

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+/** Minimum mouse movement (px) before a drag is considered started */
+const DRAG_THRESHOLD = 3
+
 interface Transform {
   offsetX: number
   offsetY: number
@@ -135,7 +138,26 @@ export function useDraggable<
         maxTop = clientHeight - targetTop - targetHeight + offsetY
       }
 
+      // When the element is larger than the container/viewport, the top-left
+      // boundary always takes priority so the titlebar remains reachable.
+      // The bottom/right of the element is allowed to overflow in that case.
+      if (maxLeft < minLeft) maxLeft = minLeft
+      if (maxTop < minTop) maxTop = minTop
+
+      let hasDragStarted = false
+
       const onMousemove = (e: MouseEvent): void => {
+        if (!hasDragStarted) {
+          const dx = e.clientX - downX
+          const dy = e.clientY - downY
+          if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) {
+            return
+          }
+          hasDragStarted = true
+          setDragging(true)
+          onDragChange?.(true)
+        }
+
         // Clamp to boundaries
         const moveX = Math.min(
           Math.max(offsetX + e.clientX - downX, minLeft),
@@ -151,8 +173,10 @@ export function useDraggable<
       }
 
       const onMouseup = (): void => {
-        setDragging(false)
-        onDragChange?.(false)
+        if (hasDragStarted) {
+          setDragging(false)
+          onDragChange?.(false)
+        }
         document.removeEventListener('mousemove', onMousemove)
         document.removeEventListener('mouseup', onMouseup)
         cleanupRef.current = null
@@ -164,8 +188,6 @@ export function useDraggable<
         document.removeEventListener('mouseup', onMouseup)
       }
 
-      setDragging(true)
-      onDragChange?.(true)
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },

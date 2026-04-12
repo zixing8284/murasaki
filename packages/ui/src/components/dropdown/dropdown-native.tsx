@@ -22,8 +22,6 @@ const selectVariants = cva([
   // Colors
   'bg-(--window)',
   'text-(--window-text)',
-  // Border effect
-  'shadow-(--shadow-border-field)',
   // Focus state
   'focus:outline-none',
   'focus:text-(--hilight-text)',
@@ -37,6 +35,13 @@ const selectVariants = cva([
 const selectWrapperVariants = cva([
   'relative',
   'inline-block',
+  // Border effect (on wrapper since <select> can't have ::before)
+  'before:content-[\'\']',
+  'before:absolute',
+  'before:inset-0',
+  'before:shadow-(--shadow-border-field)',
+  'before:pointer-events-none',
+  'before:z-[1]',
 ])
 
 const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])

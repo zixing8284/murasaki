@@ -131,3 +131,12 @@ export function RepeatOneIcon() {
     </span>
   )
 }
+
+export function EjectIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <polygon points="7,1 1,8 13,8" fill="var(--button-text)" />
+      <rect x="1" y="10" width="12" height="3" fill="var(--button-text)" />
+    </svg>
+  )
+}

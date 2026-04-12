@@ -6,7 +6,13 @@ import { ScrollArea } from '../scroll-area/scroll-area'
 
 const sunkenPanelVariants = cva(
   [
-    'shadow-(--shadow-border-field)',
+    'relative',
+    'before:content-[\'\']',
+    'before:absolute',
+    'before:inset-0',
+    'before:shadow-(--shadow-border-field)',
+    'before:pointer-events-none',
+    'before:z-[1]',
     'bg-(--button-face)',
     'p-0.5',
     'overflow-hidden',

@@ -123,7 +123,7 @@ export function TextBox({
 
   const fieldElement = multiline
     ? (
-        <div className={cn('bg-(--window) shadow-(--shadow-border-field) p-[2px] size-full flex flex-col min-h-[60px]', className)}>
+        <div className={cn('relative bg-(--window) before:content-[\'\'] before:absolute before:inset-0 before:shadow-(--shadow-border-field) before:pointer-events-none before:z-[1] p-[2px] size-full flex flex-col min-h-[60px]', className)}>
           <div className="relative flex-1 flex flex-col overflow-hidden">
             <textarea
               ref={textareaRef}

@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import type { AudioState, Track } from './audio-manager'
-import { AudioManager } from './audio-manager'
+import type { MediaState, Track } from './media-manager'
+import { MediaManager } from './media-manager'
+
+export type { Track } from './media-manager'
 
 // Singleton pattern from murasaki-old
-let singletonManager: AudioManager | null = null
+let singletonManager: MediaManager | null = null
 let singletonRefCount = 0
 
-function acquireManager(): AudioManager {
+function acquireManager(): MediaManager {
   if (!singletonManager) {
-    singletonManager = new AudioManager()
+    singletonManager = new MediaManager()
   }
   singletonRefCount++
   return singletonManager
@@ -23,6 +25,17 @@ function releaseManager() {
     }
   }
 }
+
+const VIDEO_EXTENSIONS = /\.(mp4|webm|ogv|mov|avi|mkv)$/i
+const ACCEPTED_MEDIA_TYPES = 'audio/*,video/*'
+
+function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
+  if (file) return file.type.startsWith('video/') ? 'video' : 'audio'
+  if (url && VIDEO_EXTENSIONS.test(url)) return 'video'
+  return 'audio'
+}
+
+let nextLocalId = 1
 
 function formatTime(seconds: number): string {
   if (isNaN(seconds)) return '00:00'
@@ -52,17 +65,41 @@ interface PlayerState {
 }
 
 export function useMediaPlayer() {
-  const [audioState, setAudioState] = useState<AudioState | null>(null)
-  const managerRef = useRef<AudioManager | null>(null)
+  const [mediaState, setMediaState] = useState<MediaState | null>(null)
+  const managerRef = useRef<MediaManager | null>(null)
+  const mediaRef = useRef<HTMLVideoElement | null>(null)
+  const objectUrlsRef = useRef<Set<string>>(new Set())
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     const manager = acquireManager()
     managerRef.current = manager
-    const unsubscribe = manager.subscribe(setAudioState)
+    // Attach element if already mounted (ref callback fires before this effect)
+    if (mediaRef.current) {
+      manager.attachElement(mediaRef.current)
+    }
+    const unsubscribe = manager.subscribe(setMediaState)
     return () => {
       unsubscribe()
       managerRef.current = null
       releaseManager()
+      // Revoke all object URLs on unmount
+      for (const url of objectUrlsRef.current) {
+        URL.revokeObjectURL(url)
+      }
+      objectUrlsRef.current.clear()
+    }
+  }, [])
+
+  // Attach/detach the video element to the manager
+  const mediaRefCallback = useCallback((el: HTMLVideoElement | null) => {
+    mediaRef.current = el
+    const manager = managerRef.current
+    if (!manager) return
+    if (el) {
+      manager.attachElement(el)
+    } else {
+      manager.detachElement()
     }
   }, [])
 
@@ -131,13 +168,13 @@ export function useMediaPlayer() {
 
       const manager = managerRef.current
       if (!manager) return
-      if (audioState?.isPlaying) {
+      if (mediaState?.isPlaying) {
         manager.loadAndPlay(track)
       } else {
         manager.loadTrack(track)
       }
     },
-    [model.playlist, audioState?.isPlaying],
+    [model.playlist, mediaState?.isPlaying],
   )
 
   // Handle track ended
@@ -166,12 +203,12 @@ export function useMediaPlayer() {
   const togglePlay = useCallback(() => {
     const manager = managerRef.current
     if (!manager) return
-    if (audioState?.isPlaying) {
+    if (mediaState?.isPlaying) {
       manager.pause()
-    } else if (audioState?.currentTrack) {
+    } else if (mediaState?.currentTrack) {
       manager.play()
     }
-  }, [audioState?.isPlaying, audioState?.currentTrack])
+  }, [mediaState?.isPlaying, mediaState?.currentTrack])
 
   const stop = useCallback(() => {
     const manager = managerRef.current
@@ -188,13 +225,13 @@ export function useMediaPlayer() {
 
   const previous = useCallback(() => {
     if (!playOrder.length) return
-    if ((audioState?.currentTime ?? 0) > 3) {
+    if ((mediaState?.currentTime ?? 0) > 3) {
       managerRef.current?.seek(0)
       return
     }
     const prevTrack = getAdjacentTrack(-1, true)
     if (prevTrack) switchTrack(prevTrack)
-  }, [playOrder.length, audioState?.currentTime, getAdjacentTrack, switchTrack])
+  }, [playOrder.length, mediaState?.currentTime, getAdjacentTrack, switchTrack])
 
   const seek = useCallback((time: number) => {
     managerRef.current?.seek(time)
@@ -202,13 +239,42 @@ export function useMediaPlayer() {
 
   const seekByPercentage = useCallback(
     (percentage: number) => {
-      const duration = audioState?.duration ?? 0
+      const duration = mediaState?.duration ?? 0
       if (duration > 0) {
         seek((percentage / 100) * duration)
       }
     },
-    [audioState?.duration, seek],
+    [mediaState?.duration, seek],
   )
+
+  /** Add a local file to the playlist and auto-play it */
+  const addLocalFile = useCallback((file: File) => {
+    const objectUrl = URL.createObjectURL(file)
+    objectUrlsRef.current.add(objectUrl)
+    const type = detectTrackType(file)
+    const track: Track = {
+      id: `local-${nextLocalId++}`,
+      title: file.name.replace(/\.[^.]+$/, ''),
+      url: objectUrl,
+      type,
+    }
+    setModel((prev) => {
+      const newPlaylist = [...prev.playlist, track]
+      const newIndex = newPlaylist.length - 1
+      return {
+        ...prev,
+        playlist: newPlaylist,
+        currentIndex: newIndex,
+        playOrderIndices: Array.from({ length: newPlaylist.length }, (_, i) => i),
+      }
+    })
+    managerRef.current?.loadAndPlay(track)
+  }, [])
+
+  /** Open file picker to load local media */
+  const openFilePicker = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
 
   const toggleShuffle = useCallback(() => {
     setModel((prev) => {
@@ -247,26 +313,34 @@ export function useMediaPlayer() {
     setModel((prev) => ({ ...prev, repeat: mode }))
   }, [])
 
-  const progress = audioState && audioState.duration > 0
-    ? (audioState.currentTime / audioState.duration) * 100
+  const progress = mediaState && mediaState.duration > 0
+    ? (mediaState.currentTime / mediaState.duration) * 100
     : 0
 
+  const currentTrack = mediaState?.currentTrack ?? null
+  const isVideo = currentTrack?.type === 'video'
+
   return {
-    // Audio state
-    isPlaying: audioState?.isPlaying ?? false,
-    loading: audioState?.loading ?? false,
-    currentTime: audioState?.currentTime ?? 0,
-    duration: audioState?.duration ?? 0,
-    currentTrack: audioState?.currentTrack ?? null,
+    // Media state
+    isPlaying: mediaState?.isPlaying ?? false,
+    loading: mediaState?.loading ?? false,
+    currentTime: mediaState?.currentTime ?? 0,
+    duration: mediaState?.duration ?? 0,
+    currentTrack,
     progress,
-    formattedCurrentTime: formatTime(audioState?.currentTime ?? 0),
-    formattedDuration: formatTime(audioState?.duration ?? 0),
+    formattedCurrentTime: formatTime(mediaState?.currentTime ?? 0),
+    formattedDuration: formatTime(mediaState?.duration ?? 0),
+    isVideo,
 
     // Model state
     playlist: model.playlist,
     currentIndex: model.currentIndex,
     shuffle: model.shuffle,
     repeat: model.repeat,
+
+    // Refs
+    mediaRefCallback,
+    fileInputRef,
 
     // Actions
     playTrack,
@@ -279,5 +353,10 @@ export function useMediaPlayer() {
     toggleShuffle,
     cycleRepeat,
     setRepeat,
+    addLocalFile,
+    openFilePicker,
+
+    // Constants
+    acceptedMediaTypes: ACCEPTED_MEDIA_TYPES,
   }
 }

@@ -7,7 +7,7 @@ export function MyComputer({ windowId }: ProcessComponentProps): React.ReactElem
   const [selected, setSelected] = useState('option1')
 
   return (
-    <RndWindow windowId={windowId} className="w-[520px] top-[10%] left-[10%]">
+    <RndWindow windowId={windowId} className="top-[10%] left-[10%]">
       <div className="p-2">
         <p>Window content here...</p>
         <OptionGroup name="demo" onChange={setSelected} selectedValue={selected}>

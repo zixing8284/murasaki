@@ -31,6 +31,8 @@ export interface ProcessDirectoryEntry {
   showOnDesktop?: boolean
   /** Ephemeral windows participate in z-index / focus but are hidden from taskbar */
   ephemeral?: boolean
+  /** Default window dimensions in px — used as both initial inline size and minimum resize constraint */
+  defaultSize?: { width?: number, height?: number }
 }
 
 /** Static registry keyed by appId */

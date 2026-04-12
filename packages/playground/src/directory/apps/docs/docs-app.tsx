@@ -6,7 +6,7 @@ export function DocsApp({ windowId }: ProcessComponentProps): React.ReactElement
   return (
     <RndWindow
       windowId={windowId}
-      className="w-[750px] h-[90%] top-[10%] left-[60px]"
+      className="h-[90%] top-[10%] left-[60px]"
     >
       <DocsLayout />
     </RndWindow>

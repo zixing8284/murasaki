@@ -24,6 +24,7 @@ const directory = {
     defaultTitle: 'My Computer',
     icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
+    defaultSize: { width: 520 },
   },
   docs: {
     name: 'Component Docs',
@@ -33,6 +34,7 @@ const directory = {
     defaultTitle: 'Component Docs',
     icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
+    defaultSize: { width: 750 },
   },
   notepad: {
     name: 'Notepad',
@@ -43,6 +45,7 @@ const directory = {
     icon: { sm: '/img/desktop/Notepad.png', lg: '/img/desktop/Notepad.png' },
     singleton: false,
     showOnDesktop: true,
+    defaultSize: { width: 400, height: 300 },
   },
   displayproperties: {
     name: 'Display Properties',
@@ -53,6 +56,7 @@ const directory = {
     icon: { sm: '/img/display_16.png', lg: '/img/display_16.png' },
     singleton: true,
     ephemeral: true,
+    defaultSize: { width: 420 },
   },
   jspaint: {
     name: 'JSPaint',
@@ -63,6 +67,7 @@ const directory = {
     icon: { sm: '/img/desktop/InternetExplorer.png', lg: '/img/desktop/InternetExplorer.png' },
     singleton: false,
     showOnDesktop: true,
+    defaultSize: { width: 900, height: 650 },
   },
   themedesigner: {
     name: 'Theme Designer',
@@ -73,6 +78,7 @@ const directory = {
     icon: { sm: '/img/display_16.png', lg: '/img/display_16.png' },
     singleton: true,
     showOnDesktop: true,
+    defaultSize: { width: 720, height: 584 },
   },
   mediaplayer: {
     name: 'Media Player',
@@ -83,6 +89,7 @@ const directory = {
     icon: { sm: '/img/desktop/ProgMan.png', lg: '/img/desktop/ProgMan.png' },
     singleton: true,
     showOnDesktop: true,
+    defaultSize: { width: 640, height: 480 },
   },
 } satisfies Record<string, ProcessDirectoryEntry>
 

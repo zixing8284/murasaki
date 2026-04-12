@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type * as React from 'react'
 import { createPortal } from 'react-dom'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
@@ -8,13 +8,17 @@ export interface TooltipProps {
   text: string
   /** Delay in ms before showing the tooltip (default: 400) */
   delay?: number
-  /** Positioning side relative to the trigger */
+  /** Preferred positioning side relative to the trigger (flips if it overflows the viewport) */
   side?: 'top' | 'bottom'
   /** Optional className for the tooltip popup */
   className?: string
-  /** Trigger element */
-  children: React.ReactElement
+  /** Trigger element(s) */
+  children: React.ReactNode
 }
+
+/** Approximate tooltip height for viewport flip calculation */
+const TOOLTIP_HEIGHT_ESTIMATE = 20
+const GAP = 4
 
 export function Tooltip({
   text,
@@ -25,6 +29,7 @@ export function Tooltip({
 }: TooltipProps): React.ReactElement {
   const [visible, setVisible] = useState(false)
   const [coords, setCoords] = useState({ top: 0, left: 0 })
+  const [resolvedSide, setResolvedSide] = useState(side)
   const wrapperRef = useRef<HTMLSpanElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const tooltipId = useId()
@@ -40,14 +45,23 @@ export function Tooltip({
     clearTimer()
     timerRef.current = setTimeout(() => {
       const el = wrapperRef.current
-      if (el) {
-        const rect = el.getBoundingClientRect()
-        const gap = 4
-        setCoords({
-          top: side === 'top' ? rect.top - gap : rect.bottom + gap,
-          left: rect.left + rect.width / 2,
-        })
+      if (!el) return
+
+      const rect = el.getBoundingClientRect()
+      let actualSide = side
+
+      // Viewport boundary flip
+      if (side === 'top' && rect.top - GAP - TOOLTIP_HEIGHT_ESTIMATE < 0) {
+        actualSide = 'bottom'
+      } else if (side === 'bottom' && rect.bottom + GAP + TOOLTIP_HEIGHT_ESTIMATE > window.innerHeight) {
+        actualSide = 'top'
       }
+
+      setResolvedSide(actualSide)
+      setCoords({
+        top: actualSide === 'top' ? rect.top - GAP : rect.bottom + GAP,
+        left: rect.left + rect.width / 2,
+      })
       setVisible(true)
     }, delay)
   }, [delay, clearTimer, side])
@@ -68,37 +82,18 @@ export function Tooltip({
     return clearTimer
   }, [clearTimer])
 
-  const child = React.Children.only(children)
-  const childProps = child.props as Record<string, unknown>
-
-  const trigger = React.cloneElement(child, {
-    'aria-label': text,
-    'aria-describedby': visible ? tooltipId : undefined,
-    onPointerEnter: (e: React.PointerEvent) => {
-      ;(childProps['onPointerEnter'] as ((e: React.PointerEvent) => void) | undefined)?.(e)
-      show()
-    },
-    onPointerLeave: (e: React.PointerEvent) => {
-      ;(childProps['onPointerLeave'] as ((e: React.PointerEvent) => void) | undefined)?.(e)
-      hide()
-    },
-    onFocus: (e: React.FocusEvent) => {
-      ;(childProps['onFocus'] as ((e: React.FocusEvent) => void) | undefined)?.(e)
-      show()
-    },
-    onBlur: (e: React.FocusEvent) => {
-      ;(childProps['onBlur'] as ((e: React.FocusEvent) => void) | undefined)?.(e)
-      hide()
-    },
-    onKeyDown: (e: React.KeyboardEvent) => {
-      ;(childProps['onKeyDown'] as ((e: React.KeyboardEvent) => void) | undefined)?.(e)
-      handleKeyDown(e)
-    },
-  } as Record<string, unknown>)
-
   return (
-    <span ref={wrapperRef} className="inline-flex">
-      {trigger}
+    <span
+      ref={wrapperRef}
+      className="inline-flex"
+      aria-describedby={visible ? tooltipId : undefined}
+      onPointerEnter={show}
+      onPointerLeave={hide}
+      onFocus={show}
+      onBlur={hide}
+      onKeyDown={handleKeyDown}
+    >
+      {children}
       {visible && createPortal(
         <span
           id={tooltipId}
@@ -107,7 +102,7 @@ export function Tooltip({
             'fixed z-9999 whitespace-nowrap px-1 py-0.5',
             'bg-(--info-window) text-(--info-text) border border-(--window-frame)',
             'pointer-events-none -translate-x-1/2',
-            side === 'top' && '-translate-y-full',
+            resolvedSide === 'top' && '-translate-y-full',
             className,
           )}
           style={{ top: coords.top, left: coords.left }}

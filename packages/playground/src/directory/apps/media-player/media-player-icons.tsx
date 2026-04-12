@@ -140,3 +140,38 @@ export function EjectIcon() {
     </svg>
   )
 }
+
+/** Speaker cone with two sound waves */
+export function VolumeHighIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      {/* Speaker body */}
+      <polygon points="1,5 1,9 3,9 6,12 6,2 3,5" fill="var(--button-text)" />
+      {/* Small wave */}
+      <path d="M8,5 C9,6 9,8 8,9" stroke="var(--button-text)" strokeWidth="1.2" fill="none" />
+      {/* Large wave */}
+      <path d="M10,3 C12,5 12,9 10,11" stroke="var(--button-text)" strokeWidth="1.2" fill="none" />
+    </svg>
+  )
+}
+
+/** Speaker cone with one small sound wave */
+export function VolumeLowIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <polygon points="1,5 1,9 3,9 6,12 6,2 3,5" fill="var(--button-text)" />
+      <path d="M8,5 C9,6 9,8 8,9" stroke="var(--button-text)" strokeWidth="1.2" fill="none" />
+    </svg>
+  )
+}
+
+/** Speaker cone with X (muted) */
+export function VolumeMutedIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <polygon points="1,5 1,9 3,9 6,12 6,2 3,5" fill="var(--button-text)" />
+      <line x1="8" y1="4" x2="13" y2="10" stroke="var(--button-text)" strokeWidth="1.5" />
+      <line x1="13" y1="4" x2="8" y2="10" stroke="var(--button-text)" strokeWidth="1.5" />
+    </svg>
+  )
+}

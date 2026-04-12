@@ -1,6 +1,6 @@
 import type { ProcessComponentProps } from '../../../contexts/process'
 import { useProcessActions } from '../../../contexts/process'
-import { Divider, WindowStatusBar, WindowStatusBarField, SunkenPanel, Tooltip } from 'murasaki-react98'
+import { Divider, WindowStatusBar, WindowStatusBarField, SunkenPanel, Tooltip, Slider } from 'murasaki-react98'
 import { RndWindow } from '../../../shell/window/rnd-window'
 import { useMediaPlayer } from './use-media-player'
 import {
@@ -16,6 +16,9 @@ import {
   RepeatAllIcon,
   RepeatOneIcon,
   EjectIcon,
+  VolumeHighIcon,
+  VolumeLowIcon,
+  VolumeMutedIcon,
 } from './media-player-icons'
 import { useEffect, useRef, useCallback, useState } from 'react'
 
@@ -103,8 +106,8 @@ function SeekBar({
                 className="text-[9px] text-(--button-text) mt-px select-none whitespace-nowrap"
                 style={
                   i === 0 ? undefined
-                  : i === 10 ? { transform: 'translateX(-100%)' }
-                  : { transform: 'translateX(-50%)' }
+                    : i === 10 ? { transform: 'translateX(-100%)' }
+                      : { transform: 'translateX(-50%)' }
                 }
               >
                 {formatTime((i / 10) * duration)}
@@ -132,11 +135,10 @@ function TransportButton({
 } & React.ComponentProps<'button'>) {
   return (
     <button
-      className={`min-w-[24px] h-[22px] flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:[&>*]:translate-x-px active:not-disabled:[&>*]:translate-y-px disabled:opacity-40 border-none box-border px-0.5${
-        active
+      className={`min-w-[24px] h-[22px] flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:[&>*]:translate-x-px active:not-disabled:[&>*]:translate-y-px disabled:opacity-40 border-none box-border px-0.5${active
           ? ' shadow-(--shadow-sunken) bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'
           : ''
-      }`}
+        }`}
       onClick={onClick}
       disabled={disabled}
       aria-pressed={active}
@@ -288,6 +290,32 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           {/* Vertical divider */}
           <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
 
+          {/* Volume mute toggle */}
+          <div className='flex items-center gap-2 px-1'>
+
+            <Tooltip text={player.muted ? 'Unmute' : 'Mute'} side="top">
+              <TransportButton onClick={player.toggleMute} aria-label={player.muted ? 'Unmute' : 'Mute'}>
+                {player.muted ? <VolumeMutedIcon /> : player.volume > 50 ? <VolumeHighIcon /> : <VolumeLowIcon />}
+              </TransportButton>
+            </Tooltip>
+
+            {/* Volume slider */}
+            <Slider
+              className="w-20"
+              disabled={player.muted}
+              min={0}
+              max={100}
+              boxIndicator
+              value={player.muted ? 0 : player.volume}
+              onChange={e => player.setVolume(Number(e.target.value))}
+              aria-label="Volume"
+            />
+
+          </div>
+
+          {/* Vertical divider */}
+          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
           {/* Time display - sunken field */}
           <div className="flex-1 shadow-(--shadow-border-field) bg-(--window) px-1 py-px">
             {player.formattedCurrentTime}
@@ -301,11 +329,10 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             return (
               <div
                 key={track.id}
-                className={`px-1 py-0.5 cursor-pointer select-none truncate ${
-                  isActive
+                className={`px-1 py-0.5 cursor-pointer select-none truncate ${isActive
                     ? 'bg-(--hilight) text-(--hilight-text)'
                     : 'hover:bg-(--hilight) hover:text-(--hilight-text)'
-                }`}
+                  }`}
                 onDoubleClick={() => player.playTrack(track)}
               >
                 {track.title}

@@ -313,6 +313,17 @@ export function useMediaPlayer() {
     setModel((prev) => ({ ...prev, repeat: mode }))
   }, [])
 
+  const setVolume = useCallback((level: number) => {
+    managerRef.current?.setVolume(level)
+  }, [])
+
+  const toggleMute = useCallback(() => {
+    const manager = managerRef.current
+    if (!manager) return
+    const state = manager.getState()
+    manager.setMuted(!state.muted)
+  }, [])
+
   const progress = mediaState && mediaState.duration > 0
     ? (mediaState.currentTime / mediaState.duration) * 100
     : 0
@@ -331,6 +342,8 @@ export function useMediaPlayer() {
     formattedCurrentTime: formatTime(mediaState?.currentTime ?? 0),
     formattedDuration: formatTime(mediaState?.duration ?? 0),
     isVideo,
+    volume: mediaState?.volume ?? 100,
+    muted: mediaState?.muted ?? false,
 
     // Model state
     playlist: model.playlist,
@@ -353,6 +366,8 @@ export function useMediaPlayer() {
     toggleShuffle,
     cycleRepeat,
     setRepeat,
+    setVolume,
+    toggleMute,
     addLocalFile,
     openFilePicker,
 

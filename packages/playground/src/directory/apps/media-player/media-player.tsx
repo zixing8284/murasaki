@@ -21,6 +21,7 @@ import {
   VolumeMutedIcon,
   PlaylistIcon,
 } from './media-player-icons'
+import { AudioVisualizer } from './audio-visualizer'
 import { useEffect, useRef, useCallback, useState } from 'react'
 
 function formatTime(seconds: number): string {
@@ -196,12 +197,17 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
         </div>
 
         {/* Video display area — fills remaining space, min 80px */}
-        <div className="flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden">
+        <div className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden">
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video
             ref={player.mediaRefCallback}
-            className="max-w-full max-h-full p-1 object-contain aspect-video"
+            className={`max-w-full max-h-full p-1 object-contain aspect-video${player.isVideo ? '' : ' hidden'}`}
             playsInline
+          />
+          <AudioVisualizer
+            getMediaElement={player.getMediaElement}
+            isPlaying={player.isPlaying}
+            isAudio={!player.isVideo}
           />
         </div>
 

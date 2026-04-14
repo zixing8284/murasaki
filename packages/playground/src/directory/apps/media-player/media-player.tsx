@@ -19,6 +19,7 @@ import {
   VolumeHighIcon,
   VolumeLowIcon,
   VolumeMutedIcon,
+  PlaylistIcon,
 } from './media-player-icons'
 import { useEffect, useRef, useCallback, useState } from 'react'
 
@@ -152,6 +153,7 @@ function TransportButton({
 export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactElement | null {
   const player = useMediaPlayer()
   const { title } = useProcessActions()
+  const [showPlaylist, setShowPlaylist] = useState(true)
 
   // Update window title based on current track
   const currentTitle = player.currentTrack
@@ -165,7 +167,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   return (
     <RndWindow windowId={windowId} className="top-[15%] left-[25%]">
 
-      <div className="grid h-full grid-rows-[auto_minmax(80px,1fr)_auto_auto_auto_auto_auto]">
+      <div className="flex h-full flex-col">
 
         {/* Hidden file input for local media loading */}
         <input
@@ -193,12 +195,12 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           ))}
         </div>
 
-        {/* Video display area — takes 1fr row, never collapses below 80px */}
-        <div className="bg-black shadow-(--shadow-sunken) flex items-center justify-center">
+        {/* Video display area — fills remaining space, min 80px */}
+        <div className="flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden">
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video
             ref={player.mediaRefCallback}
-            className="max-w-full max-h-full p-1 object-contain"
+            className="max-w-full max-h-full p-1 object-contain aspect-video"
             playsInline
           />
         </div>
@@ -320,27 +322,41 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           <div className="flex-1 shadow-(--shadow-border-field) bg-(--window) px-1 py-px">
             {player.formattedCurrentTime}
           </div>
+
+          {/* Vertical divider */}
+          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
+          {/* Playlist toggle */}
+          <Tooltip text={showPlaylist ? 'Hide Playlist' : 'Show Playlist'} side="top">
+            <TransportButton onClick={() => setShowPlaylist(prev => !prev)} active={showPlaylist} aria-label={showPlaylist ? 'Hide Playlist' : 'Show Playlist'}>
+              <PlaylistIcon />
+            </TransportButton>
+          </Tooltip>
         </div>
 
-        {/* Playlist - bounded height, scrollable */}
-        <SunkenPanel className="h-40 min-h-0 mb-1 bg-(--window) overflow-y-auto">
-          {player.playlist.map((track) => {
-            const isActive = player.currentTrack?.id === track.id
-            return (
-              <div
-                key={track.id}
-                className={`px-1 py-0.5 cursor-pointer select-none truncate ${isActive
-                    ? 'bg-(--hilight) text-(--hilight-text)'
-                    : 'hover:bg-(--hilight) hover:text-(--hilight-text)'
-                  }`}
-                onDoubleClick={() => player.playTrack(track)}
-              >
-                {track.title}
-                {track.artist ? ` - ${track.artist}` : ''}{track.type === 'video' ? ' (Video)' : ''}
-              </div>
-            )
-          })}
-        </SunkenPanel>
+        {/* Playlist - animated expand/collapse via grid-template-rows transition */}
+        <div className={`grid transition-[grid-template-rows] duration-100 ease-in-out ${showPlaylist ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+          <div className="min-h-0 overflow-hidden">
+            <SunkenPanel className="h-40 overflow-y-auto bg-(--window)">
+              {player.playlist.map((track) => {
+                const isActive = player.currentTrack?.id === track.id
+                return (
+                  <div
+                    key={track.id}
+                    className={`px-1 py-0.5 cursor-pointer select-none truncate ${isActive
+                      ? 'bg-(--hilight) text-(--hilight-text)'
+                      : 'hover:bg-(--hilight) hover:text-(--hilight-text)'
+                      }`}
+                    onDoubleClick={() => player.playTrack(track)}
+                  >
+                    {track.title}
+                    {track.artist ? ` - ${track.artist}` : ''}{track.type === 'video' ? ' (Video)' : ''}
+                  </div>
+                )
+              })}
+            </SunkenPanel>
+          </div>
+        </div>
 
         {/* Status bar - using UI library components */}
         <WindowStatusBar>

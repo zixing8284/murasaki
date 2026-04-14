@@ -175,3 +175,15 @@ export function VolumeMutedIcon() {
     </svg>
   )
 }
+
+export function PlaylistIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect x="1" y="2" width="9" height="1.5" fill="var(--button-text)" />
+      <rect x="1" y="5" width="9" height="1.5" fill="var(--button-text)" />
+      <rect x="1" y="8" width="6" height="1.5" fill="var(--button-text)" />
+      <rect x="1" y="11" width="6" height="1.5" fill="var(--button-text)" />
+      <polygon points="9,8.5 9,12.5 13,10.5" fill="var(--button-text)" />
+    </svg>
+  )
+}

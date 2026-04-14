@@ -217,6 +217,10 @@ export class MediaManager {
     this.mediaElement.muted = muted
   }
 
+  getMediaElement(): HTMLMediaElement | null {
+    return this.mediaElement
+  }
+
   destroy() {
     const el = this.mediaElement
     if (el) {

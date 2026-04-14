@@ -371,6 +371,9 @@ export function useMediaPlayer() {
     addLocalFile,
     openFilePicker,
 
+    // Media element access (for audio visualizer)
+    getMediaElement: useCallback(() => managerRef.current?.getMediaElement() ?? null, []),
+
     // Constants
     acceptedMediaTypes: ACCEPTED_MEDIA_TYPES,
   }

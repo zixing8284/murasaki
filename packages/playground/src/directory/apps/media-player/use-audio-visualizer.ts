@@ -17,26 +17,18 @@ interface AnalysisData {
 export type { AnalysisData }
 
 /**
- * Hook managing Web Audio API analysis for audio visualization.
- * Writes analysis data to a shared ref that the visualizer component reads during rAF.
- * Returns a ref to the latest analysis data (avoids React state churn at 60fps).
+ * Hook managing Web Audio API AnalyserNode connection.
+ * Returns refs to the analyser and data buffers — the component drives the single rAF loop.
  */
 export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseAudioVisualizerOptions) {
   const audioCtxRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const dataRef = useRef<AnalysisData | null>(null)
-  const rafIdRef = useRef<number>(0)
   const connectedElementRef = useRef<HTMLMediaElement | null>(null)
 
+  // Connect / disconnect the Web Audio graph
   useEffect(() => {
-    if (!isAudio || !isPlaying) {
-      // Stop the animation loop when not needed
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current)
-        rafIdRef.current = 0
-      }
-      return
-    }
+    if (!isAudio || !isPlaying) return
 
     const el = getMediaElement()
     if (!el) return
@@ -81,34 +73,11 @@ export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseA
         timeDomain: new Uint8Array(analyser.fftSize),
       }
     }
-
-    const analyser = analyserRef.current
-    const data = dataRef.current
-    if (!analyser || !data) return
-
-    // Animation loop — reads audio data each frame
-    function tick() {
-      analyser!.getByteFrequencyData(data!.frequency)
-      analyser!.getByteTimeDomainData(data!.timeDomain)
-      rafIdRef.current = requestAnimationFrame(tick)
-    }
-
-    rafIdRef.current = requestAnimationFrame(tick)
-
-    return () => {
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current)
-        rafIdRef.current = 0
-      }
-    }
   }, [isAudio, isPlaying, getMediaElement])
 
   // Cleanup AudioContext on unmount
   useEffect(() => {
     return () => {
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current)
-      }
       if (audioCtxRef.current) {
         audioCtxRef.current.close()
         audioCtxRef.current = null
@@ -119,5 +88,5 @@ export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseA
     }
   }, [])
 
-  return dataRef
+  return { analyserRef, dataRef }
 }

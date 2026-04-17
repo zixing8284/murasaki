@@ -1,26 +1,4 @@
-/*
- * murasaki-react98 — Theme Variables (Consumer Template)
- *
- * This file contains all CSS custom properties that define the Win98 visual
- * theme. Consumers following the shadcn/ui pattern should COPY these
- * variables into their own CSS and customize values as needed.
- *
- * Usage (shadcn/ui pattern — recommended):
- *
- *   // In your project's globals.css or app.css:
- *   @import "murasaki-react98/theme-config.css";  // library core (do NOT copy)
- *
- *   :root {
- *     // paste variables from this file, customize as needed
- *     --button-face: rgb(212, 208, 200);
- *     --window: rgb(255, 255, 255);
- *     ...
- *   }
- *
- * Usage (quick-start — import as-is):
- *
- *   @import "murasaki-react98/theme.css";   // imports everything including these variables
- */
+/* Theme variables (consumer template). Copy & customize for the shadcn/ui pattern. */
 
 /* ==========================================================================
    CSS Variables — Windows 98 Color Palette

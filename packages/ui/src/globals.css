@@ -1,30 +1,4 @@
-/*
- * murasaki-react98 UI Library
- * Windows 98 Style CSS Variables and Theme Configuration
- *
- * This is the all-in-one entry point that aggregates:
- *   - theme-variables.css — CSS custom properties (consumer template)
- *   - theme-config.css   — @theme, @utility, base styles, scrollbar (library core)
- *
- * Exported as "murasaki-react98/theme.css" for Tailwind v4 consumers.
- *
- * Quick-start usage:
- *
- *   @source "../node_modules/murasaki-react98/dist";
- *   @import "tailwindcss";
- *   @import "murasaki-react98/theme.css";
- *
- * shadcn/ui-style usage (recommended for full theme ownership):
- *
- *   @source "../node_modules/murasaki-react98/dist";
- *   @import "tailwindcss";
- *   @import "murasaki-react98/theme-config.css";
- *   // then define :root { ... } with variables copied from theme-variables.css
- *
- * Non-Tailwind consumers (self-contained bundle):
- *
- *   @import "murasaki-react98/globals.css";
- */
+/* All-in-one theme entry: variables + config. Exported as "murasaki-react98/theme.css". */
 
 @import "./theme-variables.css";
 @import "./theme-config.css";

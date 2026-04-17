@@ -1,26 +1,4 @@
-/*
- * murasaki-react98 — Theme Configuration (Library Core)
- *
- * This file contains base styles, custom utilities (including shadow
- * utilities), and scrollbar styles that power the component library.
- * Consumers should IMPORT this file — never copy or modify it.
- *
- * Components use Tailwind v4's arbitrary CSS variable syntax directly
- * (e.g. bg-(--button-face)) instead of theme tokens.
- * Shadow utilities (shadow-raised, shadow-sunken, etc.) are provided
- * as @utility definitions backed by CSS custom properties.
- *
- * It depends on CSS custom properties defined in theme-variables.css.
- * Those variables must be present (either via import or consumer-defined)
- * for the styles below to resolve correctly.
- *
- * Usage (shadcn/ui pattern):
- *   @import "murasaki-react98/theme-config.css";
- *   // then define your own :root variables (copied from theme-variables.css)
- *
- * Usage (quick-start):
- *   @import "murasaki-react98/theme.css";  // imports both files
- */
+/* Library core: shadows, @utility, @layer base, scrollbar. Import only — do not copy. */
 
 @custom-variant dark (&:is(.dark *));
 

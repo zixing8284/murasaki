@@ -1,12 +1,4 @@
-/*
- * Standalone CSS entry point for building dist/globals.css
- *
- * This file combines Tailwind CSS with the library's theme configuration
- * so that the compiled output contains ALL utility classes used by components.
- *
- * The output dist/globals.css is a self-contained CSS bundle that works
- * for non-Tailwind consumers — no Tailwind setup required.
- */
+/* Build entry for dist/globals.css — self-contained bundle for non-Tailwind consumers. */
 
 @import "tailwindcss";
 @import "./globals.css";

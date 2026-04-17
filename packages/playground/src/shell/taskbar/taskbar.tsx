@@ -9,6 +9,7 @@ import {
 } from 'murasaki-react98'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
 import { NetworkIcon } from './notification-area/network-icon'
+import { SwUpdateBalloon } from './notification-area/sw-update-balloon'
 import { RunningTasks } from './running-tasks/running-tasks'
 
 const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = [
@@ -51,7 +52,8 @@ export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): Rea
       </div>
 
       {/* Notification Area (System Tray) */}
-      <TaskbarNotificationArea>
+      <TaskbarNotificationArea className="relative">
+        <SwUpdateBalloon />
         <NetworkIcon />
         <DisplayPropertiesIcon />
         <TaskbarSystemClock />

@@ -1,7 +1,7 @@
 import type { ProcessComponentProps } from '../../contexts/process'
 import { IframeWindow } from '../../shell/window/iframe-window'
 
-const JSPaintApp_URL = 'https://jspaint.app/'
+const JSPaintApp_URL = '/programs/jspaint/index.html'
 
 function JspaintIcon(): React.ReactElement {
   return (

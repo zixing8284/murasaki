@@ -158,6 +158,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   const { title } = useProcessActions()
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const [showPlaylist, setShowPlaylist] = useState(true)
+  const activeItemRef = useRef<HTMLDivElement>(null)
 
   // Update window title based on current track
   const currentTitle = player.currentTrack
@@ -167,6 +168,12 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   useEffect(() => {
     title(windowId, currentTitle)
   }, [windowId, currentTitle, title])
+
+  // Scroll playlist to the active track once when it changes
+  const currentTrackId = player.currentTrack?.id
+  useEffect(() => {
+    activeItemRef.current?.scrollIntoView({ block: 'nearest' })
+  }, [currentTrackId])
 
   useEffect(() => {
     if (!launchRequest) {
@@ -230,13 +237,13 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video
             ref={player.mediaRefCallback}
-            className={`max-w-full max-h-full p-1 object-contain aspect-video${player.isVideo ? '' : ' hidden'}`}
+            className={`max-w-full max-h-full p-1 object-contain aspect-video${player.hasVideo ? '' : ' hidden'}`}
             playsInline
           />
           <AudioVisualizer
             getMediaElement={player.getMediaElement}
             isPlaying={player.isPlaying}
-            isAudio={!player.isVideo}
+            isAudio={!player.hasVideo}
           />
         </div>
 
@@ -378,14 +385,22 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
                 return (
                   <div
                     key={track.id}
-                    className={`px-1 py-0.5 cursor-pointer select-none truncate ${isActive
+                    ref={isActive ? activeItemRef : undefined}
+                    className={`flex items-center pl-1 pr-1 py-0.5 cursor-pointer select-none ${isActive
                       ? 'bg-(--hilight) text-(--hilight-text)'
                       : 'hover:bg-(--hilight) hover:text-(--hilight-text)'
                       }`}
                     onDoubleClick={() => player.playTrack(track)}
                   >
-                    {track.title}
-                    {track.artist ? ` - ${track.artist}` : ''}{track.type === 'video' ? ' (Video)' : ''}
+                    <span className="truncate pl-0.5">
+                      {track.title}
+                      {track.artist ? ` - ${track.artist}` : ''}
+                    </span>
+                    {track.duration !== null && track.duration !== undefined && track.duration > 0 && (
+                      <span className="ml-auto pl-2 shrink-0 tabular-nums">
+                        {formatTime(track.duration)}
+                      </span>
+                    )}
                   </div>
                 )
               })}

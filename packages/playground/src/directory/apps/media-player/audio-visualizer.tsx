@@ -8,60 +8,50 @@ const VIRTUAL_H = 90
 // ── 30fps throttle ──────────────────────────────────────────────────────
 const FRAME_INTERVAL = 1000 / 30
 
-// ── Segmented LED bar grid ──────────────────────────────────────────────
-const CELL_H = 3 // height of each "LED" cell in virtual pixels
-const CELL_GAP = 1 // vertical gap between cells
-const BAR_W = 4 // width of each bar
-const BAR_GAP = 2 // horizontal gap between bars
-const MAX_CELLS = Math.floor(VIRTUAL_H / (CELL_H + CELL_GAP))
-
-// ── Stepped color palette (by row position, bottom → top) ───────────────
-const CELL_COLORS = [
-  '#585858', // bottom — dim
-  '#787878',
-  '#989898',
-  '#b8b8b8',
-  '#d8d8d8', // top — bright
-] as const
-
-function cellColor(row: number, totalCells: number): string {
-  const t = row / Math.max(1, totalCells - 1)
-  const idx = Math.min(CELL_COLORS.length - 1, Math.floor(t * CELL_COLORS.length))
-  return CELL_COLORS[idx]
-}
+// ── Oscilloscope styling ────────────────────────────────────────────────
+const BG_COLOR = '#0a0a0a'
+const WAVE_COLOR = '#c8c8c8'
+const CENTER_LINE_COLOR = '#1a1a1a'
 
 // ── Canvas drawing ──────────────────────────────────────────────────────
 
-function drawBars(
+function drawWaveform(
   ctx: CanvasRenderingContext2D,
-  frequency: Uint8Array,
+  timeDomain: Uint8Array,
 ) {
-  ctx.fillStyle = '#0a0a0a'
+  ctx.fillStyle = BG_COLOR
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
 
-  const barCount = Math.floor(VIRTUAL_W / (BAR_W + BAR_GAP))
-  const binCount = frequency.length
-  // Use ~75% of bins (lower frequencies carry most musical energy)
-  const usableBins = Math.floor(binCount * 0.75)
+  // Dim center line
+  ctx.fillStyle = CENTER_LINE_COLOR
+  ctx.fillRect(0, Math.floor(VIRTUAL_H / 2), VIRTUAL_W, 1)
 
-  for (let i = 0; i < barCount; i++) {
-    const binIdx = Math.floor((i / barCount) * usableBins)
-    const value = frequency[binIdx]
-    const filledCells = Math.round((value / 255) * MAX_CELLS)
+  // Draw waveform — 1px thin line for clean pixel look
+  const step = timeDomain.length / VIRTUAL_W
+  ctx.fillStyle = WAVE_COLOR
 
-    const x = i * (BAR_W + BAR_GAP)
+  let prevY = Math.floor((timeDomain[0] / 255) * VIRTUAL_H)
 
-    for (let c = 0; c < filledCells; c++) {
-      const y = VIRTUAL_H - (c + 1) * (CELL_H + CELL_GAP)
-      ctx.fillStyle = cellColor(c, MAX_CELLS)
-      ctx.fillRect(x, y, BAR_W, CELL_H)
-    }
+  for (let x = 0; x < VIRTUAL_W; x++) {
+    const idx = Math.floor(x * step)
+    const value = timeDomain[idx]
+    const y = Math.floor((value / 255) * VIRTUAL_H)
+
+    // Connect prevY to y with vertical segment for continuity
+    const minY = Math.min(prevY, y)
+    const maxY = Math.max(prevY, y)
+    ctx.fillRect(x, minY, 1, maxY - minY + 1)
+
+    prevY = y
   }
 }
 
 function drawEmpty(ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = '#0a0a0a'
+  ctx.fillStyle = BG_COLOR
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
+
+  ctx.fillStyle = CENTER_LINE_COLOR
+  ctx.fillRect(0, Math.floor(VIRTUAL_H / 2), VIRTUAL_W, 1)
 }
 
 // ── Component ───────────────────────────────────────────────────────────
@@ -79,15 +69,7 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
 
   const { analyserRef, dataRef } = useAudioVisualizer({ getMediaElement, isPlaying, isAudio })
 
-  // Set fixed low resolution — browser upscales with nearest-neighbor via CSS
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    canvas.width = VIRTUAL_W
-    canvas.height = VIRTUAL_H
-  }, [])
-
-  // Render loop at ~30fps when playing
+  // Animation loop at ~30fps when playing
   useEffect(() => {
     if (!isAudio || !isPlaying) return
 
@@ -105,8 +87,8 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
       const ctx = canvas.getContext('2d')
       if (!ctx) return
 
-      analyser.getByteFrequencyData(data.frequency)
-      drawBars(ctx, data.frequency)
+      analyser.getByteTimeDomainData(data.timeDomain)
+      drawWaveform(ctx, data.timeDomain)
     }
 
     rafRef.current = requestAnimationFrame(render)
@@ -119,7 +101,7 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
     }
   }, [isAudio, isPlaying, analyserRef, dataRef])
 
-  // Static empty frame when paused/stopped
+  // Draw empty state when paused/stopped
   useEffect(() => {
     if (!isAudio || isPlaying) return
     const canvas = canvasRef.current
@@ -129,28 +111,13 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
     drawEmpty(ctx)
   }, [isAudio, isPlaying])
 
-  // Re-draw empty frame on resize when paused
-  useEffect(() => {
-    if (!isAudio || isPlaying) return
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const observer = new ResizeObserver(() => {
-      const c = canvasRef.current
-      if (!c) return
-      const ctx = c.getContext('2d')
-      if (!ctx) return
-      drawEmpty(ctx)
-    })
-    observer.observe(canvas)
-    return () => observer.disconnect()
-  }, [isAudio, isPlaying])
-
   if (!isAudio) return null
 
   return (
     <canvas
       ref={canvasRef}
+      width={VIRTUAL_W}
+      height={VIRTUAL_H}
       className="absolute inset-0 w-full h-full"
       style={{ imageRendering: 'pixelated' }}
     />

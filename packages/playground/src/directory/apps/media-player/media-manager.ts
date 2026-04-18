@@ -15,6 +15,7 @@ export interface MediaState {
   currentTrack: Track | null
   volume: number
   muted: boolean
+  hasVideo: boolean
 }
 
 type StateChangeListener = (state: MediaState) => void
@@ -34,6 +35,7 @@ export class MediaManager {
     currentTrack: null,
     volume: 100,
     muted: false,
+    hasVideo: false,
   }
 
   onTrackEnded?: () => void
@@ -87,7 +89,8 @@ export class MediaManager {
     })
 
     on('loadedmetadata', () => {
-      this.updateState({ duration: el.duration || 0 })
+      const hasVideo = 'videoWidth' in el && (el as HTMLVideoElement).videoWidth > 0
+      this.updateState({ duration: el.duration || 0, hasVideo })
     })
 
     on('canplay', () => {

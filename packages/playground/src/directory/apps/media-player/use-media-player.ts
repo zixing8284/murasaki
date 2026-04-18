@@ -78,7 +78,20 @@ export function useMediaPlayer() {
     if (mediaRef.current) {
       manager.attachElement(mediaRef.current)
     }
-    const unsubscribe = manager.subscribe(setMediaState)
+    const unsubscribe = manager.subscribe((state) => {
+      if (state.duration > 0 && state.currentTrack) {
+        const currentTrackId = state.currentTrack.id
+        const duration = state.duration
+        setModel((prev) => {
+          const trackIndex = prev.playlist.findIndex((t) => t.id === currentTrackId)
+          if (trackIndex === -1 || prev.playlist[trackIndex].duration === duration) return prev
+          const newPlaylist = [...prev.playlist]
+          newPlaylist[trackIndex] = { ...newPlaylist[trackIndex], duration: duration }
+          return { ...prev, playlist: newPlaylist }
+        })
+      }
+      setMediaState(state)
+    })
     return () => {
       unsubscribe()
       managerRef.current = null
@@ -343,7 +356,7 @@ export function useMediaPlayer() {
     : 0
 
   const currentTrack = mediaState?.currentTrack ?? null
-  const isVideo = currentTrack?.type === 'video'
+  const hasVideo = mediaState?.hasVideo ?? false
 
   return {
     // Media state
@@ -355,7 +368,7 @@ export function useMediaPlayer() {
     progress,
     formattedCurrentTime: formatTime(mediaState?.currentTime ?? 0),
     formattedDuration: formatTime(mediaState?.duration ?? 0),
-    isVideo,
+    hasVideo,
     volume: mediaState?.volume ?? 100,
     muted: mediaState?.muted ?? false,
 

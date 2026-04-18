@@ -1,32 +1,28 @@
-import type { AppId } from '../../contexts/process'
-import { AppIcon } from '../app-icon'
+import type { ReactNode } from 'react'
 
 interface DesktopIconProps {
-  appId: AppId
+  id: string
+  icon: ReactNode
   label: string
   selected: boolean
-  onSelect: (appId: string) => void
-  onOpen: (appId: AppId) => void
+  onSelect: (id: string) => void
+  onOpen: () => void
 }
 
-export function DesktopIcon({ appId, label, selected, onSelect, onOpen }: DesktopIconProps): React.ReactElement {
+export function DesktopIcon({ id, icon, label, selected, onSelect, onOpen }: DesktopIconProps): React.ReactElement {
   return (
     <div
       className="flex flex-col items-center gap-0.5 w-16 cursor-pointer select-none"
       onClick={(e) => {
         e.stopPropagation()
-        onSelect(appId)
+        onSelect(id)
       }}
       onDoubleClick={(e) => {
         e.stopPropagation()
-        onOpen(appId)
+        onOpen()
       }}
     >
-      <AppIcon
-        appId={appId}
-        size="lg"
-        className={selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}
-      />
+      <div className={selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}>{icon}</div>
 
       <span
         className={

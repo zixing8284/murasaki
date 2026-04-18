@@ -1,22 +1,24 @@
-import type { AppId } from '../../contexts/process'
 import { useState } from 'react'
-import { appDirectory } from '../../contexts/process'
+import { useDesktopFiles } from '../../contexts/desktop-files'
+import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
 import { useClickAway } from '../../hooks/use-click-away'
+import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 
-const desktopIcons = Object.entries(appDirectory)
+const appDesktopIcons = Object.entries(appDirectory)
   .filter(([, entry]) => entry.showOnDesktop)
   .map(([appId, entry]) => ({
-    appId: appId as AppId,
+    id: `app:${appId}`,
     label: entry.name,
+    appId: appId as keyof typeof appDirectory,
   }))
 
-interface DesktopProps {
-  onOpen: (appId: AppId) => void
-}
+const DESKTOP_MEDIA_ICON = '/img/desktop/MyDocuments.png'
 
-export function Desktop({ onOpen }: DesktopProps): React.ReactElement {
+export function Desktop(): React.ReactElement {
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
+  const { open } = useProcessActions()
+  const { items, requestOpenInMediaPlayer } = useDesktopFiles()
   const iconContainerRef = useClickAway<HTMLDivElement>(() => {
     setSelectedIconId(null)
   })
@@ -27,13 +29,30 @@ export function Desktop({ onOpen }: DesktopProps): React.ReactElement {
       data-area="desktop"
       className="absolute top-2 left-2 flex flex-col gap-4"
     >
-      {desktopIcons.map(iconConfig => (
+      {appDesktopIcons.map(iconConfig => (
         <DesktopIcon
-          key={iconConfig.appId}
-          {...iconConfig}
-          selected={selectedIconId === iconConfig.appId}
+          key={iconConfig.id}
+          id={iconConfig.id}
+          icon={<AppIcon appId={iconConfig.appId} size="lg" />}
+          label={iconConfig.label}
+          selected={selectedIconId === iconConfig.id}
           onSelect={setSelectedIconId}
-          onOpen={onOpen}
+          onOpen={() => open(iconConfig.appId)}
+        />
+      ))}
+
+      {items.map(item => (
+        <DesktopIcon
+          key={item.id}
+          id={item.id}
+          icon={<img src={DESKTOP_MEDIA_ICON} alt="" className="w-8 h-8 pixelated shrink-0" draggable={false} />}
+          label={item.name}
+          selected={selectedIconId === item.id}
+          onSelect={setSelectedIconId}
+          onOpen={() => {
+            requestOpenInMediaPlayer(item.id)
+            open(APP_ID.MEDIA_PLAYER)
+          }}
         />
       ))}
     </div>

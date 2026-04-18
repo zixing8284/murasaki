@@ -247,9 +247,17 @@ export function useMediaPlayer() {
     [mediaState?.duration, seek],
   )
 
-  /** Add a local file to the playlist and auto-play it */
-  const addLocalFile = useCallback((file: File) => {
+  /** Load a local file and optionally replace previous local selections. */
+  const loadLocalFile = useCallback((file: File, options?: { replacePlaylist?: boolean }) => {
     const objectUrl = URL.createObjectURL(file)
+
+    if (options?.replacePlaylist) {
+      for (const url of objectUrlsRef.current) {
+        URL.revokeObjectURL(url)
+      }
+      objectUrlsRef.current.clear()
+    }
+
     objectUrlsRef.current.add(objectUrl)
     const type = detectTrackType(file)
     const track: Track = {
@@ -259,7 +267,8 @@ export function useMediaPlayer() {
       type,
     }
     setModel((prev) => {
-      const newPlaylist = [...prev.playlist, track]
+      const basePlaylist = options?.replacePlaylist ? [] : prev.playlist
+      const newPlaylist = [...basePlaylist, track]
       const newIndex = newPlaylist.length - 1
       return {
         ...prev,
@@ -270,6 +279,11 @@ export function useMediaPlayer() {
     })
     managerRef.current?.loadAndPlay(track)
   }, [])
+
+  /** Add a local file to the playlist and auto-play it */
+  const addLocalFile = useCallback((file: File) => {
+    loadLocalFile(file)
+  }, [loadLocalFile])
 
   /** Open file picker to load local media */
   const openFilePicker = useCallback(() => {
@@ -368,6 +382,7 @@ export function useMediaPlayer() {
     setRepeat,
     setVolume,
     toggleMute,
+    loadLocalFile,
     addLocalFile,
     openFilePicker,
 

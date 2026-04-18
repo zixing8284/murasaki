@@ -1,4 +1,5 @@
 import type { ProcessComponentProps } from '../../../contexts/process'
+import { useDesktopFiles } from '../../../contexts/desktop-files'
 import { useProcessActions } from '../../../contexts/process'
 import { Divider, WindowStatusBar, WindowStatusBarField, SunkenPanel, Tooltip, Slider } from 'murasaki-react98'
 import { RndWindow } from '../../../shell/window/rnd-window'
@@ -153,7 +154,9 @@ function TransportButton({
 
 export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactElement | null {
   const player = useMediaPlayer()
+  const { loadLocalFile } = player
   const { title } = useProcessActions()
+  const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const [showPlaylist, setShowPlaylist] = useState(true)
 
   // Update window title based on current track
@@ -164,6 +167,32 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   useEffect(() => {
     title(windowId, currentTitle)
   }, [windowId, currentTitle, title])
+
+  useEffect(() => {
+    if (!launchRequest) {
+      return
+    }
+
+    let active = true
+
+    const loadRequestedFile = async () => {
+      const file = await getFile(launchRequest.fileId)
+      if (!active) {
+        return
+      }
+
+      if (file) {
+        loadLocalFile(file, { replacePlaylist: true })
+      }
+      clearLaunchRequest()
+    }
+
+    void loadRequestedFile()
+
+    return () => {
+      active = false
+    }
+  }, [launchRequest, clearLaunchRequest, getFile, loadLocalFile])
 
   return (
     <RndWindow windowId={windowId} className="top-[15%] left-[25%]">

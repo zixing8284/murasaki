@@ -234,7 +234,7 @@ describe('slider', () => {
     const screen = await render(
       <Slider value={50} onChange={() => {}} />,
     )
-    const container = screen.getByRole('slider')
+    const container = screen.container.firstElementChild as HTMLElement
     await expect.element(container).toMatchScreenshot('slider-horizontal')
   })
 
@@ -242,7 +242,7 @@ describe('slider', () => {
     const screen = await render(
       <Slider vertical value={50} onChange={() => {}} />,
     )
-    const container = screen.getByRole('slider')
+    const container = screen.container.firstElementChild as HTMLElement
     await expect.element(container).toMatchScreenshot('slider-vertical')
   })
 
@@ -265,7 +265,45 @@ describe('slider', () => {
     const screen = await render(
       <Slider vertical boxIndicator value={60} onChange={() => {}} />,
     )
-    const container = screen.getByRole('slider')
+    const container = screen.container.firstElementChild as HTMLElement
     await expect.element(container).toMatchScreenshot('slider-vertical-box')
+  })
+
+  // === Hit area extends beyond track for thumb overhang ===
+
+  it('extends native input hit area beyond track wrapper (horizontal)', async () => {
+    const screen = await render(
+      <div style={{ padding: '20px' }}>
+        <Slider value={0} onChange={() => {}} />
+      </div>,
+    )
+    const input = screen.getByRole('slider').element() as HTMLInputElement
+    const trackWrapper = input.parentElement as HTMLElement
+
+    const inputRect = input.getBoundingClientRect()
+    const trackRect = trackWrapper.getBoundingClientRect()
+
+    // Input should extend 5.5px beyond track on each side (half of 11px thumb width)
+    expect(inputRect.left).toBeLessThan(trackRect.left)
+    expect(inputRect.right).toBeGreaterThan(trackRect.right)
+    expect(inputRect.width).toBeCloseTo(trackRect.width + 11, 0)
+  })
+
+  it('extends native input hit area beyond track wrapper (vertical)', async () => {
+    const screen = await render(
+      <div style={{ padding: '20px' }}>
+        <Slider vertical value={0} onChange={() => {}} />
+      </div>,
+    )
+    const input = screen.getByRole('slider').element() as HTMLInputElement
+    const trackWrapper = input.parentElement as HTMLElement
+
+    const inputRect = input.getBoundingClientRect()
+    const trackRect = trackWrapper.getBoundingClientRect()
+
+    // Input should extend 10.5px beyond track on each side (half of 21px thumb height)
+    expect(inputRect.top).toBeLessThan(trackRect.top)
+    expect(inputRect.bottom).toBeGreaterThan(trackRect.bottom)
+    expect(inputRect.height).toBeCloseTo(trackRect.height + 21, 0)
   })
 })

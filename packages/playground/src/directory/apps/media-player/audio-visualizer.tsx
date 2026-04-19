@@ -2,33 +2,39 @@ import { useEffect, useRef } from 'react'
 import { useAudioVisualizer } from './use-audio-visualizer'
 
 // ── Virtual resolution — intentionally low for pixel-art upscaling ──────
-const VIRTUAL_W = 160
-const VIRTUAL_H = 90
+const VIRTUAL_W = 100
+const VIRTUAL_H = 16
 
 // ── 30fps throttle ──────────────────────────────────────────────────────
 const FRAME_INTERVAL = 1000 / 30
 
-// ── Oscilloscope styling ────────────────────────────────────────────────
-const BG_COLOR = '#0a0a0a'
-const WAVE_COLOR = '#c8c8c8'
-const CENTER_LINE_COLOR = '#1a1a1a'
+// ── Oscilloscope styling — resolved at draw time from CSS variables ─────
+function getColors(canvas: HTMLCanvasElement) {
+  const style = getComputedStyle(canvas)
+  return {
+    bg: style.getPropertyValue('--button-face').trim() || '#c0c0c0',
+    wave: style.getPropertyValue('--button-dk-shadow').trim() || '#000000',
+    center: style.getPropertyValue('--button-shadow').trim() || '#808080',
+  }
+}
 
 // ── Canvas drawing ──────────────────────────────────────────────────────
 
 function drawWaveform(
   ctx: CanvasRenderingContext2D,
   timeDomain: Uint8Array,
+  colors: { bg: string, wave: string, center: string },
 ) {
-  ctx.fillStyle = BG_COLOR
+  ctx.fillStyle = colors.bg
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
 
   // Dim center line
-  ctx.fillStyle = CENTER_LINE_COLOR
+  ctx.fillStyle = colors.center
   ctx.fillRect(0, Math.floor(VIRTUAL_H / 2), VIRTUAL_W, 1)
 
   // Draw waveform — 1px thin line for clean pixel look
   const step = timeDomain.length / VIRTUAL_W
-  ctx.fillStyle = WAVE_COLOR
+  ctx.fillStyle = colors.wave
 
   let prevY = Math.floor((timeDomain[0] / 255) * VIRTUAL_H)
 
@@ -46,11 +52,11 @@ function drawWaveform(
   }
 }
 
-function drawEmpty(ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = BG_COLOR
+function drawEmpty(ctx: CanvasRenderingContext2D, colors: { bg: string, center: string }) {
+  ctx.fillStyle = colors.bg
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
 
-  ctx.fillStyle = CENTER_LINE_COLOR
+  ctx.fillStyle = colors.center
   ctx.fillRect(0, Math.floor(VIRTUAL_H / 2), VIRTUAL_W, 1)
 }
 
@@ -88,7 +94,7 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
       if (!ctx) return
 
       analyser.getByteTimeDomainData(data.timeDomain)
-      drawWaveform(ctx, data.timeDomain)
+      drawWaveform(ctx, data.timeDomain, getColors(canvas))
     }
 
     rafRef.current = requestAnimationFrame(render)
@@ -108,7 +114,7 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    drawEmpty(ctx)
+    drawEmpty(ctx, getColors(canvas))
   }, [isAudio, isPlaying])
 
   if (!isAudio) return null
@@ -118,7 +124,7 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
       ref={canvasRef}
       width={VIRTUAL_W}
       height={VIRTUAL_H}
-      className="absolute inset-0 w-full h-full"
+      className="block w-full h-full"
       style={{ imageRendering: 'pixelated' }}
     />
   )

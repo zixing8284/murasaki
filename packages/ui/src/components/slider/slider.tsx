@@ -26,14 +26,21 @@ const nativeInputVariants = cva(
     variants: {
       vertical: {
         true: [
-          'h-full',
           'w-full',
           'left-0',
-          'top-0',
+          // Extend hit area beyond track for thumb overhang (half of THUMB_HEIGHT each side)
+          'top-[-10.5px]',
+          'h-[calc(100%+21px)]',
           // Use writing-mode to make native vertical slider work correctly
           '[writing-mode:vertical-lr]',
         ],
-        false: ['m-0', 'w-full', 'h-full'],
+        false: [
+          'm-0',
+          'h-full',
+          // Extend hit area beyond track for thumb overhang (half of THUMB_WIDTH each side)
+          'left-[-5.5px]',
+          'w-[calc(100%+11px)]',
+        ],
       },
     },
     defaultVariants: {

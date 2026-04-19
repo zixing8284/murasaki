@@ -1,175 +1,91 @@
 # Copilot Instructions — murasaki-react98
 
-## Monorepo Layout
+## Project Shape
 
 pnpm workspace with two packages:
 
-- **`packages/ui`** — Publishable component library (`murasaki-react98` on npm). Builds to `dist/`.
-- **`packages/playground`** — Windows 98 desktop demo app that consumes the UI library.
+- **`packages/ui`** — Publishable React component library. Build output goes to `dist/`.
+- **`packages/playground`** — Windows 98 desktop demo app that consumes the built UI library.
 
-## Critical Workflow
+## Core Workflow
 
-After modifying any file under `packages/ui/`, **rebuild before testing in the playground**:
+Use these commands regularly:
 
 ```bash
-pnpm ui:build          # vite build + tsc --emitDeclarationOnly → packages/ui/dist/
+pnpm play
+pnpm play:build
+
+pnpm ui:build
+pnpm ui:dev
+pnpm ui:test
+
+pnpm lint
 ```
 
-Other key commands: `pnpm play` (dev server), `pnpm ui:test` (Vitest + Playwright browser), `pnpm lint` (ESLint).
+When changing anything under `packages/ui/`, use this order:
 
-## UI Component Update Workflow
+1. **Lint** — `pnpm lint`
+2. **Test** — `pnpm ui:test`
+3. **Build** — `pnpm ui:build`
 
-After modifying component code or styles under `packages/ui/`, follow these steps in order:
+The playground consumes `packages/ui/dist`, not UI source files, so rebuild before verifying library changes in the playground or any other consumer.
 
-1. **Lint** — `pnpm lint` (ensure code style and React Compiler rules pass)
-2. **Test** — `pnpm ui:test` (runs in real Chromium; includes screenshot comparison)
-   - Screenshot tests compare current renders against baseline images in `tests/__screenshots__/`
-   - If a screenshot comparison **fails**:
-     - **Intentional change** → update baselines: `pnpm --filter murasaki-react98 test -- --update`
-     - **Unintentional change** → fix the code and re-run tests
-   - On failure, diff images (`*-diff.png`) and actual images (`*-actual.png`) are generated alongside the baselines in `tests/__screenshots__/` to highlight pixel-level differences
-3. **Build** — `pnpm ui:build` (⚠️ required — playground consumes `dist/`, not source)
+## Design Priorities
 
-> Steps 4–7 are **manual** — hand off to the developer for confirmation.
+**Component autonomy** — Keep state and behavior as close as possible to the component that owns them. Avoid prop-drilling data through layers that do not use it.
 
-4. **Verify in playground** — `pnpm play` (manually check the component in the browser)
-5. **Commit** — use Conventional Commits (e.g., `feat: update button hover style`)
-6. **Push & PR** — branch naming `type/description`, squash merge into `main`
-7. **Publish** *(optional)* — bump version, `pnpm ui:build`, `cd packages/ui && npm publish`
+**Proactive optimization review** — Do not stop at functional correctness. Before finishing a UI change, check for unnecessary network activity, repeated asset loads, avoidable re-renders, redundant state/effect synchronization, and hot-path resource churn.
 
-## Component Design Principles
+**Prefer durable simplicity** — Favor patterns that are easy to understand and cheap to maintain over clever abstractions or overly specific one-off rules.
 
-**Component autonomy** — When a component can fully own its data and behavior, it should. Avoid prop-drilling state through intermediaries that don't use it. Specifically:
+## UI Library Conventions
 
-- If data is only consumed by a single leaf component (e.g., a clock displaying the current time), that component should manage the data internally rather than receiving it as a prop from a distant ancestor.
-- Parent components should only pass data that they themselves produce or that coordinates multiple children.
-- Prefer local state, local effects, and custom hooks within the component that needs them over threading props through layers of wrappers.
-- This improves reusability (the component works standalone), reduces coupling (intermediary components don't carry irrelevant props), and limits unnecessary re-renders.
+- Components live under `packages/ui/src/components/`, typically one directory per component.
+- Public exports go through `packages/ui/src/index.ts`.
+- Use **flat named exports** for public primitives.
+- Use **CVA** for variant-heavy styling.
+- Use `cn()` by default and `cnPure()` only when the base font injection should be skipped.
+- Prefer Tailwind utilities over custom CSS. Add CSS only when Tailwind cannot express the style cleanly.
+- Prefer CSS-variable-backed Tailwind values over hardcoded colors so components remain themeable.
+- For complex pixel-precise graphics, prefer inline SVG components that use theme variables.
 
-## Component Conventions (`packages/ui`)
+## Theme And Styling
 
-- One directory per component under `src/components/` (e.g., `button/button.tsx`).
-- **Compound components** — Two export styles are used:
-  - **Namespace (callable root)**: `Object.assign` with namespace files (`*-namespace.ts`): `export const Tabs = Object.assign(TabsRoot, { List, Tab, Panel })`
-  - **Flat exports (shadcn/ui style)**: Individual named exports (e.g., `WindowFrame`, `WindowTitleBar`, `TreeViewRoot`, `TreeViewItem`) — no namespace wrapper
-- **CVA** (`class-variance-authority`) for variant-based styling. Define variants via `cva()`, derive props with `VariantProps<typeof variants>`.
-- **`cn()`** (`src/lib/utils.ts`) wraps `clsx` + `tailwind-merge` and auto-injects an 11px base font. Use **`cnPure()`** to skip the font injection.
-- All public exports go through `src/index.ts`.
+- The library is Tailwind CSS v4 based and uses Windows 98 design tokens.
+- Keep styling theme-first: use CSS variable-backed utilities such as `bg-(--button-face)` and `text-(--window-text)`.
+- Treat shared theme config as library-owned and theme variable values as consumer-customizable.
 
-### Inline SVG Icons
+## Playground Architecture
 
-For complex vector graphics (e.g., slider thumbs), create a separate `*-icons.tsx` file with inline SVG components. This approach:
+- Window/process state is managed from `packages/playground/src/contexts/process/`.
+- App metadata is registered in `packages/playground/src/contexts/process/directory.ts`.
+- Window implementations live under `packages/playground/src/directory/`.
+- Component docs content lives under `packages/playground/src/content/<component>/`.
 
-1. **Enables pixel-perfect rendering** — SVG paths match the original design exactly
-2. **Supports theme adaptation** — Use CSS variables instead of hardcoded colors
-3. **Follows the Win98 3D bevel pattern:**
+## Testing And React Rules
 
-| SVG Color | CSS Variable | Win98 Role |
-|-----------|--------------|------------|
-| White / Light | `var(--button-hilight)` | Top-left highlight edge |
-| ButtonFace | `var(--button-face)` | Main button background |
-| Medium Gray | `var(--button-shadow)` | Bottom-right shadow edge |
-| Black / Dark | `var(--button-dk-shadow)` | Outer dark border |
+- UI tests run in real Chromium via Vitest + Playwright browser mode.
+- Prefer behavioral assertions over snapshots unless the visual output itself is the contract.
+- React Compiler is enabled in both packages.
+- Never mutate refs during render.
+- For latest-callback refs, update the ref in `useLayoutEffect` or `useEffect`, not during render.
 
-Example: `packages/ui/src/components/slider/slider-icons.tsx`
+## Delivery Conventions
 
-## Styling
+- Use Conventional Commits.
+- Use branch names like `type/description`.
+- Do not assume repo hooks will fix issues automatically; run `pnpm lint` yourself.
+- Publishing `packages/ui` is manual: bump the package version, run `pnpm ui:build`, then publish from `packages/ui`.
 
-- **Tailwind CSS v4** with Windows 98 design tokens. Components use Tailwind v4's **arbitrary CSS variable syntax** directly (e.g., `bg-(--button-face)`, `text-(--window-text)`, `shadow-(--shadow-raised)`) instead of `@theme inline` tokens. The CSS is split into three source files:
-  - **`src/theme-variables.css`** — CSS custom properties (`:root` and `[data-theme]` overrides). Consumer template — consumers copy and customize. Exported as `murasaki-react98/theme-variables.css`.
-  - **`src/theme-config.css`** — Shadow CSS custom properties (`:root`), `@utility` definitions (`sunken-panel`, `pixelated`, etc.), `@layer base` (fonts, box-sizing), scrollbar styles. Library-owned — consumers import, never copy. Exported as `murasaki-react98/theme-config.css`.
-  - **`src/globals.css`** — Aggregator importing both. Exported as `murasaki-react98/theme.css` (source) and compiled to `dist/globals.css` (non-Tailwind consumers).
-- **Consumer usage patterns:**
-  - **Quick-start**: `@import "murasaki-react98/theme.css"` — imports everything.
-  - **shadcn/ui pattern** (recommended): `@import "murasaki-react98/theme-config.css"` + define `:root { ... }` with variables copied from `theme-variables.css`.
-- **CSS variable syntax in components**: Use Tailwind v4 arbitrary value syntax with CSS variables: `bg-(--button-face)`, `text-(--window-text)`, `border-(--button-shadow)`, `shadow-(--shadow-raised)`, `shadow-(--shadow-sunken)`, `shadow-(--shadow-border-field)`, etc.
-- **Tailwind-first styling**: Always prefer Tailwind utility classes over custom CSS classes or inline `style` attributes. Only add rules to CSS files when Tailwind cannot express the style (e.g., pseudo-elements with `content`, complex keyframes, or MDX prose styles).
-- **Theme-first colors**: Use CSS variable-backed Tailwind syntax (e.g., `bg-(--hilight)`, `text-(--desktop-text)`, `bg-(--window)`) instead of hardcoded colors (e.g., `text-white`, `bg-[#0a246a]`). All colors and visual tokens should come from the Win98 theme variables so styles adapt automatically when switching themes. Use `bg-(--window)` for content area backgrounds (white in Win98) and `bg-(--button-face)` for window chrome (silver/ButtonFace).
-- **Theme reference**: When creating or updating component styles, follow `packages/ui/template-theme-explained.en.md` as the authoritative guide for Win98 visual patterns (button states, borders, 3D effects, color usage).
-- Custom utilities: `sunken-panel`, `bgi-icon-*`, `pixelated`.
-- Build outputs a single `dist/globals.css`; all assets (fonts, icons) are inlined as base64.
+## Maintaining AI Guidance
 
-## Path Alias & File Naming
+Keep this file and `CLAUDE.md` aligned.
 
-- **`#/*`** maps to `./src/*` (configured in tsconfig `imports` and vite `resolve.alias`).
-- All source files use **kebab-case** (`my-component.tsx`, `use-draggable.ts`).
+Update them when stable project conventions change, such as:
 
-## Playground Architecture (`packages/playground`)
+- package structure
+- build, test, or release workflow
+- cross-cutting architectural patterns
+- shared styling or API conventions
 
-- Window management uses a **React Context** system in `src/contexts/process/`:
-  - `useProcesses()` — full state + actions
-  - `useProcess(id)` — single process state with `isActive` and `zIndex`
-  - `useProcessActions()` — memoized actions only (avoids re-renders)
-  - `useProcessList()` — flat array of running processes
-- Docs pages are MDX files under `src/docs/` with companion `demo-*.tsx` files.
-
-## Dependencies & Tooling
-
-- **pnpm catalogs** (`pnpm-workspace.yaml`) centralize dependency versions — use `catalog:` specifiers in `package.json`.
-- **ESLint**: `@antfu/eslint-config` with `type: 'lib'`, `react: true`.
-- **React Compiler** (`babel-plugin-react-compiler`) is enabled in **both** `packages/ui` and `packages/playground` Vite configs.
-- **Testing**: Vitest with Playwright browser provider; test files live in `packages/ui/tests/`. Run a single test: `pnpm --filter murasaki-react98 test -- path/to/test.ts`.
-- Build uses `preserveModules: true` for tree-shaking by consumers.
-
-## Testing Conventions
-
-Tests run in **real Chromium** via Vitest + Playwright browser mode (`vitest-browser-react`). Test files live in `packages/ui/tests/`.
-
-- **File naming**: `tests/{component-name}.test.tsx` (e.g., `button.test.tsx`, `tabs.test.tsx`)
-- **Setup file**: `tests/setup.ts` imports `globals.css` so Tailwind classes are available in tests
-- **Test helpers**: `tests/utils.tsx` provides context wrappers for compound components (e.g., `TabsWrapper`)
-- **Structure per component**:
-  ```ts
-  describe('component-name', () => {
-    // Rendering: default render, variant application, className/ref forwarding
-    // Interaction: click, keyboard (via userEvent from 'vitest/browser')
-    // State: controlled vs uncontrolled
-    // Edge cases: disabled, readOnly, empty props
-  })
-  ```
-- **Behavioral assertions over snapshots**: Use `getByRole`, `toHaveAttribute`, `toBeVisible` instead of inline snapshots for interactive components
-- **Disabled/hidden elements**: Playwright refuses to click disabled or invisible elements. Use native DOM `.element().click()` or `userEvent.keyboard()` for these cases
-
-## React Compiler & Hooks Conventions
-
-React Compiler is enabled in both packages. All code must satisfy its rules:
-
-- **Never mutate refs during render** — `ref.current = value` must be inside `useEffect`, `useLayoutEffect`, or an event handler, never at the top level of a component/hook body.
-- **Latest-callback ref pattern** — To keep a stable ref pointing to the latest callback without re-subscribing effects:
-  ```ts
-  const callbackRef = useRef(callback)
-  useLayoutEffect(() => { callbackRef.current = callback })   // sync before paint
-  ```
-  Use `useLayoutEffect` (no deps) in client-only code. Fall back to `useEffect` if SSR compatibility is needed.
-
-## Commit Messages
-
-[Conventional Commits](https://www.conventionalcommits.org/), **lowercase** type + description, imperative tense. Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`. Optional scope: `chore(lint): enforce catalog specifier`.
-
-Pre-commit hook (`simple-git-hooks` + `lint-staged`) auto-runs ESLint fix on staged files.
-
-## PR Workflow
-
-- Branch naming: `type/description` (e.g., `feat/add-slider`, `fix/button-focus`)
-- Squash merge into `main`
-- Require at least one review approval
-- `pnpm lint` and `pnpm ui:test` must pass before merge
-
-## Publishing (`packages/ui`)
-
-Manual process — no automated release tooling:
-
-1. Bump `version` in `packages/ui/package.json`
-2. `pnpm ui:build`
-3. `cd packages/ui && npm publish`
-
-## Maintaining AI Instruction Files
-
-Update both `CLAUDE.md` and `.github/copilot-instructions.md` when:
-
-- Adding, removing, or renaming components or hooks
-- Changing build commands, scripts, or workflow
-- Modifying architectural patterns (e.g., state management, context structure)
-- Adding new conventions (file naming, export patterns, etc.)
-
-Keep both files in sync.
+Avoid filling these files with feature inventories, fragile examples, or implementation trivia that will drift quickly. Prefer concise rules that stay true as the codebase evolves.

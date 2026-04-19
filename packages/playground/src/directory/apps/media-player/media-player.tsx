@@ -251,11 +251,6 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
               className="pointer-events-none select-none pixelated w-40 max-w-[72%] h-auto"
             />
           ) : null}
-          <AudioVisualizer
-            getMediaElement={player.getMediaElement}
-            isPlaying={player.isPlaying}
-            isAudio={!player.hasVideo && !showEmptyPlaceholder}
-          />
         </div>
 
         {/* Seek bar area */}
@@ -371,8 +366,20 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           {/* Vertical divider */}
           <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
 
+          {/* Audio visualizer - compact waveform display */}
+          <div className="w-[100px] shadow-(--shadow-sunken) bg-(--button-face) overflow-hidden shrink-0 box-content p-px self-stretch">
+            <AudioVisualizer
+              getMediaElement={player.getMediaElement}
+              isPlaying={player.isPlaying}
+              isAudio={!player.hasVideo && !showEmptyPlaceholder}
+            />
+          </div>
+
+          {/* Vertical divider */}
+          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
           {/* Time display - sunken field */}
-          <div className="flex-1 shadow-(--shadow-border-field) bg-(--window) px-1 py-px">
+          <div className="flex-1 flex items-center shadow-(--shadow-border-field) bg-(--window) px-1 tabular-nums whitespace-nowrap self-stretch">
             {player.formattedCurrentTime}
           </div>
 

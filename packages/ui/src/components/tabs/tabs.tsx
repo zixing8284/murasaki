@@ -6,6 +6,9 @@ import { useId, useState } from 'react'
 
 import { TabsContext, useTabsContext } from './tabs-context'
 
+export { useTabsContext } from './tabs-context'
+export type { TabsContextValue } from './tabs-context'
+
 // ============================================================================
 // TabList
 // ============================================================================

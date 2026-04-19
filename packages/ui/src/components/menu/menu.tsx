@@ -62,6 +62,12 @@ export interface MenuItemProps extends React.ComponentProps<'li'> {
   icon?: React.ReactNode
   disabled?: boolean
   selected?: boolean
+  /**
+   * When true, always reserve space for the icon column even when `icon`
+   * is `null` / `undefined`. Useful in menus where some items have icons
+   * (e.g. a check glyph) and others don't, so the text stays aligned.
+   */
+  reserveIconSpace?: boolean
 }
 
 export function MenuItem({
@@ -69,10 +75,13 @@ export function MenuItem({
   icon,
   disabled = false,
   selected = false,
+  reserveIconSpace = false,
   children,
   ref,
   ...props
 }: MenuItemProps): React.ReactElement {
+  const showIconSlot = icon != null || reserveIconSpace
+
   return (
     <li
       ref={ref}
@@ -81,7 +90,7 @@ export function MenuItem({
       className={cn(menuItemVariants({ disabled, selected }), className)}
       {...props}
     >
-      {icon && <span className="w-4 h-4 shrink-0 flex-center">{icon}</span>}
+      {showIconSlot && <span className="w-4 h-4 shrink-0 flex-center">{icon}</span>}
       <span className="flex-1">{children}</span>
     </li>
   )

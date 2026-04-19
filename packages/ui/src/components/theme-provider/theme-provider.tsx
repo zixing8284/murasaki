@@ -2,6 +2,9 @@ import type { ThemeId } from '#/components/theme-provider/theme-context'
 import { ThemeContext, themeIds } from '#/components/theme-provider/theme-context'
 import { useCallback, useEffect, useState } from 'react'
 
+export { useTheme, themeIds } from '#/components/theme-provider/theme-context'
+export type { ThemeContextValue, ThemeId } from '#/components/theme-provider/theme-context'
+
 const STORAGE_KEY = 'murasaki-theme'
 const DEFAULT_THEME: ThemeId = 'windows-98'
 

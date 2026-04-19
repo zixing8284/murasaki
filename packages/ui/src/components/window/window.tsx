@@ -40,3 +40,11 @@ export type { WindowTitleProps } from './window-title'
 
 export { WindowTitleBar } from './window-title-bar'
 export type { WindowTitleBarProps } from './window-title-bar'
+
+export { useWindowContext } from './window-context'
+export type {
+  WindowActions,
+  WindowContextValue,
+  WindowMeta,
+  WindowState,
+} from './window-context'

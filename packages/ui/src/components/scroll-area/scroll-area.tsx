@@ -111,3 +111,10 @@ export function ScrollAreaLegacy({
 
 export { useScrollAreaContext } from './scroll-area-context'
 export type { ScrollAreaContextValue } from './scroll-area-context'
+
+export { ScrollAreaScrollbar } from './scroll-area-scrollbar'
+export { ScrollAreaThumb } from './scroll-area-thumb'
+export { ScrollAreaCorner } from './scroll-area-corner'
+export { ArrowUpIcon, ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon } from './scroll-area-icons'
+export { useScrollbar } from './use-scrollbar'
+export type { UseScrollbarOptions } from './use-scrollbar'

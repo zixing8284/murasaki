@@ -13,10 +13,8 @@ export { Divider } from './components/divider/divider'
 export type { DividerProps } from './components/divider/divider'
 
 // Dropdown
-export { Dropdown } from './components/dropdown/dropdown'
-export type { DropdownProps } from './components/dropdown/dropdown'
-export { DropdownNative } from './components/dropdown/dropdown-native'
-export type { DropdownOption } from './components/dropdown/use-dropdown-state'
+export { Dropdown, DropdownNative } from './components/dropdown/dropdown'
+export type { DropdownOption, DropdownProps } from './components/dropdown/dropdown'
 
 // FieldPanel
 export { FieldPanel } from './components/field-panel/field-panel'
@@ -29,27 +27,48 @@ export { GroupBox } from './components/group-box/group-box'
 export { Menu, MenuItem, MenuSeparator } from './components/menu/menu'
 export type { MenuItemProps, MenuProps, MenuSeparatorProps } from './components/menu/menu'
 
+// ContextMenu
+export {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+  useContextMenu,
+} from './components/context-menu/context-menu'
+export type {
+  ContextMenuContentProps,
+  ContextMenuContextValue,
+  ContextMenuProps,
+  ContextMenuTriggerProps,
+} from './components/context-menu/context-menu'
+
 // NumberBox
 export { NumberBox } from './components/number-box/number-box'
 
 // OptionButton
-export { OptionButton } from './components/option-button/option-button'
-export { OptionGroup } from './components/option-button/option-group'
+export { OptionButton, OptionGroup } from './components/option-button/option-button'
 
 // ProgressIndicator
 export { ProgressIndicator } from './components/progress-indicator/progress-indicator'
 
 // ScrollArea
-export { ScrollArea, ScrollAreaLegacy } from './components/scroll-area/scroll-area'
-export type { ScrollAreaProps } from './components/scroll-area/scroll-area'
-export { useScrollAreaContext } from './components/scroll-area/scroll-area'
-export type { ScrollAreaContextValue } from './components/scroll-area/scroll-area'
-export { ScrollAreaScrollbar } from './components/scroll-area/scroll-area-scrollbar'
-export { ScrollAreaThumb } from './components/scroll-area/scroll-area-thumb'
-export { ScrollAreaCorner } from './components/scroll-area/scroll-area-corner'
-export { ArrowUpIcon, ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon } from './components/scroll-area/scroll-area-icons'
-export { useScrollbar } from './components/scroll-area/use-scrollbar'
-export type { UseScrollbarOptions } from './components/scroll-area/use-scrollbar'
+export {
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  ScrollArea,
+  ScrollAreaCorner,
+  ScrollAreaLegacy,
+  ScrollAreaScrollbar,
+  ScrollAreaThumb,
+  useScrollAreaContext,
+  useScrollbar,
+} from './components/scroll-area/scroll-area'
+export type {
+  ScrollAreaContextValue,
+  ScrollAreaProps,
+  UseScrollbarOptions,
+} from './components/scroll-area/scroll-area'
 
 // Slider
 export { Slider } from './components/slider/slider'
@@ -72,28 +91,31 @@ export {
 } from './components/table/table'
 
 // Taskbar
-export { Taskbar } from './components/taskbar/taskbar'
-export type { TaskbarProps } from './components/taskbar/taskbar'
-export { TaskbarDivider } from './components/taskbar/taskbar-divider'
-export type { TaskbarDividerProps } from './components/taskbar/taskbar-divider'
-export { TaskbarNotificationArea } from './components/taskbar/taskbar-notification-area'
-export type { TaskbarNotificationAreaProps } from './components/taskbar/taskbar-notification-area'
-export { TaskbarQuickLaunch } from './components/taskbar/taskbar-quick-launch'
-export type { TaskbarQuickLaunchIcon, TaskbarQuickLaunchProps } from './components/taskbar/taskbar-quick-launch'
-export { TaskbarSystemClock } from './components/taskbar/taskbar-system-clock'
-export type { TaskbarSystemClockProps } from './components/taskbar/taskbar-system-clock'
+export {
+  Taskbar,
+  TaskbarDivider,
+  TaskbarNotificationArea,
+  TaskbarQuickLaunch,
+  TaskbarSystemClock,
+} from './components/taskbar/taskbar'
+export type {
+  TaskbarDividerProps,
+  TaskbarNotificationAreaProps,
+  TaskbarProps,
+  TaskbarQuickLaunchIcon,
+  TaskbarQuickLaunchProps,
+  TaskbarSystemClockProps,
+} from './components/taskbar/taskbar'
 
 // Tabs
-export { Tab, TabList, TabPanel, Tabs } from './components/tabs/tabs'
+export { Tab, TabList, TabPanel, Tabs, useTabsContext } from './components/tabs/tabs'
 export type {
   TabListProps,
   TabPanelProps,
   TabProps,
+  TabsContextValue,
   TabsProps,
 } from './components/tabs/tabs'
-
-export { useTabsContext } from './components/tabs/tabs-context'
-export type { TabsContextValue } from './components/tabs/tabs-context'
 
 // TextBox
 export { TextBox } from './components/text-box/text-box'
@@ -103,15 +125,8 @@ export { Tooltip } from './components/tooltip/tooltip'
 export type { TooltipProps } from './components/tooltip/tooltip'
 
 // Theme
-export { useTheme } from './components/theme-provider/theme-context'
-export type { ThemeContextValue } from './components/theme-provider/theme-context'
-
-// Theme
-export { themeIds } from './components/theme-provider/theme-context'
-export type { ThemeId } from './components/theme-provider/theme-context'
-
-export { ThemeProvider } from './components/theme-provider/theme-provider'
-export type { ThemeProviderProps } from './components/theme-provider/theme-provider'
+export { ThemeProvider, useTheme, themeIds } from './components/theme-provider/theme-provider'
+export type { ThemeContextValue, ThemeId, ThemeProviderProps } from './components/theme-provider/theme-provider'
 // TreeView
 export { TreeView, TreeViewItem } from './components/tree-view/tree-view'
 export type {
@@ -155,13 +170,13 @@ export type {
   WindowTitleProps,
 } from './components/window/window'
 
-export { useWindowContext } from './components/window/window-context'
+export { useWindowContext } from './components/window/window'
 export type {
   WindowActions,
   WindowContextValue,
   WindowMeta,
   WindowState,
-} from './components/window/window-context'
+} from './components/window/window'
 // Hooks
 export { useDraggable } from './hooks/use-draggable'
 export type { UseDraggableOptions } from './hooks/use-draggable'

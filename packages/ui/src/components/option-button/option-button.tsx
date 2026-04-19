@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { RadioBorderIcon, RadioDotIcon } from './option-button-icons'
-import { useOptionButtonGroupContext } from './option-context'
+import { type OptionGroupProps, OptionButtonGroupContext, useOptionButtonGroupContext } from './option-context'
 
 const labelVariants = cva([
   'inline-flex',
@@ -146,3 +146,18 @@ function OptionButtonLabel({
     </label>
   )
 }
+
+// ─── OptionGroup ──────────────────────────────────────────────────────────────
+
+export function OptionGroup(
+  props: React.PropsWithChildren<OptionGroupProps>,
+): React.ReactElement {
+  const { children, name, onChange, selectedValue } = props
+
+  return (
+    <OptionButtonGroupContext value={{ name, onChange, selectedValue }}>
+      {children}
+    </OptionButtonGroupContext>
+  )
+}
+OptionGroup.Option = OptionButton

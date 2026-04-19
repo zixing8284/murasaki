@@ -243,7 +243,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             className={`max-w-full max-h-full p-1 object-contain aspect-video${player.hasVideo ? '' : ' hidden'}`}
             playsInline
           />
-          {showEmptyPlaceholder ? (
+          {!player.hasVideo ? (
             <img
               src={EMPTY_STATE_ICON_SRC}
               alt=""
@@ -371,7 +371,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             <AudioVisualizer
               getMediaElement={player.getMediaElement}
               isPlaying={player.isPlaying}
-              isAudio={!player.hasVideo && !showEmptyPlaceholder}
+              isAudio={!player.hasVideo}
             />
           </div>
 

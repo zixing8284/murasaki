@@ -107,17 +107,15 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
     }
   }, [isAudio, isPlaying, analyserRef, dataRef])
 
-  // Draw empty state when paused/stopped
+  // Draw static line whenever the animation loop is not running
   useEffect(() => {
-    if (!isAudio || isPlaying) return
+    if (isAudio && isPlaying) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     drawEmpty(ctx, getColors(canvas))
   }, [isAudio, isPlaying])
-
-  if (!isAudio) return null
 
   return (
     <canvas

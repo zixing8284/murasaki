@@ -25,6 +25,8 @@ import {
 import { AudioVisualizer } from './audio-visualizer'
 import { useEffect, useRef, useCallback, useState } from 'react'
 
+const EMPTY_STATE_ICON_SRC = '/img/media-player/mediaplayer-bg.png'
+
 function formatTime(seconds: number): string {
   if (isNaN(seconds)) return '00:00'
   const m = Math.floor(seconds / 60)
@@ -80,7 +82,7 @@ function SeekBar({
       {/* Track container */}
       <div
         ref={trackRef}
-        className="relative h-[13px] bg-(--window) shadow-(--shadow-border-field) cursor-pointer"
+        className="relative h-[13px] bg-(--window) shadow-(--shadow-border-field) cursor-pointer before:content-[''] before:absolute before:-left-[7.5px] before:-right-[7.5px] before:top-0 before:bottom-0"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -159,6 +161,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const [showPlaylist, setShowPlaylist] = useState(true)
   const activeItemRef = useRef<HTMLDivElement>(null)
+  const showEmptyPlaceholder = !player.loading && !player.currentTrack
 
   // Update window title based on current track
   const currentTitle = player.currentTrack
@@ -240,10 +243,18 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             className={`max-w-full max-h-full p-1 object-contain aspect-video${player.hasVideo ? '' : ' hidden'}`}
             playsInline
           />
+          {showEmptyPlaceholder ? (
+            <img
+              src={EMPTY_STATE_ICON_SRC}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none select-none pixelated w-40 max-w-[72%] h-auto"
+            />
+          ) : null}
           <AudioVisualizer
             getMediaElement={player.getMediaElement}
             isPlaying={player.isPlaying}
-            isAudio={!player.hasVideo}
+            isAudio={!player.hasVideo && !showEmptyPlaceholder}
           />
         </div>
 

@@ -8,7 +8,7 @@ import {
   MenuSeparator,
 } from 'murasaki-react98'
 import { useRef, useState } from 'react'
-import { ICON_HEIGHT, ICON_WIDTH, useDesktopLayout } from '../../contexts/desktop-layout'
+import { CELL_HEIGHT, CELL_WIDTH, DESKTOP_PADDING, useDesktopLayout } from '../../contexts/desktop-layout'
 
 const DRAG_THRESHOLD = 3
 
@@ -16,8 +16,8 @@ interface DesktopIconProps {
   id: string
   icon: ReactNode
   label: string
-  x: number
-  y: number
+  col: number
+  row: number
   selected: boolean
   onSelect: (id: string) => void
   onOpen: () => void
@@ -28,8 +28,6 @@ interface DragState {
   pointerId: number
   startClientX: number
   startClientY: number
-  origX: number
-  origY: number
   moved: boolean
 }
 
@@ -37,14 +35,14 @@ export function DesktopIcon({
   id,
   icon,
   label,
-  x,
-  y,
+  col,
+  row,
   selected,
   onSelect,
   onOpen,
   menuContainer = null,
 }: DesktopIconProps): React.ReactElement {
-  const { snap, setPosition } = useDesktopLayout()
+  const { setPosition, isCellOccupied } = useDesktopLayout()
   const [dragOffset, setDragOffset] = useState<{ dx: number, dy: number } | null>(null)
   const dragRef = useRef<DragState | null>(null)
   const suppressClickRef = useRef(false)
@@ -59,8 +57,6 @@ export function DesktopIcon({
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startClientY: event.clientY,
-      origX: x,
-      origY: y,
       moved: false,
     }
   }
@@ -99,41 +95,45 @@ export function DesktopIcon({
 
     suppressClickRef.current = true
 
-    const parent = event.currentTarget.parentElement
-    const dx = event.clientX - drag.startClientX
-    const dy = event.clientY - drag.startClientY
-    let nextX = drag.origX + dx
-    let nextY = drag.origY + dy
+    // Compute the target grid cell from the pointer position relative to the
+    // grid container.
+    const container = event.currentTarget.parentElement
+    if (container) {
+      const rect = container.getBoundingClientRect()
+      const relX = event.clientX - rect.left - DESKTOP_PADDING
+      const relY = event.clientY - rect.top - DESKTOP_PADDING
 
-    const snapped = snap({ x: nextX, y: nextY })
-    nextX = snapped.x
-    nextY = snapped.y
+      const targetCol = Math.max(1, Math.round(relX / CELL_WIDTH) + 1)
+      const targetRow = Math.max(1, Math.round(relY / CELL_HEIGHT) + 1)
 
-    if (parent) {
-      const maxX = Math.max(0, parent.clientWidth - ICON_WIDTH)
-      const maxY = Math.max(0, parent.clientHeight - ICON_HEIGHT)
-      nextX = Math.max(0, Math.min(nextX, maxX))
-      nextY = Math.max(0, Math.min(nextY, maxY))
-    }
-    else {
-      nextX = Math.max(0, nextX)
-      nextY = Math.max(0, nextY)
+      // Clamp to the visible grid area.
+      const maxCols = Math.max(1, Math.floor((container.clientWidth - DESKTOP_PADDING) / CELL_WIDTH))
+      const maxRows = Math.max(1, Math.floor((container.clientHeight - DESKTOP_PADDING) / CELL_HEIGHT))
+      const clampedCol = Math.min(targetCol, maxCols)
+      const clampedRow = Math.min(targetRow, maxRows)
+
+      if (!isCellOccupied(clampedCol, clampedRow, id)) {
+        setPosition(id, { col: clampedCol, row: clampedRow })
+      }
     }
 
     setDragOffset(null)
-    setPosition(id, { x: nextX, y: nextY })
   }
 
-  const renderedX = x + (dragOffset?.dx ?? 0)
-  const renderedY = y + (dragOffset?.dy ?? 0)
   const dragging = dragOffset !== null
+  const zIndex = dragging ? 10 : selected ? 1 : undefined
 
   return (
     <ContextMenu container={menuContainer}>
       <ContextMenuTrigger>
         <div
-          className="absolute flex flex-col items-center gap-0.5 w-16 cursor-pointer select-none touch-none"
-          style={{ left: renderedX, top: renderedY, zIndex: dragging ? 1 : undefined }}
+          className="flex flex-col items-center gap-0.5 cursor-pointer select-none touch-none"
+          style={{
+            gridColumnStart: col,
+            gridRowStart: row,
+            transform: dragging ? `translate(${dragOffset.dx}px, ${dragOffset.dy}px)` : undefined,
+            zIndex,
+          }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={finishDrag}
@@ -154,9 +154,10 @@ export function DesktopIcon({
           <span
             className={
               selected
-                ? 'text-[11px] text-center leading-tight px-0.5 bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
-                : 'text-[11px] text-center leading-tight px-0.5 text-(--desktop-text)'
+                ? 'text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-anywhere bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
+                : 'text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-anywhere line-clamp-2 text-(--desktop-text)'
             }
+            title={label}
           >
             {label}
           </span>

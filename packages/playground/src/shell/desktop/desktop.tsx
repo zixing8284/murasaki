@@ -9,16 +9,12 @@ import {
 } from 'murasaki-react98'
 import { useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
-import { useDesktopLayout } from '../../contexts/desktop-layout'
+import { CELL_HEIGHT, CELL_WIDTH, DESKTOP_PADDING, useDesktopLayout } from '../../contexts/desktop-layout'
 import { appDirectory, APP_ID, type AppId, useProcessActions } from '../../contexts/process'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 
 const DESKTOP_MEDIA_ICON = '/img/desktop/MyDocuments.png'
-
-const CheckGlyph = (): React.ReactElement => (
-  <span aria-hidden="true">✓</span>
-)
 
 interface IconEntry {
   id: string
@@ -27,11 +23,21 @@ interface IconEntry {
   onOpen: () => void
 }
 
+const gridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: `repeat(auto-fill, ${CELL_WIDTH}px)`,
+  gridTemplateRows: `repeat(auto-fill, ${CELL_HEIGHT}px)`,
+  gridAutoFlow: 'column',
+  alignContent: 'start',
+  justifyContent: 'start',
+  padding: DESKTOP_PADDING,
+}
+
 export function Desktop(): React.ReactElement {
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
   const { open } = useProcessActions()
   const { items, requestOpenInMediaPlayer, importFiles } = useDesktopFiles()
-  const { positions, alignToGrid, setAlignToGrid, getDefaultPosition } = useDesktopLayout()
+  const { positions, getDefaultPosition } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
 
@@ -77,8 +83,6 @@ export function Desktop(): React.ReactElement {
   }
 
   const handleRefresh = (): void => {
-    // Classic Windows "Refresh" is a visual no-op here; clearing selection
-    // gives immediate feedback without touching persistent state.
     setSelectedIconId(null)
   }
 
@@ -89,6 +93,7 @@ export function Desktop(): React.ReactElement {
           ref={desktopRef}
           data-area="desktop"
           className="absolute inset-0"
+          style={gridStyle}
           onPointerDown={handleBackgroundPointerDown}
         >
           {iconEntries.map((entry, index) => {
@@ -99,8 +104,8 @@ export function Desktop(): React.ReactElement {
                 id={entry.id}
                 icon={entry.icon}
                 label={entry.label}
-                x={pos.x}
-                y={pos.y}
+                col={pos.col}
+                row={pos.row}
                 selected={selectedIconId === entry.id}
                 onSelect={setSelectedIconId}
                 onOpen={entry.onOpen}
@@ -120,14 +125,6 @@ export function Desktop(): React.ReactElement {
       </ContextMenuTrigger>
       <ContextMenuContent>
         <Menu>
-          <MenuItem
-            icon={alignToGrid ? <CheckGlyph /> : null}
-            reserveIconSpace
-            onClick={() => setAlignToGrid(!alignToGrid)}
-          >
-            Align to grid
-          </MenuItem>
-          <MenuSeparator />
           <MenuItem reserveIconSpace onClick={handleRefresh}>Refresh</MenuItem>
           <MenuSeparator />
           <MenuItem reserveIconSpace onClick={handleImportClick}>Import files...</MenuItem>

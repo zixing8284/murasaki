@@ -35,6 +35,9 @@ export type { WindowResizeGripProps } from './window-resize-grip'
 export { WindowStatusBar, WindowStatusBarField } from './window-status-bar'
 export type { WindowStatusBarFieldProps, WindowStatusBarProps } from './window-status-bar'
 
+export { WindowMenuBar, WindowMenuBarItem } from './window-menu-bar'
+export type { WindowMenuBarItemProps, WindowMenuBarProps } from './window-menu-bar'
+
 export { WindowTitle } from './window-title'
 export type { WindowTitleProps } from './window-title'
 

@@ -7,9 +7,9 @@ import {
   MenuItem,
   MenuSeparator,
 } from 'murasaki-react98'
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
-import { CELL_HEIGHT, CELL_WIDTH, DESKTOP_PADDING, useDesktopLayout } from '../../contexts/desktop-layout'
+import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
 import { appDirectory, APP_ID, type AppId, useProcessActions } from '../../contexts/process'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
@@ -26,10 +26,12 @@ interface IconEntry {
 const gridStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: `repeat(auto-fill, ${CELL_WIDTH}px)`,
-  gridTemplateRows: `repeat(auto-fill, ${CELL_HEIGHT}px)`,
+  gridTemplateRows: `repeat(auto-fill, minmax(${CELL_HEIGHT}px, 1fr))`,
   gridAutoFlow: 'column',
   alignContent: 'start',
   justifyContent: 'start',
+  columnGap: COLUMN_GAP,
+  rowGap: ROW_GAP,
   padding: DESKTOP_PADDING,
 }
 
@@ -37,9 +39,14 @@ export function Desktop(): React.ReactElement {
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
   const { open } = useProcessActions()
   const { items, requestOpenInMediaPlayer, importFiles } = useDesktopFiles()
-  const { positions, getDefaultPosition } = useDesktopLayout()
+  const { positions, getDefaultPosition, gridRef } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
+
+  const setGridEl = useCallback((el: HTMLDivElement | null) => {
+    desktopRef.current = el
+    gridRef.current = el
+  }, [gridRef])
 
   const iconEntries = useMemo<IconEntry[]>(() => {
     const apps: IconEntry[] = Object.entries(appDirectory)
@@ -90,7 +97,7 @@ export function Desktop(): React.ReactElement {
     <ContextMenu container={desktopRef.current}>
       <ContextMenuTrigger onlyDirectTarget>
         <div
-          ref={desktopRef}
+          ref={setGridEl}
           data-area="desktop"
           className="absolute inset-0"
           style={gridStyle}

@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
 import type { GridLayout, GridPosition } from './storage'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { DesktopLayoutContext } from './context'
 import { loadLayout, saveLayout } from './storage'
 
 export function DesktopLayoutProvider({ children }: { children: ReactNode }): React.ReactElement {
   const [positions, setPositions] = useState<GridLayout>(() => loadLayout())
+  const gridRef = useRef<HTMLElement | null>(null)
 
   const setPosition = useCallback((id: string, pos: GridPosition) => {
     setPositions((prev) => {
@@ -29,7 +30,7 @@ export function DesktopLayoutProvider({ children }: { children: ReactNode }): Re
   )
 
   const value = useMemo(
-    () => ({ positions, setPosition, isCellOccupied, getDefaultPosition }),
+    () => ({ positions, setPosition, isCellOccupied, getDefaultPosition, gridRef }),
     [positions, setPosition, isCellOccupied, getDefaultPosition],
   )
 

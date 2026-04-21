@@ -1,4 +1,4 @@
-import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react'
+import type { PointerEvent as ReactPointerEvent, ReactElement, ReactNode } from 'react'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -8,7 +8,7 @@ import {
   MenuSeparator,
 } from 'murasaki-react98'
 import { useRef, useState } from 'react'
-import { CELL_HEIGHT, CELL_WIDTH, DESKTOP_PADDING, useDesktopLayout } from '../../contexts/desktop-layout'
+import { calcGridDropTarget, useDesktopLayout } from '../../contexts/desktop-layout'
 
 const DRAG_THRESHOLD = 3
 
@@ -41,8 +41,8 @@ export function DesktopIcon({
   onSelect,
   onOpen,
   menuContainer = null,
-}: DesktopIconProps): React.ReactElement {
-  const { setPosition, isCellOccupied } = useDesktopLayout()
+}: DesktopIconProps): ReactElement {
+  const { setPosition, isCellOccupied, gridRef } = useDesktopLayout()
   const [dragOffset, setDragOffset] = useState<{ dx: number, dy: number } | null>(null)
   const dragRef = useRef<DragState | null>(null)
   const suppressClickRef = useRef(false)
@@ -80,9 +80,10 @@ export function DesktopIcon({
     const drag = dragRef.current
     if (!drag || drag.pointerId !== event.pointerId) return
     dragRef.current = null
+    const dragEl = event.currentTarget
 
     try {
-      event.currentTarget.releasePointerCapture(event.pointerId)
+      dragEl.releasePointerCapture(event.pointerId)
     }
     catch {
       // Already released.
@@ -95,43 +96,66 @@ export function DesktopIcon({
 
     suppressClickRef.current = true
 
-    // Compute the target grid cell from the pointer position relative to the
-    // grid container.
-    const container = event.currentTarget.parentElement
-    if (container) {
-      const rect = container.getBoundingClientRect()
-      const relX = event.clientX - rect.left - DESKTOP_PADDING
-      const relY = event.clientY - rect.top - DESKTOP_PADDING
+    const previousPointerEvents = dragEl.style.pointerEvents
+    dragEl.style.pointerEvents = 'none'
+    const hitTarget = dragEl.ownerDocument.elementFromPoint(event.clientX, event.clientY)
+    dragEl.style.pointerEvents = previousPointerEvents
 
-      const targetCol = Math.max(1, Math.round(relX / CELL_WIDTH) + 1)
-      const targetRow = Math.max(1, Math.round(relY / CELL_HEIGHT) + 1)
+    if (!gridRef.current || !hitTarget || !gridRef.current.contains(hitTarget)) {
+      setDragOffset(null)
+      return
+    }
 
-      // Clamp to the visible grid area.
-      const maxCols = Math.max(1, Math.floor((container.clientWidth - DESKTOP_PADDING) / CELL_WIDTH))
-      const maxRows = Math.max(1, Math.floor((container.clientHeight - DESKTOP_PADDING) / CELL_HEIGHT))
-      const clampedCol = Math.min(targetCol, maxCols)
-      const clampedRow = Math.min(targetRow, maxRows)
-
-      if (!isCellOccupied(clampedCol, clampedRow, id)) {
-        setPosition(id, { col: clampedCol, row: clampedRow })
-      }
+    const target = calcGridDropTarget(
+      gridRef.current,
+      { col, row },
+      event.clientX - drag.startClientX,
+      event.clientY - drag.startClientY,
+    )
+    if (
+      target
+      && (target.col !== col || target.row !== row)
+      && !isCellOccupied(target.col, target.row, id)
+    ) {
+      setPosition(id, target)
     }
 
     setDragOffset(null)
   }
 
   const dragging = dragOffset !== null
-  const zIndex = dragging ? 10 : selected ? 1 : undefined
+  const zIndex = selected ? 1 : undefined
+  // Two-line label budget at 72px width / 11px font. Selected state shows the
+  // full label (multi-line expand). Unselected state truncates the displayed
+  // text with an ellipsis character so overflow never relies on CSS hiding.
+  const LABEL_MAX_CHARS = 20
+  const displayLabel = selected || label.length <= LABEL_MAX_CHARS
+    ? label
+    : `${label.slice(0, LABEL_MAX_CHARS - 1).trimEnd()}…`
+  const content = (
+    <>
+      <div className={selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}>{icon}</div>
+      <span
+        className={
+          selected
+            ? 'max-w-18 text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-break-word bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
+            : 'max-w-18 text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-break-word text-(--desktop-text)'
+        }
+        title={label}
+      >
+        {displayLabel}
+      </span>
+    </>
+  )
 
   return (
     <ContextMenu container={menuContainer}>
       <ContextMenuTrigger>
         <div
-          className="flex flex-col items-center gap-0.5 cursor-pointer select-none touch-none"
+          className="relative cursor-pointer select-none touch-none"
           style={{
             gridColumnStart: col,
             gridRowStart: row,
-            transform: dragging ? `translate(${dragOffset.dx}px, ${dragOffset.dy}px)` : undefined,
             zIndex,
           }}
           onPointerDown={handlePointerDown}
@@ -150,17 +174,22 @@ export function DesktopIcon({
             onOpen()
           }}
         >
-          <div className={selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}>{icon}</div>
-          <span
-            className={
-              selected
-                ? 'text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-anywhere bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
-                : 'text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-anywhere line-clamp-2 text-(--desktop-text)'
-            }
-            title={label}
+          <div
+            className={`flex flex-col items-center gap-0.5 ${dragging ? 'opacity-40 pointer-events-none' : ''}`}
           >
-            {label}
-          </span>
+            {content}
+          </div>
+          {dragging && dragOffset && (
+            <div
+              className="absolute inset-0 flex flex-col items-center gap-0.5 pointer-events-none"
+              style={{
+                transform: `translate(${dragOffset.dx}px, ${dragOffset.dy}px)`,
+                zIndex: 10,
+              }}
+            >
+              {content}
+            </div>
+          )}
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>

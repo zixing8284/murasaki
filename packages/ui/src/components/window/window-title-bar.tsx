@@ -10,7 +10,6 @@ const titleBarVariants = cva(
     'items-center',
     'justify-between',
     'h-[18px]',
-    'mb-1',
     'px-0.5',
     'text-[11px]',
     'font-bold',

@@ -3,6 +3,7 @@ import { useDesktopFiles } from '../../../contexts/desktop-files'
 import { useProcessActions } from '../../../contexts/process'
 import { Divider, WindowStatusBar, WindowStatusBarField, WindowMenuBar, WindowMenuBarItem, SunkenPanel, Tooltip, Slider } from 'murasaki-react98'
 import { RndWindow } from '../../../shell/window/rnd-window'
+import { InactiveClickGuard } from '../../../shell/window/inactive-click-guard'
 import { useMediaPlayer } from './use-media-player'
 import {
   SeekThumbIcon,
@@ -223,21 +224,23 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
         />
 
         {/* Menu bar */}
-        <WindowMenuBar>
-          {['File', 'Edit', 'Device', 'Scale', 'Help'].map((menu) => {
-            // Wire File → Open File as a first observable action; others remain placeholders.
-            const isFile = menu === 'File'
-            return (
-              <WindowMenuBarItem
-                key={menu}
-                onClick={isFile ? player.openFilePicker : undefined}
-                disabled={!isFile}
-              >
-                <span className="underline">{menu[0]}</span>{menu.slice(1)}
-              </WindowMenuBarItem>
-            )
-          })}
-        </WindowMenuBar>
+        <InactiveClickGuard windowId={windowId}>
+          <WindowMenuBar>
+            {['File', 'Edit', 'Device', 'Scale', 'Help'].map((menu) => {
+              // Wire File → Open File as a first observable action; others remain placeholders.
+              const isFile = menu === 'File'
+              return (
+                <WindowMenuBarItem
+                  key={menu}
+                  onClick={isFile ? player.openFilePicker : undefined}
+                  disabled={!isFile}
+                >
+                  <span className="underline">{menu[0]}</span>{menu.slice(1)}
+                </WindowMenuBarItem>
+              )
+            })}
+          </WindowMenuBar>
+        </InactiveClickGuard>
 
         {/* Video display area — fills remaining space, min 80px */}
         <div className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden">

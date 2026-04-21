@@ -19,31 +19,11 @@ describe('window menu bar', () => {
     await expect.element(screen.getByRole('menuitem', { name: 'Edit' })).toBeInTheDocument()
   })
 
-  it('swallows menu item clicks when the window is inactive', async () => {
-    const onPointerDown = vi.fn()
+  it('fires menu item clicks regardless of window active state', async () => {
     const onClick = vi.fn()
 
     const screen = await render(
-      <div onPointerDown={onPointerDown}>
-        <WindowProvider active={false}>
-          <WindowMenuBar>
-            <WindowMenuBarItem onClick={onClick}>File</WindowMenuBarItem>
-          </WindowMenuBar>
-        </WindowProvider>
-      </div>,
-    )
-
-    await screen.getByRole('menuitem', { name: 'File' }).click()
-
-    expect(onPointerDown).toHaveBeenCalledOnce()
-    expect(onClick).not.toHaveBeenCalled()
-  })
-
-  it('allows menu item clicks when the window is active', async () => {
-    const onClick = vi.fn()
-
-    const screen = await render(
-      <WindowProvider active>
+      <WindowProvider active={false}>
         <WindowMenuBar>
           <WindowMenuBarItem onClick={onClick}>File</WindowMenuBarItem>
         </WindowMenuBar>

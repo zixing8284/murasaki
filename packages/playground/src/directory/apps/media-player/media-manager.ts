@@ -40,20 +40,21 @@ export class MediaManager {
 
   onTrackEnded?: () => void
 
-  attachElement(el: HTMLMediaElement) {
-    if (this.mediaElement === el) return
+  attachElement(el: HTMLMediaElement): void {
+    if (this.mediaElement === el)
+      return
     this.detachElement()
     this.mediaElement = el
     this.setupEventListeners(el)
   }
 
-  detachElement() {
+  detachElement(): void {
     this.eventCleanup?.()
     this.eventCleanup = null
     this.mediaElement = null
   }
 
-  subscribe(listener: StateChangeListener) {
+  subscribe(listener: StateChangeListener): () => void {
     this.listeners.add(listener)
     listener(this.state)
     return () => {
@@ -65,21 +66,21 @@ export class MediaManager {
     return { ...this.state }
   }
 
-  private notifyStateChange() {
+  private notifyStateChange(): void {
     for (const listener of this.listeners) {
       listener({ ...this.state })
     }
   }
 
-  private updateState(updates: Partial<MediaState>) {
+  private updateState(updates: Partial<MediaState>): void {
     this.state = { ...this.state, ...updates }
     this.notifyStateChange()
   }
 
-  private setupEventListeners(el: HTMLMediaElement) {
+  private setupEventListeners(el: HTMLMediaElement): void {
     const handlers: Array<[string, EventListener]> = []
 
-    const on = (event: string, handler: EventListener) => {
+    const on = (event: string, handler: EventListener): void => {
       el.addEventListener(event, handler)
       handlers.push([event, handler])
     }
@@ -132,7 +133,8 @@ export class MediaManager {
     })
 
     on('error', () => {
-      if ((el as HTMLMediaElement).error?.code === 4 && !this.currentSrc) return
+      if ((el as HTMLMediaElement).error?.code === 4 && !this.currentSrc)
+        return
       this.updateState({ loading: false, isPlaying: false })
     })
 
@@ -150,16 +152,18 @@ export class MediaManager {
     }
   }
 
-  loadTrack(track: Track) {
+  loadTrack(track: Track): void {
     const el = this.mediaElement
-    if (!el) return
+    if (!el)
+      return
 
     const isNew = this.currentSrc !== track.url
     if (isNew) {
       this.currentSrc = track.url
       el.src = track.url
       el.preload = 'auto'
-    } else {
+    }
+    else {
       el.currentTime = 0
     }
 
@@ -170,32 +174,36 @@ export class MediaManager {
       duration: isNew ? 0 : this.state.duration,
     })
 
-    if (isNew) el.load()
+    if (isNew)
+      el.load()
   }
 
-  async loadAndPlay(track: Track) {
+  async loadAndPlay(track: Track): Promise<void> {
     this.loadTrack(track)
     await this.play()
   }
 
-  async play() {
+  async play(): Promise<void> {
     try {
       await this.mediaElement?.play()
-    } catch {
+    }
+    catch {
       this.updateState({ isPlaying: false })
     }
   }
 
-  pause() {
+  pause(): void {
     this.mediaElement?.pause()
   }
 
-  seek(time: number) {
+  seek(time: number): void {
     const el = this.mediaElement
-    if (!el || el.readyState < HTMLMediaElement.HAVE_METADATA) return
+    if (!el || el.readyState < HTMLMediaElement.HAVE_METADATA)
+      return
 
     const duration = el.duration
-    if (!duration || isNaN(duration) || duration <= 0) return
+    if (!duration || Number.isNaN(duration) || duration <= 0)
+      return
 
     const clampedTime = Math.max(0, Math.min(time, duration))
 
@@ -204,19 +212,22 @@ export class MediaManager {
       this.pendingSeekTime = clampedTime
       el.currentTime = clampedTime
       this.updateState({ loading: true, currentTime: clampedTime })
-    } catch {
+    }
+    catch {
       this.isSeeking = false
       this.pendingSeekTime = null
     }
   }
 
-  setVolume(level: number) {
-    if (!this.mediaElement) return
+  setVolume(level: number): void {
+    if (!this.mediaElement)
+      return
     this.mediaElement.volume = Math.max(0, Math.min(1, level / 100))
   }
 
-  setMuted(muted: boolean) {
-    if (!this.mediaElement) return
+  setMuted(muted: boolean): void {
+    if (!this.mediaElement)
+      return
     this.mediaElement.muted = muted
   }
 
@@ -224,7 +235,7 @@ export class MediaManager {
     return this.mediaElement
   }
 
-  destroy() {
+  destroy(): void {
     const el = this.mediaElement
     if (el) {
       el.pause()

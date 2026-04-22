@@ -25,32 +25,32 @@ export function DocsLayout(): React.ReactElement {
     <div className="flex h-full">
       {/* Left panel - TreeView navigation */}
       <FieldPanel className="w-45 shrink-0 h-full">
-          <TreeView>
+        <TreeView>
+          <TreeViewItem
+            label="Welcome"
+            selected={selectedId === 'welcome'}
+            onClick={() => setSelectedId('welcome')}
+          />
+          {docsNavTree.map(node => (
             <TreeViewItem
-              label="Welcome"
-              selected={selectedId === 'welcome'}
-              onClick={() => setSelectedId('welcome')}
-            />
-            {docsNavTree.map(node => (
-              <TreeViewItem
-                key={node.id}
-                label={node.label}
-                defaultExpanded
-                preventCollapse={node.id !== selectedId}
-                selected={selectedId === node.id}
-                onClick={() => setSelectedId(node.id)}
-              >
-                {node.children?.map(child => (
-                  <TreeViewItem
-                    key={child.id}
-                    label={child.label}
-                    selected={selectedId === child.id}
-                    onClick={() => setSelectedId(child.id)}
-                  />
-                ))}
-              </TreeViewItem>
-            ))}
-          </TreeView>
+              key={node.id}
+              label={node.label}
+              defaultExpanded
+              preventCollapse={node.id !== selectedId}
+              selected={selectedId === node.id}
+              onClick={() => setSelectedId(node.id)}
+            >
+              {node.children?.map(child => (
+                <TreeViewItem
+                  key={child.id}
+                  label={child.label}
+                  selected={selectedId === child.id}
+                  onClick={() => setSelectedId(child.id)}
+                />
+              ))}
+            </TreeViewItem>
+          ))}
+        </TreeView>
       </FieldPanel>
 
       {/* Right panel - Content area */}

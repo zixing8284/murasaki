@@ -1,10 +1,10 @@
 import type { TaskbarQuickLaunchIcon } from 'murasaki-react98'
 import {
   Button,
-  Taskbar as TaskbarRoot,
   TaskbarDivider,
   TaskbarNotificationArea,
   TaskbarQuickLaunch,
+  Taskbar as TaskbarRoot,
   TaskbarSystemClock,
 } from 'murasaki-react98'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'

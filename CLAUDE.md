@@ -20,6 +20,7 @@ pnpm play:build
 pnpm ui:build
 pnpm ui:dev
 pnpm ui:test
+pnpm ui:test:watch
 
 pnpm lint
 ```
@@ -29,6 +30,8 @@ When changing anything under `packages/ui/`, use this order:
 1. **Lint** — `pnpm lint`
 2. **Test** — `pnpm ui:test`
 3. **Build** — `pnpm ui:build`
+
+Use `pnpm ui:test:watch` only for interactive development. `pnpm ui:test` should stay one-shot so automation can exit cleanly.
 
 The playground consumes `packages/ui/dist`, not UI source files, so rebuild before verifying library changes in the playground or any other consumer.
 

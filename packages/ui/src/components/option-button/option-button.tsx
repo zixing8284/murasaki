@@ -1,11 +1,12 @@
 import type { VariantProps } from 'class-variance-authority'
 
-import { cn } from '#/lib/utils'
+import type { OptionGroupProps } from './option-context'
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
+import { cn } from '#/lib/utils'
 import { RadioBorderIcon, RadioDotIcon } from './option-button-icons'
-import { type OptionGroupProps, OptionButtonGroupContext, useOptionButtonGroupContext } from './option-context'
+import { OptionButtonGroupContext, useOptionButtonGroupContext } from './option-context'
 
 const labelVariants = cva([
   'inline-flex',

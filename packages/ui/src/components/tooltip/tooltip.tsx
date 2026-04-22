@@ -1,6 +1,6 @@
 import type * as React from 'react'
-import { createPortal } from 'react-dom'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
 
 export interface TooltipProps {
@@ -45,7 +45,8 @@ export function Tooltip({
     clearTimer()
     timerRef.current = setTimeout(() => {
       const el = wrapperRef.current
-      if (!el) return
+      if (!el)
+        return
 
       const rect = el.getBoundingClientRect()
       let actualSide = side
@@ -53,7 +54,8 @@ export function Tooltip({
       // Viewport boundary flip
       if (side === 'top' && rect.top - GAP - TOOLTIP_HEIGHT_ESTIMATE < 0) {
         actualSide = 'bottom'
-      } else if (side === 'bottom' && rect.bottom + GAP + TOOLTIP_HEIGHT_ESTIMATE > window.innerHeight) {
+      }
+      else if (side === 'bottom' && rect.bottom + GAP + TOOLTIP_HEIGHT_ESTIMATE > window.innerHeight) {
         actualSide = 'top'
       }
 

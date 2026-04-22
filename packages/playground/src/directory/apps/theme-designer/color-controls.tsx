@@ -1,5 +1,5 @@
-import { Checkbox } from 'murasaki-react98'
 import type { ThemeColorsState } from './use-theme-colors'
+import { Checkbox } from 'murasaki-react98'
 
 interface ColorControlsProps {
   state: ThemeColorsState
@@ -103,7 +103,8 @@ export function ColorControls({ state }: ColorControlsProps): React.ReactElement
           <div className="flex flex-col gap-0.5">
             {group.items.map((item) => {
               const derived = isDerived(item.key)
-              if (derived) return null
+              if (derived)
+                return null
 
               return (
                 <label

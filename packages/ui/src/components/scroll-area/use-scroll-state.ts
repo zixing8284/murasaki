@@ -98,7 +98,8 @@ export function useScrollState(
   // ── Sync layout ──
   const syncLayout = useCallback(() => {
     const el = viewportRef.current
-    if (!el) return
+    if (!el)
+      return
 
     const vTrackH = vTrackRef.current?.clientHeight ?? 0
     const hTrackW = hTrackRef.current?.clientWidth ?? 0
@@ -127,7 +128,8 @@ export function useScrollState(
   // ── Hide native scrollbar + observe scroll/resize/mutation ──
   useEffect(() => {
     const el = viewportRef.current
-    if (!el) return
+    if (!el)
+      return
 
     // Hide native scrollbar
     el.style.setProperty('scrollbar-width', 'none', 'important')
@@ -142,14 +144,17 @@ export function useScrollState(
     syncLayout()
 
     // Scroll listener
-    const onScroll = (): void => { syncLayout() }
+    const onScroll = (): void => {
+      syncLayout()
+    }
     el.addEventListener('scroll', onScroll, { passive: true })
 
     // ResizeObserver
     let resizeObs: ResizeObserver | null = null
     if (window.ResizeObserver) {
       resizeObs = new ResizeObserver(() => {
-        if (rafIdRef.current != null) return
+        if (rafIdRef.current != null)
+          return
         rafIdRef.current = requestAnimationFrame(() => {
           rafIdRef.current = null
           syncLayout()
@@ -167,7 +172,8 @@ export function useScrollState(
     // MutationObserver — content changes
     let mutRafId: number | null = null
     const mutObs = new MutationObserver(() => {
-      if (mutRafId != null) return
+      if (mutRafId != null)
+        return
       mutRafId = requestAnimationFrame(() => {
         mutRafId = null
         syncLayout()
@@ -179,8 +185,10 @@ export function useScrollState(
       el.removeEventListener('scroll', onScroll)
       resizeObs?.disconnect()
       mutObs.disconnect()
-      if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current)
-      if (mutRafId != null) cancelAnimationFrame(mutRafId)
+      if (rafIdRef.current != null)
+        cancelAnimationFrame(rafIdRef.current)
+      if (mutRafId != null)
+        cancelAnimationFrame(mutRafId)
       hideStyle.parentNode?.removeChild(hideStyle)
       el.style.removeProperty('scrollbar-width')
       el.style.removeProperty('-ms-overflow-style')
@@ -191,24 +199,39 @@ export function useScrollState(
   // ── Scroll actions ──
   const scrollStep = useCallback((axis: 'v' | 'h', direction: -1 | 1) => {
     const el = viewportRef.current
-    if (!el) return
-    if (axis === 'v') el.scrollTop += direction * SCROLL_STEP
-    else el.scrollLeft += direction * SCROLL_STEP
+    if (!el)
+      return
+
+    if (axis === 'v') {
+      el.scrollTop += direction * SCROLL_STEP
+    }
+    else {
+      el.scrollLeft += direction * SCROLL_STEP
+    }
+
     syncLayout()
   }, [viewportRef, syncLayout])
 
   const scrollPage = useCallback((axis: 'v' | 'h', direction: -1 | 1) => {
     const el = viewportRef.current
-    if (!el) return
-    if (axis === 'v') el.scrollTop += direction * el.clientHeight
-    else el.scrollLeft += direction * el.clientWidth
+    if (!el)
+      return
+
+    if (axis === 'v') {
+      el.scrollTop += direction * el.clientHeight
+    }
+    else {
+      el.scrollLeft += direction * el.clientWidth
+    }
+
     syncLayout()
   }, [viewportRef, syncLayout])
 
   // ── Thumb drag ──
   const startDrag = useCallback((axis: 'v' | 'h', startMousePos: number) => {
     const el = viewportRef.current
-    if (!el) return
+    if (!el)
+      return
 
     const startScroll = axis === 'v' ? el.scrollTop : el.scrollLeft
 
@@ -224,10 +247,12 @@ export function useScrollState(
         ? el.scrollHeight - el.clientHeight
         : el.scrollWidth - el.clientWidth
       const travel = trackSize - thumbSize
-      if (travel <= 0) return
+      if (travel <= 0)
+        return
       const scrollDelta = (delta / travel) * scrollSize
 
-      if (axis === 'v') el.scrollTop = startScroll + scrollDelta
+      if (axis === 'v')
+        el.scrollTop = startScroll + scrollDelta
       else el.scrollLeft = startScroll + scrollDelta
       syncLayout()
     }

@@ -23,9 +23,11 @@ export function SwUpdateBalloon(): React.ReactElement {
 
   // Compute portal position from anchor element
   useEffect(() => {
-    if (!visible) return
+    if (!visible)
+      return
     const anchor = anchorRef.current
-    if (!anchor) return
+    if (!anchor)
+      return
 
     const rect = anchor.getBoundingClientRect()
     setPosition({

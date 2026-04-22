@@ -21,9 +21,15 @@ export function rgbToHsl(r: number, g: number, b: number): HSL {
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
 
     switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break
-      case g: h = (b - r) / d + 2; break
-      case b: h = (r - g) / d + 4; break
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0)
+        break
+      case g:
+        h = (b - r) / d + 2
+        break
+      case b:
+        h = (r - g) / d + 4
+        break
     }
 
     h /= 6
@@ -33,11 +39,16 @@ export function rgbToHsl(r: number, g: number, b: number): HSL {
 }
 
 function hue2rgb(p: number, q: number, t: number): number {
-  if (t < 0) t += 1
-  if (t > 1) t -= 1
-  if (t < 1 / 6) return p + (q - p) * 6 * t
-  if (t < 1 / 2) return q
-  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+  if (t < 0)
+    t += 1
+  if (t > 1)
+    t -= 1
+  if (t < 1 / 6)
+    return p + (q - p) * 6 * t
+  if (t < 1 / 2)
+    return q
+  if (t < 2 / 3)
+    return p + (q - p) * (2 / 3 - t) * 6
   return p
 }
 
@@ -85,13 +96,15 @@ export function rgbToCss({ r, g, b }: RGB): string {
 
 export function cssToRgb(css: string): RGB | null {
   const match = css.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/)
-  if (!match) return null
+  if (!match)
+    return null
   return { r: Number(match[1]), g: Number(match[2]), b: Number(match[3]) }
 }
 
 export function cssToHex(css: string): string {
   const rgb = cssToRgb(css)
-  if (!rgb) return '#000000'
+  if (!rgb)
+    return '#000000'
   return rgbToHex(rgb)
 }
 

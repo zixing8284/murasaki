@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import type {
   ComponentProps,
   MouseEvent,
@@ -72,7 +74,7 @@ export function ContextMenu({
 
 // ─── ContextMenuTrigger ───────────────────────────────────────────────────────
 
-type TriggerChildProps = {
+interface TriggerChildProps {
   onContextMenu?: (event: MouseEvent<HTMLElement>) => void
 }
 
@@ -113,8 +115,10 @@ export function ContextMenuTrigger({
   return cloneElement<TriggerChildProps>(child, {
     onContextMenu: (event: MouseEvent<HTMLElement>) => {
       existing?.(event)
-      if (event.defaultPrevented || disabled) return
-      if (onlyDirectTarget && event.target !== event.currentTarget) return
+      if (event.defaultPrevented || disabled)
+        return
+      if (onlyDirectTarget && event.target !== event.currentTarget)
+        return
       event.preventDefault()
       event.stopPropagation()
       ctx.openAt(event.clientX, event.clientY)
@@ -158,9 +162,11 @@ export function ContextMenuContent({
 
   // Clamp the popup so it stays entirely inside the container (or viewport).
   useLayoutEffect(() => {
-    if (!open) return
+    if (!open)
+      return
     const el = ref.current
-    if (!el) return
+    if (!el)
+      return
 
     const menuRect = el.getBoundingClientRect()
 
@@ -185,7 +191,8 @@ export function ContextMenuContent({
   }, [open, x, y, container])
 
   useEffect(() => {
-    if (!open) return
+    if (!open)
+      return
 
     const onDown = (event: Event): void => {
       const node = ref.current
@@ -194,7 +201,8 @@ export function ContextMenuContent({
       }
     }
     const onKey = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') close()
+      if (event.key === 'Escape')
+        close()
     }
     const onScroll = (): void => close()
 
@@ -213,11 +221,13 @@ export function ContextMenuContent({
     }
   }, [open, close])
 
-  if (!open) return null
+  if (!open)
+    return null
 
   const handleClick = (event: MouseEvent<HTMLDivElement>): void => {
     onClick?.(event)
-    if (!closeOnItemClick || event.defaultPrevented) return
+    if (!closeOnItemClick || event.defaultPrevented)
+      return
     const target = event.target instanceof Element
       ? event.target.closest('[role="menuitem"]')
       : null

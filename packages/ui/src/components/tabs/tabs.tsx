@@ -1,8 +1,10 @@
-import { cn, cnPure } from '#/lib/utils'
+/* eslint-disable react-refresh/only-export-components */
 
 import { cva } from 'class-variance-authority'
 
 import { useId, useState } from 'react'
+
+import { cn, cnPure } from '#/lib/utils'
 
 import { TabsContext, useTabsContext } from './tabs-context'
 

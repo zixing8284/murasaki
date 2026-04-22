@@ -9,6 +9,7 @@
     "ui:build": "pnpm --filter murasaki-react98 build",
     "ui:dev": "pnpm --filter murasaki-react98 dev",
     "ui:test": "pnpm --filter murasaki-react98 test",
+    "ui:test:watch": "pnpm --filter murasaki-react98 test:watch",
     "lint": "pnpm eslint .",
     "skills:update": "npx skills add vercel-labs/agent-skills"
   },

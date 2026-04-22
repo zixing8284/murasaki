@@ -1,4 +1,4 @@
-import type { PointerEvent as ReactPointerEvent, ReactElement, ReactNode } from 'react'
+import type { ReactElement, ReactNode, PointerEvent as ReactPointerEvent } from 'react'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -48,7 +48,8 @@ export function DesktopIcon({
   const suppressClickRef = useRef(false)
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
-    if (event.button !== 0) return
+    if (event.button !== 0)
+      return
     event.stopPropagation()
     onSelect(id)
 
@@ -63,13 +64,15 @@ export function DesktopIcon({
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>): void => {
     const drag = dragRef.current
-    if (!drag || drag.pointerId !== event.pointerId) return
+    if (!drag || drag.pointerId !== event.pointerId)
+      return
 
     const dx = event.clientX - drag.startClientX
     const dy = event.clientY - drag.startClientY
 
     if (!drag.moved) {
-      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return
+      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD)
+        return
       drag.moved = true
     }
 
@@ -78,7 +81,8 @@ export function DesktopIcon({
 
   const finishDrag = (event: ReactPointerEvent<HTMLDivElement>): void => {
     const drag = dragRef.current
-    if (!drag || drag.pointerId !== event.pointerId) return
+    if (!drag || drag.pointerId !== event.pointerId)
+      return
     dragRef.current = null
     const dragEl = event.currentTarget
 

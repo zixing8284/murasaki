@@ -1,8 +1,10 @@
-import type { ThemeId } from '#/components/theme-provider/theme-context'
-import { ThemeContext, themeIds } from '#/components/theme-provider/theme-context'
-import { useCallback, useEffect, useState } from 'react'
+/* eslint-disable react-refresh/only-export-components */
 
-export { useTheme, themeIds } from '#/components/theme-provider/theme-context'
+import type { ThemeId } from '#/components/theme-provider/theme-context'
+import { useCallback, useEffect, useState } from 'react'
+import { ThemeContext, themeIds } from '#/components/theme-provider/theme-context'
+
+export { themeIds, useTheme } from '#/components/theme-provider/theme-context'
 export type { ThemeContextValue, ThemeId } from '#/components/theme-provider/theme-context'
 
 const STORAGE_KEY = 'murasaki-theme'

@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import * as React from 'react'
 
 import { cn, cnPure } from '../../lib/utils'
@@ -112,9 +114,9 @@ export function ScrollAreaLegacy({
 export { useScrollAreaContext } from './scroll-area-context'
 export type { ScrollAreaContextValue } from './scroll-area-context'
 
+export { ScrollAreaCorner } from './scroll-area-corner'
+export { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from './scroll-area-icons'
 export { ScrollAreaScrollbar } from './scroll-area-scrollbar'
 export { ScrollAreaThumb } from './scroll-area-thumb'
-export { ScrollAreaCorner } from './scroll-area-corner'
-export { ArrowUpIcon, ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon } from './scroll-area-icons'
 export { useScrollbar } from './use-scrollbar'
 export type { UseScrollbarOptions } from './use-scrollbar'

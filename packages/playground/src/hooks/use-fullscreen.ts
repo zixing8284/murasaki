@@ -20,7 +20,7 @@ export function useFullscreen(ref: FullscreenTarget): {
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
-    const handleChange = () => {
+    const handleChange = (): void => {
       setIsFullscreen(document.fullscreenElement === ref.current)
     }
 
@@ -33,19 +33,23 @@ export function useFullscreen(ref: FullscreenTarget): {
 
   const enter = useCallback(async () => {
     const el = ref.current
-    if (!el || document.fullscreenElement === el) return
+    if (!el || document.fullscreenElement === el)
+      return
     try {
       await el.requestFullscreen()
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to enter fullscreen.', error)
     }
   }, [ref])
 
   const exit = useCallback(async () => {
-    if (document.fullscreenElement !== ref.current) return
+    if (document.fullscreenElement !== ref.current)
+      return
     try {
       await document.exitFullscreen()
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to exit fullscreen.', error)
     }
   }, [ref])
@@ -53,7 +57,8 @@ export function useFullscreen(ref: FullscreenTarget): {
   const toggle = useCallback(async () => {
     if (document.fullscreenElement === ref.current) {
       await exit()
-    } else {
+    }
+    else {
       await enter()
     }
   }, [ref, enter, exit])

@@ -2,8 +2,8 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   BUTTON_FACE_DERIVED_KEYS,
   DEFAULT_COLORS,
-  TITLEBAR_DERIVED_KEYS,
   deriveFromButtonFace,
+  TITLEBAR_DERIVED_KEYS,
 } from './color-utils'
 import { parseThemeFile } from './theme-file'
 

@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 export {
   WindowButtons,
   WindowCloseButton,
@@ -16,8 +18,19 @@ export type {
 export { WindowContent } from './window-content'
 export type { WindowContentProps } from './window-content'
 
+export { useWindowContext } from './window-context'
+export type {
+  WindowActions,
+  WindowContextValue,
+  WindowMeta,
+  WindowState,
+} from './window-context'
+
 export { WindowFrame } from './window-frame'
 export type { WindowFrameProps } from './window-frame'
+
+export { WindowMenuBar, WindowMenuBarItem } from './window-menu-bar'
+export type { WindowMenuBarItemProps, WindowMenuBarProps } from './window-menu-bar'
 
 export { WindowOverlay } from './window-overlay'
 export type { WindowOverlayProps } from './window-overlay'
@@ -35,19 +48,8 @@ export type { WindowResizeGripProps } from './window-resize-grip'
 export { WindowStatusBar, WindowStatusBarField } from './window-status-bar'
 export type { WindowStatusBarFieldProps, WindowStatusBarProps } from './window-status-bar'
 
-export { WindowMenuBar, WindowMenuBarItem } from './window-menu-bar'
-export type { WindowMenuBarItemProps, WindowMenuBarProps } from './window-menu-bar'
-
 export { WindowTitle } from './window-title'
 export type { WindowTitleProps } from './window-title'
 
 export { WindowTitleBar } from './window-title-bar'
 export type { WindowTitleBarProps } from './window-title-bar'
-
-export { useWindowContext } from './window-context'
-export type {
-  WindowActions,
-  WindowContextValue,
-  WindowMeta,
-  WindowState,
-} from './window-context'

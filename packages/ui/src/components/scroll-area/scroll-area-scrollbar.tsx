@@ -11,6 +11,63 @@ export interface ScrollAreaScrollbarProps extends React.ComponentProps<'div'> {
   orientation: 'vertical' | 'horizontal'
 }
 
+interface TrackProps {
+  axis: 'v' | 'h'
+  children: React.ReactNode
+  scrollPage: (axis: 'v' | 'h', direction: -1 | 1) => void
+  // Vertical-specific
+  btnHeight?: number
+  thumbTop?: number
+  // Horizontal-specific
+  barSize?: number
+  thumbLeft?: number
+}
+
+const Track = React.forwardRef<HTMLDivElement, TrackProps>(
+  ({ axis, children, scrollPage, btnHeight, thumbTop, barSize, thumbLeft }, ref) => {
+    const isVertical = axis === 'v'
+
+    const onMouseDown = (e: React.MouseEvent): void => {
+      // Don't page-scroll if the click was on the thumb itself
+      const target = e.target as HTMLElement
+      if (target.closest('[data-murasaki-thumb]'))
+        return
+
+      if (isVertical) {
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+        const clickPos = e.clientY - rect.top
+        scrollPage('v', clickPos < (thumbTop ?? 0) ? -1 : 1)
+      }
+      else {
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+        const clickPos = e.clientX - rect.left
+        scrollPage('h', clickPos < (thumbLeft ?? 0) ? -1 : 1)
+      }
+    }
+
+    const positionStyle: React.CSSProperties = isVertical
+      ? { top: btnHeight, bottom: btnHeight, left: 0, right: 0 }
+      : { left: barSize, right: barSize, top: 0, bottom: 0 }
+
+    return (
+      <div
+        ref={ref}
+        data-murasaki-track={axis}
+        className="absolute cursor-default"
+        style={{
+          backgroundImage: TRACK_BG_IMAGE,
+          backgroundSize: TRACK_BG_SIZE,
+          backgroundColor: TRACK_BG_COLOR,
+          ...positionStyle,
+        }}
+        onMouseDown={onMouseDown}
+      >
+        {children}
+      </div>
+    )
+  },
+)
+
 /**
  * A single scrollbar (vertical or horizontal) with arrow buttons, track, and thumb.
  * Only renders when content overflows in the corresponding direction.
@@ -26,7 +83,8 @@ export function ScrollAreaScrollbar({
   const isVertical = orientation === 'vertical'
 
   const visible = isVertical ? metrics.hasVertical : metrics.hasHorizontal
-  if (!visible) return null
+  if (!visible)
+    return null
 
   return isVertical
     ? (
@@ -118,7 +176,6 @@ function VerticalBar({
     </div>
   )
 }
-
 // ─── Horizontal scrollbar ────────────────────────────────────────────────────
 
 interface HorizontalBarProps extends React.ComponentProps<'div'> {
@@ -217,7 +274,9 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
 
   // Cleanup on unmount
   React.useEffect(() => {
-    return () => { cleanupRef.current?.() }
+    return () => {
+      cleanupRef.current?.()
+    }
   }, [])
 
   return (
@@ -234,61 +293,3 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
     </div>
   )
 }
-
-// ─── Track ───────────────────────────────────────────────────────────────────
-
-interface TrackProps {
-  axis: 'v' | 'h'
-  children: React.ReactNode
-  scrollPage: (axis: 'v' | 'h', direction: -1 | 1) => void
-  // Vertical-specific
-  btnHeight?: number
-  thumbTop?: number
-  // Horizontal-specific
-  barSize?: number
-  thumbLeft?: number
-}
-
-const Track = React.forwardRef<HTMLDivElement, TrackProps>(
-  function Track({ axis, children, scrollPage, btnHeight, thumbTop, barSize, thumbLeft }, ref) {
-    const isVertical = axis === 'v'
-
-    const onMouseDown = (e: React.MouseEvent): void => {
-      // Don't page-scroll if the click was on the thumb itself
-      const target = e.target as HTMLElement
-      if (target.closest('[data-murasaki-thumb]')) return
-
-      if (isVertical) {
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        const clickPos = e.clientY - rect.top
-        scrollPage('v', clickPos < (thumbTop ?? 0) ? -1 : 1)
-      }
-      else {
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        const clickPos = e.clientX - rect.left
-        scrollPage('h', clickPos < (thumbLeft ?? 0) ? -1 : 1)
-      }
-    }
-
-    const positionStyle: React.CSSProperties = isVertical
-      ? { top: btnHeight, bottom: btnHeight, left: 0, right: 0 }
-      : { left: barSize, right: barSize, top: 0, bottom: 0 }
-
-    return (
-      <div
-        ref={ref}
-        data-murasaki-track={axis}
-        className="absolute cursor-default"
-        style={{
-          backgroundImage: TRACK_BG_IMAGE,
-          backgroundSize: TRACK_BG_SIZE,
-          backgroundColor: TRACK_BG_COLOR,
-          ...positionStyle,
-        }}
-        onMouseDown={onMouseDown}
-      >
-        {children}
-      </div>
-    )
-  },
-)

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
+import type { AppId } from '../../contexts/process/directory'
 import { useDraggable, useResizable } from 'murasaki-react98'
 import { useCallback } from 'react'
-import directory from '../../contexts/process/directory'
-import type { AppId } from '../../contexts/process/directory'
 import { useProcesses } from '../../contexts/process'
+import directory from '../../contexts/process/directory'
 import { BaseWindow } from './base-window'
 
 interface RndWindowProps {

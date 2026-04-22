@@ -1,8 +1,6 @@
 import type { CSSProperties } from 'react'
-import { useMemo } from 'react'
 import {
   Button,
-  Tooltip,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -13,6 +11,7 @@ import {
   WindowTitle,
   WindowTitleBar,
 } from 'murasaki-react98'
+import { useMemo } from 'react'
 
 interface DesignerPreviewProps {
   colors: Record<string, string>

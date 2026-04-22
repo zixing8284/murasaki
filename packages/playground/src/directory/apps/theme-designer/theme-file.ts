@@ -1,4 +1,4 @@
-import { CSS_TO_THEME, THEME_TO_CSS, hexToRgb } from './color-utils'
+import { hexToRgb, THEME_TO_CSS } from './color-utils'
 
 // ---------------------------------------------------------------------------
 // Parse
@@ -17,9 +17,10 @@ export function parseThemeFile(content: string): Record<string, string> {
 
   for (const line of lines) {
     const match = line.match(
-      /^\s*([A-Za-z]+)\s*=\s*((?:[1-9]|1\d|2[0-4])?\d|25[0-5])\s+((?:[1-9]|1\d|2[0-4])?\d|25[0-5])\s+((?:[1-9]|1\d|2[0-4])?\d|25[0-5])\s*$/,
+      /^\s*([A-Z]+)\s*=\s*((?:[1-9]|1\d|2[0-4])?\d|25[0-5])\s+((?:[1-9]|1\d|2[0-4])?\d|25[0-5])\s+((?:[1-9]|1\d|2[0-4])?\d|25[0-5])\s*$/i,
     )
-    if (!match) continue
+    if (!match)
+      continue
 
     const themeName = match[1]
     const r = Number(match[2])
@@ -36,11 +37,29 @@ export function parseThemeFile(content: string): Record<string, string> {
 }
 
 function extractColorsSection(content: string): string {
-  // Try to find [Control Panel\Colors] section
-  const sectionMatch = content.match(
-    /\[Control Panel\\Colors\]\s*\n([\s\S]*?)(?=\n\s*\[|$)/,
-  )
-  if (sectionMatch) return sectionMatch[1]
+  const lines = content.split(/\r?\n/)
+  const sectionLines: string[] = []
+  let inColorsSection = false
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      if (trimmed.toLowerCase() === '[control panel\\colors]') {
+        inColorsSection = true
+        continue
+      }
+
+      if (inColorsSection)
+        break
+    }
+
+    if (inColorsSection)
+      sectionLines.push(line)
+  }
+
+  if (inColorsSection)
+    return sectionLines.join('\n')
 
   // Fallback: treat entire content as INI color lines
   return content
@@ -95,7 +114,8 @@ export function exportThemeFile(
   const colorLines = EXPORT_ORDER.map((themeName) => {
     const cssName = THEME_TO_CSS[themeName]
     const hex = cssName ? colors[cssName] : undefined
-    if (!hex) return `${themeName}=0 0 0`
+    if (!hex)
+      return `${themeName}=0 0 0`
     const rgb = hexToRgb(hex)
     return `${themeName}=${rgb.r} ${rgb.g} ${rgb.b}`
   }).join('\n')

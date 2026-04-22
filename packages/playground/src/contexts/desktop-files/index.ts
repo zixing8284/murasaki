@@ -1,7 +1,7 @@
-export { DesktopFilesProvider } from './provider'
 export { useDesktopFiles } from './hooks'
+export { DesktopFilesProvider } from './provider'
 export {
-  isSupportedDesktopMediaFile,
   type DesktopMediaFileEntry,
   type DesktopMediaKind,
+  isSupportedDesktopMediaFile,
 } from './storage'

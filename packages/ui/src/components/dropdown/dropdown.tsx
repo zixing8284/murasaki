@@ -1,11 +1,11 @@
 import type { DropdownOption } from './use-dropdown-state'
 
-import { cn } from '#/lib/utils'
-
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
+
 import { useEffect, useId, useMemo, useRef } from 'react'
+import { cn } from '#/lib/utils'
 import { useScrollbar } from '../scroll-area/use-scrollbar'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './dropdown-icons'
 import { useDropdownState } from './use-dropdown-state'

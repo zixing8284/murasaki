@@ -25,6 +25,7 @@ import {
 } from './media-player-icons'
 import { AudioVisualizer } from './audio-visualizer'
 import { useEffect, useRef, useCallback, useState } from 'react'
+import { useFullscreen } from '../../../hooks/use-fullscreen'
 
 const EMPTY_STATE_ICON_SRC = '/img/media-player/mediaplayer-bg.png'
 
@@ -161,11 +162,52 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   const { title } = useProcessActions()
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const [showPlaylist, setShowPlaylist] = useState(true)
-  const [isMediaFullscreen, setIsMediaFullscreen] = useState(false)
   const activeItemRef = useRef<HTMLDivElement>(null)
   const fullscreenContainerRef = useRef<HTMLDivElement>(null)
-  const showEmptyPlaceholder = !player.loading && !player.currentTrack
+  const { isFullscreen: isMediaFullscreen, toggle: toggleMediaFullscreen } = useFullscreen(fullscreenContainerRef)
   const shouldShowPlaylist = showPlaylist && !isMediaFullscreen
+
+  // Guard the video area from accidental fullscreen toggles caused by
+  // layout shifts (e.g. the Playlist button click followed by a click on
+  // the now-expanded video region can satisfy the browser's dblclick
+  // heuristics). We require two clicks to actually land on the video
+  // element before acting on dblclick.
+  const videoClickCountRef = useRef(0)
+  const videoClickResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const resetVideoClickCount = useCallback(() => {
+    videoClickCountRef.current = 0
+    if (videoClickResetTimerRef.current !== null) {
+      clearTimeout(videoClickResetTimerRef.current)
+      videoClickResetTimerRef.current = null
+    }
+  }, [])
+
+  const handleVideoClick = useCallback(() => {
+    videoClickCountRef.current += 1
+    if (videoClickResetTimerRef.current !== null) {
+      clearTimeout(videoClickResetTimerRef.current)
+    }
+    videoClickResetTimerRef.current = setTimeout(() => {
+      videoClickCountRef.current = 0
+      videoClickResetTimerRef.current = null
+    }, 500)
+  }, [])
+
+  const handleVideoDoubleClick = useCallback(() => {
+    const count = videoClickCountRef.current
+    resetVideoClickCount()
+    if (count < 2) return
+    void toggleMediaFullscreen()
+  }, [resetVideoClickCount, toggleMediaFullscreen])
+
+  useEffect(() => {
+    return () => {
+      if (videoClickResetTimerRef.current !== null) {
+        clearTimeout(videoClickResetTimerRef.current)
+      }
+    }
+  }, [])
 
   // Update window title based on current track
   const currentTitle = player.currentTrack
@@ -207,36 +249,6 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
       active = false
     }
   }, [launchRequest, clearLaunchRequest, getFile, loadLocalFile])
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsMediaFullscreen(document.fullscreenElement === fullscreenContainerRef.current)
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange)
-    }
-  }, [])
-
-  const toggleMediaFullscreen = useCallback(async () => {
-    const container = fullscreenContainerRef.current
-    if (!container) {
-      return
-    }
-
-    try {
-      if (document.fullscreenElement === container) {
-        await document.exitFullscreen()
-        return
-      }
-
-      await container.requestFullscreen()
-    } catch (error) {
-      console.error('Failed to toggle media fullscreen.', error)
-    }
-  }, [])
 
   return (
     <RndWindow windowId={windowId} className="top-[15%] left-[25%]">
@@ -283,9 +295,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           {/* Video display area — fills remaining space, min 80px. Double-click toggles fullscreen for the video + transport region. */}
           <div
             className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden"
-            onDoubleClick={() => {
-              void toggleMediaFullscreen()
-            }}
+            onClick={handleVideoClick}
+            onDoubleClick={handleVideoDoubleClick}
           >
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video

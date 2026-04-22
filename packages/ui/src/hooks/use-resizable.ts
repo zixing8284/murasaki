@@ -149,8 +149,10 @@ export function useResizable<
       // Ensure minimum constraints always win over container limits.
       // If the container is smaller than minWidth/minHeight the element is
       // allowed to overflow rather than being forced below its minimum size.
-      if (maxAllowedWidth < minWidth) maxAllowedWidth = minWidth
-      if (maxAllowedHeight < minHeight) maxAllowedHeight = minHeight
+      if (maxAllowedWidth < minWidth)
+        maxAllowedWidth = minWidth
+      if (maxAllowedHeight < minHeight)
+        maxAllowedHeight = minHeight
 
       // Save original cursor and set resize cursor on body to prevent flicker
       const originalCursor = document.body.style.cursor

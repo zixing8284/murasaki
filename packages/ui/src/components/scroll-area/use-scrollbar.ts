@@ -547,7 +547,8 @@ function bindEvents(s: ScrollbarState): void {
 
   // MutationObserver — content changes
   s.mutationObs = new MutationObserver(() => {
-    if (s.mutationRafId != null) return
+    if (s.mutationRafId != null)
+      return
     s.mutationRafId = requestAnimationFrame(() => {
       s.mutationRafId = null
       syncLayout(s)

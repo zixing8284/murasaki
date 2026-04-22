@@ -141,8 +141,10 @@ export function useDraggable<
       // When the element is larger than the container/viewport, the top-left
       // boundary always takes priority so the titlebar remains reachable.
       // The bottom/right of the element is allowed to overflow in that case.
-      if (maxLeft < minLeft) maxLeft = minLeft
-      if (maxTop < minTop) maxTop = minTop
+      if (maxLeft < minLeft)
+        maxLeft = minLeft
+      if (maxTop < minTop)
+        maxTop = minTop
 
       let hasDragStarted = false
 

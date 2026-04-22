@@ -1,6 +1,6 @@
-import { createContext, use } from 'react'
-
 import type { ScrollMetrics } from './use-scroll-state'
+
+import { createContext, use } from 'react'
 
 export interface ScrollAreaContextValue {
   /** Ref to the native scrollable viewport element */

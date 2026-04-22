@@ -29,14 +29,16 @@ export function calcGridDropTarget(
   dx: number,
   dy: number,
 ): GridPosition | null {
-  if (!gridEl) return null
+  if (!gridEl)
+    return null
 
   const cs = window.getComputedStyle(gridEl)
   const cols = cs.getPropertyValue('grid-template-columns').split(' ')
   const rows = cs.getPropertyValue('grid-template-rows').split(' ')
   const cellW = pxToNum(cols[0] ?? '')
   const cellH = pxToNum(rows[0] ?? '')
-  if (cellW <= 0 || cellH <= 0) return null
+  if (cellW <= 0 || cellH <= 0)
+    return null
 
   const colGap = pxToNum(cs.getPropertyValue('column-gap'))
   const rowGap = pxToNum(cs.getPropertyValue('row-gap'))

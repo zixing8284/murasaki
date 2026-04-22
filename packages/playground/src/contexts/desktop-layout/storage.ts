@@ -15,9 +15,11 @@ const V1_PADDING = 8
 function migrateV1toV2(): GridLayout {
   try {
     const raw = window.localStorage.getItem(LAYOUT_V1_KEY)
-    if (!raw) return {}
+    if (!raw)
+      return {}
     const parsed = JSON.parse(raw) as unknown
-    if (!parsed || typeof parsed !== 'object') return {}
+    if (!parsed || typeof parsed !== 'object')
+      return {}
     const result: GridLayout = {}
     for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
       if (
@@ -42,7 +44,8 @@ function migrateV1toV2(): GridLayout {
 
 function parseV2(raw: string): GridLayout {
   const parsed = JSON.parse(raw) as unknown
-  if (!parsed || typeof parsed !== 'object') return {}
+  if (!parsed || typeof parsed !== 'object')
+    return {}
   const result: GridLayout = {}
   for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
     if (
@@ -61,10 +64,12 @@ function parseV2(raw: string): GridLayout {
 }
 
 export function loadLayout(): GridLayout {
-  if (typeof window === 'undefined') return {}
+  if (typeof window === 'undefined')
+    return {}
   try {
     const v2Raw = window.localStorage.getItem(LAYOUT_V2_KEY)
-    if (v2Raw) return parseV2(v2Raw)
+    if (v2Raw)
+      return parseV2(v2Raw)
     // Migrate from v1 pixel positions if available.
     const migrated = migrateV1toV2()
     if (Object.keys(migrated).length > 0) {
@@ -78,7 +83,8 @@ export function loadLayout(): GridLayout {
 }
 
 export function saveLayout(layout: GridLayout): void {
-  if (typeof window === 'undefined') return
+  if (typeof window === 'undefined')
+    return
   try {
     window.localStorage.setItem(LAYOUT_V2_KEY, JSON.stringify(layout))
   }

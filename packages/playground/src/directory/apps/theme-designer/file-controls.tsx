@@ -1,6 +1,6 @@
-import { useRef } from 'react'
-import { Button } from 'murasaki-react98'
 import type { ThemeColorsState } from './use-theme-colors'
+import { Button } from 'murasaki-react98'
+import { useRef } from 'react'
 import { downloadThemeFile, exportThemeFile, readFileAsText } from './theme-file'
 
 interface FileControlsProps {
@@ -17,11 +17,13 @@ export function FileControls({ state }: FileControlsProps): React.ReactElement {
 
   const handleLoad = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file)
+      return
     const content = await readFileAsText(file)
     state.loadFromThemeFile(content)
     // Reset file input so the same file can be loaded again
-    if (fileInputRef.current) fileInputRef.current.value = ''
+    if (fileInputRef.current)
+      fileInputRef.current.value = ''
   }
 
   const handleLoadClick = (): void => {

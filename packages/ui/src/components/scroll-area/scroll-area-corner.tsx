@@ -16,7 +16,8 @@ export function ScrollAreaCorner({
 }: ScrollAreaCornerProps): React.ReactElement | null {
   const { metrics, BAR_SIZE, BTN_HEIGHT } = useScrollAreaContext()
 
-  if (!metrics.hasVertical || !metrics.hasHorizontal) return null
+  if (!metrics.hasVertical || !metrics.hasHorizontal)
+    return null
 
   return (
     <div

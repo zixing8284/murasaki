@@ -14,13 +14,18 @@ interface AnalysisData {
   timeDomain: Uint8Array<ArrayBuffer>
 }
 
+interface UseAudioVisualizerResult {
+  analyserRef: React.RefObject<AnalyserNode | null>
+  dataRef: React.RefObject<AnalysisData | null>
+}
+
 export type { AnalysisData }
 
 /**
  * Hook managing Web Audio API AnalyserNode connection.
  * Returns refs to the analyser and data buffers — the component drives the single rAF loop.
  */
-export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseAudioVisualizerOptions) {
+export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseAudioVisualizerOptions): UseAudioVisualizerResult {
   const audioCtxRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const dataRef = useRef<AnalysisData | null>(null)
@@ -28,10 +33,12 @@ export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseA
 
   // Connect / disconnect the Web Audio graph
   useEffect(() => {
-    if (!isAudio || !isPlaying) return
+    if (!isAudio || !isPlaying)
+      return
 
     const el = getMediaElement()
-    if (!el) return
+    if (!el)
+      return
 
     // Lazily create AudioContext (needs user gesture — we're in a play handler so it's fine)
     if (!audioCtxRef.current) {
@@ -53,7 +60,8 @@ export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseA
       if (!source) {
         source = ctx.createMediaElementSource(el)
         sourceCache.set(el, source)
-      } else {
+      }
+      else {
         source.disconnect()
       }
 

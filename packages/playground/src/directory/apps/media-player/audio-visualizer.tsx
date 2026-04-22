@@ -8,8 +8,14 @@ const VIRTUAL_H = 16
 // ── 30fps throttle ──────────────────────────────────────────────────────
 const FRAME_INTERVAL = 1000 / 30
 
+interface VisualizerColors {
+  bg: string
+  wave: string
+  center: string
+}
+
 // ── Oscilloscope styling — resolved at draw time from CSS variables ─────
-function getColors(canvas: HTMLCanvasElement) {
+function getColors(canvas: HTMLCanvasElement): VisualizerColors {
   const style = getComputedStyle(canvas)
   return {
     bg: style.getPropertyValue('--button-face').trim() || '#c0c0c0',
@@ -23,8 +29,8 @@ function getColors(canvas: HTMLCanvasElement) {
 function drawWaveform(
   ctx: CanvasRenderingContext2D,
   timeDomain: Uint8Array,
-  colors: { bg: string, wave: string, center: string },
-) {
+  colors: VisualizerColors,
+): void {
   ctx.fillStyle = colors.bg
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
 
@@ -52,7 +58,7 @@ function drawWaveform(
   }
 }
 
-function drawEmpty(ctx: CanvasRenderingContext2D, colors: { bg: string, center: string }) {
+function drawEmpty(ctx: CanvasRenderingContext2D, colors: Pick<VisualizerColors, 'bg' | 'center'>): void {
   ctx.fillStyle = colors.bg
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
 
@@ -68,7 +74,7 @@ interface AudioVisualizerProps {
   isAudio: boolean
 }
 
-export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVisualizerProps) {
+export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVisualizerProps): React.JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>(0)
   const lastFrameTimeRef = useRef<number>(0)
@@ -77,21 +83,25 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
 
   // Animation loop at ~30fps when playing
   useEffect(() => {
-    if (!isAudio || !isPlaying) return
+    if (!isAudio || !isPlaying)
+      return
 
-    function render(now: number) {
+    function render(now: number): void {
       rafRef.current = requestAnimationFrame(render)
 
-      if (now - lastFrameTimeRef.current < FRAME_INTERVAL) return
+      if (now - lastFrameTimeRef.current < FRAME_INTERVAL)
+        return
       lastFrameTimeRef.current = now
 
       const canvas = canvasRef.current
       const analyser = analyserRef.current
       const data = dataRef.current
-      if (!canvas || !analyser || !data) return
+      if (!canvas || !analyser || !data)
+        return
 
       const ctx = canvas.getContext('2d')
-      if (!ctx) return
+      if (!ctx)
+        return
 
       analyser.getByteTimeDomainData(data.timeDomain)
       drawWaveform(ctx, data.timeDomain, getColors(canvas))
@@ -109,11 +119,14 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
 
   // Draw static line whenever the animation loop is not running
   useEffect(() => {
-    if (isAudio && isPlaying) return
+    if (isAudio && isPlaying)
+      return
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas)
+      return
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx)
+      return
     drawEmpty(ctx, getColors(canvas))
   }, [isAudio, isPlaying])
 

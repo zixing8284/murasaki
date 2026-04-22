@@ -19,7 +19,7 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
   useEffect(() => {
     let active = true
 
-    const load = async () => {
+    const load = async (): Promise<void> => {
       try {
         await requestPersistentStorage()
         const nextItems = await listDesktopMediaFiles()

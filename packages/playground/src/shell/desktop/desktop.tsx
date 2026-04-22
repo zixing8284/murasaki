@@ -1,4 +1,5 @@
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
+import type { AppId } from '../../contexts/process'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -10,7 +11,7 @@ import {
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
-import { appDirectory, APP_ID, type AppId, useProcessActions } from '../../contexts/process'
+import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 

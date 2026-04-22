@@ -1,8 +1,8 @@
-import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
-
 import * as React from 'react'
+
 import { useCallback, useId, useRef, useState } from 'react'
+import { cn } from '#/lib/utils'
 
 import { RectThumbIcon, TriangleThumbIcon } from './slider-icons'
 

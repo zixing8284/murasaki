@@ -1,36 +1,38 @@
 import type { ProcessComponentProps } from '../../../contexts/process'
+import { Divider, Slider, SunkenPanel, Tooltip, WindowMenuBar, WindowMenuBarItem, WindowStatusBar, WindowStatusBarField } from 'murasaki-react98'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../../contexts/desktop-files'
 import { useProcessActions } from '../../../contexts/process'
-import { Divider, WindowStatusBar, WindowStatusBarField, WindowMenuBar, WindowMenuBarItem, SunkenPanel, Tooltip, Slider } from 'murasaki-react98'
-import { RndWindow } from '../../../shell/window/rnd-window'
+import { useFullscreen } from '../../../hooks/use-fullscreen'
 import { InactiveClickGuard } from '../../../shell/window/inactive-click-guard'
-import { useMediaPlayer } from './use-media-player'
+import { RndWindow } from '../../../shell/window/rnd-window'
+import { AudioVisualizer } from './audio-visualizer'
 import {
-  SeekThumbIcon,
-  PlayIcon,
-  PauseIcon,
-  StopIcon,
-  PreviousIcon,
-  NextIcon,
-  RewindIcon,
+  EjectIcon,
   FastForwardIcon,
-  ShuffleIcon,
+  NextIcon,
+  PauseIcon,
+  PlayIcon,
+  PlaylistIcon,
+  PreviousIcon,
   RepeatAllIcon,
   RepeatOneIcon,
-  EjectIcon,
+  RewindIcon,
+  SeekThumbIcon,
+  ShuffleIcon,
+  StopIcon,
   VolumeHighIcon,
   VolumeLowIcon,
   VolumeMutedIcon,
-  PlaylistIcon,
 } from './media-player-icons'
-import { AudioVisualizer } from './audio-visualizer'
-import { useEffect, useRef, useCallback, useState } from 'react'
-import { useFullscreen } from '../../../hooks/use-fullscreen'
+import { useMediaPlayer } from './use-media-player'
 
 const EMPTY_STATE_ICON_SRC = '/img/media-player/mediaplayer-bg.png'
+const EMPTY_CAPTIONS_TRACK_SRC = 'data:text/vtt;charset=utf-8,WEBVTT%0A%0A'
 
 function formatTime(seconds: number): string {
-  if (isNaN(seconds)) return '00:00'
+  if (Number.isNaN(seconds))
+    return '00:00'
   const m = Math.floor(seconds / 60)
   const s = Math.floor(seconds % 60)
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
@@ -45,20 +47,22 @@ function SeekBar({
   progress: number
   duration: number
   onSeek: (percentage: number) => void
-}) {
+}): React.JSX.Element {
   const trackRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [dragProgress, setDragProgress] = useState(0)
 
   const getPercentageFromEvent = useCallback((e: React.PointerEvent | PointerEvent) => {
     const rect = trackRef.current?.getBoundingClientRect()
-    if (!rect) return 0
+    if (!rect)
+      return 0
     const x = e.clientX - rect.left
     return Math.max(0, Math.min(100, (x / rect.width) * 100))
   }, [])
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    if (duration <= 0) return
+    if (duration <= 0)
+      return
     e.preventDefault()
     const el = e.currentTarget as HTMLElement
     el.setPointerCapture(e.pointerId)
@@ -67,12 +71,14 @@ function SeekBar({
   }, [duration, getPercentageFromEvent])
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isDragging) return
+    if (!isDragging)
+      return
     setDragProgress(getPercentageFromEvent(e))
   }, [isDragging, getPercentageFromEvent])
 
   const handlePointerUp = useCallback((e: React.PointerEvent) => {
-    if (!isDragging) return
+    if (!isDragging)
+      return
     setIsDragging(false)
     onSeek(getPercentageFromEvent(e))
   }, [isDragging, getPercentageFromEvent, onSeek])
@@ -112,8 +118,10 @@ function SeekBar({
               <span
                 className="text-[9px] text-(--button-text) mt-px select-none whitespace-nowrap"
                 style={
-                  i === 0 ? undefined
-                    : i === 10 ? { transform: 'translateX(-100%)' }
+                  i === 0
+                    ? undefined
+                    : i === 10
+                      ? { transform: 'translateX(-100%)' }
                       : { transform: 'translateX(-50%)' }
                 }
               >
@@ -139,13 +147,13 @@ function TransportButton({
   onClick?: () => void
   disabled?: boolean
   active?: boolean
-} & React.ComponentProps<'button'>) {
+} & React.ComponentProps<'button'>): React.JSX.Element {
   return (
     <button
       className={`min-w-6 h-5.5 flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:*:translate-x-px active:not-disabled:*:translate-y-px disabled:opacity-40 border-none box-border px-0.5${active
-          ? ' shadow-(--shadow-sunken) bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'
-          : ''
-        }`}
+        ? ' shadow-(--shadow-sunken) bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'
+        : ''
+      }`}
       onClick={onClick}
       disabled={disabled}
       aria-pressed={active}
@@ -197,7 +205,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   const handleVideoDoubleClick = useCallback(() => {
     const count = videoClickCountRef.current
     resetVideoClickCount()
-    if (count < 2) return
+    if (count < 2)
+      return
     void toggleMediaFullscreen()
   }, [resetVideoClickCount, toggleMediaFullscreen])
 
@@ -231,7 +240,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
 
     let active = true
 
-    const loadRequestedFile = async () => {
+    const loadRequestedFile = async (): Promise<void> => {
       const file = await getFile(launchRequest.fileId)
       if (!active) {
         return
@@ -263,7 +272,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0]
-            if (file) player.addLocalFile(file)
+            if (file)
+              player.addLocalFile(file)
             e.target.value = ''
           }}
         />
@@ -280,7 +290,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
                   onClick={isFile ? player.openFilePicker : undefined}
                   disabled={!isFile}
                 >
-                  <span className="underline">{menu[0]}</span>{menu.slice(1)}
+                  <span className="underline">{menu[0]}</span>
+                  {menu.slice(1)}
                 </WindowMenuBarItem>
               )
             })}
@@ -298,20 +309,29 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             onClick={handleVideoClick}
             onDoubleClick={handleVideoDoubleClick}
           >
-            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video
               ref={player.mediaRefCallback}
               className={`max-w-full max-h-full p-1 object-contain aspect-video${player.hasVideo ? '' : ' hidden'}`}
               playsInline
-            />
-            {!player.hasVideo ? (
-              <img
-                src={EMPTY_STATE_ICON_SRC}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none select-none pixelated w-40 max-w-[72%] h-auto"
+            >
+              <track
+                default
+                kind="captions"
+                label="Empty captions"
+                src={EMPTY_CAPTIONS_TRACK_SRC}
+                srcLang="en"
               />
-            ) : null}
+            </video>
+            {!player.hasVideo
+              ? (
+                  <img
+                    src={EMPTY_STATE_ICON_SRC}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none select-none pixelated w-40 max-w-[72%] h-auto"
+                  />
+                )
+              : null}
           </div>
 
           {/* Seek bar area */}
@@ -327,133 +347,135 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
 
           {/* Transport controls toolbar */}
           <div className={`flex items-center gap-0 px-1 py-1 ${isMediaFullscreen ? 'bg-(--button-face)' : ''}`}>
-          {/* Play/Pause */}
-          <Tooltip text={player.isPlaying ? 'Pause' : 'Play'} side="top">
-            <TransportButton onClick={player.togglePlay} disabled={!player.currentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
-              {player.isPlaying ? (
-                <PauseIcon />
-              ) : (
-                <PlayIcon />
-              )}
-            </TransportButton>
-          </Tooltip>
-          {/* Stop */}
-          <Tooltip text="Stop" side="top">
-            <TransportButton onClick={player.stop} disabled={!player.currentTrack} aria-label="Stop">
-              <StopIcon />
-            </TransportButton>
-          </Tooltip>
-          {/* Eject / Load file */}
-          <Tooltip text="Open File" side="top">
-            <TransportButton onClick={player.openFilePicker} aria-label="Open File">
-              <EjectIcon />
-            </TransportButton>
-          </Tooltip>
-
-          <div className="w-2" />
-
-          {/* Previous */}
-          <Tooltip text="Previous" side="top">
-            <TransportButton onClick={player.previous} disabled={!player.currentTrack} aria-label="Previous">
-              <PreviousIcon />
-            </TransportButton>
-          </Tooltip>
-          {/* Rewind - seek backward */}
-          <Tooltip text="Rewind" side="top">
-            <TransportButton onClick={() => player.seek(Math.max(0, player.currentTime - 5))} disabled={!player.currentTrack} aria-label="Rewind">
-              <RewindIcon />
-            </TransportButton>
-          </Tooltip>
-          {/* Fast Forward - seek forward */}
-          <Tooltip text="Fast Forward" side="top">
-            <TransportButton onClick={() => player.seek(Math.min(player.duration, player.currentTime + 5))} disabled={!player.currentTrack} aria-label="Fast Forward">
-              <FastForwardIcon />
-            </TransportButton>
-          </Tooltip>
-          {/* Next */}
-          <Tooltip text="Next" side="top">
-            <TransportButton onClick={player.next} disabled={!player.currentTrack} aria-label="Next">
-              <NextIcon />
-            </TransportButton>
-          </Tooltip>
-
-          <div className="w-2" />
-
-          {/* Shuffle */}
-          <Tooltip text="Shuffle" side="top">
-            <TransportButton onClick={player.toggleShuffle} active={player.shuffle} aria-label="Shuffle">
-              <ShuffleIcon />
-            </TransportButton>
-          </Tooltip>
-          {/* Repeat All */}
-          <Tooltip text="Repeat All" side="top">
-            <TransportButton onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')} active={player.repeat === 'all'} aria-label="Repeat All">
-              <RepeatAllIcon />
-            </TransportButton>
-          </Tooltip>
-          {/* Repeat One */}
-          <Tooltip text="Repeat One" side="top">
-            <TransportButton onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')} active={player.repeat === 'one'} aria-label="Repeat One">
-              <RepeatOneIcon />
-            </TransportButton>
-          </Tooltip>
-
-          {/* Vertical divider */}
-          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
-
-          {/* Volume mute toggle */}
-          <div className='flex items-center gap-2 px-1'>
-
-            <Tooltip text={player.muted ? 'Unmute' : 'Mute'} side="top">
-              <TransportButton onClick={player.toggleMute} aria-label={player.muted ? 'Unmute' : 'Mute'}>
-                {player.muted ? <VolumeMutedIcon /> : player.volume > 50 ? <VolumeHighIcon /> : <VolumeLowIcon />}
+            {/* Play/Pause */}
+            <Tooltip text={player.isPlaying ? 'Pause' : 'Play'} side="top">
+              <TransportButton onClick={player.togglePlay} disabled={!player.currentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
+                {player.isPlaying
+                  ? (
+                      <PauseIcon />
+                    )
+                  : (
+                      <PlayIcon />
+                    )}
+              </TransportButton>
+            </Tooltip>
+            {/* Stop */}
+            <Tooltip text="Stop" side="top">
+              <TransportButton onClick={player.stop} disabled={!player.currentTrack} aria-label="Stop">
+                <StopIcon />
+              </TransportButton>
+            </Tooltip>
+            {/* Eject / Load file */}
+            <Tooltip text="Open File" side="top">
+              <TransportButton onClick={player.openFilePicker} aria-label="Open File">
+                <EjectIcon />
               </TransportButton>
             </Tooltip>
 
-            {/* Volume slider */}
-            <Slider
-              className="w-20"
-              disabled={player.muted}
-              min={0}
-              max={100}
-              boxIndicator
-              value={player.muted ? 0 : player.volume}
-              onChange={e => player.setVolume(Number(e.target.value))}
-              aria-label="Volume"
-            />
+            <div className="w-2" />
 
+            {/* Previous */}
+            <Tooltip text="Previous" side="top">
+              <TransportButton onClick={player.previous} disabled={!player.currentTrack} aria-label="Previous">
+                <PreviousIcon />
+              </TransportButton>
+            </Tooltip>
+            {/* Rewind - seek backward */}
+            <Tooltip text="Rewind" side="top">
+              <TransportButton onClick={() => player.seek(Math.max(0, player.currentTime - 5))} disabled={!player.currentTrack} aria-label="Rewind">
+                <RewindIcon />
+              </TransportButton>
+            </Tooltip>
+            {/* Fast Forward - seek forward */}
+            <Tooltip text="Fast Forward" side="top">
+              <TransportButton onClick={() => player.seek(Math.min(player.duration, player.currentTime + 5))} disabled={!player.currentTrack} aria-label="Fast Forward">
+                <FastForwardIcon />
+              </TransportButton>
+            </Tooltip>
+            {/* Next */}
+            <Tooltip text="Next" side="top">
+              <TransportButton onClick={player.next} disabled={!player.currentTrack} aria-label="Next">
+                <NextIcon />
+              </TransportButton>
+            </Tooltip>
+
+            <div className="w-2" />
+
+            {/* Shuffle */}
+            <Tooltip text="Shuffle" side="top">
+              <TransportButton onClick={player.toggleShuffle} active={player.shuffle} aria-label="Shuffle">
+                <ShuffleIcon />
+              </TransportButton>
+            </Tooltip>
+            {/* Repeat All */}
+            <Tooltip text="Repeat All" side="top">
+              <TransportButton onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')} active={player.repeat === 'all'} aria-label="Repeat All">
+                <RepeatAllIcon />
+              </TransportButton>
+            </Tooltip>
+            {/* Repeat One */}
+            <Tooltip text="Repeat One" side="top">
+              <TransportButton onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')} active={player.repeat === 'one'} aria-label="Repeat One">
+                <RepeatOneIcon />
+              </TransportButton>
+            </Tooltip>
+
+            {/* Vertical divider */}
+            <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
+            {/* Volume mute toggle */}
+            <div className="flex items-center gap-2 px-1">
+
+              <Tooltip text={player.muted ? 'Unmute' : 'Mute'} side="top">
+                <TransportButton onClick={player.toggleMute} aria-label={player.muted ? 'Unmute' : 'Mute'}>
+                  {player.muted ? <VolumeMutedIcon /> : player.volume > 50 ? <VolumeHighIcon /> : <VolumeLowIcon />}
+                </TransportButton>
+              </Tooltip>
+
+              {/* Volume slider */}
+              <Slider
+                className="w-20"
+                disabled={player.muted}
+                min={0}
+                max={100}
+                boxIndicator
+                value={player.muted ? 0 : player.volume}
+                onChange={e => player.setVolume(Number(e.target.value))}
+                aria-label="Volume"
+              />
+
+            </div>
+
+            {/* Vertical divider */}
+            <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
+            {/* Audio visualizer - compact waveform display */}
+            <div className="w-25 shadow-(--shadow-sunken) bg-(--button-face) overflow-hidden shrink-0 box-content p-px self-stretch">
+              <AudioVisualizer
+                getMediaElement={player.getMediaElement}
+                isPlaying={player.isPlaying}
+                isAudio={!player.hasVideo}
+              />
+            </div>
+
+            {/* Vertical divider */}
+            <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
+            {/* Time display - sunken field */}
+            <div className="flex-1 flex items-center shadow-(--shadow-border-field) bg-(--window) px-1 tabular-nums whitespace-nowrap self-stretch">
+              {player.formattedCurrentTime}
+            </div>
+
+            {/* Vertical divider */}
+            <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+
+            {/* Playlist toggle */}
+            <Tooltip text={showPlaylist ? 'Hide Playlist' : 'Show Playlist'} side="top">
+              <TransportButton onClick={() => setShowPlaylist(prev => !prev)} active={showPlaylist} aria-label={showPlaylist ? 'Hide Playlist' : 'Show Playlist'}>
+                <PlaylistIcon />
+              </TransportButton>
+            </Tooltip>
           </div>
-
-          {/* Vertical divider */}
-          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
-
-          {/* Audio visualizer - compact waveform display */}
-          <div className="w-25 shadow-(--shadow-sunken) bg-(--button-face) overflow-hidden shrink-0 box-content p-px self-stretch">
-            <AudioVisualizer
-              getMediaElement={player.getMediaElement}
-              isPlaying={player.isPlaying}
-              isAudio={!player.hasVideo}
-            />
-          </div>
-
-          {/* Vertical divider */}
-          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
-
-          {/* Time display - sunken field */}
-          <div className="flex-1 flex items-center shadow-(--shadow-border-field) bg-(--window) px-1 tabular-nums whitespace-nowrap self-stretch">
-            {player.formattedCurrentTime}
-          </div>
-
-          {/* Vertical divider */}
-          <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
-
-          {/* Playlist toggle */}
-          <Tooltip text={showPlaylist ? 'Hide Playlist' : 'Show Playlist'} side="top">
-            <TransportButton onClick={() => setShowPlaylist(prev => !prev)} active={showPlaylist} aria-label={showPlaylist ? 'Hide Playlist' : 'Show Playlist'}>
-              <PlaylistIcon />
-            </TransportButton>
-          </Tooltip>
-        </div>
         </div>
 
         {/* Playlist - animated expand/collapse via grid-template-rows transition */}
@@ -469,7 +491,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
                     className={`flex items-center pl-1 pr-1 py-0.5 cursor-pointer select-none ${isActive
                       ? 'bg-(--hilight) text-(--hilight-text)'
                       : 'hover:bg-(--hilight) hover:text-(--hilight-text)'
-                      }`}
+                    }`}
                     onDoubleClick={() => player.playTrack(track)}
                   >
                     <span className="truncate pl-0.5">
@@ -495,7 +517,10 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
               {player.currentTrack ? player.currentTrack.title : 'Ready'}
             </WindowStatusBarField>
             <WindowStatusBarField grow={false} className="w-20">
-              {player.formattedCurrentTime} / {player.formattedDuration}
+              {player.formattedCurrentTime}
+              {' '}
+              /
+              {player.formattedDuration}
             </WindowStatusBarField>
           </WindowStatusBar>
         )}

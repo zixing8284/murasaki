@@ -1,6 +1,6 @@
-import { cn } from '#/lib/utils'
-
 import { cva } from 'class-variance-authority'
+
+import { cn } from '#/lib/utils'
 
 const taskbarVariants = cva([
   'flex',

@@ -44,7 +44,8 @@ export function ThemeDesigner({ windowId }: ProcessComponentProps): React.ReactE
             >
               winclassic
             </a>
-            {' '}by tPenguinLTG (MPL 2.0)
+            {' '}
+            by tPenguinLTG (MPL 2.0)
           </span>
         </div>
       </div>

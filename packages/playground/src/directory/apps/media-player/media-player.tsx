@@ -90,7 +90,7 @@ function SeekBar({
       >
         {/* Seek handle */}
         <div
-          className="absolute top-[-4px] pointer-events-none"
+          className="absolute -top-1 pointer-events-none"
           style={{
             left: `calc(${displayProgress}% - 7.5px)`,
           }}
@@ -141,7 +141,7 @@ function TransportButton({
 } & React.ComponentProps<'button'>) {
   return (
     <button
-      className={`min-w-[24px] h-[22px] flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:[&>*]:translate-x-px active:not-disabled:[&>*]:translate-y-px disabled:opacity-40 border-none box-border px-0.5${active
+      className={`min-w-6 h-5.5 flex items-center justify-center bg-(--button-face) shadow-(--shadow-raised) active:not-disabled:shadow-(--shadow-sunken) active:not-disabled:*:translate-x-px active:not-disabled:*:translate-y-px disabled:opacity-40 border-none box-border px-0.5${active
           ? ' shadow-(--shadow-sunken) bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC")]'
           : ''
         }`}
@@ -161,8 +161,11 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
   const { title } = useProcessActions()
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const [showPlaylist, setShowPlaylist] = useState(true)
+  const [isMediaFullscreen, setIsMediaFullscreen] = useState(false)
   const activeItemRef = useRef<HTMLDivElement>(null)
+  const fullscreenContainerRef = useRef<HTMLDivElement>(null)
   const showEmptyPlaceholder = !player.loading && !player.currentTrack
+  const shouldShowPlaylist = showPlaylist && !isMediaFullscreen
 
   // Update window title based on current track
   const currentTitle = player.currentTrack
@@ -205,6 +208,36 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
     }
   }, [launchRequest, clearLaunchRequest, getFile, loadLocalFile])
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsMediaFullscreen(document.fullscreenElement === fullscreenContainerRef.current)
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }
+  }, [])
+
+  const toggleMediaFullscreen = useCallback(async () => {
+    const container = fullscreenContainerRef.current
+    if (!container) {
+      return
+    }
+
+    try {
+      if (document.fullscreenElement === container) {
+        await document.exitFullscreen()
+        return
+      }
+
+      await container.requestFullscreen()
+    } catch (error) {
+      console.error('Failed to toggle media fullscreen.', error)
+    }
+  }, [])
+
   return (
     <RndWindow windowId={windowId} className="top-[15%] left-[25%]">
 
@@ -242,37 +275,47 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           </WindowMenuBar>
         </InactiveClickGuard>
 
-        {/* Video display area — fills remaining space, min 80px */}
-        <div className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden">
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video
-            ref={player.mediaRefCallback}
-            className={`max-w-full max-h-full p-1 object-contain aspect-video${player.hasVideo ? '' : ' hidden'}`}
-            playsInline
-          />
-          {!player.hasVideo ? (
-            <img
-              src={EMPTY_STATE_ICON_SRC}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none select-none pixelated w-40 max-w-[72%] h-auto"
+        <div
+          ref={fullscreenContainerRef}
+          className={`flex flex-1 min-h-0 flex-col ${isMediaFullscreen ? 'bg-black text-(--button-text)' : 'bg-(--button-face)'}`}
+          data-fullscreen={isMediaFullscreen || undefined}
+        >
+          {/* Video display area — fills remaining space, min 80px. Double-click toggles fullscreen for the video + transport region. */}
+          <div
+            className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden"
+            onDoubleClick={() => {
+              void toggleMediaFullscreen()
+            }}
+          >
+            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+            <video
+              ref={player.mediaRefCallback}
+              className={`max-w-full max-h-full p-1 object-contain aspect-video${player.hasVideo ? '' : ' hidden'}`}
+              playsInline
             />
-          ) : null}
-        </div>
+            {!player.hasVideo ? (
+              <img
+                src={EMPTY_STATE_ICON_SRC}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none select-none pixelated w-40 max-w-[72%] h-auto"
+              />
+            ) : null}
+          </div>
 
-        {/* Seek bar area */}
-        <div className="flex items-start">
-          <SeekBar
-            progress={player.progress}
-            duration={player.duration}
-            onSeek={player.seekByPercentage}
-          />
-        </div>
+          {/* Seek bar area */}
+          <div className={`flex items-start ${isMediaFullscreen ? 'bg-(--button-face)' : ''}`}>
+            <SeekBar
+              progress={player.progress}
+              duration={player.duration}
+              onSeek={player.seekByPercentage}
+            />
+          </div>
 
-        <Divider />
+          <Divider />
 
-        {/* Transport controls toolbar */}
-        <div className="flex items-center gap-0 px-1 py-1">
+          {/* Transport controls toolbar */}
+          <div className={`flex items-center gap-0 px-1 py-1 ${isMediaFullscreen ? 'bg-(--button-face)' : ''}`}>
           {/* Play/Pause */}
           <Tooltip text={player.isPlaying ? 'Pause' : 'Play'} side="top">
             <TransportButton onClick={player.togglePlay} disabled={!player.currentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
@@ -374,7 +417,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
 
           {/* Audio visualizer - compact waveform display */}
-          <div className="w-[100px] shadow-(--shadow-sunken) bg-(--button-face) overflow-hidden shrink-0 box-content p-px self-stretch">
+          <div className="w-25 shadow-(--shadow-sunken) bg-(--button-face) overflow-hidden shrink-0 box-content p-px self-stretch">
             <AudioVisualizer
               getMediaElement={player.getMediaElement}
               isPlaying={player.isPlaying}
@@ -400,9 +443,10 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
             </TransportButton>
           </Tooltip>
         </div>
+        </div>
 
         {/* Playlist - animated expand/collapse via grid-template-rows transition */}
-        <div className={`grid transition-[grid-template-rows] duration-100 ease-in-out ${showPlaylist ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className={`grid transition-[grid-template-rows] duration-100 ease-in-out ${shouldShowPlaylist ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="min-h-0 overflow-hidden">
             <SunkenPanel className="h-40 overflow-y-auto bg-(--window)">
               {player.playlist.map((track) => {
@@ -433,15 +477,17 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): React.ReactEle
           </div>
         </div>
 
-        {/* Status bar - using UI library components */}
-        <WindowStatusBar>
-          <WindowStatusBarField className="truncate">
-            {player.currentTrack ? player.currentTrack.title : 'Ready'}
-          </WindowStatusBarField>
-          <WindowStatusBarField grow={false} className="w-20">
-            {player.formattedCurrentTime} / {player.formattedDuration}
-          </WindowStatusBarField>
-        </WindowStatusBar>
+        {/* Status bar - using UI library components. Hidden while the media region is fullscreen. */}
+        {!isMediaFullscreen && (
+          <WindowStatusBar>
+            <WindowStatusBarField className="truncate">
+              {player.currentTrack ? player.currentTrack.title : 'Ready'}
+            </WindowStatusBarField>
+            <WindowStatusBarField grow={false} className="w-20">
+              {player.formattedCurrentTime} / {player.formattedDuration}
+            </WindowStatusBarField>
+          </WindowStatusBar>
+        )}
       </div>
     </RndWindow>
   )

@@ -43,8 +43,11 @@ export function IframeWindow({
   if (!win)
     return null
 
-  // Only active window's iframe can receive interactions
-  const isInteractive = !isDragging && !isResizing && win.isActive
+  // Only during drag/resize should iframe be isolated from pointer events.
+  // Inactive state is handled by a transparent overlay (see below) so clicks
+  // on cross-origin iframes still activate the window, rather than passing
+  // through to whatever sits behind it.
+  const isInteracting = isDragging || isResizing
 
   return (
     <RndWindow
@@ -59,14 +62,20 @@ export function IframeWindow({
     >
       {/*
        * Iframe wrapper: clicking activates the window and triggers delayed focus.
-       * pointer-events is disabled during drag/resize or when window is inactive.
-       * For same-origin iframes, clicking inside content also triggers the
-       * contentWindow focus listener which calls activate() + focusIframe().
-       * For cross-origin iframes, clicking inside content doesn't bubble up,
-       * so focus is only triggered via the wrapper's onPointerDown.
+       *
+       * - During drag/resize, the iframe itself gets pointer-events: none so
+       *   mousemove/up events don't get swallowed when the pointer crosses
+       *   the iframe boundary.
+       * - When the window is inactive, a transparent "glass" overlay is placed
+       *   above the iframe. This captures the first click to activate the
+       *   window (solving cross-origin iframes where inner clicks can't bubble
+       *   out) and prevents accidental operations inside the iframe content.
+       * - `overscroll-behavior: contain` and `touch-action: none` on the
+       *   wrapper stop pull-to-refresh / chained scroll leaking to the host
+       *   page when touching inside the iframe area.
        */}
       <div
-        className={`w-full h-full relative ${iframeLoaded ? '' : 'opacity-0'} ${isInteractive ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        className={`w-full h-full relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)
@@ -87,9 +96,25 @@ export function IframeWindow({
           src={src}
           sandbox={sandbox}
           referrerPolicy={referrerPolicy}
-          className="w-full h-full border-none block"
+          className={`w-full h-full border-none block ${isInteracting ? 'pointer-events-none' : ''}`}
           title={win.process.title}
         />
+        {/*
+         * Glass overlay: only rendered while the window is inactive. Captures
+         * the activation click so cross-origin iframes behave like native
+         * Windows apps (first click activates, second click interacts).
+         */}
+        {!win.isActive && (
+          <div
+            aria-hidden
+            className="absolute inset-0 cursor-default"
+            onPointerDown={(e) => {
+              e.stopPropagation()
+              actions.activate(windowId)
+              focusIframe()
+            }}
+          />
+        )}
       </div>
     </RndWindow>
   )

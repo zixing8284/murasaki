@@ -91,6 +91,16 @@ const directory = {
     showOnDesktop: true,
     defaultSize: { width: 640, height: 480 },
   },
+  webamp: {
+    name: 'Webamp',
+    Component: lazy(() =>
+      import('../../directory/apps/webamp/webamp-app').then(m => ({ default: m.WebampApp })),
+    ),
+    defaultTitle: 'Webamp',
+    icon: { sm: '/img/desktop/Webamp16.png', lg: '/img/desktop/Webamp.png' },
+    singleton: true,
+    showOnDesktop: true,
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory
@@ -112,6 +122,7 @@ export const APP_ID = {
   JSPaintApp: 'jspaint',
   THEME_DESIGNER: 'themedesigner',
   MEDIA_PLAYER: 'mediaplayer',
+  WEBAMP: 'webamp',
 } as const satisfies Record<string, AppId>
 
 export default directory as Record<AppId, ProcessDirectoryEntry>

@@ -541,9 +541,12 @@ export function useWebamp(
             // Fill the host so child window `position: absolute` coords
             // are resolved against the desktop area (matches system
             // windows, which are clamped to the same container bounds).
+            // Pointer-events scoping lives in `playground.css`:
+            // `#webamp` is pointer-transparent so the full-area wrapper
+            // does not cover desktop icons, and `#webamp > *` re-enables
+            // events on each Webamp window.
             webampEl.style.position = 'absolute'
             webampEl.style.inset = '0'
-            webampEl.style.pointerEvents = 'auto'
           }
 
           // daedalOS parity: close EQ, enable Milkdrop menu, center the

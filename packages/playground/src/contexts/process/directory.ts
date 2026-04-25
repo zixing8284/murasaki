@@ -29,7 +29,7 @@ const directory = {
   docs: {
     name: 'Component Docs',
     Component: lazy(() =>
-      import('../../directory/apps/docs/docs-app').then(m => ({ default: m.DocsApp })),
+      import('../../directory/apps/docs/docs').then(m => ({ default: m.DocsApp })),
     ),
     defaultTitle: 'Component Docs',
     icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
@@ -94,7 +94,7 @@ const directory = {
   webamp: {
     name: 'Webamp',
     Component: lazy(() =>
-      import('../../directory/apps/webamp/webamp-app').then(m => ({ default: m.WebampApp })),
+      import('../../directory/apps/webamp/webamp').then(m => ({ default: m.WebampApp })),
     ),
     defaultTitle: 'Webamp',
     icon: { sm: '/img/desktop/Webamp16.png', lg: '/img/desktop/Webamp.png' },

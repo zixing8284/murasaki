@@ -40,16 +40,19 @@ export function ThemeProvider({
     catch { /* ignore */ }
   }, [])
 
-  // Toggle data-theme attribute on <html>
+  // Toggle data-theme attribute on <html>. Skip writes when the attribute already
+  // matches the desired state to avoid the cleanup→set churn that previously caused
+  // a brief flash where data-theme was wiped between transitions.
   useEffect(() => {
     const el = document.documentElement
+    const current = el.getAttribute('data-theme')
     if (themeId === DEFAULT_THEME) {
-      el.removeAttribute('data-theme')
+      if (current !== null)
+        el.removeAttribute('data-theme')
     }
-    else {
+    else if (current !== themeId) {
       el.setAttribute('data-theme', themeId)
     }
-    return () => el.removeAttribute('data-theme')
   }, [themeId])
 
   return (

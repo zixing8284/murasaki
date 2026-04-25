@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface DropdownOption<T = string> {
   label?: string
@@ -57,11 +57,10 @@ export function useDropdownState<T = string>({
   // Controlled vs uncontrolled
   const currentValue = value ?? internalValue
 
-  // Find current selected option
-  const selectedOption = useMemo(
-    () => options.find(opt => opt.value === currentValue),
-    [options, currentValue],
-  )
+  // Find current selected option. Plain render-time lookup: the array is short
+  // and React Compiler will memoize when beneficial; an explicit useMemo here
+  // only adds overhead without observable savings.
+  const selectedOption = options.find(opt => opt.value === currentValue)
 
   // Active index for keyboard navigation
   const [activeIndex, setActiveIndex] = useState(() => {

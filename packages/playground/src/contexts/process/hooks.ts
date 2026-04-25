@@ -1,21 +1,32 @@
 import type {
   Process,
   ProcessContextActions,
+  ProcessContextState,
   ProcessContextValue,
 } from './types'
 import { use, useMemo } from 'react'
-import { ProcessContext } from './context'
+import { ProcessActionsContext, ProcessStateContext } from './context'
+
+function useProcessState(): ProcessContextState {
+  const ctx = use(ProcessStateContext)
+  if (!ctx) {
+    throw new Error('useProcesses / useProcess must be used within a <ProcessProvider>')
+  }
+  return ctx
+}
 
 /**
  * Access the full process context — state + actions.
  * Equivalent to daedalOS's `useProcesses()`.
+ *
+ * Prefer `useProcessActions()` when you only invoke actions: it skips
+ * subscribing to the reactive state context and avoids re-renders on
+ * unrelated process changes.
  */
 export function useProcesses(): ProcessContextValue {
-  const ctx = use(ProcessContext)
-  if (!ctx) {
-    throw new Error('useProcesses must be used within a <ProcessProvider>')
-  }
-  return ctx
+  const state = useProcessState()
+  const actions = useProcessActions()
+  return useMemo(() => ({ ...state, ...actions }), [state, actions])
 }
 
 /**
@@ -26,7 +37,7 @@ export function useProcess(id: string): {
   isActive: boolean
   zIndex: number
 } | null {
-  const { processes, foregroundId, stackOrder } = useProcesses()
+  const { processes, foregroundId, stackOrder } = useProcessState()
   const process = processes[id]
   if (!process)
     return null
@@ -38,59 +49,22 @@ export function useProcess(id: string): {
 }
 
 /**
- * Get just the action functions — avoids re-renders when only
- * calling actions without reading state.
+ * Get just the action functions — never re-renders on state changes because
+ * the actions context value is stable for the provider's lifetime.
  */
 export function useProcessActions(): ProcessContextActions {
-  const {
-    open,
-    close,
-    activate,
-    minimize,
-    toggleMaximize,
-    restore,
-    deactivateAll,
-    handleTaskbarClick,
-    setContainer,
-    linkElement,
-    title,
-    openEphemeral,
-  } = useProcesses()
-
-  return useMemo(() => ({
-    open,
-    close,
-    activate,
-    minimize,
-    toggleMaximize,
-    restore,
-    deactivateAll,
-    handleTaskbarClick,
-    setContainer,
-    linkElement,
-    title,
-    openEphemeral,
-  }), [
-    open,
-    close,
-    activate,
-    minimize,
-    toggleMaximize,
-    restore,
-    deactivateAll,
-    handleTaskbarClick,
-    setContainer,
-    linkElement,
-    title,
-    openEphemeral,
-  ])
+  const ctx = use(ProcessActionsContext)
+  if (!ctx) {
+    throw new Error('useProcessActions must be used within a <ProcessProvider>')
+  }
+  return ctx
 }
 
 /**
  * Get a flat list of running processes (with PID attached).
  */
 export function useProcessList(): (Process & { id: string })[] {
-  const { processes } = useProcesses()
+  const { processes } = useProcessState()
   return useMemo(
     () => Object.entries(processes)
       .filter(([, proc]) => !proc.ephemeral)

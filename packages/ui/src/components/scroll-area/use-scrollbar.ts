@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 
 import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP, THUMB_BOX_SHADOW, TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scroll-area-constants'
 
@@ -102,9 +102,6 @@ function createButtonSvg(dir: string): SVGSVGElement {
 
 // ─── Scrollbar instance (plain object + functions) ───────────────────────────
 
-// Module-level counter for unique per-element scrollbar IDs.
-let _scrollbarIdCounter = 0
-
 interface ScrollbarState {
   target: HTMLElement
   scrollbarId: string
@@ -164,7 +161,7 @@ function buildButton(dir: string): HTMLDivElement {
 
 // ── Build all scrollbar DOM elements ──
 
-function buildScrollbarDom(target: HTMLElement): ScrollbarState {
+function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarState {
   // Build visual structure first, then append everything beside the target.
 
   // Vertical bar
@@ -305,7 +302,8 @@ function buildScrollbarDom(target: HTMLElement): ScrollbarState {
 
   // Assign a unique attribute so the injected ::-webkit-scrollbar rule targets
   // only this element and not all elements that happen to share the same class.
-  const scrollbarId = String(++_scrollbarIdCounter)
+  // ID is sourced from React's useId() to stay SSR-safe and avoid module-level
+  // mutable state.
   target.setAttribute('data-murasaki-scrollbar-id', scrollbarId)
 
   // Hide native scrollbar
@@ -668,9 +666,9 @@ function destroy(s: ScrollbarState): void {
 
 // ── Create scrollbar instance ──
 
-function createScrollbar(target: HTMLElement): ScrollbarState {
+function createScrollbar(target: HTMLElement, scrollbarId: string): ScrollbarState {
   // One-time setup pipeline used by the hook effect.
-  const state = buildScrollbarDom(target)
+  const state = buildScrollbarDom(target, scrollbarId)
   syncLayout(state)
   bindEvents(state)
   return state
@@ -712,6 +710,7 @@ export function useScrollbar(
 ): void {
   const { disabled = false } = options
   const stateRef = useRef<ScrollbarState | null>(null)
+  const reactId = useId()
 
   useEffect(() => {
     // Effect lifecycle:
@@ -721,12 +720,12 @@ export function useScrollbar(
       return
     }
 
-    const state = createScrollbar(ref.current)
+    const state = createScrollbar(ref.current, reactId)
     stateRef.current = state
 
     return () => {
       destroy(state)
       stateRef.current = null
     }
-  }, [ref, disabled])
+  }, [ref, disabled, reactId])
 }

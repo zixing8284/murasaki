@@ -82,6 +82,20 @@ The playground consumes `packages/ui/dist`, not UI source files, so rebuild befo
 - Do not assume repo hooks will fix issues automatically; run `pnpm lint` yourself.
 - Publishing `packages/ui` is manual: bump the package version, run `pnpm ui:build`, then publish from `packages/ui`.
 
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues for `zixing8284/murasaki-react98`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the default five-label triage vocabulary. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
+
 ## Maintaining AI Guidance
 
 Keep this file and `.github/copilot-instructions.md` aligned.

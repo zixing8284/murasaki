@@ -90,7 +90,7 @@ export function MenuItem({
       className={cn(menuItemVariants({ disabled, selected }), className)}
       {...props}
     >
-      {showIconSlot && <span className="w-4 h-4 shrink-0 flex-center">{icon}</span>}
+      {showIconSlot && <span className="w-4 h-4 shrink-0 flex items-center justify-center">{icon}</span>}
       <span className="flex-1">{children}</span>
     </li>
   )

@@ -13,16 +13,20 @@
   "bugs": {
     "url": "https://github.com/zixing8284/murasaki-react98/issues"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "imports": {
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./dist": "./dist/index.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
     "./globals.css": "./dist/globals.css",
-    "./theme.css": "./src/globals.css",
-    "./theme-config.css": "./src/theme-config.css",
-    "./theme-variables.css": "./src/theme-variables.css",
+    "./theme.css": "./dist/theme.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -30,11 +34,7 @@
   "style": "./dist/globals.css",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "src/assets",
-    "src/globals.css",
-    "src/theme-config.css",
-    "src/theme-variables.css"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"

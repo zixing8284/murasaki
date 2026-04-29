@@ -10,35 +10,44 @@ export type { ThemeContextValue, ThemeId } from '#/components/theme-provider/the
 const STORAGE_KEY = 'murasaki-theme'
 const DEFAULT_THEME: ThemeId = 'windows-98'
 
+function isThemeId(value: string | null): value is ThemeId {
+  return value !== null && themeIds.includes(value as ThemeId)
+}
+
 export interface ThemeProviderProps {
-  /** Initial theme. Falls back to localStorage, then `'windows-98'`. */
+  /** Initial theme supplied by the app. SSR apps should provide this from request-aware data. */
   defaultTheme?: ThemeId
+  /** Browser persistence key. Set to `null` to disable localStorage persistence. */
+  storageKey?: string | null
   children: React.ReactNode
 }
 
 export function ThemeProvider({
   defaultTheme,
+  storageKey = STORAGE_KEY,
   children,
 }: ThemeProviderProps): React.ReactElement {
   const [themeId, setThemeId] = useState<ThemeId>(() => {
-    if (defaultTheme)
-      return defaultTheme
+    if (defaultTheme !== undefined || storageKey === null || typeof window === 'undefined')
+      return defaultTheme ?? DEFAULT_THEME
     try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored && themeIds.includes(stored as ThemeId))
-        return stored as ThemeId
+      const stored = localStorage.getItem(storageKey)
+      if (isThemeId(stored))
+        return stored
     }
-    catch { /* SSR / private browsing */ }
+    catch { /* ignore */ }
     return DEFAULT_THEME
   })
 
   const setTheme = useCallback((id: ThemeId) => {
     setThemeId(id)
+    if (storageKey === null)
+      return
     try {
-      localStorage.setItem(STORAGE_KEY, id)
+      localStorage.setItem(storageKey, id)
     }
     catch { /* ignore */ }
-  }, [])
+  }, [storageKey])
 
   // Toggle data-theme attribute on <html>. Skip writes when the attribute already
   // matches the desired state to avoid the cleanup→set churn that previously caused

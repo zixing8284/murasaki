@@ -3,5 +3,21 @@
 
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "murasaki-react98/theme-config.css";
+@import "murasaki-react98/theme.css";
 @import "./playground.css";
+
+@utility pixelated {
+  image-rendering: pixelated;
+}
+
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+
+@utility flex-center-column {
+  @apply flex flex-col items-center justify-center;
+}
+
+@utility break-line {
+  @apply text-wrap wrap-break-word break-all whitespace-pre-line;
+}

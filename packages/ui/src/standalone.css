@@ -1,4 +1,0 @@
-/* Build entry for dist/globals.css — self-contained bundle for non-Tailwind consumers. */
-
-@import "tailwindcss";
-@import "./globals.css";

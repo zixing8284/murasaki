@@ -1,0 +1,38 @@
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+.fixturePage {
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--background);
+}
+
+.fixtureWindow {
+  left: 24px;
+  top: 24px;
+  width: 360px;
+}
+
+.fixtureContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.fixtureScrollArea {
+  width: 100%;
+  height: 128px;
+}
+
+.fixtureScrollContent {
+  min-width: 460px;
+  padding: 8px;
+}
+
+.fixtureScrollContent p {
+  margin: 0 0 6px;
+}

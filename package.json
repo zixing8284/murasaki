@@ -6,6 +6,7 @@
     "play": "pnpm --filter murasaki-react98-playground dev",
     "play:build": "pnpm --filter murasaki-react98-playground build",
     "play:preview": "pnpm --filter murasaki-react98-playground preview",
+    "next:build": "pnpm --filter murasaki-react98-next-fixture build",
     "ui:build": "pnpm --filter murasaki-react98 build",
     "ui:dev": "pnpm --filter murasaki-react98 dev",
     "ui:test": "pnpm --filter murasaki-react98 test",

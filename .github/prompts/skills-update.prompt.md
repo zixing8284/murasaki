@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Force-update all agent skills to their latest versions
 ---
 

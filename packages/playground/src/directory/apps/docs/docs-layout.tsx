@@ -22,7 +22,7 @@ export function DocsLayout(): React.ReactElement {
   const selectedNode = findNode(docsNavTree, selectedId)
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full p-1">
       {/* Left panel - TreeView navigation */}
       <FieldPanel className="w-45 shrink-0 h-full">
         <TreeView>

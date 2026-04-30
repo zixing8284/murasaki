@@ -4,8 +4,9 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 
-import { useEffect, useId, useMemo, useRef } from 'react'
+import { useId, useMemo, useRef } from 'react'
 import { cn } from '#/lib/utils'
+import { useDismissable } from '#/primitives'
 import { useScrollbar } from '../scroll-area/use-scrollbar'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './dropdown-icons'
 import { useDropdownState } from './use-dropdown-state'
@@ -190,6 +191,7 @@ export function Dropdown<T = string>({
 
   const {
     activeIndex,
+    closeDropdown,
     dropdownRef,
     handleOptionClick,
     handleOptionKeyDown,
@@ -214,26 +216,16 @@ export function Dropdown<T = string>({
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
 
-  // Prevent scrollbar clicks from closing the dropdown.
-  // Scrollbar DOM is appended to the wrapper div (outside the <ul>),
-  // so clicks on it would otherwise trigger the click-outside handler.
-  useEffect(() => {
-    if (!open)
-      return
-    const wrapper = menuWrapperRef.current
-    if (!wrapper)
-      return
-
-    const handleMouseDown = (e: MouseEvent): void => {
-      const target = e.target as Node
-      if (!dropdownRef.current?.contains(target)) {
-        e.stopPropagation()
-      }
-    }
-
-    wrapper.addEventListener('mousedown', handleMouseDown)
-    return () => wrapper.removeEventListener('mousedown', handleMouseDown)
-  }, [open, dropdownRef])
+  // Outside pointerdown (anywhere outside the trigger or the menu wrapper —
+  // the wrapper contains both the listbox and the custom scrollbar DOM) and
+  // Escape close the dropdown via the shared dismissable primitive.
+  const layerRefs = useMemo(() => [triggerRef, menuWrapperRef], [triggerRef])
+  useDismissable({
+    enabled: open,
+    onDismiss: closeDropdown,
+    outsidePointer: true,
+    layerRefs,
+  })
 
   // Display label
   const displayLabel = useMemo(() => {

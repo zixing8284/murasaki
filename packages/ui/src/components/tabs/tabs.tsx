@@ -2,9 +2,10 @@
 
 import { cva } from 'class-variance-authority'
 
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 
 import { cn, cnPure } from '#/lib/utils'
+import { useRovingFocus } from '#/primitives'
 
 import { TabsContext, useTabsContext } from './tabs-context'
 
@@ -28,8 +29,18 @@ const tabListVariants = cva([
 export type TabListProps = React.ComponentProps<'menu'>
 
 export function TabList({ children, className, ...props }: TabListProps): React.ReactElement {
+  const ref = useRef<HTMLMenuElement>(null)
+  // ARIA Tabs pattern: arrow keys move focus only; Enter/Space (handled per
+  // Tab) activates. Disabled tabs are skipped via `aria-disabled`.
+  useRovingFocus({
+    enabled: true,
+    containerRef: ref,
+    itemSelector: '[role="tab"]',
+    orientation: 'horizontal',
+  })
   return (
     <menu
+      ref={ref}
       role="tablist"
       className={cn(tabListVariants(), className)}
       {...props}

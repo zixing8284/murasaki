@@ -20,6 +20,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { cnPure } from '../../lib/utils'
+import { useDismissable } from '../../primitives'
 import {
   ContextMenuContext,
 } from './context-menu-context'
@@ -194,32 +195,26 @@ export function ContextMenuContent({
     if (!open)
       return
 
-    const onDown = (event: Event): void => {
-      const node = ref.current
-      if (node && event.target instanceof Node && !node.contains(event.target)) {
-        close()
-      }
-    }
-    const onKey = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape')
-        close()
-    }
     const onScroll = (): void => close()
 
-    document.addEventListener('mousedown', onDown, true)
-    document.addEventListener('contextmenu', onDown, true)
-    document.addEventListener('keydown', onKey, true)
     window.addEventListener('scroll', onScroll, true)
     window.addEventListener('resize', onScroll)
 
     return () => {
-      document.removeEventListener('mousedown', onDown, true)
-      document.removeEventListener('contextmenu', onDown, true)
-      document.removeEventListener('keydown', onKey, true)
       window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', onScroll)
     }
   }, [open, close])
+
+  // Outside pointerdown (covers right-click since pointerdown fires before
+  // contextmenu) and Escape close the popup via the shared primitive.
+  const layerRefs = useMemo(() => [ref], [])
+  useDismissable({
+    enabled: open,
+    onDismiss: close,
+    outsidePointer: true,
+    layerRefs,
+  })
 
   if (!open)
     return null

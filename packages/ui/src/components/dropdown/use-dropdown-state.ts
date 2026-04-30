@@ -131,15 +131,10 @@ export function useDropdownState<T = string>({
             openDropdown()
           }
           break
-        case 'Escape':
-          if (open) {
-            e.preventDefault()
-            closeDropdown()
-          }
-          break
+        // Escape is handled centrally by `useDismissable` in the consumer.
       }
     },
-    [disabled, open, openDropdown, closeDropdown],
+    [disabled, open, openDropdown],
   )
 
   // Handle option click
@@ -171,10 +166,7 @@ export function useDropdownState<T = string>({
           e.preventDefault()
           setActiveIndex(options.length - 1)
           break
-        case 'Escape':
-          e.preventDefault()
-          closeDropdown()
-          break
+        // Escape is handled centrally by `useDismissable` in the consumer.
         case 'Home':
           e.preventDefault()
           setActiveIndex(0)
@@ -199,26 +191,8 @@ export function useDropdownState<T = string>({
     }
   }, [open, activeIndex])
 
-  // Close on click outside
-  useEffect(() => {
-    if (!open)
-      return
-
-    const handleClickOutside = (e: MouseEvent): void => {
-      const target = e.target as Node
-      if (
-        !triggerRef.current?.contains(target)
-        && !dropdownRef.current?.contains(target)
-      ) {
-        closeDropdown()
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [open, closeDropdown])
+  // Outside-click and Escape dismissal are owned by the consuming component
+  // via the `useDismissable` primitive, scoped to the dropdown layer refs.
 
   return {
     activeIndex,

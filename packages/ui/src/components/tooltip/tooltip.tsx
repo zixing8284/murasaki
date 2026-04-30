@@ -2,6 +2,7 @@ import type * as React from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
+import { useDismissable, useLayer } from '../../primitives'
 
 export interface TooltipProps {
   /** Tooltip content text */
@@ -16,10 +17,6 @@ export interface TooltipProps {
   children: React.ReactNode
 }
 
-/** Approximate tooltip height for viewport flip calculation */
-const TOOLTIP_HEIGHT_ESTIMATE = 20
-const GAP = 4
-
 export function Tooltip({
   text,
   delay = 400,
@@ -28,8 +25,6 @@ export function Tooltip({
   children,
 }: TooltipProps): React.ReactElement {
   const [visible, setVisible] = useState(false)
-  const [coords, setCoords] = useState({ top: 0, left: 0 })
-  const [resolvedSide, setResolvedSide] = useState(side)
   const wrapperRef = useRef<HTMLSpanElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const tooltipId = useId()
@@ -43,46 +38,27 @@ export function Tooltip({
 
   const show = useCallback(() => {
     clearTimer()
-    timerRef.current = setTimeout(() => {
-      const el = wrapperRef.current
-      if (!el)
-        return
-
-      const rect = el.getBoundingClientRect()
-      let actualSide = side
-
-      // Viewport boundary flip
-      if (side === 'top' && rect.top - GAP - TOOLTIP_HEIGHT_ESTIMATE < 0) {
-        actualSide = 'bottom'
-      }
-      else if (side === 'bottom' && rect.bottom + GAP + TOOLTIP_HEIGHT_ESTIMATE > window.innerHeight) {
-        actualSide = 'top'
-      }
-
-      setResolvedSide(actualSide)
-      setCoords({
-        top: actualSide === 'top' ? rect.top - GAP : rect.bottom + GAP,
-        left: rect.left + rect.width / 2,
-      })
-      setVisible(true)
-    }, delay)
-  }, [delay, clearTimer, side])
+    timerRef.current = setTimeout(setVisible, delay, true)
+  }, [delay, clearTimer])
 
   const hide = useCallback(() => {
     clearTimer()
     setVisible(false)
   }, [clearTimer])
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      hide()
-    }
-  }, [hide])
+  const position = useLayer({
+    anchorRef: wrapperRef,
+    open: visible,
+    side,
+  })
+
+  useDismissable({
+    enabled: visible,
+    onDismiss: hide,
+  })
 
   // Clean up timer on unmount
-  useEffect(() => {
-    return clearTimer
-  }, [clearTimer])
+  useEffect(() => clearTimer, [clearTimer])
 
   return (
     <span
@@ -93,10 +69,9 @@ export function Tooltip({
       onPointerLeave={hide}
       onFocus={show}
       onBlur={hide}
-      onKeyDown={handleKeyDown}
     >
       {children}
-      {visible && createPortal(
+      {visible && position && createPortal(
         <span
           id={tooltipId}
           role="tooltip"
@@ -104,10 +79,10 @@ export function Tooltip({
             'fixed z-9999 whitespace-nowrap px-1 py-0.5',
             'bg-(--info-window) text-(--info-text) border border-(--window-frame)',
             'pointer-events-none -translate-x-1/2',
-            resolvedSide === 'top' && '-translate-y-full',
+            position.side === 'top' && '-translate-y-full',
             className,
           )}
-          style={{ top: coords.top, left: coords.left }}
+          style={{ top: position.y, left: position.x }}
         >
           {text}
         </span>,

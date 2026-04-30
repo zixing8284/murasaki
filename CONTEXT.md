@@ -44,6 +44,14 @@ _Avoid_: LocalStorage-first SSR theme, post-hydration theme correction
 A styling contract where consuming applications import the library's global stylesheet from their application entry or root layout instead of receiving it as a component import side effect.
 _Avoid_: Automatic component-side CSS injection, hidden stylesheet import
 
+**Server sub-entry**:
+An optional `murasaki-react98/server` export path that exposes verified zero-client-dependency presentation primitives as server-safe, without changing the client-first root entry.
+_Avoid_: Bulk server migration, dual-build target
+
+**Component API consistency**:
+A quality standard where all components follow the same prop naming, controlled/uncontrolled, and `data-*` state attribute conventions, documented with fixed Accessibility, Keyboard, and SSR sections.
+_Avoid_: Per-component API drift, undocumented interaction contracts
+
 **Scoped breaking changes**:
 Intentional consumption-contract changes allowed during the pre-stable library phase when they directly support SSR compatibility, package clarity, or long-term primitive quality.
 _Avoid_: Silent compatibility drift, unrestricted breaking changes
@@ -64,6 +72,8 @@ _Avoid_: Source-root export, public TS source entry
 - A **Selective Slot API** may emerge from the **Internal primitive toolkit**, but is not required for the **Compatibility baseline**.
 - An **SSR-provided initial theme** keeps **RSC-safe Client Components** visually stable during hydration.
 - An **Explicit global CSS import** supports the **Client-first package entry** by keeping global styling setup in the consuming application's root.
+- A **Server sub-entry** extends the **Client-first package entry** with an opt-in server-safe path for verified presentation primitives.
+- **Component API consistency** is the quality standard applied after the **Internal primitive toolkit** stabilizes, ensuring uniform prop and state conventions across all components.
 - **Scoped breaking changes** may be used to establish the **Compatibility baseline** while the package remains pre-stable.
 - **Dist-only public exports** make the **Compatibility baseline** represent the real package consumption path.
 

@@ -1,12 +1,5 @@
 // Internal primitive toolkit. NOT part of the public package API.
 // Do not re-export from `src/index.ts`.
-//
-// Migration milestones (Phase 2):
-//   - useDismissable     ✅ (Tooltip wave A)
-//   - useLayer           ✅ (Tooltip wave A)
-//   - useFocusScope      ✅ scaffolded (Dropdown/Menu wave A)
-//   - useCollection      ✅ scaffolded (Tabs / TreeView / Menu wave B)
-//   - useTypeahead       ✅ scaffolded (Menu / Dropdown wave A/B)
 
 export { useCollection } from './use-collection'
 export type { CollectionItem, UseCollectionResult } from './use-collection'

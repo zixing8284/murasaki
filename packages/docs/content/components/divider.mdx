@@ -1,0 +1,28 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { DividerBasicExample } from './divider/examples/divider-examples'
+import { dividerBasicSource } from './divider/examples/sources'
+
+# Divider
+
+`Divider` draws the paired dark/light rule used to separate Windows 98 control groups.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Chooses the rule direction. |
+| `className` | `string` | - | Adds sizing or layout classes. |
+
+## Examples
+
+<ExampleFrame title="Horizontal and vertical rules" source={dividerBasicSource}>
+	<DividerBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Divider is decorative by default. Add `role="separator"` yourself when the divider communicates document structure.
+
+## SSR
+
+Divider has no client state and renders stable markup.

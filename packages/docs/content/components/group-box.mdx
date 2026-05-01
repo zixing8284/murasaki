@@ -1,0 +1,29 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { GroupBoxBasicExample } from './group-box/examples/group-box-examples'
+import { groupBoxBasicSource } from './group-box/examples/sources'
+
+# GroupBox
+
+`GroupBox` renders a Windows 98 fieldset with an optional legend label.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `ReactNode` | - | Legend text shown on the top border. |
+| `className` | `string` | - | Adds width, spacing, or layout classes. |
+| `children` | `ReactNode` | - | Grouped controls. |
+
+## Examples
+
+<ExampleFrame title="Grouped radio options" source={groupBoxBasicSource}>
+	<GroupBoxBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+GroupBox renders a native `fieldset`; `label` renders as the `legend`.
+
+## SSR
+
+GroupBox is presentational and renders stable markup.

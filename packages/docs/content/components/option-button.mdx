@@ -1,0 +1,28 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { OptionButtonBasicExample } from './option-button/examples/option-button-examples'
+import { optionButtonBasicSource } from './option-button/examples/sources'
+
+# OptionButton
+
+`OptionButton` is the Windows 98 radio control. Wrap related options in `OptionGroup` so they share a name and controlled value.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `OptionGroup` | `name`, `selectedValue`, `onChange` | Provides radio group wiring. |
+| `OptionButton` | `value`, `disabled`, `children` | Individual radio option. |
+
+## Examples
+
+<ExampleFrame title="Controlled option group" source={optionButtonBasicSource}>
+	<OptionButtonBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+OptionButton renders a native radio input and associated label.
+
+## SSR
+
+Controlled groups should provide the same `selectedValue` during server render and hydration.

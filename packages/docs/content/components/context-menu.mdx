@@ -1,0 +1,30 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { ContextMenuBasicExample } from './context-menu/examples/context-menu-examples'
+import { contextMenuBasicSource } from './context-menu/examples/sources'
+
+# ContextMenu
+
+`ContextMenu` manages right-click menu coordinates and renders menu content in a portal.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `ContextMenu` | `container` | Provider that stores open state and optional boundary element. |
+| `ContextMenuTrigger` | `disabled`, `onlyDirectTarget`, `children` | Adds a `contextmenu` handler to one child element. |
+| `ContextMenuContent` | `closeOnItemClick`, div props | Portal layer clamped to the viewport or container. |
+| `useContextMenu` | - | Programmatic access to `openAt` and `close`. |
+
+## Examples
+
+<ExampleFrame title="Right-click menu" source={contextMenuBasicSource}>
+	<ContextMenuBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Pair ContextMenuContent with semantic `Menu` and `MenuItem` children. Escape, outside pointer, scroll, and resize dismiss the layer.
+
+## SSR
+
+ContextMenuContent renders only after the menu opens on the client. The trigger child should be stable during hydration.

@@ -9,18 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mdx-js/react": "catalog:",
-    "@mdx-js/rollup": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "murasaki-react98": "workspace:*",
-    "remark-gfm": "catalog:",
     "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:cli",
-    "@types/mdx": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
@@ -28,7 +24,6 @@
     "babel-plugin-react-compiler": "catalog:cli",
     "react": "catalog:libs",
     "react-dom": "catalog:libs",
-    "shiki": "catalog:cli",
     "tailwindcss": "catalog:libs",
     "typescript": "catalog:cli",
     "vite": "catalog:cli"

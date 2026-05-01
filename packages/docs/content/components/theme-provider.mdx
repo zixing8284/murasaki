@@ -1,0 +1,29 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { ThemeProviderBasicExample } from './theme-provider/examples/theme-provider-examples'
+import { themeProviderBasicSource } from './theme-provider/examples/sources'
+
+# ThemeProvider
+
+`ThemeProvider` stores the active theme and writes the matching `data-theme` attribute on the document element.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultTheme` | `'windows-98' \| 'solarized-dark'` | `'windows-98'` | Initial theme. |
+| `storageKey` | `string \| null` | `'murasaki-theme'` | Local storage key. Use `null` to disable persistence. |
+| `children` | `ReactNode` | required | The app subtree. |
+
+## Examples
+
+<ExampleFrame title="Theme switcher" source={themeProviderBasicSource}>
+	<ThemeProviderBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+ThemeProvider has no own UI. Ensure color contrast remains acceptable for custom theme variables.
+
+## SSR
+
+For SSR apps, pass a request-aware `defaultTheme` when possible. Use `storageKey={null}` for isolated previews and examples.

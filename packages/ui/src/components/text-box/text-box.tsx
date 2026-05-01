@@ -45,8 +45,9 @@ const baseFieldStyles = [
   'disabled:bg-(--button-face)',
   'read-only:bg-(--button-face)',
   'read-only:text-(--gray-text)',
-  'px-1',
-  'py-[3px]',
+  'pl-2',
+  'pr-1.5',
+  'py-0.75',
 ]
 
 const inputVariants = cva(
@@ -54,7 +55,6 @@ const inputVariants = cva(
     ...baseFieldStyles,
     'shadow-(--shadow-border-field)',
     'border-none',
-    'px-1',
     'leading-loose',
   ],
   {
@@ -63,13 +63,13 @@ const inputVariants = cva(
     },
     variants: {
       inputType: {
-        email: ['h-[21px]'],
-        number: ['h-[22px]'],
-        password: ['h-[21px]'],
-        search: ['h-[21px]'],
-        tel: ['h-[21px]'],
-        text: ['h-[21px]'],
-        url: ['h-[21px]'],
+        email: ['h-5.25'],
+        number: ['h-5.5'],
+        password: ['h-5.25'],
+        search: ['h-5.25'],
+        tel: ['h-5.25'],
+        text: ['h-5.25'],
+        url: ['h-5.25'],
       },
     },
   },
@@ -123,7 +123,7 @@ export function TextBox({
 
   const fieldElement = multiline
     ? (
-        <div className={cn('relative bg-(--window) before:content-[\'\'] before:absolute before:inset-0 before:shadow-(--shadow-border-field) before:pointer-events-none before:z-[1] p-[2px] size-full flex flex-col min-h-[60px]', className)}>
+        <div className={cn('relative bg-(--window) before:content-[\'\'] before:absolute before:inset-0 before:shadow-(--shadow-border-field) before:pointer-events-none before:z-1 p-0.5 size-full flex flex-col min-h-15', className)}>
           <div className="relative flex-1 flex flex-col overflow-hidden">
             <textarea
               ref={textareaRef}

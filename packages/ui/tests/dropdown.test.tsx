@@ -10,6 +10,11 @@ const fruitOptions = [
   { value: 'cherry', label: 'Cherry' },
 ]
 
+const scrollOptions = Array.from({ length: 12 }, (_, index) => ({
+  value: `item-${index + 1}`,
+  label: `Item ${index + 1}`,
+}))
+
 describe('dropdown', () => {
   // === Rendering ===
 
@@ -67,6 +72,38 @@ describe('dropdown', () => {
 
     const options = screen.container.querySelectorAll('[role="option"]')
     expect(options).toHaveLength(3)
+  })
+
+  it('keeps custom scrollbar inside the dropdown menu layer', async () => {
+    const screen = await render(
+      <Dropdown name="items" options={scrollOptions} menuMaxHeight={64} width={160} />,
+    )
+    await screen.getByRole('combobox').click()
+
+    const listbox = screen.getByRole('listbox').element() as HTMLUListElement
+    const viewport = listbox.parentElement as HTMLDivElement
+    const menuLayer = viewport.parentElement as HTMLDivElement
+
+    await vi.waitFor(() => {
+      const vBar = screen.container.querySelector('[data-murasaki-vbar]') as HTMLElement | null
+      expect(vBar).not.toBeNull()
+      expect(getComputedStyle(vBar!).display).toBe('block')
+      expect(vBar!.parentElement).toBe(menuLayer)
+      expect(viewport.hasAttribute('data-murasaki-scrollbar-id')).toBe(true)
+      expect(listbox.hasAttribute('data-murasaki-scrollbar-id')).toBe(false)
+
+      const menuLayerRect = menuLayer.getBoundingClientRect()
+      const viewportRect = viewport.getBoundingClientRect()
+      const vBarRect = vBar!.getBoundingClientRect()
+
+      expect(menuLayerRect.height).toBeGreaterThan(0)
+      expect(viewportRect.height).toBeGreaterThan(0)
+      expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight)
+      expect(vBarRect.left).toBeGreaterThanOrEqual(menuLayerRect.left)
+      expect(vBarRect.right).toBeLessThanOrEqual(menuLayerRect.right + 0.5)
+      expect(vBarRect.top).toBeGreaterThanOrEqual(menuLayerRect.top)
+      expect(vBarRect.bottom).toBeLessThanOrEqual(menuLayerRect.bottom + 0.5)
+    })
   })
 
   it('closes the menu when an option is clicked', async () => {

@@ -1,0 +1,31 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { TaskbarBasicExample } from './taskbar/examples/taskbar-examples'
+import { taskbarBasicSource } from './taskbar/examples/sources'
+
+# Taskbar
+
+`Taskbar` builds the Windows 98 shell footer and exposes quick launch, dividers, notification area, and clock primitives.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `Taskbar` | footer props | Root shell bar. |
+| `TaskbarQuickLaunch` | `icons`, `defaultVisibleCount`, `iconStepWidth` | Resizable quick launch icon strip. |
+| `TaskbarDivider` | div props | Raised separator. |
+| `TaskbarNotificationArea` | div props | Inset tray container. |
+| `TaskbarSystemClock` | span props | Client clock updated every second. |
+
+## Examples
+
+<ExampleFrame title="Shell taskbar" source={taskbarBasicSource}>
+	<TaskbarBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Taskbar renders a `footer`. Provide accessible names for custom task buttons and meaningful `alt` text for quick launch icons.
+
+## SSR
+
+`TaskbarSystemClock` is client-rendered and updates after mount. Use your own stable timestamp if exact server/client text is required.

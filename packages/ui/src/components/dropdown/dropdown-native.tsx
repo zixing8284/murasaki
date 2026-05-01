@@ -14,11 +14,11 @@ const selectVariants = cva([
   'rounded-none',
   // Sizing
   'box-border',
-  'h-[21px]',
+  'h-5.25',
   'w-full',
-  'py-[3px]',
-  'pl-1',
-  'pr-[18px]',
+  'py-0.75',
+  'pl-2',
+  'pr-4.5',
   // Colors
   'bg-(--window)',
   'text-(--window-text)',
@@ -41,10 +41,10 @@ const selectWrapperVariants = cva([
   'before:inset-0',
   'before:shadow-(--shadow-border-field)',
   'before:pointer-events-none',
-  'before:z-[1]',
+  'before:z-1',
 ])
 
-const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])
+const labelVariants = cva(['inline-block', 'mr-2', 'leading-5.25'])
 
 interface DropdownNativeProps
   extends React.ComponentProps<'select'>,
@@ -96,7 +96,7 @@ export function DropdownNative({
       >
         {children}
       </select>
-      <ButtonDownIcon className="absolute right-[2px] top-[2px] pointer-events-none" />
+      <ButtonDownIcon className="absolute right-0.5 top-0.5 pointer-events-none" />
     </div>
   )
 

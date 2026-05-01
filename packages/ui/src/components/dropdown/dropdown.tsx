@@ -19,11 +19,11 @@ const triggerVariants = cva([
   'rounded-none',
   // Sizing
   'box-border',
-  'h-[21px]',
+  'h-5.25',
   'w-full',
-  'py-[3px]',
-  'pl-1',
-  'pr-[18px]',
+  'py-0.75',
+  'pl-2',
+  'pr-4.5',
   // Colors
   'bg-(--window)',
   'text-(--window-text)',
@@ -34,7 +34,7 @@ const triggerVariants = cva([
   'before:inset-0',
   'before:shadow-(--shadow-border-field)',
   'before:pointer-events-none',
-  'before:z-[1]',
+  'before:z-1',
   // Position context for arrow icon
   'relative',
   'group',
@@ -54,18 +54,24 @@ const triggerVariants = cva([
 const menuWrapperVariants = cva([
   'absolute',
   'left-0',
-  'right-[1px]',
+  'right-px',
   'z-50',
+  'overflow-hidden',
   'border',
   'border-(--button-shadow)',
+  'bg-(--window)',
+])
+
+const menuViewportVariants = cva([
+  'w-full',
+  'max-h-40',
+  'overflow-y-auto',
+  'box-border',
 ])
 
 // Dropdown menu
 const menuVariants = cva([
   'w-full',
-  'max-h-40',
-  'overflow-y-auto',
-  'bg-(--window)',
   'list-none',
   'm-0',
   'p-0',
@@ -76,7 +82,8 @@ const menuItemVariants = cva(
   [
     'box-border',
     'w-full',
-    'px-1',
+    'pl-2',
+    'pr-1.5',
     'py-0.5',
     'cursor-pointer',
     'outline-none',
@@ -97,7 +104,7 @@ const menuItemVariants = cva(
   },
 )
 
-const labelVariants = cva(['inline-block', 'mr-2', 'leading-[21px]'])
+const labelVariants = cva(['inline-block', 'mr-2', 'leading-5.25'])
 
 const wrapperVariants = cva(['relative', 'inline-block'])
 
@@ -212,7 +219,8 @@ export function Dropdown<T = string>({
     value,
   })
 
-  useScrollbar(dropdownRef, { disabled: !open })
+  const menuViewportRef = useRef<HTMLDivElement>(null)
+  useScrollbar(menuViewportRef, { disabled: !open })
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
 
@@ -275,56 +283,61 @@ export function Dropdown<T = string>({
         {displayLabel}
         <ButtonDownIcon
           className={cn(
-            'absolute right-[2px] top-[2px] pointer-events-none',
+            'absolute right-0.5 top-0.5 pointer-events-none',
             !disabled && 'group-active:hidden',
           )}
         />
         {!disabled && (
-          <ButtonDownActiveIcon className="absolute right-[2px] top-[2px] pointer-events-none hidden group-active:block" />
+          <ButtonDownActiveIcon className="absolute right-0.5 top-0.5 pointer-events-none hidden group-active:block" />
         )}
       </button>
 
       {/* Dropdown menu */}
       {open && (
         <div className={cn(menuWrapperVariants())} ref={menuWrapperRef}>
-          <ul
-            className={cn(menuVariants())}
-            id={menuId}
-            ref={dropdownRef}
-            role="listbox"
+          <div
+            className={cn(menuViewportVariants())}
+            ref={menuViewportRef}
             style={menuStyle}
-            tabIndex={-1}
           >
-            {options.map((option, index) => {
-              const isActive = index === activeIndex
-              const isSelected = option.value === selectedOption?.value
-              const optionLabel = option.label ?? String(option.value)
+            <ul
+              className={cn(menuVariants())}
+              id={menuId}
+              ref={dropdownRef}
+              role="listbox"
+              tabIndex={-1}
+            >
+              {options.map((option, index) => {
+                const isActive = index === activeIndex
+                const isSelected = option.value === selectedOption?.value
+                const optionLabel = option.label ?? String(option.value)
 
-              return (
-                <li
-                  aria-selected={isSelected}
-                  className={cn(menuItemVariants({ active: isActive }))}
-                  key={`${String(option.value)}-${String(index)}`}
-                  onClick={() => {
-                    handleOptionClick(index)
-                  }}
-                  onKeyDown={(e) => {
-                    handleOptionKeyDown(e)
-                  }}
-                  onMouseEnter={() => {
-                    handleOptionMouseEnter(index)
-                  }}
-                  ref={(el) => {
-                    optionRef.current[index] = el
-                  }}
-                  role="option"
-                  tabIndex={isActive ? 0 : -1}
-                >
-                  {optionLabel}
-                </li>
-              )
-            })}
-          </ul>
+                return (
+                  <li
+                    aria-selected={isSelected}
+                    className={cn(menuItemVariants({ active: isActive }))}
+                    key={`${String(option.value)}-${String(index)}`}
+                    onClick={() => {
+                      handleOptionClick(index)
+                    }}
+                    onKeyDown={(e) => {
+                      handleOptionKeyDown(e)
+                    }}
+                    onMouseEnter={() => {
+                      handleOptionMouseEnter(index)
+                    }}
+                    ref={(el) => {
+                      optionRef.current[index] = el
+                    }}
+                    role="option"
+                    tabIndex={isActive ? 0 : -1}
+                  >
+                    {optionLabel}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </div>
       )}
     </div>

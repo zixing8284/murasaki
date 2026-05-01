@@ -1,0 +1,28 @@
+{
+  "name": "murasaki-react98-docs",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "postbuild": "pagefind --site .next/server/app --output-path out/_pagefind",
+    "preview": "node ../../scripts/preview-docs.mjs"
+  },
+  "dependencies": {
+    "murasaki-react98": "workspace:*",
+    "next": "catalog:libs",
+    "nextra": "catalog:",
+    "nextra-theme-docs": "catalog:",
+    "react": "catalog:libs",
+    "react-dom": "catalog:libs"
+  },
+  "devDependencies": {
+    "@types/mdx": "catalog:types",
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "pagefind": "catalog:cli",
+    "typescript": "catalog:cli"
+  }
+}

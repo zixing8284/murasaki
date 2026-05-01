@@ -13,10 +13,11 @@ export default antfu({
     '*.css',
     '.github/',
     '**/*.md',
+    '**/*.mdx',
   ],
 }, {
   // Next.js App Router files legitimately co-export `metadata`, `viewport`, etc.
-  files: ['packages/next-fixture/app/**/*.{ts,tsx}'],
+  files: ['packages/{next-fixture,docs}/app/**/*.{ts,tsx}'],
   rules: {
     'react-refresh/only-export-components': 'off',
   },

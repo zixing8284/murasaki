@@ -1,0 +1,31 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { TooltipBasicExample } from './tooltip/examples/tooltip-examples'
+import { tooltipBasicSource } from './tooltip/examples/sources'
+
+# Tooltip
+
+`Tooltip` shows a Windows 98 info popup for hover and focus targets.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string` | required | Tooltip text. |
+| `delay` | `number` | `400` | Delay before showing in milliseconds. |
+| `side` | `'top' \| 'bottom'` | `'top'` | Preferred placement, with viewport flipping. |
+| `className` | `string` | - | Popup classes. |
+| `children` | `ReactNode` | required | Trigger content. |
+
+## Examples
+
+<ExampleFrame title="Hover and focus hints" source={tooltipBasicSource}>
+	<TooltipBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Tooltip adds `aria-describedby` while visible and renders the popup with `role="tooltip"`.
+
+## SSR
+
+Tooltip portals after mount. Keep the trigger markup stable across server and client.

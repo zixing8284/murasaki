@@ -27,11 +27,11 @@ const directory = {
     defaultSize: { width: 520 },
   },
   docs: {
-    name: 'Component Docs',
+    name: 'Murasaki UI Library Docs',
     Component: lazy(() =>
       import('../../directory/apps/docs/docs').then(m => ({ default: m.DocsApp })),
     ),
-    defaultTitle: 'Component Docs',
+    defaultTitle: 'Murasaki UI Library Docs',
     icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
     defaultSize: { width: 750 },

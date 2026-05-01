@@ -1,0 +1,28 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { ScrollAreaBasicExample } from './scroll-area/examples/scroll-area-examples'
+import { scrollAreaBasicSource } from './scroll-area/examples/sources'
+
+# ScrollArea
+
+`ScrollArea` hides native scrollbars and renders Windows 98 scrollbar chrome around overflowing content.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | - | Sets dimensions and frame styling. |
+| `children` | `ReactNode` | - | Scrollable content. |
+
+## Examples
+
+<ExampleFrame title="Scrollable list" source={scrollAreaBasicSource}>
+	<ScrollAreaBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+ScrollArea keeps the content in normal DOM order. Add roles and labels to the content when needed.
+
+## SSR
+
+Scrollbars are measured after mount. Give the root a stable width and height to avoid layout shifts.

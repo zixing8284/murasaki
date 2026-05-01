@@ -1,0 +1,30 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { TabsBasicExample } from './tabs/examples/tabs-examples'
+import { tabsBasicSource } from './tabs/examples/sources'
+
+# Tabs
+
+`Tabs` provides the Windows 98 tab strip pattern with roving focus and controlled or uncontrolled selection.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `Tabs` | `defaultValue`, `value`, `onChange`, `keepMounted` | Root state provider. |
+| `TabList` | menu props | Horizontal tab list. |
+| `Tab` | `value`, `disabled` | Selectable tab label. |
+| `TabPanel` | `value` | Panel matched to a tab value. |
+
+## Examples
+
+<ExampleFrame title="Settings tabs" source={tabsBasicSource}>
+	<TabsBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Tabs follows the ARIA tabs pattern with `tablist`, `tab`, `tabpanel`, `aria-controls`, and roving arrow-key focus. Press Enter or Space to activate the focused tab.
+
+## SSR
+
+Use `defaultValue` for uncontrolled tabs, or keep controlled `value` consistent between server and client.

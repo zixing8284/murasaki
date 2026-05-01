@@ -1,0 +1,29 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { MenuBasicExample } from './menu/examples/menu-examples'
+import { menuBasicSource } from './menu/examples/sources'
+
+# Menu
+
+`Menu` renders a raised Windows 98 command menu. Use `MenuItem` for actions and `MenuSeparator` for grouped commands.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `Menu` | HTML `menu` props | Root command list with `role="menu"`. |
+| `MenuItem` | `icon`, `disabled`, `selected`, `reserveIconSpace` | Interactive or disabled menu row. |
+| `MenuSeparator` | HTML `li` props | Horizontal divider between command groups. |
+
+## Examples
+
+<ExampleFrame title="Command menu" source={menuBasicSource}>
+	<MenuBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Menu uses `role="menu"`; each item uses `role="menuitem"`, and disabled items expose `aria-disabled`.
+
+## SSR
+
+Menu is presentational. Keep `selected`, `disabled`, and icon content stable between server and client.

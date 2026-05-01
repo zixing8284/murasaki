@@ -1,0 +1,57 @@
+:root {
+  --m98-docs-border: #808080;
+  --m98-docs-border-light: #ffffff;
+  --m98-docs-code-bg: #f7f7f7;
+}
+
+.m98-home-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.m98-doc-card {
+  border: 1px solid var(--m98-docs-border);
+  padding: 14px;
+}
+
+.m98-doc-card h2 {
+  margin-top: 0;
+}
+
+.m98-component-list {
+  columns: 2 220px;
+}
+
+.m98-example {
+  margin: 20px 0;
+}
+
+.m98-example__title {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+
+.m98-example__preview {
+  min-height: 72px;
+  padding: 14px;
+  overflow: auto;
+}
+
+.m98-example__preview--dropdown {
+  min-height: 224px;
+}
+
+.m98-example__source {
+  margin: 8px 0 0;
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--m98-docs-border);
+  background: var(--m98-docs-code-bg);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.m98-example__source code {
+  font-family: Consolas, Monaco, monospace;
+}

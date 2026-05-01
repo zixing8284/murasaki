@@ -1,0 +1,32 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { SliderBasicExample } from './slider/examples/slider-examples'
+import { sliderBasicSource } from './slider/examples/sources'
+
+# Slider
+
+`Slider` wraps a native range input with Windows 98 track, thumb, and optional tick marks.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` / `defaultValue` | `number` | `min` | Controlled or uncontrolled value. |
+| `onChange` | `ChangeEventHandler<HTMLInputElement>` | - | Receives the native range change event. |
+| `min` / `max` / `step` | input range props | `0` / `100` / `1` | Range bounds and increments. |
+| `vertical` | `boolean` | `false` | Renders a vertical slider. |
+| `boxIndicator` | `boolean` | `false` | Uses the rectangular thumb variant. |
+| `ticks` | `TickMark[]` | - | Adds tick marks and accessible datalist options. |
+
+## Examples
+
+<ExampleFrame title="Range controls" source={sliderBasicSource}>
+	<SliderBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Slider keeps the native `input type="range"`, so keyboard interaction follows browser range behavior.
+
+## SSR
+
+Use the same controlled `value` on server and client, or prefer `defaultValue` for uncontrolled sliders.

@@ -1,0 +1,29 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { TableBasicExample } from './table/examples/table-examples'
+import { tableBasicSource } from './table/examples/sources'
+
+# Table
+
+`Table` composes semantic table elements inside a sunken Windows 98 frame.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `Table` | `containerClassName`, table props | Root table with a framed scroll container. |
+| `TableRow` | `selected` | Row styling with optional highlight state. |
+| `TableHead`, `TableCell`, `TableHeader`, `TableBody`, `TableFooter`, `TableCaption` | native element props | Semantic table slots. |
+
+## Examples
+
+<ExampleFrame title="Process table" source={tableBasicSource}>
+	<TableBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+Table keeps native `table`, `thead`, `tbody`, `tr`, `th`, and `td` semantics. Use captions and scopes where your data needs them.
+
+## SSR
+
+Table is presentational. Keep row selection deterministic during hydration.

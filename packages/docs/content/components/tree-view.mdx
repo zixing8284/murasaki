@@ -1,0 +1,28 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { TreeViewBasicExample } from './tree-view/examples/tree-view-examples'
+import { treeViewBasicSource } from './tree-view/examples/sources'
+
+# TreeView
+
+`TreeView` renders nested expandable lists with Windows 98 branch markers and roving keyboard focus.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `TreeView` | `children`, `className` | Root tree container. |
+| `TreeViewItem` | `label`, `icon`, `defaultExpanded`, `expanded`, `onExpandedChange`, `selected`, `preventCollapse`, `disabled`, `onClick` | Leaf or branch item. |
+
+## Examples
+
+<ExampleFrame title="Explorer tree" source={treeViewBasicSource}>
+	<TreeViewBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+TreeView uses `role="tree"`, `role="treeitem"`, `role="group"`, and `aria-expanded` on branch summaries. Arrow keys move through visible items and expand or collapse branches.
+
+## SSR
+
+Use `defaultExpanded` for uncontrolled branches. Use controlled `expanded` when state must be restored from app data.

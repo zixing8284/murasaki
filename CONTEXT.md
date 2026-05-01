@@ -52,6 +52,18 @@ _Avoid_: Bulk server migration, dual-build target
 A quality standard where all components follow the same prop naming, controlled/uncontrolled, and `data-*` state attribute conventions, documented with fixed Accessibility, Keyboard, and SSR sections.
 _Avoid_: Per-component API drift, undocumented interaction contracts
 
+**Standalone docs site**:
+The primary documentation product for component reference, examples, navigation, search, and public browsing outside the Windows 98 playground shell.
+_Avoid_: Playground-owned docs app, desktop-only documentation
+
+**Embedded docs window**:
+A playground window that displays the standalone docs site as a built artifact instead of owning a separate documentation implementation.
+_Avoid_: Duplicate docs system, generated live-demo sidecars
+
+**TSX example module**:
+A documentation example maintained as an ordinary typed React module that can be imported, rendered, linted, and optionally shown with explicit source text.
+_Avoid_: Markdown live block, generated demo module
+
 **Scoped breaking changes**:
 Intentional consumption-contract changes allowed during the pre-stable library phase when they directly support SSR compatibility, package clarity, or long-term primitive quality.
 _Avoid_: Silent compatibility drift, unrestricted breaking changes
@@ -74,6 +86,9 @@ _Avoid_: Source-root export, public TS source entry
 - An **Explicit global CSS import** supports the **Client-first package entry** by keeping global styling setup in the consuming application's root.
 - A **Server sub-entry** extends the **Client-first package entry** with an opt-in server-safe path for verified presentation primitives.
 - **Component API consistency** is the quality standard applied after the **Internal primitive toolkit** stabilizes, ensuring uniform prop and state conventions across all components.
+- A **Standalone docs site** is the source of truth for documentation and examples.
+- An **Embedded docs window** may surface the **Standalone docs site** inside the playground, but it does not fork or regenerate the documentation content.
+- A **TSX example module** is the preferred unit for live documentation examples in the **Standalone docs site**.
 - **Scoped breaking changes** may be used to establish the **Compatibility baseline** while the package remains pre-stable.
 - **Dist-only public exports** make the **Compatibility baseline** represent the real package consumption path.
 
@@ -115,6 +130,12 @@ _Avoid_: Source-root export, public TS source entry
 > **Dev:** "Should consumers import the TypeScript source entry?"
 > **Domain expert:** "No — use **Dist-only public exports** so tests and examples match published package behavior."
 
+> **Dev:** "Should the playground own component documentation and generate live demos from markdown?"
+> **Domain expert:** "No — documentation belongs to the **Standalone docs site**. The playground can provide an **Embedded docs window**, but it should not maintain a second docs system."
+
+> **Dev:** "Should examples be written as live markdown fences that generate demo modules?"
+> **Domain expert:** "No — use **TSX example modules** so examples remain ordinary typed React code."
+
 ## Flagged ambiguities
 
 - "Perfect SSR support" was used ambiguously — resolved: the target is **RSC-safe Client Components**, not full Server Component primitives.
@@ -129,3 +150,5 @@ _Avoid_: Source-root export, public TS source entry
 - "Style support" was resolved as **Explicit global CSS import**, not hidden CSS side effects from component imports.
 - "Compatibility promise" was resolved as allowing **Scoped breaking changes** for SSR support during the pre-stable phase.
 - "Package exports" was resolved as **Dist-only public exports**, not source-root public entry points.
+- "Component docs in the playground" was resolved as an **Embedded docs window** for the **Standalone docs site**, not a playground-owned markdown/live-demo system.
+- "Live examples" was resolved as **TSX example modules**, not markdown code fences that generate sidecar modules.

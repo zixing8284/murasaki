@@ -1,0 +1,60 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { DropdownBasicExample, DropdownNativeExample, DropdownScrollableExample } from './dropdown/examples/dropdown-examples'
+import { dropdownBasicSource, dropdownNativeSource, dropdownScrollableSource } from './dropdown/examples/sources'
+
+# Dropdown
+
+The `Dropdown` component renders a Windows 98 styled custom dropdown with a trigger button and an option list. `DropdownNative` provides a native select alternative.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | - | Name used for form submission. |
+| `options` | `DropdownOption[]` | - | Options with `value` and optional `label`. |
+| `value` | `T` | - | Controlled selected value. |
+| `defaultValue` | `T` | - | Initial selected value for uncontrolled usage. |
+| `onChange` | `(option) => void` | - | Selection change callback. |
+| `label` | `string` | - | Optional visible label. |
+| `disabled` | `boolean` | `false` | Disables the dropdown. |
+| `width` | `CSSProperties['width']` | - | Width of the dropdown control. |
+
+## Examples
+
+<ExampleFrame
+  title="Custom dropdown"
+  previewClassName="m98-example__preview--dropdown"
+  source={dropdownBasicSource}
+>
+  <DropdownBasicExample />
+</ExampleFrame>
+
+<ExampleFrame title="Native select" source={dropdownNativeSource}>
+  <DropdownNativeExample />
+</ExampleFrame>
+
+<ExampleFrame
+  title="Scrollable options"
+  previewClassName="m98-example__preview--dropdown"
+  source={dropdownScrollableSource}
+>
+  <DropdownScrollableExample />
+</ExampleFrame>
+
+## Accessibility
+
+The custom dropdown uses combobox and listbox roles. The selected option exposes `aria-selected`, and disabled state is communicated through `aria-disabled`.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `Enter` / `Space` / `ArrowDown` | Opens the custom dropdown. |
+| `ArrowUp` / `ArrowDown` | Moves through options while open. |
+| `Home` / `End` | Jumps to the first or last option. |
+| `Escape` | Closes without selecting. |
+| `Tab` | Closes and moves focus onward. |
+
+## SSR
+
+Dropdown is a client component through the package root. Initial selected values should be stable between server and client to avoid hydration drift.

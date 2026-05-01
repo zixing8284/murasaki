@@ -1,0 +1,32 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { NumberBoxBasicExample } from './number-box/examples/number-box-examples'
+import { numberBoxBasicSource } from './number-box/examples/sources'
+
+# NumberBox
+
+`NumberBox` combines a numeric input with Windows 98 spinner buttons.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` / `defaultValue` | `number` | `0` | Controlled or uncontrolled numeric value. |
+| `onChange` | `(value: number) => void` | - | Called after a valid value is parsed or spinner changes. |
+| `min` / `max` | `number` | safe integer limits | Allowed value range. |
+| `step` | `number` | `1` | Spinner increment amount. |
+| `label` | `ReactNode` | - | Optional associated label. |
+| `labelPosition` | `'left' \| 'top'` | `'left'` | Label layout. |
+
+## Examples
+
+<ExampleFrame title="Controlled number input" source={numberBoxBasicSource}>
+	<NumberBoxBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+NumberBox renders a native `input type="number"`; spinner buttons are labelled Increment and Decrement.
+
+## SSR
+
+Prefer `defaultValue` for uncontrolled usage or pass the same controlled `value` on server and client.

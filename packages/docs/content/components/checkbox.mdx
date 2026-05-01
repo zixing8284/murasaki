@@ -1,0 +1,42 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { CheckboxBasicExample, CheckboxControlledExample } from './checkbox/examples/checkbox-examples'
+import { checkboxBasicSource, checkboxControlledSource } from './checkbox/examples/sources'
+
+# Checkbox
+
+The `Checkbox` component renders a Windows 98 styled checkbox with a label.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | - | Controlled checked state. |
+| `defaultChecked` | `boolean` | `false` | Initial checked state for uncontrolled usage. |
+| `disabled` | `boolean` | `false` | Disables the checkbox. |
+| `onChange` | `(event) => void` | - | Change handler from the native input. |
+| `children` | `ReactNode` | - | Label content. |
+| `className` | `string` | - | Adds custom classes to the input. |
+
+## Examples
+
+<ExampleFrame title="Basic states" source={checkboxBasicSource}>
+  <CheckboxBasicExample />
+</ExampleFrame>
+
+<ExampleFrame title="Controlled" source={checkboxControlledSource}>
+  <CheckboxControlledExample />
+</ExampleFrame>
+
+## Accessibility
+
+Checkbox uses a native `input type="checkbox"` and an associated label, so checked and disabled states are communicated through native form semantics.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `Space` | Toggles the checkbox. |
+
+## SSR
+
+Checkbox is a client component through the package root. Server markup stays stable when `checked` or `defaultChecked` values are stable between server and client.

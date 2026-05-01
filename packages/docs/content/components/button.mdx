@@ -1,0 +1,42 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { ButtonBasicExample, ButtonStateExample } from './button/examples/button-examples'
+import { buttonBasicSource, buttonStateSource } from './button/examples/sources'
+
+# Button
+
+The `Button` component renders a Windows 98 styled push button with raised 3D borders.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `active` | `boolean` | `false` | Renders the button in a pressed state. |
+| `disabled` | `boolean` | `false` | Disables button interaction. |
+| `primary` | `boolean` | `false` | Applies the primary button emphasis. |
+| `className` | `string` | - | Adds custom classes to the button. |
+| `children` | `ReactNode` | - | Button label content. |
+
+## Examples
+
+<ExampleFrame title="Basic buttons" source={buttonBasicSource}>
+  <ButtonBasicExample />
+</ExampleFrame>
+
+<ExampleFrame title="Pressed state" source={buttonStateSource}>
+  <ButtonStateExample />
+</ExampleFrame>
+
+## Accessibility
+
+Button renders a native `button` element and preserves the browser's default button semantics.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `Enter` | Activates the button. |
+| `Space` | Activates the button. |
+
+## SSR
+
+Button is a client component through the package root. Its initial markup is stable when `active`, `disabled`, and label content are stable between server and client.

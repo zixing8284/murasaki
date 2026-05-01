@@ -1,0 +1,29 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { FieldPanelBasicExample } from './field-panel/examples/field-panel-examples'
+import { fieldPanelBasicSource } from './field-panel/examples/sources'
+
+# FieldPanel
+
+`FieldPanel` frames scrollable white content with the sunken field border used by list boxes and file panes.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `disabled` | `boolean` | `false` | Switches to disabled field colors and exposes `aria-disabled`. |
+| `className` | `string` | - | Sets dimensions or extra layout classes. |
+| `children` | `ReactNode` | - | Content rendered inside the scroll area. |
+
+## Examples
+
+<ExampleFrame title="File list field" source={fieldPanelBasicSource}>
+	<FieldPanelBasicExample />
+</ExampleFrame>
+
+## Accessibility
+
+FieldPanel does not assign a role. Add `role="listbox"`, `role="region"`, or labels when the content needs semantics.
+
+## SSR
+
+FieldPanel owns no state. Its custom scrollbars hydrate from measured overflow after mount.

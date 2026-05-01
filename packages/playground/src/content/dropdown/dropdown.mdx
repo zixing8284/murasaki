@@ -97,3 +97,26 @@ A lighter variant using the browser's native `<select>` element.
   <option value="medium">Medium</option>
   <option value="large">Large</option>
 </DropdownNative>`} />
+
+## Accessibility
+
+- The trigger button renders `role="combobox"` with `aria-haspopup="listbox"` and `aria-expanded` reflecting the open state.
+- The option list renders `role="listbox"` with each option as `role="option"`.
+- The currently selected option has `aria-selected="true"`.
+- Disabled state is communicated via `aria-disabled` on the trigger.
+- When a `label` prop is provided, it is rendered as visible text inside the trigger.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `Enter` / `Space` / `ArrowDown` | Open the dropdown and focus the first (or selected) option |
+| `ArrowUp` / `ArrowDown` | Navigate options when open |
+| `Home` / `End` | Jump to first / last option |
+| `Enter` / `Space` | Select the focused option and close |
+| `Escape` | Close without selecting |
+| `Tab` | Close and move focus to the next focusable element |
+
+## SSR
+
+Dropdown is a client component (`'use client'`). In uncontrolled mode, the initial selection is set via `defaultValue` and rendered into a hidden `<input>` for form submission. In controlled mode, `value` determines the displayed label. No hydration mismatch occurs when the value is stable between server and client.

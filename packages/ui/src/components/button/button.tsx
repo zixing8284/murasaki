@@ -50,7 +50,7 @@ export function Button({
 }: React.ComponentProps<'button'>
   & VariantProps<typeof buttonVariants>): React.ReactElement {
   return (
-    <button className={cn(buttonVariants({ active, primary, className }))} {...props}>
+    <button className={cn(buttonVariants({ active, primary, className }))} data-active={active || undefined} {...props}>
       {children}
     </button>
   )

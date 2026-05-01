@@ -87,6 +87,8 @@ export function MenuItem({
       ref={ref}
       role="menuitem"
       aria-disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
+      data-selected={selected || undefined}
       className={cn(menuItemVariants({ disabled, selected }), className)}
       {...props}
     >

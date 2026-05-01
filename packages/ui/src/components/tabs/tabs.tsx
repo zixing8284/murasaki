@@ -145,6 +145,8 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
       aria-selected={isSelected}
       aria-controls={panelId}
       aria-disabled={disabled}
+      data-selected={isSelected || undefined}
+      data-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       className={cn(tabVariants({ selected: isSelected }), className)}
       onClick={handleClick}
@@ -211,13 +213,13 @@ export function TabPanel({ children, className, value, ...props }: TabPanelProps
 
 const tabsRootVariants = cva(['inline-flex', 'flex-col'])
 
-export interface TabsProps extends React.ComponentProps<'div'> {
+export interface TabsProps extends Omit<React.ComponentProps<'div'>, 'onChange'> {
   /** The default selected tab value (uncontrolled mode) */
   defaultValue?: string
   /** The selected tab value (controlled mode) */
   value?: string
   /** Callback when the selected tab changes */
-  onValueChange?: (value: string) => void
+  onChange?: (value: string) => void
   /** Keep all panels mounted in the DOM to preserve a stable height */
   keepMounted?: boolean
 }
@@ -227,7 +229,7 @@ export function Tabs({
   className,
   defaultValue = '',
   value,
-  onValueChange,
+  onChange,
   keepMounted = false,
   ...props
 }: TabsProps): React.ReactElement {
@@ -241,7 +243,7 @@ export function Tabs({
     if (!isControlled) {
       setInternalValue(newValue)
     }
-    onValueChange?.(newValue)
+    onChange?.(newValue)
   }
 
   return (

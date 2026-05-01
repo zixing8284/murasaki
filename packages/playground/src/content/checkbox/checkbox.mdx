@@ -64,3 +64,23 @@ import { CodeBlock } from '../../directory/apps/docs/code-block'
 <Checkbox>Enable notifications</Checkbox>
 <Checkbox defaultChecked>Remember me</Checkbox>
 <Checkbox disabled>Unavailable option</Checkbox>`} />
+
+## Accessibility
+
+- Renders a native `<input type="checkbox">` with an associated `<label>`.
+- The input and label are linked via matching `id` / `htmlFor` attributes (auto-generated if not provided).
+- Supports standard `checked`, `defaultChecked`, and `disabled` native attributes.
+- The visible checkmark is a CSS pseudo-element driven by the `:checked` state — the actual input is visually hidden but remains accessible to screen readers.
+- Disabled state is communicated via the native `disabled` attribute.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `Space` | Toggle the checkbox |
+
+Tab order follows the natural DOM position. The checkbox is a standard form control — no custom keyboard handling is needed.
+
+## SSR
+
+Checkbox is a client component (`'use client'`). It renders a native `<input type="checkbox">` whose `checked` attribute is determined by `checked` (controlled) or `defaultChecked` (uncontrolled). The server-rendered markup matches the initial client state. No hydration mismatch occurs when these props are stable between server and client.

@@ -146,6 +146,9 @@ export function TreeViewItem({
                 role="treeitem"
                 aria-expanded={expanded}
                 aria-disabled={disabled || undefined}
+                data-expanded={expanded || undefined}
+                data-selected={selected || undefined}
+                data-disabled={disabled || undefined}
                 tabIndex={disabled ? -1 : 0}
                 className={cn(
                   treeViewItemStyles({
@@ -176,6 +179,8 @@ export function TreeViewItem({
             <div
               role="treeitem"
               aria-disabled={disabled || undefined}
+              data-selected={selected || undefined}
+              data-disabled={disabled || undefined}
               tabIndex={disabled || !onClick ? -1 : 0}
               className={cn(
                 treeViewItemStyles({

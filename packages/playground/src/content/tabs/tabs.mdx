@@ -60,7 +60,7 @@ import { CodeBlock } from '../../directory/apps/docs/code-block'
       <TableCell>Selected tab (controlled)</TableCell>
     </TableRow>
     <TableRow>
-      <TableCell>`onValueChange`</TableCell>
+      <TableCell>`onChange`</TableCell>
       <TableCell>`(value: string) => void`</TableCell>
       <TableCell>—</TableCell>
       <TableCell>Selection change callback</TableCell>
@@ -80,3 +80,28 @@ import { CodeBlock } from '../../directory/apps/docs/code-block'
   <TabPanel value="tab1">General content</TabPanel>
   <TabPanel value="tab2">Advanced content</TabPanel>
 </Tabs>`} />
+
+## Accessibility
+
+- `TabList` renders `role="tablist"`.
+- Each `Tab` renders `role="tab"` with `aria-selected` reflecting the current selection.
+- `TabPanel` renders `role="tabpanel"` with `aria-labelledby` pointing to its associated tab.
+- Disabled tabs set `aria-disabled="true"` and are removed from the tab order (`tabIndex={-1}`).
+- Tab and panel are linked via matching `id` / `aria-controls` pairs generated from the tab's `value`.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `ArrowLeft` | Move focus to the previous tab (wraps) |
+| `ArrowRight` | Move focus to the next tab (wraps) |
+| `Home` | Move focus to the first tab |
+| `End` | Move focus to the last tab |
+| `Enter` / `Space` | Activate the focused tab |
+| `Tab` | Move focus into/out of the tablist |
+
+Disabled tabs are skipped during arrow navigation.
+
+## SSR
+
+Tabs is a client component (`'use client'`). The initial selected tab is determined by `value` (controlled) or `defaultValue` (uncontrolled) and is reflected in the server-rendered markup. No hydration mismatch occurs when these props are stable between server and client.

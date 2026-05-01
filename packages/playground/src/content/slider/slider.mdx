@@ -95,3 +95,26 @@ Set `vertical` to render the slider vertically. A default height of 150px is app
 which can be overridden via `className`.
 
 <CodeBlock code={`<Slider vertical min={0} max={100} defaultValue={50} />`} />
+
+## Accessibility
+
+- Renders a native `<input type="range">` whose standard ARIA semantics are preserved.
+- Supports `min`, `max`, `step`, and `disabled` native attributes.
+- Tick marks use a `<datalist>` with `<option>` elements for browser-native tick rendering.
+- The visual indicator (triangle or box) is purely cosmetic — the native input remains the accessible control.
+- Disabled state is communicated via the native `disabled` attribute.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `ArrowRight` / `ArrowUp` | Increase value by one step |
+| `ArrowLeft` / `ArrowDown` | Decrease value by one step |
+| `Home` | Jump to minimum value |
+| `End` | Jump to maximum value |
+
+Slider uses the native `<input type="range">` keyboard behavior — no custom keyboard handling.
+
+## SSR
+
+Slider is a client component (`'use client'`). It renders a native `<input type="range">` whose `value` is determined by `value` (controlled) or `defaultValue` (uncontrolled). The server-rendered markup matches the initial client state. No hydration mismatch occurs when these props are stable between server and client.

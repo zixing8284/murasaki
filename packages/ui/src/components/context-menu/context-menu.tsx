@@ -235,6 +235,7 @@ export function ContextMenuContent({
     <div
       ref={ref}
       className={cnPure('fixed z-9999', className)}
+      data-open=""
       style={{ left: pos.left, top: pos.top, ...style }}
       onClick={handleClick}
       onContextMenu={event => event.preventDefault()}

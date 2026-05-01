@@ -1,0 +1,104 @@
+# Menu
+
+The Menu components render a Windows 98 styled vertical menu with items, icons, and separators. They are building blocks for context menus, dropdown menus, and window menus.
+
+## Compound Components
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'murasaki-react98'
+import { CodeBlock } from '../../directory/apps/docs/code-block'
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Component</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`Menu`</TableCell>
+      <TableCell>Root container with `role="menu"`</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`MenuItem`</TableCell>
+      <TableCell>Individual menu item with `role="menuitem"`</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`MenuSeparator`</TableCell>
+      <TableCell>Visual separator with `role="separator"`</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Props (MenuItem)
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Prop</TableHead>
+      <TableHead>Type</TableHead>
+      <TableHead>Default</TableHead>
+      <TableHead>Description</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>`icon`</TableCell>
+      <TableCell>`ReactNode`</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>Optional icon before the label</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`disabled`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`false`</TableCell>
+      <TableCell>Disables the menu item</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`selected`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`false`</TableCell>
+      <TableCell>Highlights the item as selected</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>`reserveIconSpace`</TableCell>
+      <TableCell>`boolean`</TableCell>
+      <TableCell>`false`</TableCell>
+      <TableCell>Reserve icon column space even when no icon is present</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Usage
+
+<CodeBlock code={`import { Menu, MenuItem, MenuSeparator } from 'murasaki-react98'
+
+<Menu>
+  <MenuItem icon={<CheckIcon />}>Save</MenuItem>
+  <MenuItem>Open</MenuItem>
+  <MenuSeparator />
+  <MenuItem disabled>Print</MenuItem>
+  <MenuItem selected>Recent</MenuItem>
+</Menu>`} />
+
+## Accessibility
+
+- `Menu` renders `role="menu"` on a `<menu>` element.
+- `MenuItem` renders `role="menuitem"` on an `<li>` with `aria-disabled` when disabled.
+- `MenuSeparator` renders `role="separator"` on an `<li>`.
+- Disabled items have `aria-disabled="true"` and `data-disabled` for CSS styling.
+- Selected items have `data-selected` for CSS styling.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `ArrowDown` / `ArrowUp` | Navigate between items (when integrated with a parent that provides roving focus) |
+| `Enter` / `Space` | Activate the focused item |
+| `Escape` | Close the menu (when used inside a dismissable layer) |
+
+Menu is a stateless building block. Arrow-key navigation is provided by the parent component (e.g., ContextMenu, WindowMenuBar) that wraps it.
+
+## SSR
+
+Menu is a client component (`'use client'`). It renders static HTML with ARIA roles — no interactive state is managed internally. Server-rendered markup is identical to client-rendered output. No hydration mismatch risk.

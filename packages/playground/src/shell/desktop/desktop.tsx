@@ -1,4 +1,5 @@
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
+import type { GridLayout } from '../../contexts/desktop-layout'
 import type { AppId } from '../../contexts/process'
 import {
   ContextMenu,
@@ -72,6 +73,24 @@ export function Desktop(): React.ReactElement {
     return [...apps, ...files]
   }, [items, open, requestOpenInMediaPlayer])
 
+  const renderedPositions = useMemo<GridLayout>(() => {
+    const next: GridLayout = {}
+
+    iconEntries.forEach((entry, index) => {
+      next[entry.id] = positions[entry.id] ?? getDefaultPosition(index)
+    })
+
+    return next
+  }, [iconEntries, positions, getDefaultPosition])
+
+  const isRenderedCellOccupied = useCallback(
+    (col: number, row: number, excludeId?: string): boolean =>
+      Object.entries(renderedPositions).some(
+        ([id, pos]) => id !== excludeId && pos.col === col && pos.row === row,
+      ),
+    [renderedPositions],
+  )
+
   const handleBackgroundPointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (event.target === event.currentTarget) {
       setSelectedIconId(null)
@@ -105,7 +124,7 @@ export function Desktop(): React.ReactElement {
           onPointerDown={handleBackgroundPointerDown}
         >
           {iconEntries.map((entry, index) => {
-            const pos = positions[entry.id] ?? getDefaultPosition(index)
+            const pos = renderedPositions[entry.id] ?? getDefaultPosition(index)
             return (
               <DesktopIcon
                 key={entry.id}
@@ -117,6 +136,7 @@ export function Desktop(): React.ReactElement {
                 selected={selectedIconId === entry.id}
                 onSelect={setSelectedIconId}
                 onOpen={entry.onOpen}
+                isCellOccupied={isRenderedCellOccupied}
                 menuContainer={desktopRef.current}
               />
             )

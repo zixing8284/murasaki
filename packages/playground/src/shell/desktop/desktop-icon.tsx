@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from 'react'
+import type { DesktopCellOccupancyChecker } from './use-desktop-icon-drag'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -19,6 +20,7 @@ interface DesktopIconProps {
   selected: boolean
   onSelect: (id: string) => void
   onOpen: () => void
+  isCellOccupied: DesktopCellOccupancyChecker
   menuContainer?: HTMLElement | null
 }
 
@@ -31,9 +33,10 @@ export function DesktopIcon({
   selected,
   onSelect,
   onOpen,
+  isCellOccupied,
   menuContainer = null,
 }: DesktopIconProps): ReactElement {
-  const { setPosition, isCellOccupied, gridRef } = useDesktopLayout()
+  const { setPosition, gridRef } = useDesktopLayout()
   const { dragOffset, suppressClickRef, handlePointerDown } = useDesktopIconDrag({
     id,
     col,

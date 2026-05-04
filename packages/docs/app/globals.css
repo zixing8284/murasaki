@@ -1,7 +1,30 @@
 :root {
+  --m98-docs-font-mono: Fixedsys, "Lucida Console", "Courier New", monospace;
   --m98-docs-border: #808080;
   --m98-docs-border-light: #ffffff;
   --m98-docs-code-bg: #f7f7f7;
+  --m98-docs-example-padding: 20px;
+  --m98-docs-preview-bg: var(--button-face);
+}
+
+html.dark {
+  --m98-docs-border: #586e75;
+  --m98-docs-border-light: #073642;
+  --m98-docs-code-bg: #002b36;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--m98-docs-font-mono);
+}
+
+body {
+  text-rendering: optimizeSpeed;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
 }
 
 .m98-home-grid {
@@ -24,35 +47,312 @@
 }
 
 .m98-example {
-  margin: 20px 0;
+  margin: 28px 0 36px;
 }
 
 .m98-example__title {
   font-size: 1rem;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
 }
 
 .m98-example__preview {
-  min-height: 72px;
-  padding: 14px;
+  min-height: 112px;
   overflow: auto;
+  background: var(--m98-docs-preview-bg);
+  box-shadow: var(--shadow-border-field);
+  color: var(--window-text);
+}
+
+.m98-example__preview[data-theme="windows-98"] {
+  --m98-docs-preview-bg: var(--button-face);
+}
+
+.m98-example__preview[data-theme="solarized-dark"] {
+  --m98-docs-preview-bg: var(--button-face);
+}
+
+.m98-example__preview-inner {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: var(--m98-docs-example-padding);
+  font-family: var(--m98-docs-font-mono);
+  font-size: 12px;
+  line-height: 1.25;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  text-rendering: optimizeSpeed;
+}
+
+.m98-example__preview-inner > * {
+  max-width: 100%;
 }
 
 .m98-example__preview--select {
-  height: 224px;
-  min-height: 224px;
+  height: 240px;
+  min-height: 240px;
+}
+
+.m98-example__tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin: 0 0 8px;
+  border-bottom: 1px solid var(--m98-docs-border);
+  padding-bottom: 0;
+}
+
+.m98-example__tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.m98-example__tab[data-active] {
+  opacity: 1;
+  border-bottom-color: currentColor;
+}
+
+.m98-example__tab:hover {
+  opacity: 1;
+}
+
+.m98-example__tab:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.m98-example__panel--code {
+  margin-top: 0;
+}
+
+.m98-example__panel--code pre {
+  margin: 0;
 }
 
 .m98-example__source {
-  margin: 8px 0 0;
-  padding: 12px;
+  max-height: 360px;
   overflow: auto;
-  border: 1px solid var(--m98-docs-border);
+  padding: 12px;
   background: var(--m98-docs-code-bg);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  box-shadow: var(--shadow-border-field);
+  color: inherit;
 }
 
 .m98-example__source code {
-  font-family: Consolas, Monaco, monospace;
+  font-family: var(--m98-docs-font-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre;
+}
+
+/* Minimal docs-side utility set for TSX examples. The docs site does not run
+   Tailwind over example modules, so keep these in sync with example usage. */
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.inset-0 {
+  inset: 0;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-6 {
+  gap: 24px;
+}
+
+.h-6 {
+  height: 24px;
+}
+
+.h-12 {
+  height: 48px;
+}
+
+.h-24 {
+  height: 96px;
+}
+
+.h-28 {
+  height: 112px;
+}
+
+.h-32 {
+  height: 128px;
+}
+
+.h-40 {
+  height: 160px;
+}
+
+.h-44 {
+  height: 176px;
+}
+
+.h-56 {
+  height: 224px;
+}
+
+.max-h-40 {
+  max-height: 160px;
+}
+
+.min-h-0 {
+  min-height: 0;
+}
+
+.min-h-24 {
+  min-height: 96px;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.w-40 {
+  width: 160px;
+}
+
+.w-44 {
+  width: 176px;
+}
+
+.w-52 {
+  width: 208px;
+}
+
+.w-64 {
+  width: 256px;
+}
+
+.w-72 {
+  width: 288px;
+}
+
+.w-80 {
+  width: 320px;
+}
+
+.w-\[352px\] {
+  width: 352px;
+}
+
+.w-\[360px\] {
+  width: 360px;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.list-none {
+  list-style: none;
+}
+
+.bg-\(--window\) {
+  background-color: var(--window);
+}
+
+.text-\(--button-text\) {
+  color: var(--button-text);
+}
+
+.text-\(--window-text\) {
+  color: var(--window-text);
+}
+
+.shadow-\(--shadow-border-field\) {
+  box-shadow: var(--shadow-border-field);
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.p-1\.5 {
+  padding: 6px;
+}
+
+.p-2 {
+  padding: 8px;
+}
+
+.px-1 {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.px-1\.5 {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.px-2 {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.py-0\.5 {
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+.hover\:bg-\(--hilight\):hover {
+  background-color: var(--hilight);
+}
+
+.hover\:text-\(--hilight-text\):hover {
+  color: var(--hilight-text);
 }

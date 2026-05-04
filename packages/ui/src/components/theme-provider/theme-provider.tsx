@@ -19,14 +19,20 @@ export interface ThemeProviderProps {
   defaultTheme?: ThemeId
   /** Browser persistence key. Set to `null` to disable localStorage persistence. */
   storageKey?: string | null
+  /** Optional element that receives `data-theme` instead of `<html>`. */
+  attributeTarget?: HTMLElement | null
   children: React.ReactNode
 }
 
-export function ThemeProvider({
-  defaultTheme,
-  storageKey = STORAGE_KEY,
-  children,
-}: ThemeProviderProps): React.ReactElement {
+export function ThemeProvider(props: ThemeProviderProps): React.ReactElement {
+  const {
+    defaultTheme,
+    storageKey = STORAGE_KEY,
+    children,
+  } = props
+  const hasAttributeTarget = 'attributeTarget' in props
+  const attributeTarget = props.attributeTarget
+
   const [themeId, setThemeId] = useState<ThemeId>(() => {
     if (defaultTheme !== undefined || storageKey === null || typeof window === 'undefined')
       return defaultTheme ?? DEFAULT_THEME
@@ -49,20 +55,34 @@ export function ThemeProvider({
     catch { /* ignore */ }
   }, [storageKey])
 
-  // Toggle data-theme attribute on <html>. Skip writes when the attribute already
+  // Toggle data-theme on the chosen root. Skip writes when the attribute already
   // matches the desired state to avoid the cleanup→set churn that previously caused
   // a brief flash where data-theme was wiped between transitions.
   useEffect(() => {
-    const el = document.documentElement
+    const el = hasAttributeTarget ? attributeTarget : document.documentElement
+    if (!el)
+      return
+
     const current = el.getAttribute('data-theme')
-    if (themeId === DEFAULT_THEME) {
+    const nextAttribute = themeId === DEFAULT_THEME && !hasAttributeTarget ? null : themeId
+    if (nextAttribute === null) {
       if (current !== null)
         el.removeAttribute('data-theme')
     }
-    else if (current !== themeId) {
-      el.setAttribute('data-theme', themeId)
+    else if (current !== nextAttribute) {
+      el.setAttribute('data-theme', nextAttribute)
     }
-  }, [themeId])
+  }, [attributeTarget, hasAttributeTarget, themeId])
+
+  useEffect(() => {
+    if (!hasAttributeTarget || !attributeTarget)
+      return
+
+    const el = attributeTarget
+    return () => {
+      el.removeAttribute('data-theme')
+    }
+  }, [attributeTarget, hasAttributeTarget])
 
   return (
     <ThemeContext value={{ themeId, setTheme }}>

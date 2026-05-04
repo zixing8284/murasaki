@@ -23,10 +23,21 @@ describe('treeView', () => {
 
   function getItem(text: string): HTMLElement {
     const items = Array.from(document.querySelectorAll<HTMLElement>('[role="treeitem"]'))
-    const match = items.find(el => el.textContent?.trim() === text)
+    const match = items.find((el) => {
+      const clone = el.cloneNode(true) as HTMLElement
+      clone.querySelectorAll('[aria-hidden="true"]').forEach(hidden => hidden.remove())
+      return clone.textContent?.trim() === text
+    })
     if (!match)
       throw new Error(`Tree item not found: ${text}`)
     return match
+  }
+
+  function getDisclosure(item: HTMLElement): HTMLElement {
+    const marker = item.querySelector<HTMLElement>('[data-tree-view-disclosure]')
+    if (!marker)
+      throw new Error('Tree disclosure not found')
+    return marker
   }
 
   // === ARIA roles ===
@@ -75,6 +86,20 @@ describe('treeView', () => {
     expect(bravo.getAttribute('aria-expanded')).toBe('false')
     await userEvent.keyboard('{ArrowRight}')
     expect(bravo.getAttribute('aria-expanded')).toBe('true')
+  })
+
+  it('renders plus and minus disclosure markers for branches', async () => {
+    await renderTree()
+    const alpha = getItem('Alpha')
+    const bravo = getItem('Bravo')
+
+    expect(getDisclosure(alpha).textContent).toBe('-')
+    expect(getDisclosure(bravo).textContent).toBe('+')
+
+    bravo.focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    expect(getDisclosure(bravo).textContent).toBe('-')
   })
 
   it('arrowRight on an expanded branch focuses the first child', async () => {

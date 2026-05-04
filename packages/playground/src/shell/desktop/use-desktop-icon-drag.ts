@@ -5,6 +5,8 @@ import { calcGridDropTarget } from '../../contexts/desktop-layout'
 
 const DRAG_THRESHOLD = 3
 
+export type DesktopCellOccupancyChecker = (col: number, row: number, excludeId?: string) => boolean
+
 interface DragState {
   pointerId: number
   startClientX: number
@@ -21,7 +23,7 @@ export interface UseDesktopIconDragOptions {
   row: number
   gridRef: RefObject<HTMLElement | null>
   setPosition: DesktopLayoutContextValue['setPosition']
-  isCellOccupied: DesktopLayoutContextValue['isCellOccupied']
+  isCellOccupied: DesktopCellOccupancyChecker
   onSelect: (id: string) => void
 }
 

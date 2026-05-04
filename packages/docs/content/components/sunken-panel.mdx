@@ -1,10 +1,10 @@
-import { ExampleFrame } from './_shared/example-frame'
-import { SunkenPanelBasicExample } from './sunken-panel/examples/sunken-panel-examples'
-import { sunkenPanelBasicSource } from './sunken-panel/examples/sources'
+import { SunkenPanelBasicDemo } from './sunken-panel/sunken-panel-basic'
 
 # SunkenPanel
 
 `SunkenPanel` provides a general-purpose inset panel with the library's custom scroll area inside.
+
+Because SunkenPanel is a frame primitive, raw text should live in a padded child element. Keep text away from the inset border when using the 11px pixel font so the first glyph pixels are not visually clipped.
 
 ## Props
 
@@ -16,9 +16,9 @@ import { sunkenPanelBasicSource } from './sunken-panel/examples/sources'
 
 ## Examples
 
-<ExampleFrame title="Inset output panel" source={sunkenPanelBasicSource}>
-	<SunkenPanelBasicExample />
-</ExampleFrame>
+<ComponentExample name="sunken-panel-basic" title="Inset output panel">
+  <SunkenPanelBasicDemo />
+</ComponentExample>
 
 ## Accessibility
 

@@ -10,7 +10,7 @@ import {
   WindowProvider,
   WindowTitle,
   WindowTitleBar,
-} from 'murasaki-react98'
+} from '@murasaki/react98'
 import { useMemo } from 'react'
 
 interface DesignerPreviewProps {

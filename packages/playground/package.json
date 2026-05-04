@@ -1,17 +1,18 @@
 {
-  "name": "murasaki-react98-playground",
+  "name": "@murasaki/react98-playground",
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "description": "Windows 98 desktop playground for @murasaki/react98",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@murasaki/react98": "workspace:*",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
-    "murasaki-react98": "workspace:*",
     "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:"
   },

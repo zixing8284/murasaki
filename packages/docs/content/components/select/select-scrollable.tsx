@@ -1,6 +1,6 @@
 'use client'
 
-import { Select } from 'murasaki-react98'
+import { Select } from '@murasaki/react98'
 
 const countryOptions = [
   { value: 'cn', label: 'China' },

@@ -13,7 +13,7 @@ import {
   WindowProvider,
   WindowTitle,
   WindowTitleBar,
-} from 'murasaki-react98'
+} from '@murasaki/react98'
 
 const options = [
   { label: 'Windows 98', value: 'windows-98' },
@@ -33,7 +33,7 @@ export default function Page(): React.ReactElement {
         <WindowProvider positioning="absolute">
           <WindowFrame className="fixtureWindow">
             <WindowTitleBar>
-              <WindowTitle>Murasaki React98</WindowTitle>
+              <WindowTitle>@murasaki/react98</WindowTitle>
               <WindowButtons>
                 <WindowMinimizeButton />
                 <WindowMaximizeButton />

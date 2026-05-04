@@ -1,4 +1,4 @@
-import { Menu, MenuItem, MenuSeparator } from 'murasaki-react98'
+import { Menu, MenuItem, MenuSeparator } from '@murasaki/react98'
 
 interface StartMenuProps {
   onClose: () => void
@@ -19,7 +19,7 @@ export function StartMenu({ onClose }: StartMenuProps): React.ReactElement {
           {/* Stripe */}
           <div className="bg-linear-to-b from-(--active-title) to-(--gradient-active-title) w-5.25 min-h-fit flex flex-col justify-end pb-4 shadow-(--shadow-raised)">
             <span className="text-(--title-text) -rotate-90 origin-center whitespace-nowrap text-xs">
-              murasaki-react98
+              @murasaki/react98
             </span>
           </div>
           {/* Menu Items */}

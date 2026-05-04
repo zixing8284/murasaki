@@ -1,4 +1,4 @@
-import { OptionButton, OptionGroup } from 'murasaki-react98'
+import { OptionButton, OptionGroup } from '@murasaki/react98'
 import { useState } from 'react'
 
 export function MyComputer(): React.ReactElement {

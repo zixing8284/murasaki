@@ -1,6 +1,6 @@
 'use client'
 
-import { FieldPanel } from 'murasaki-react98'
+import { FieldPanel } from '@murasaki/react98'
 
 const files = ['AUTOEXEC.BAT', 'COMMAND.COM', 'CONFIG.SYS', 'README.TXT', 'SETUP.EXE', 'WIN.COM']
 

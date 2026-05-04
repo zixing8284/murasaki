@@ -1,6 +1,6 @@
 'use client'
 
-import { Divider } from 'murasaki-react98'
+import { Divider } from '@murasaki/react98'
 
 export function DividerBasicDemo(): React.ReactElement {
   return (

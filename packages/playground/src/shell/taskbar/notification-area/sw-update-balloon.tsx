@@ -1,4 +1,4 @@
-import { Button } from 'murasaki-react98'
+import { Button } from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 

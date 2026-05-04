@@ -1,4 +1,4 @@
-import type { ThemeId } from 'murasaki-react98'
+import type { ThemeId } from '@murasaki/react98'
 import {
   Button,
   WindowButtons,
@@ -10,7 +10,7 @@ import {
   WindowProvider,
   WindowTitle,
   WindowTitleBar,
-} from 'murasaki-react98'
+} from '@murasaki/react98'
 
 interface ThemePreviewProps {
   themeId: ThemeId

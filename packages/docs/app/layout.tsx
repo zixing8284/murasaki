@@ -5,16 +5,16 @@ import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 
 import 'nextra-theme-docs/style.css'
-import 'murasaki-react98/globals.css'
+import '@murasaki/react98/globals.css'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Murasaki React98 Docs',
-  description: 'Component documentation and examples for Murasaki React98.',
+  title: '@murasaki/react98 Docs',
+  description: 'Component documentation and examples for @murasaki/react98.',
 }
 
-const navbar = <Navbar logo={<strong>Murasaki React98</strong>} />
-const footer = <Footer>Murasaki React98 component documentation</Footer>
+const navbar = <Navbar logo={<strong>@murasaki/react98</strong>} />
+const footer = <Footer>@murasaki/react98 component documentation</Footer>
 
 export default async function RootLayout({
   children,
@@ -26,7 +26,7 @@ export default async function RootLayout({
         <Layout
           navbar={navbar}
           pageMap={await getPageMap()}
-          docsRepositoryBase="https://github.com/zixing8284/murasaki-react98/tree/main/packages/docs"
+          docsRepositoryBase="https://github.com/zixing8284/murasaki/tree/main/packages/docs"
           footer={footer}
         >
           {children}

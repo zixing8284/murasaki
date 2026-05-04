@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, WindowButtons, WindowCloseButton, WindowContent, WindowFrame, WindowMaximizeButton, WindowMenuBar, WindowMenuBarItem, WindowMinimizeButton, WindowProvider, WindowStatusBar, WindowStatusBarField, WindowTitle, WindowTitleBar } from 'murasaki-react98'
+import { Button, WindowButtons, WindowCloseButton, WindowContent, WindowFrame, WindowMaximizeButton, WindowMenuBar, WindowMenuBarItem, WindowMinimizeButton, WindowProvider, WindowStatusBar, WindowStatusBarField, WindowTitle, WindowTitleBar } from '@murasaki/react98'
 
 export function WindowBasicDemo(): React.ReactElement {
   return (

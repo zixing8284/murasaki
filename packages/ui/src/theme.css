@@ -1,9 +1,9 @@
-/* Murasaki React98 — theme stylesheet.
+/* @murasaki/react98 — theme stylesheet.
    Contains CSS variable tokens, library-computed shadow tokens, and base resets.
 
    Public exports:
-   - "murasaki-react98/theme.css"   — this file (Tailwind v4 source).
-   - "murasaki-react98/globals.css" — pre-compiled bundle for non-Tailwind apps. */
+   - "@murasaki/react98/theme.css"   — this file (Tailwind v4 source).
+   - "@murasaki/react98/globals.css" — pre-compiled bundle for non-Tailwind apps. */
 
 @import "tailwindcss";
 

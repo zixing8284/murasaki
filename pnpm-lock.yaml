@@ -132,7 +132,7 @@ importers:
 
   packages/docs:
     dependencies:
-      murasaki-react98:
+      '@murasaki/react98':
         specifier: workspace:*
         version: link:../ui
       next:
@@ -172,7 +172,7 @@ importers:
 
   packages/next-fixture:
     dependencies:
-      murasaki-react98:
+      '@murasaki/react98':
         specifier: workspace:*
         version: link:../ui
       next:
@@ -206,7 +206,7 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
-      murasaki-react98:
+      '@murasaki/react98':
         specifier: workspace:*
         version: link:../ui
       tailwind-merge:

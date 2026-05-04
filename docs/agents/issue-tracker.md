@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues and PRDs for this repo live as GitHub issues in `zixing8284/murasaki-react98`. Use the `gh` CLI for all operations.
+Issues and PRDs for this repo live as GitHub issues in `zixing8284/murasaki`. Use the `gh` CLI for all operations.
 
 ## Conventions
 

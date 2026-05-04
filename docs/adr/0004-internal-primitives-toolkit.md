@@ -1,6 +1,6 @@
 # Internal primitive toolkit
 
-Murasaki React98 maintains a non-public layer of shared behavior utilities under `src/primitives/` to keep complex component behavior consistent across the library. These hooks are internal implementation details — they are not exported through `src/index.ts` and are not part of the published package API.
+@murasaki/react98 maintains a non-public layer of shared behavior utilities under `src/primitives/` to keep complex component behavior consistent across the library. These hooks are internal implementation details — they are not exported through `src/index.ts` and are not part of the published package API.
 
 ## Scope
 

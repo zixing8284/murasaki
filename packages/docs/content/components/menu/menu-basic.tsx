@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu, MenuItem, MenuSeparator } from 'murasaki-react98'
+import { Menu, MenuItem, MenuSeparator } from '@murasaki/react98'
 
 export function MenuBasicDemo(): React.ReactElement {
   return (

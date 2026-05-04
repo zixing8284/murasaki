@@ -1,10 +1,8 @@
-import { ExampleFrame } from './_shared/example-frame'
-import { ThemeProviderBasicExample } from './theme-provider/examples/theme-provider-examples'
-import { themeProviderBasicSource } from './theme-provider/examples/sources'
+import { ThemeProviderBasicDemo } from './theme-provider/theme-provider-basic'
 
 # ThemeProvider
 
-`ThemeProvider` stores the active theme and writes the matching `data-theme` attribute on the document element.
+`ThemeProvider` stores the active theme and writes the matching `data-theme` attribute on the document element by default.
 
 ## Props
 
@@ -12,13 +10,14 @@ import { themeProviderBasicSource } from './theme-provider/examples/sources'
 |------|------|---------|-------------|
 | `defaultTheme` | `'windows-98' \| 'solarized-dark'` | `'windows-98'` | Initial theme. |
 | `storageKey` | `string \| null` | `'murasaki-theme'` | Local storage key. Use `null` to disable persistence. |
+| `attributeTarget` | `HTMLElement \| null` | `document.documentElement` | Optional element that receives `data-theme` instead of `<html>`. |
 | `children` | `ReactNode` | required | The app subtree. |
 
 ## Examples
 
-<ExampleFrame title="Theme switcher" source={themeProviderBasicSource}>
-	<ThemeProviderBasicExample />
-</ExampleFrame>
+<ComponentExample name="theme-provider-basic" title="Theme switcher" previewTheme="none">
+  <ThemeProviderBasicDemo />
+</ComponentExample>
 
 ## Accessibility
 

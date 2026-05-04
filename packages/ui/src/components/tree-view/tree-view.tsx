@@ -22,29 +22,10 @@ const treeViewItemStyles = cva(
       variant: {
         summary: [
           'list-none',
-          'before:block',
-          'before:h-[11px]',
-          'before:w-[11px]',
-          'before:leading-[11px]',
-          'before:pl-px',
-          'before:border',
-          'before:border-(--button-shadow)',
-          'before:text-center',
-          'before:bg-(--window)',
-          'before:text-(--window-text)',
-          'before:flex',
-          'before:cursor-pointer',
-          'before:items-center',
-          'before:justify-center',
-          'before:shrink-0',
           '[&::-webkit-details-marker]:content-none',
           '[&::marker]:content-none',
         ],
         leaf: [],
-      },
-      expanded: {
-        true: 'before:content-[\'-\']',
-        false: 'before:content-[\'+\']',
       },
       disabled: {
         true: 'cursor-not-allowed opacity-50',
@@ -80,6 +61,23 @@ const treeViewItemStyles = cva(
     },
   },
 )
+
+const treeViewDisclosureStyles = cva([
+  'flex',
+  'h-2.75',
+  'w-2.75',
+  'shrink-0',
+  'cursor-pointer',
+  'items-center',
+  'justify-center',
+  'border',
+  'border-(--button-shadow)',
+  'bg-(--window)',
+  'pl-px',
+  'text-center',
+  'leading-2.75',
+  'text-(--window-text)',
+])
 
 interface TreeViewItemProps {
   /** The label to display for this item */
@@ -153,7 +151,6 @@ export function TreeViewItem({
                 className={cn(
                   treeViewItemStyles({
                     variant: 'summary',
-                    expanded,
                     disabled,
                     selected,
                   }),
@@ -167,6 +164,13 @@ export function TreeViewItem({
                   }
                 }}
               >
+                <span
+                  aria-hidden="true"
+                  data-tree-view-disclosure=""
+                  className={treeViewDisclosureStyles()}
+                >
+                  {expanded ? '-' : '+'}
+                </span>
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>
               </summary>

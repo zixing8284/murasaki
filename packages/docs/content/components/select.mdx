@@ -1,6 +1,6 @@
-import { ExampleFrame } from './_shared/example-frame'
-import { SelectBasicExample, SelectNativeExample, SelectScrollableExample } from './select/examples/select-examples'
-import { selectBasicSource, selectNativeSource, selectScrollableSource } from './select/examples/sources'
+import { SelectBasicDemo } from './select/select-basic'
+import { SelectNativeDemo } from './select/select-native'
+import { SelectScrollableDemo } from './select/select-scrollable'
 
 # Select
 
@@ -22,25 +22,19 @@ The `Select` component renders a Windows 98 styled custom select with a trigger 
 
 ## Examples
 
-<ExampleFrame
-  title="Custom select"
-  previewClassName="m98-example__preview--select"
-  source={selectBasicSource}
->
-  <SelectBasicExample />
-</ExampleFrame>
+<ComponentExample name="select-basic" title="Custom select"
+  previewClassName="m98-example__preview--select">
+  <SelectBasicDemo />
+</ComponentExample>
 
-<ExampleFrame title="Native select" source={selectNativeSource}>
-  <SelectNativeExample />
-</ExampleFrame>
+<ComponentExample name="select-native" title="Native select">
+  <SelectNativeDemo />
+</ComponentExample>
 
-<ExampleFrame
-  title="Scrollable options"
-  previewClassName="m98-example__preview--select"
-  source={selectScrollableSource}
->
-  <SelectScrollableExample />
-</ExampleFrame>
+<ComponentExample name="select-scrollable" title="Scrollable options"
+  previewClassName="m98-example__preview--select">
+  <SelectScrollableDemo />
+</ComponentExample>
 
 ## Accessibility
 

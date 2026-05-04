@@ -1,6 +1,5 @@
-import { ExampleFrame } from './_shared/example-frame'
-import { CheckboxBasicExample, CheckboxControlledExample } from './checkbox/examples/checkbox-examples'
-import { checkboxBasicSource, checkboxControlledSource } from './checkbox/examples/sources'
+import { CheckboxBasicDemo } from './checkbox/checkbox-basic'
+import { CheckboxControlledDemo } from './checkbox/checkbox-controlled'
 
 # Checkbox
 
@@ -19,13 +18,13 @@ The `Checkbox` component renders a Windows 98 styled checkbox with a label.
 
 ## Examples
 
-<ExampleFrame title="Basic states" source={checkboxBasicSource}>
-  <CheckboxBasicExample />
-</ExampleFrame>
+<ComponentExample name="checkbox-basic" title="Basic states">
+  <CheckboxBasicDemo />
+</ComponentExample>
 
-<ExampleFrame title="Controlled" source={checkboxControlledSource}>
-  <CheckboxControlledExample />
-</ExampleFrame>
+<ComponentExample name="checkbox-controlled" title="Controlled">
+  <CheckboxControlledDemo />
+</ComponentExample>
 
 ## Accessibility
 

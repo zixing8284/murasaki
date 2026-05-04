@@ -21,8 +21,6 @@ export interface DesktopLayoutContextValue {
   positions: GridLayout
   /** Persist the grid position of a single icon. */
   setPosition: (id: string, pos: GridPosition) => void
-  /** Check whether a grid cell is occupied (optionally exclude one icon). */
-  isCellOccupied: (col: number, row: number, excludeId?: string) => boolean
   /** Column-first default position for an icon that has no persisted entry yet. */
   getDefaultPosition: (index: number) => GridPosition
   /** Ref to the desktop grid container. Consumers use `.current` for drop math. */

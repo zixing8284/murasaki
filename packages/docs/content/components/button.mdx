@@ -1,6 +1,5 @@
-import { ExampleFrame } from './_shared/example-frame'
-import { ButtonBasicExample, ButtonStateExample } from './button/examples/button-examples'
-import { buttonBasicSource, buttonStateSource } from './button/examples/sources'
+import { ButtonBasicDemo } from './button/button-basic'
+import { ButtonStateDemo } from './button/button-state'
 
 # Button
 
@@ -18,13 +17,13 @@ The `Button` component renders a Windows 98 styled push button with raised 3D bo
 
 ## Examples
 
-<ExampleFrame title="Basic buttons" source={buttonBasicSource}>
-  <ButtonBasicExample />
-</ExampleFrame>
+<ComponentExample name="button-basic" title="Basic buttons">
+  <ButtonBasicDemo />
+</ComponentExample>
 
-<ExampleFrame title="Pressed state" source={buttonStateSource}>
-  <ButtonStateExample />
-</ExampleFrame>
+<ComponentExample name="button-state" title="Pressed state">
+  <ButtonStateDemo />
+</ComponentExample>
 
 ## Accessibility
 

@@ -101,6 +101,25 @@ const server = createServer(async (request, response) => {
   createReadStream(filePath).pipe(response)
 })
 
-server.listen(port, () => {
-  console.log(`Docs preview: http://localhost:${String(port)}${basePath}/`)
-})
+async function startServer() {
+  if (!await exists(join(outDir, 'index.html'))) {
+    console.error('Docs export not found. Run `pnpm docs:build` before `pnpm docs:preview`.')
+    process.exitCode = 1
+    return
+  }
+
+  server.on('error', (error) => {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'EADDRINUSE') {
+      console.error(`Port ${String(port)} is already in use. Try: PORT=${String(port + 1)} pnpm docs:preview`)
+      process.exitCode = 1
+      return
+    }
+    throw error
+  })
+
+  server.listen(port, () => {
+    console.log(`Docs preview: http://localhost:${String(port)}${basePath}/`)
+  })
+}
+
+void startServer()

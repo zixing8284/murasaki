@@ -5,7 +5,7 @@ import * as React from 'react'
 
 import { cn } from '#/lib/utils'
 
-import { ButtonDownIcon } from './dropdown-icons'
+import { ButtonDownIcon } from './select-icons'
 
 const selectVariants = cva([
   // Reset
@@ -46,7 +46,7 @@ const selectWrapperVariants = cva([
 
 const labelVariants = cva(['inline-block', 'mr-2', 'leading-5.25'])
 
-interface DropdownNativeProps
+interface SelectNativeProps
   extends React.ComponentProps<'select'>,
   VariantProps<typeof selectVariants> {
   /**
@@ -66,11 +66,11 @@ interface DropdownNativeProps
 }
 
 /**
- * A Windows 98 styled native dropdown/select component.
- * Uses the browser's native select element for the dropdown list.
+ * A Windows 98 styled native select component.
+ * Uses the browser's native select element for the option list.
  * Supports forwarding ref to the internal select element.
  */
-export function DropdownNative({
+export function SelectNative({
   children,
   className,
   id,
@@ -81,7 +81,7 @@ export function DropdownNative({
   ...props
 }: {
   ref?: React.RefObject<HTMLSelectElement | null>
-} & DropdownNativeProps): React.ReactElement {
+} & SelectNativeProps): React.ReactElement {
   const generatedId = React.useId()
   const selectId = id ?? (label ? generatedId : undefined)
 
@@ -116,3 +116,5 @@ export function DropdownNative({
 
   return selectElement
 }
+
+export type { SelectNativeProps }

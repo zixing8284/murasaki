@@ -1,7 +1,7 @@
 import {
   Button,
-  Dropdown,
   ScrollArea,
+  Select,
   ThemeProvider,
   Tooltip,
   WindowButtons,
@@ -44,7 +44,7 @@ export default function Page(): React.ReactElement {
               <Tooltip text="Rendered through the package client boundary">
                 <Button>Hover me</Button>
               </Tooltip>
-              <Dropdown
+              <Select
                 defaultValue="windows-98"
                 label="Theme"
                 name="theme"

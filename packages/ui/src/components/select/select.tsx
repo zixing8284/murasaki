@@ -1,4 +1,4 @@
-import type { DropdownOption } from './use-dropdown-state'
+import type { SelectOption } from './use-select-state'
 
 import { cva } from 'class-variance-authority'
 
@@ -8,10 +8,10 @@ import { useId, useMemo, useRef } from 'react'
 import { cn } from '#/lib/utils'
 import { useDismissable } from '#/primitives'
 import { useScrollbar } from '../scroll-area/use-scrollbar'
-import { ButtonDownActiveIcon, ButtonDownIcon } from './dropdown-icons'
-import { useDropdownState } from './use-dropdown-state'
+import { ButtonDownActiveIcon, ButtonDownIcon } from './select-icons'
+import { useSelectState } from './use-select-state'
 
-// Trigger button variants - styled like DropdownNative's select
+// Trigger button variants - styled like SelectNative's select
 const triggerVariants = cva([
   // Reset
   'appearance-none',
@@ -50,7 +50,7 @@ const triggerVariants = cva([
   'text-ellipsis',
 ])
 
-// Dropdown menu wrapper (positioning context for scrollbar)
+// Select menu wrapper (positioning context for scrollbar)
 const menuWrapperVariants = cva([
   'absolute',
   'left-0',
@@ -62,16 +62,13 @@ const menuWrapperVariants = cva([
   'bg-(--window)',
 ])
 
-const menuViewportVariants = cva([
+// Select menu
+const menuVariants = cva([
   'w-full',
   'max-h-40',
   'overflow-y-auto',
   'box-border',
-])
-
-// Dropdown menu
-const menuVariants = cva([
-  'w-full',
+  'bg-(--window)',
   'list-none',
   'm-0',
   'p-0',
@@ -108,20 +105,20 @@ const labelVariants = cva(['inline-block', 'mr-2', 'leading-5.25'])
 
 const wrapperVariants = cva(['relative', 'inline-block'])
 
-export interface DropdownProps<T = string>
+export interface SelectProps<T = string>
   extends Omit<React.ComponentProps<'div'>, 'defaultValue' | 'onChange'> {
   /**
    * Default selected value (uncontrolled mode).
    */
   defaultValue?: T
   /**
-   * Whether the dropdown is disabled.
+   * Whether the select is disabled.
    */
   disabled?: boolean
   /**
    * Custom display formatter for the selected option.
    */
-  formatDisplay?: (option: DropdownOption<T>) => string
+  formatDisplay?: (option: SelectOption<T>) => string
   /**
    * Optional label text for accessibility.
    */
@@ -131,7 +128,7 @@ export interface DropdownProps<T = string>
    */
   labelClassName?: string
   /**
-   * Maximum height of the dropdown menu.
+   * Maximum height of the select menu.
    */
   menuMaxHeight?: number | string
   /**
@@ -141,19 +138,19 @@ export interface DropdownProps<T = string>
   /**
    * Callback fired when selection changes.
    */
-  onChange?: (option: DropdownOption<T>) => void
+  onChange?: (option: SelectOption<T>) => void
   /**
-   * Callback fired when dropdown closes.
+   * Callback fired when select closes.
    */
   onClose?: () => void
   /**
-   * Callback fired when dropdown opens.
+   * Callback fired when select opens.
    */
   onOpen?: () => void
   /**
-   * Array of options to display in the dropdown.
+   * Array of options to display in the select.
    */
-  options: DropdownOption<T>[]
+  options: SelectOption<T>[]
   /**
    * Additional className for the trigger button.
    */
@@ -163,16 +160,16 @@ export interface DropdownProps<T = string>
    */
   value?: T
   /**
-   * Width of the dropdown.
+   * Width of the select.
    */
   width?: React.CSSProperties['width']
 }
 
 /**
- * A Windows 98 styled dropdown component with custom rendered options.
- * Unlike DropdownNative, this renders its own dropdown list for more styling control.
+ * A Windows 98 styled select component with custom rendered options.
+ * Unlike SelectNative, this renders its own listbox for more styling control.
  */
-export function Dropdown<T = string>({
+export function Select<T = string>({
   className,
   defaultValue,
   disabled = false,
@@ -191,25 +188,25 @@ export function Dropdown<T = string>({
   value,
   width,
   ...props
-}: DropdownProps<T>): React.ReactElement {
+}: SelectProps<T>): React.ReactElement {
   const generatedId = useId()
   const triggerId = id ?? (label ? generatedId : undefined)
   const menuId = `${generatedId}-menu`
 
   const {
     activeIndex,
-    closeDropdown,
-    dropdownRef,
+    closeSelect,
     handleOptionClick,
     handleOptionKeyDown,
     handleOptionMouseEnter,
     handleTriggerClick,
     handleTriggerKeyDown,
+    listboxRef,
     open,
     optionRef,
     selectedOption,
     triggerRef,
-  } = useDropdownState({
+  } = useSelectState({
     defaultValue,
     disabled,
     onChange,
@@ -219,18 +216,17 @@ export function Dropdown<T = string>({
     value,
   })
 
-  const menuViewportRef = useRef<HTMLDivElement>(null)
-  useScrollbar(menuViewportRef, { disabled: !open })
+  useScrollbar(listboxRef, { disabled: !open })
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
 
   // Outside pointerdown (anywhere outside the trigger or the menu wrapper —
   // the wrapper contains both the listbox and the custom scrollbar DOM) and
-  // Escape close the dropdown via the shared dismissable primitive.
+  // Escape close the select via the shared dismissable primitive.
   const layerRefs = useMemo(() => [triggerRef, menuWrapperRef], [triggerRef])
   useDismissable({
     enabled: open,
-    onDismiss: closeDropdown,
+    onDismiss: closeSelect,
     outsidePointer: true,
     layerRefs,
   })
@@ -250,7 +246,7 @@ export function Dropdown<T = string>({
     [menuMaxHeight],
   )
 
-  const dropdownElement = (
+  const selectElement = (
     <div
       className={cn(wrapperVariants(), className)}
       style={{ ...style, width }}
@@ -292,52 +288,47 @@ export function Dropdown<T = string>({
         )}
       </button>
 
-      {/* Dropdown menu */}
+      {/* Select menu */}
       {open && (
         <div className={cn(menuWrapperVariants())} ref={menuWrapperRef}>
-          <div
-            className={cn(menuViewportVariants())}
-            ref={menuViewportRef}
+          <ul
+            className={cn(menuVariants())}
+            id={menuId}
+            ref={listboxRef}
+            role="listbox"
             style={menuStyle}
+            tabIndex={-1}
           >
-            <ul
-              className={cn(menuVariants())}
-              id={menuId}
-              ref={dropdownRef}
-              role="listbox"
-              tabIndex={-1}
-            >
-              {options.map((option, index) => {
-                const isActive = index === activeIndex
-                const isSelected = option.value === selectedOption?.value
-                const optionLabel = option.label ?? String(option.value)
+            {options.map((option, index) => {
+              const isActive = index === activeIndex
+              const isSelected = option.value === selectedOption?.value
+              const optionLabel = option.label ?? String(option.value)
 
-                return (
-                  <li
-                    aria-selected={isSelected}
-                    className={cn(menuItemVariants({ active: isActive }))}
-                    key={`${String(option.value)}-${String(index)}`}
-                    onClick={() => {
-                      handleOptionClick(index)
-                    }}
-                    onKeyDown={(e) => {
-                      handleOptionKeyDown(e)
-                    }}
-                    onMouseEnter={() => {
-                      handleOptionMouseEnter(index)
-                    }}
-                    ref={(el) => {
-                      optionRef.current[index] = el
-                    }}
-                    role="option"
-                    tabIndex={isActive ? 0 : -1}
-                  >
-                    {optionLabel}
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
+              return (
+                <li
+                  aria-selected={isSelected}
+                  className={cn(menuItemVariants({ active: isActive }))}
+                  key={`${String(option.value)}-${String(index)}`}
+                  onClick={() => {
+                    handleOptionClick(index)
+                  }}
+                  onKeyDown={(e) => {
+                    handleOptionKeyDown(e)
+                  }}
+                  onMouseEnter={() => {
+                    handleOptionMouseEnter(index)
+                  }}
+                  ref={(el) => {
+                    optionRef.current[index] = el
+                  }}
+                  role="option"
+                  tabIndex={isActive ? 0 : -1}
+                >
+                  {optionLabel}
+                </li>
+              )
+            })}
+          </ul>
         </div>
       )}
     </div>
@@ -352,13 +343,14 @@ export function Dropdown<T = string>({
         >
           {label}
         </label>
-        {dropdownElement}
+        {selectElement}
       </>
     )
   }
 
-  return dropdownElement
+  return selectElement
 }
 
-export type { DropdownOption }
-export { DropdownNative } from './dropdown-native'
+export type { SelectOption }
+export type { SelectNativeProps } from './select-native'
+export { SelectNative } from './select-native'

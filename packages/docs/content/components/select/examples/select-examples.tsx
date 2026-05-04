@@ -1,6 +1,6 @@
 'use client'
 
-import { Dropdown, DropdownNative } from 'murasaki-react98'
+import { Select, SelectNative } from 'murasaki-react98'
 
 const colorOptions = [
   { value: 'red', label: 'Red' },
@@ -20,13 +20,17 @@ const countryOptions = [
   { value: 'au', label: 'Australia' },
   { value: 'kr', label: 'South Korea' },
   { value: 'br', label: 'Brazil' },
+  { value: 'in', label: 'India' },
+  { value: 'ru', label: 'Russia' },
+  { value: 'it', label: 'Italy' },
+  { value: 'mx', label: 'Mexico' },
 ]
 
-export function DropdownBasicExample(): React.ReactElement {
+export function SelectBasicExample(): React.ReactElement {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 260 }}>
-      <Dropdown name="color" label="Color:" options={colorOptions} defaultValue="red" width={220} />
-      <Dropdown
+      <Select name="color" label="Color:" options={colorOptions} defaultValue="red" width={220} />
+      <Select
         name="disabled-example"
         label="Disabled:"
         options={[{ value: 'none', label: 'No options' }]}
@@ -37,18 +41,18 @@ export function DropdownBasicExample(): React.ReactElement {
   )
 }
 
-export function DropdownNativeExample(): React.ReactElement {
+export function SelectNativeExample(): React.ReactElement {
   return (
-    <DropdownNative name="size" label="Size:" defaultValue="medium">
+    <SelectNative name="size" label="Size:" defaultValue="medium">
       <option value="small">Small</option>
       <option value="medium">Medium</option>
       <option value="large">Large</option>
-    </DropdownNative>
+    </SelectNative>
   )
 }
 
-export function DropdownScrollableExample(): React.ReactElement {
+export function SelectScrollableExample(): React.ReactElement {
   return (
-    <Dropdown name="country" label="Country:" options={countryOptions} defaultValue="cn" width={220} />
+    <Select name="country" label="Country:" options={countryOptions} defaultValue="cn" menuMaxHeight={96} width={220} />
   )
 }

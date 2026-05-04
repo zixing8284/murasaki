@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { Dropdown } from '../src'
+import { Select } from '../src'
 
 // Reusable options for test cases
 const fruitOptions = [
@@ -15,12 +15,12 @@ const scrollOptions = Array.from({ length: 12 }, (_, index) => ({
   label: `Item ${index + 1}`,
 }))
 
-describe('dropdown', () => {
+describe('select', () => {
   // === Rendering ===
 
   it('renders a combobox trigger button', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toBeInTheDocument()
@@ -28,7 +28,7 @@ describe('dropdown', () => {
 
   it('displays the first option by default when no value/defaultValue', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Apple')
@@ -36,7 +36,7 @@ describe('dropdown', () => {
 
   it('displays defaultValue option label initially', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} defaultValue="banana" />,
+      <Select name="fruit" options={fruitOptions} defaultValue="banana" />,
     )
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Banana')
@@ -44,7 +44,7 @@ describe('dropdown', () => {
 
   it('renders aria-expanded="false" when closed', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'false')
@@ -54,7 +54,7 @@ describe('dropdown', () => {
 
   it('opens the menu on trigger click (aria-expanded="true")', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.click()
@@ -66,7 +66,7 @@ describe('dropdown', () => {
 
   it('renders all options in the listbox when open', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     await screen.getByRole('combobox').click()
 
@@ -74,31 +74,30 @@ describe('dropdown', () => {
     expect(options).toHaveLength(3)
   })
 
-  it('keeps custom scrollbar inside the dropdown menu layer', async () => {
+  it('keeps custom scrollbar inside the select menu layer', async () => {
     const screen = await render(
-      <Dropdown name="items" options={scrollOptions} menuMaxHeight={64} width={160} />,
+      <Select name="items" options={scrollOptions} menuMaxHeight={64} width={160} />,
     )
     await screen.getByRole('combobox').click()
 
     const listbox = screen.getByRole('listbox').element() as HTMLUListElement
-    const viewport = listbox.parentElement as HTMLDivElement
-    const menuLayer = viewport.parentElement as HTMLDivElement
+    const menuLayer = listbox.parentElement as HTMLDivElement
 
     await vi.waitFor(() => {
       const vBar = screen.container.querySelector('[data-murasaki-vbar]') as HTMLElement | null
       expect(vBar).not.toBeNull()
       expect(getComputedStyle(vBar!).display).toBe('block')
       expect(vBar!.parentElement).toBe(menuLayer)
-      expect(viewport.hasAttribute('data-murasaki-scrollbar-id')).toBe(true)
-      expect(listbox.hasAttribute('data-murasaki-scrollbar-id')).toBe(false)
+      expect(listbox.hasAttribute('data-murasaki-scrollbar-id')).toBe(true)
 
       const menuLayerRect = menuLayer.getBoundingClientRect()
-      const viewportRect = viewport.getBoundingClientRect()
+      const listboxRect = listbox.getBoundingClientRect()
       const vBarRect = vBar!.getBoundingClientRect()
 
       expect(menuLayerRect.height).toBeGreaterThan(0)
-      expect(viewportRect.height).toBeGreaterThan(0)
-      expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight)
+      expect(listboxRect.height).toBeGreaterThan(0)
+      expect(listbox.clientHeight).toBeLessThanOrEqual(64)
+      expect(listbox.scrollHeight).toBeGreaterThan(listbox.clientHeight)
       expect(vBarRect.left).toBeGreaterThanOrEqual(menuLayerRect.left)
       expect(vBarRect.right).toBeLessThanOrEqual(menuLayerRect.right + 0.5)
       expect(vBarRect.top).toBeGreaterThanOrEqual(menuLayerRect.top)
@@ -108,7 +107,7 @@ describe('dropdown', () => {
 
   it('closes the menu when an option is clicked', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.click()
@@ -126,7 +125,7 @@ describe('dropdown', () => {
 
   it('updates display when an option is selected (uncontrolled)', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.click()
@@ -136,7 +135,7 @@ describe('dropdown', () => {
 
   it('updates the hidden input value on selection', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     await screen.getByRole('combobox').click()
     await screen.getByRole('option', { name: 'Banana' }).click()
@@ -152,7 +151,7 @@ describe('dropdown', () => {
 
   it('reflects controlled value', async () => {
     const screen = await render(
-      <Dropdown
+      <Select
         name="fruit"
         options={fruitOptions}
         value="cherry"
@@ -166,7 +165,7 @@ describe('dropdown', () => {
   it('calls onChange when an option is selected', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <Dropdown
+      <Select
         name="fruit"
         options={fruitOptions}
         value="apple"
@@ -185,7 +184,7 @@ describe('dropdown', () => {
 
   it('does not open when disabled', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} disabled />,
+      <Select name="fruit" options={fruitOptions} disabled />,
     )
     const trigger = screen.getByRole('combobox')
     // Use native click — Playwright refuses to click disabled buttons
@@ -199,7 +198,7 @@ describe('dropdown', () => {
 
   it('opens menu on Enter key', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
@@ -210,7 +209,7 @@ describe('dropdown', () => {
 
   it('opens menu on ArrowDown key', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
@@ -221,7 +220,7 @@ describe('dropdown', () => {
 
   it('closes menu on Escape key', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.click()
@@ -234,7 +233,7 @@ describe('dropdown', () => {
 
   it('selects option with Enter key after navigating with ArrowDown', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} />,
+      <Select name="fruit" options={fruitOptions} />,
     )
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
@@ -272,7 +271,7 @@ describe('dropdown', () => {
     const onOpen = vi.fn()
     const onClose = vi.fn()
     const screen = await render(
-      <Dropdown
+      <Select
         name="fruit"
         options={fruitOptions}
         onOpen={onOpen}
@@ -294,7 +293,7 @@ describe('dropdown', () => {
 
   it('uses formatDisplay for custom trigger text', async () => {
     const screen = await render(
-      <Dropdown
+      <Select
         name="fruit"
         options={fruitOptions}
         defaultValue="cherry"
@@ -309,7 +308,7 @@ describe('dropdown', () => {
 
   it('renders a label element when label prop is provided', async () => {
     const screen = await render(
-      <Dropdown name="fruit" options={fruitOptions} label="Pick fruit" />,
+      <Select name="fruit" options={fruitOptions} label="Pick fruit" />,
     )
     await expect.element(screen.getByText('Pick fruit')).toBeInTheDocument()
     // The label should be associated with the trigger via htmlFor

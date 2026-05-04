@@ -1,5 +1,5 @@
 /**
- * Inline SVG icons for dropdown arrow button.
+ * Inline SVG icons for select arrow button.
  * Border paths use CSS variable fills for theme adaptation.
  * Arrow uses `currentColor` so it follows the parent's `color` property.
  */

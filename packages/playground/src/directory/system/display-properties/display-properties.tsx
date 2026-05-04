@@ -3,7 +3,7 @@ import type { ProcessComponentProps } from '../../../contexts/process'
 import {
   Button,
   Checkbox,
-  DropdownNative,
+  SelectNative,
   Tab,
   TabList,
   TabPanel,
@@ -70,7 +70,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
               <label className="text-(--button-text)" htmlFor="theme-select">
                 Selected Theme:
               </label>
-              <DropdownNative
+              <SelectNative
                 id="theme-select"
                 name="theme"
                 value={selectedTheme}
@@ -82,7 +82,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
                     {themeLabels[id]}
                   </option>
                 ))}
-              </DropdownNative>
+              </SelectNative>
             </div>
 
             <div className="flex flex-col gap-1">

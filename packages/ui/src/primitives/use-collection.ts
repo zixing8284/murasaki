@@ -17,7 +17,7 @@ export interface UseCollectionResult<T = unknown> {
 
 /**
  * DOM-order item registry shared by collection-driven components
- * (Tabs, TreeView, Menu, Dropdown listbox).
+ * (Tabs, TreeView, Menu, Select listbox).
  *
  * Items register themselves and are returned in document order so consumers
  * can layer roving-tabindex / typeahead / arrow navigation on top.

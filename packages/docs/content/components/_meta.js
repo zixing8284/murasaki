@@ -4,7 +4,7 @@ export default {
   'checkbox': 'Checkbox',
   'context-menu': 'ContextMenu',
   'divider': 'Divider',
-  'dropdown': 'Dropdown',
+  'select': 'Select',
   'field-panel': 'FieldPanel',
   'group-box': 'GroupBox',
   'menu': 'Menu',

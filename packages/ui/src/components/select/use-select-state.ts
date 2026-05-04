@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export interface DropdownOption<T = string> {
+export interface SelectOption<T = string> {
   label?: string
   value: T
 }
 
-interface UseDropdownStateOptions<T> {
+interface UseSelectStateOptions<T> {
   defaultValue?: T | undefined
   disabled?: boolean | undefined
-  onChange?: ((option: DropdownOption<T>) => void) | undefined
+  onChange?: ((option: SelectOption<T>) => void) | undefined
   onClose?: (() => void) | undefined
   onOpen?: (() => void) | undefined
-  options: DropdownOption<T>[]
+  options: SelectOption<T>[]
   value?: T | undefined
 }
 
-interface UseDropdownStateReturn<T> {
+interface UseSelectStateReturn<T> {
   activeIndex: number
-  closeDropdown: () => void
-  dropdownRef: React.RefObject<HTMLUListElement | null>
+  closeSelect: () => void
+  listboxRef: React.RefObject<HTMLUListElement | null>
 
   handleOptionClick: (index: number) => void
   handleOptionKeyDown: (e: React.KeyboardEvent) => void
@@ -30,13 +30,13 @@ interface UseDropdownStateReturn<T> {
   // State
   open: boolean
   optionRef: React.RefObject<(HTMLLIElement | null)[]>
-  selectedOption: DropdownOption<T> | undefined
+  selectedOption: SelectOption<T> | undefined
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>
   // Refs
   triggerRef: React.RefObject<HTMLButtonElement | null>
 }
 
-export function useDropdownState<T = string>({
+export function useSelectState<T = string>({
   defaultValue,
   disabled = false,
   onChange,
@@ -44,9 +44,9 @@ export function useDropdownState<T = string>({
   onOpen,
   options,
   value,
-}: UseDropdownStateOptions<T>): UseDropdownStateReturn<T> {
+}: UseSelectStateOptions<T>): UseSelectStateReturn<T> {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
-  const dropdownRef = useRef<HTMLUListElement | null>(null)
+  const listboxRef = useRef<HTMLUListElement | null>(null)
   const optionRef = useRef<(HTMLLIElement | null)[]>([])
 
   const [open, setOpen] = useState(false)
@@ -68,8 +68,8 @@ export function useDropdownState<T = string>({
     return idx >= 0 ? idx : 0
   })
 
-  // Open dropdown
-  const openDropdown = useCallback(() => {
+  // Open select
+  const openSelect = useCallback(() => {
     if (disabled)
       return
     setOpen(true)
@@ -79,8 +79,8 @@ export function useDropdownState<T = string>({
     onOpen?.()
   }, [disabled, options, currentValue, onOpen])
 
-  // Close dropdown
-  const closeDropdown = useCallback(() => {
+  // Close select
+  const closeSelect = useCallback(() => {
     setOpen(false)
     onClose?.()
     triggerRef.current?.focus()
@@ -98,22 +98,22 @@ export function useDropdownState<T = string>({
         setInternalValue(option.value)
       }
       onChange?.(option)
-      closeDropdown()
+      closeSelect()
     },
-    [options, value, onChange, closeDropdown],
+    [options, value, onChange, closeSelect],
   )
 
-  // Toggle dropdown
+  // Toggle select
   const handleTriggerClick = useCallback(() => {
     if (disabled)
       return
     if (open) {
-      closeDropdown()
+      closeSelect()
     }
     else {
-      openDropdown()
+      openSelect()
     }
-  }, [disabled, open, closeDropdown, openDropdown])
+  }, [disabled, open, closeSelect, openSelect])
 
   // Handle trigger keyboard events
   const handleTriggerKeyDown = useCallback(
@@ -128,13 +128,13 @@ export function useDropdownState<T = string>({
         case 'Enter':
           e.preventDefault()
           if (!open) {
-            openDropdown()
+            openSelect()
           }
           break
         // Escape is handled centrally by `useDismissable` in the consumer.
       }
     },
-    [disabled, open, openDropdown],
+    [disabled, open, openSelect],
   )
 
   // Handle option click
@@ -172,11 +172,11 @@ export function useDropdownState<T = string>({
           setActiveIndex(0)
           break
         case 'Tab':
-          closeDropdown()
+          closeSelect()
           break
       }
     },
-    [options.length, activeIndex, selectOption, closeDropdown],
+    [options.length, activeIndex, selectOption, closeSelect],
   )
 
   // Handle option hover
@@ -184,7 +184,7 @@ export function useDropdownState<T = string>({
     setActiveIndex(index)
   }, [])
 
-  // Focus active option when dropdown opens or active index changes
+  // Focus active option when select opens or active index changes
   useEffect(() => {
     if (open && optionRef.current[activeIndex]) {
       optionRef.current[activeIndex]?.focus()
@@ -192,17 +192,17 @@ export function useDropdownState<T = string>({
   }, [open, activeIndex])
 
   // Outside-click and Escape dismissal are owned by the consuming component
-  // via the `useDismissable` primitive, scoped to the dropdown layer refs.
+  // via the `useDismissable` primitive, scoped to the select layer refs.
 
   return {
     activeIndex,
-    closeDropdown,
-    dropdownRef,
+    closeSelect,
     handleOptionClick,
     handleOptionKeyDown,
     handleOptionMouseEnter,
     handleTriggerClick,
     handleTriggerKeyDown,
+    listboxRef,
     open,
     optionRef,
     selectedOption,

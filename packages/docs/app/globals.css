@@ -38,7 +38,8 @@
   overflow: auto;
 }
 
-.m98-example__preview--dropdown {
+.m98-example__preview--select {
+  height: 224px;
   min-height: 224px;
 }
 

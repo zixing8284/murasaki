@@ -1,0 +1,61 @@
+import { ExampleFrame } from './_shared/example-frame'
+import { SelectBasicExample, SelectNativeExample, SelectScrollableExample } from './select/examples/select-examples'
+import { selectBasicSource, selectNativeSource, selectScrollableSource } from './select/examples/sources'
+
+# Select
+
+The `Select` component renders a Windows 98 styled custom select with a trigger button and an option list. `SelectNative` provides a native select alternative.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | - | Name used for form submission. |
+| `options` | `SelectOption[]` | - | Options with `value` and optional `label`. |
+| `value` | `T` | - | Controlled selected value. |
+| `defaultValue` | `T` | - | Initial selected value for uncontrolled usage. |
+| `onChange` | `(option) => void` | - | Selection change callback. |
+| `label` | `string` | - | Optional visible label. |
+| `disabled` | `boolean` | `false` | Disables the select. |
+| `menuMaxHeight` | `number \| string` | - | Maximum height of the custom option list. |
+| `width` | `CSSProperties['width']` | - | Width of the select control. |
+
+## Examples
+
+<ExampleFrame
+  title="Custom select"
+  previewClassName="m98-example__preview--select"
+  source={selectBasicSource}
+>
+  <SelectBasicExample />
+</ExampleFrame>
+
+<ExampleFrame title="Native select" source={selectNativeSource}>
+  <SelectNativeExample />
+</ExampleFrame>
+
+<ExampleFrame
+  title="Scrollable options"
+  previewClassName="m98-example__preview--select"
+  source={selectScrollableSource}
+>
+  <SelectScrollableExample />
+</ExampleFrame>
+
+## Accessibility
+
+The custom select uses combobox and listbox roles. The selected option exposes `aria-selected`, and disabled state is communicated through `aria-disabled`.
+
+## Keyboard
+
+| Key | Behavior |
+|-----|----------|
+| `Enter` / `Space` / `ArrowDown` | Opens the custom select. |
+| `ArrowUp` / `ArrowDown` | Moves through options while open. |
+| `Home` / `End` | Jumps to the first or last option. |
+| `Escape` | Closes without selecting. |
+| `Tab` | Closes and moves focus onward. |
+
+## SSR
+
+Select is a client component through the package root. Initial selected values should be stable between server and client to avoid hydration drift.

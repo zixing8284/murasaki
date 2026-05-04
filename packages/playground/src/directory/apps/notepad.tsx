@@ -1,13 +1,8 @@
-import type { ProcessComponentProps } from '../../contexts/process'
-import { RndWindow } from '../../shell/window/rnd-window'
-
-export function Notepad({ windowId }: ProcessComponentProps): React.ReactElement | null {
+export function Notepad(): React.ReactElement {
   return (
-    <RndWindow windowId={windowId} className="top-[15%] left-[20%]">
-      <textarea
-        className="w-full h-full resize-none border-none outline-none bg-(--window) p-1 font-mono text-xs"
-        placeholder="Type here..."
-      />
-    </RndWindow>
+    <textarea
+      className="w-full h-full resize-none border-none outline-none bg-(--window) p-1 font-mono text-xs"
+      placeholder="Type here..."
+    />
   )
 }

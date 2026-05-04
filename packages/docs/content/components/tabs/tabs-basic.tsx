@@ -1,6 +1,6 @@
 'use client'
 
-import { Tab, TabList, TabPanel, Tabs } from 'murasaki-react98'
+import { Tab, TabList, TabPanel, Tabs } from '@murasaki/react98'
 
 export function TabsBasicDemo(): React.ReactElement {
   return (

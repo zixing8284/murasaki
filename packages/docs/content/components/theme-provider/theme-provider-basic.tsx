@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, FieldPanel, ThemeProvider, useTheme } from 'murasaki-react98'
+import { Button, FieldPanel, ThemeProvider, useTheme } from '@murasaki/react98'
 import { useState } from 'react'
 
 function ThemeControls(): React.ReactElement {

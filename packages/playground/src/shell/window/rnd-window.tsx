@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
-import { useDraggable, useResizable } from 'murasaki-react98'
+import { useDraggable, useResizable } from '@murasaki/react98'
 import { useCallback } from 'react'
 import { useProcesses } from '../../contexts/process'
 import directory from '../../contexts/process/directory'

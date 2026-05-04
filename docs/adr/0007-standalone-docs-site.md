@@ -1,6 +1,6 @@
 # Standalone docs site
 
-Murasaki React98 will move component documentation and examples to a standalone Nextra/Next.js docs site, and the Windows 98 playground will embed that built site in an iframe instead of owning a separate documentation system. This supersedes ADR 0006: the markdown-first playground docs implementation introduced generated `.md.live.ts` sidecars, custom transform complexity, heavier Shiki-driven chunks, and live demo behavior that did not justify the maintenance cost.
+@murasaki/react98 will move component documentation and examples to a standalone Nextra/Next.js docs site, and the Windows 98 playground will embed that built site in an iframe instead of owning a separate documentation system. This supersedes ADR 0006: the markdown-first playground docs implementation introduced generated `.md.live.ts` sidecars, custom transform complexity, heavier Shiki-driven chunks, and live demo behavior that did not justify the maintenance cost.
 
 ## Consequences
 

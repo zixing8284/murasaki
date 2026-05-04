@@ -8,7 +8,7 @@ import {
   Menu,
   MenuItem,
   MenuSeparator,
-} from 'murasaki-react98'
+} from '@murasaki/react98'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'

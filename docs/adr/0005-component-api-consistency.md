@@ -1,6 +1,6 @@
 # Component API consistency
 
-Murasaki React98 will adopt a consistent API contract across all components covering prop naming conventions, controlled/uncontrolled state patterns, and `data-*` state attributes for CSS styling hooks. This is a phase-3 quality goal that depends on the internal primitive toolkit (ADR 0004) being stable first.
+@murasaki/react98 will adopt a consistent API contract across all components covering prop naming conventions, controlled/uncontrolled state patterns, and `data-*` state attributes for CSS styling hooks. This is a phase-3 quality goal that depends on the internal primitive toolkit (ADR 0004) being stable first.
 
 ## Prop naming
 
@@ -24,7 +24,7 @@ Murasaki React98 will adopt a consistent API contract across all components cove
 ## Deferred decisions
 
 - **Selective Slot API** (`asChild` / Slot-style element replacement): deferred until after the internal primitive toolkit is stable. Will be evaluated per-component based on semantic composition needs, not applied library-wide.
-- **Server sub-entry** (`murasaki-react98/server`): covered by ADR 0002, to be implemented in this phase.
+- **Server sub-entry** (`@murasaki/react98/server`): covered by ADR 0002, to be implemented in this phase.
 
 ## Documentation
 

@@ -1,4 +1,4 @@
-# Copilot Instructions — murasaki-react98
+# Copilot Instructions — @murasaki/react98
 
 ## Project Shape
 
@@ -104,7 +104,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 
 ### Issue tracker
 
-Issues live in GitHub Issues for `zixing8284/murasaki-react98`. See `docs/agents/issue-tracker.md`.
+Issues live in GitHub Issues for `zixing8284/murasaki`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

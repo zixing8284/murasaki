@@ -1,5 +1,5 @@
 import type { ThemeColorsState } from './use-theme-colors'
-import { Button } from 'murasaki-react98'
+import { Button } from '@murasaki/react98'
 import { useRef } from 'react'
 import { downloadThemeFile, exportThemeFile, readFileAsText } from './theme-file'
 

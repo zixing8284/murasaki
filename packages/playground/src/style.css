@@ -1,9 +1,9 @@
-@source "../node_modules/murasaki-react98/dist";
+@source "../node_modules/@murasaki/react98/dist";
 @source "../../ui/src"; /* dev only */
 
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "murasaki-react98/theme.css";
+@import "@murasaki/react98/theme.css";
 @import "./playground.css";
 
 @utility pixelated {

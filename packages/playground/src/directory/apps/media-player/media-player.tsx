@@ -1,5 +1,5 @@
 import type { ProcessComponentProps } from '../../../contexts/process'
-import { Divider, Slider, SunkenPanel, Tooltip, WindowMenuBar, WindowMenuBarItem, WindowStatusBar, WindowStatusBarField } from 'murasaki-react98'
+import { Divider, Slider, SunkenPanel, Tooltip, WindowMenuBar, WindowMenuBarItem, WindowStatusBar, WindowStatusBarField } from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../../contexts/desktop-files'
 import { useProcessActions } from '../../../contexts/process'

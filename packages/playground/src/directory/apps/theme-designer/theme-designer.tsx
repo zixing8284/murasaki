@@ -1,4 +1,4 @@
-import { FieldPanel } from 'murasaki-react98'
+import { FieldPanel } from '@murasaki/react98'
 import { ColorControls } from './color-controls'
 import { FileControls } from './file-controls'
 import { DesignerPreview } from './theme-preview'

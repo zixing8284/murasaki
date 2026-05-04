@@ -1,6 +1,6 @@
 'use client'
 
-import { SunkenPanel } from 'murasaki-react98'
+import { SunkenPanel } from '@murasaki/react98'
 
 export function SunkenPanelBasicDemo(): React.ReactElement {
   return (

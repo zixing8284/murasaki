@@ -1,17 +1,17 @@
 {
-  "name": "murasaki-react98",
+  "name": "@murasaki/react98",
   "type": "module",
   "version": "0.0.0",
-  "description": "A Windows 98-themed UI component library built with React and Tailwind CSS",
+  "description": "A Windows 98-themed React UI component library published as @murasaki/react98",
   "author": "sasasa10 <zixing8284@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/zixing8284/murasaki-react98#readme",
+  "homepage": "https://github.com/zixing8284/murasaki#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zixing8284/murasaki-react98.git"
+    "url": "git+https://github.com/zixing8284/murasaki.git"
   },
   "bugs": {
-    "url": "https://github.com/zixing8284/murasaki-react98/issues"
+    "url": "https://github.com/zixing8284/murasaki/issues"
   },
   "sideEffects": [
     "**/*.css"

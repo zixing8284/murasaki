@@ -1,6 +1,6 @@
-# Murasaki React98
+# @murasaki/react98
 
-Murasaki React98 is a Windows 98-themed React UI component library and playground. This context defines the language used when discussing the component library's runtime support, ownership model, and design-system goals.
+@murasaki/react98 is a Windows 98-themed React UI component library and playground. This context defines the language used when discussing the component library's runtime support, ownership model, and design-system goals.
 
 ## Language
 
@@ -45,7 +45,7 @@ A styling contract where consuming applications import the library's global styl
 _Avoid_: Automatic component-side CSS injection, hidden stylesheet import
 
 **Server sub-entry**:
-An optional `murasaki-react98/server` export path that exposes verified zero-client-dependency presentation primitives as server-safe, without changing the client-first root entry.
+An optional `@murasaki/react98/server` export path that exposes verified zero-client-dependency presentation primitives as server-safe, without changing the client-first root entry.
 _Avoid_: Bulk server migration, dual-build target
 
 **Component API consistency**:

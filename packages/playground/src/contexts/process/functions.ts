@@ -176,7 +176,6 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         }
       }
 
-      // Create new process
       const process: Processes[string] = {
         appId,
         title: overrides?.title ?? entry.defaultTitle,
@@ -184,8 +183,12 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         maximized: false,
         componentWindow: null,
         ephemeral: entry.ephemeral ?? false,
-        Component: entry.ephemeral ? entry.Component : undefined,
-        icon: entry.ephemeral ? entry.icon : undefined,
+      }
+      if (entry.ephemeral && entry.Component) {
+        process.Component = entry.Component
+      }
+      if (entry.ephemeral) {
+        process.icon = entry.icon
       }
       return {
         ...prev,
@@ -263,7 +266,9 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         componentWindow: null,
         ephemeral: true,
         Component,
-        icon,
+      }
+      if (icon) {
+        process.icon = icon
       }
       return {
         ...prev,

@@ -16,11 +16,40 @@ export interface AppIcon {
   lg: string
 }
 
+export interface ProcessWindowPosition {
+  top?: number | string
+  right?: number | string
+  bottom?: number | string
+  left?: number | string
+}
+
+export interface ProcessBaseWindowConfig {
+  className?: string
+  disableMaximize?: boolean
+  disableMinimize?: boolean
+  disableResize?: boolean
+}
+
+export interface ProcessDefaultWindowConfig extends ProcessBaseWindowConfig {
+  type?: 'default'
+}
+
+export interface ProcessIframeWindowConfig extends ProcessBaseWindowConfig {
+  type: 'iframe'
+  src: string
+}
+
+export interface ProcessNoWindowConfig {
+  type: 'none'
+}
+
+export type ProcessWindowConfig = ProcessDefaultWindowConfig | ProcessIframeWindowConfig | ProcessNoWindowConfig
+
 export interface ProcessDirectoryEntry {
   /** App display name (for desktop icons, start menu, etc.) */
   name: string
-  /** React component rendered inside the window */
-  Component: ComponentType<ProcessComponentProps>
+  /** React component rendered inside framework-owned window chrome */
+  Component?: ComponentType<ProcessComponentProps>
   /** Default window title */
   defaultTitle: string
   /** Icon paths for small (16px) and large (32px) sizes */
@@ -33,6 +62,10 @@ export interface ProcessDirectoryEntry {
   ephemeral?: boolean
   /** Default window dimensions in px — used as both initial inline size and minimum resize constraint */
   defaultSize?: { width?: number, height?: number }
+  /** Default absolute window position applied by the framework-owned shell */
+  defaultPosition?: ProcessWindowPosition
+  /** Window shell selected by the renderer. Defaults to a draggable/resizable window. */
+  window?: ProcessWindowConfig
 }
 
 /** Static registry keyed by appId */

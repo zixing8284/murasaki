@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 import { ExpandArrowIcon } from './taskbar-icons'
 

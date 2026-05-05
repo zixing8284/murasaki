@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { cnPure } from '#/lib/utils'
+import { cnPure } from '../../lib/utils'
 
 import { TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scroll-area-constants'
 import { useScrollAreaContext } from './scroll-area-context'

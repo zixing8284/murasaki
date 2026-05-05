@@ -7,11 +7,6 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   root: '.',
-  resolve: {
-    alias: {
-      '#': resolve(__dirname, 'src'),
-    },
-  },
   plugins: [
     react({
       babel: { plugins: ['babel-plugin-react-compiler'] },

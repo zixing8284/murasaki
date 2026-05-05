@@ -16,9 +16,6 @@
   "sideEffects": [
     "**/*.css"
   ],
-  "imports": {
-    "#/*": "./src/*"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -26,7 +23,7 @@
       "default": "./dist/index.js"
     },
     "./globals.css": "./dist/globals.css",
-    "./theme.css": "./dist/theme.css",
+    "./theme.css": "./src/theme.css",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -34,7 +31,9 @@
   "style": "./dist/globals.css",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src/assets",
+    "src/theme.css"
   ],
   "publishConfig": {
     "access": "public"

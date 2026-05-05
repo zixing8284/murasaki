@@ -4,7 +4,7 @@ import type { OptionGroupProps } from './option-context'
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 import { RadioBorderIcon, RadioDotIcon } from './option-button-icons'
 import { OptionButtonGroupContext, useOptionButtonGroupContext } from './option-context'
 

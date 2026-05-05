@@ -20,7 +20,6 @@ import { ThemePreview } from './theme-preview'
 const themeLabels: Record<ThemeId, string> = {
   'windows-98': 'Windows 98',
   'solarized-dark': 'Solarized Dark',
-  'windows-95': 'Windows 95',
 }
 
 export function DisplayProperties({ windowId }: ProcessComponentProps): React.ReactElement | null {

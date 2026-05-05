@@ -57,10 +57,6 @@ export function Shell(): React.ReactElement {
     setContainer(el)
   }, [setContainer])
 
-  // const setDocsContainerRef = useCallback((el: HTMLDivElement | null) => {
-  //   linkElement('docs', el)
-  // }, [linkElement])
-
   // Open default windows on mount
   useEffect(() => {
     DEFAULT_STARTUP_APPS.forEach(appId => open(appId))
@@ -136,12 +132,6 @@ export function Shell(): React.ReactElement {
               </div>
             </div>
           )}
-
-          {/* Docs Window 专属容器（实验用） */}
-          {/* <div
-            ref={setDocsContainerRef}
-            className="absolute top-[60px] left-[60px] w-[900px] h-[600px] border-2 border-dashed border-white/25 overflow-hidden"
-          /> */}
 
           {/* All managed windows */}
           <WindowRenderer />

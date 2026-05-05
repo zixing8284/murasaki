@@ -1,11 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import type { ThemeId } from '#/components/theme-provider/theme-context'
+import type { ThemeId } from './theme-context'
 import { useCallback, useEffect, useState } from 'react'
-import { ThemeContext, themeIds } from '#/components/theme-provider/theme-context'
+import { ThemeContext, themeIds } from './theme-context'
 
-export { themeIds, useTheme } from '#/components/theme-provider/theme-context'
-export type { ThemeContextValue, ThemeId } from '#/components/theme-provider/theme-context'
+export { themeIds, useTheme } from './theme-context'
+export type { ThemeContextValue, ThemeId } from './theme-context'
 
 const STORAGE_KEY = 'murasaki-theme'
 const DEFAULT_THEME: ThemeId = 'windows-98'

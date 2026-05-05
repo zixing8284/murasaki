@@ -4,8 +4,8 @@ import { cva } from 'class-variance-authority'
 
 import { useId, useRef, useState } from 'react'
 
-import { cn, cnPure } from '#/lib/utils'
-import { useRovingFocus } from '#/primitives'
+import { cn, cnPure } from '../../lib/utils'
+import { useRovingFocus } from '../../primitives'
 
 import { TabsContext, useTabsContext } from './tabs-context'
 

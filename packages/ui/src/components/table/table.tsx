@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 import { SunkenPanel } from '../sunken-panel/sunken-panel'
 
 interface TableProps extends ComponentProps<'table'> {

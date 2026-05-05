@@ -21,6 +21,20 @@
   @apply text-wrap wrap-break-word break-all whitespace-pre-line;
 }
 
+@theme {
+  --animate-now-playing-bar: now-playing-bar 0.8s ease-in-out infinite;
+
+  @keyframes now-playing-bar {
+    0%, 100% {
+      transform: scaleY(var(--now-playing-bar-min, 0.32));
+    }
+
+    50% {
+      transform: scaleY(var(--now-playing-bar-max, 0.96));
+    }
+  }
+}
+
 html, body, #root {
   height: 100%;
   margin: 0;

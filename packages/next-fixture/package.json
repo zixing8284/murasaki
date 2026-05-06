@@ -1,0 +1,23 @@
+{
+  "name": "@murasaki/react98-next-fixture",
+  "type": "module",
+  "private": true,
+  "description": "Next.js consumer fixture for @murasaki/react98",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "preview": "next start"
+  },
+  "dependencies": {
+    "@murasaki/react98": "workspace:*",
+    "next": "catalog:libs",
+    "react": "catalog:libs",
+    "react-dom": "catalog:libs"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "typescript": "catalog:cli"
+  }
+}

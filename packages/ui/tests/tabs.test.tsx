@@ -8,7 +8,7 @@ describe('tabs', () => {
   function renderTabs(props?: {
     defaultValue?: string
     value?: string
-    onValueChange?: (v: string) => void
+    onChange?: (v: string) => void
   }) {
     return render(
       <Tabs {...props}>
@@ -87,14 +87,14 @@ describe('tabs', () => {
   // === Controlled mode ===
 
   it('reflects controlled value prop', async () => {
-    const screen = await renderTabs({ value: 'two', onValueChange: () => {} })
+    const screen = await renderTabs({ value: 'two', onChange: () => {} })
     await expect.element(screen.getByText('Content Two')).toBeInTheDocument()
     expect(screen.container.textContent).not.toContain('Content One')
   })
 
-  it('calls onValueChange when a tab is clicked (controlled)', async () => {
+  it('calls onChange when a tab is clicked (controlled)', async () => {
     const handleChange = vi.fn()
-    const screen = await renderTabs({ value: 'one', onValueChange: handleChange })
+    const screen = await renderTabs({ value: 'one', onChange: handleChange })
 
     await screen.getByRole('tab', { name: 'Tab Two' }).click()
     expect(handleChange).toHaveBeenCalledWith('two')
@@ -169,5 +169,83 @@ describe('tabs', () => {
     const screen = await renderTabs({ defaultValue: 'nonexistent' })
     const panels = screen.container.querySelectorAll('[role="tabpanel"]')
     expect(panels).toHaveLength(0)
+  })
+
+  // === Roving focus (arrow nav) ===
+
+  it('moves focus to the next tab on ArrowRight', async () => {
+    const screen = await renderTabs({ defaultValue: 'one' })
+    const tabOne = screen.getByRole('tab', { name: 'Tab One' }).element() as HTMLElement
+    const tabTwo = screen.getByRole('tab', { name: 'Tab Two' }).element() as HTMLElement
+
+    tabOne.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(document.activeElement).toBe(tabTwo)
+  })
+
+  it('moves focus to the previous tab on ArrowLeft', async () => {
+    const screen = await renderTabs({ defaultValue: 'two' })
+    const tabOne = screen.getByRole('tab', { name: 'Tab One' }).element() as HTMLElement
+    const tabTwo = screen.getByRole('tab', { name: 'Tab Two' }).element() as HTMLElement
+
+    tabTwo.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(document.activeElement).toBe(tabOne)
+  })
+
+  it('wraps focus from last to first on ArrowRight', async () => {
+    const screen = await renderTabs({ defaultValue: 'one' })
+    const tabOne = screen.getByRole('tab', { name: 'Tab One' }).element() as HTMLElement
+    const tabTwo = screen.getByRole('tab', { name: 'Tab Two' }).element() as HTMLElement
+
+    tabTwo.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(document.activeElement).toBe(tabOne)
+  })
+
+  it('home and end jump to first / last tab', async () => {
+    const screen = await render(
+      <Tabs defaultValue="two">
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two">Tab Two</Tab>
+          <Tab value="three">Tab Three</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
+        <TabPanel value="three">Content Three</TabPanel>
+      </Tabs>,
+    )
+    const tabOne = screen.getByRole('tab', { name: 'Tab One' }).element() as HTMLElement
+    const tabTwo = screen.getByRole('tab', { name: 'Tab Two' }).element() as HTMLElement
+    const tabThree = screen.getByRole('tab', { name: 'Tab Three' }).element() as HTMLElement
+
+    tabTwo.focus()
+    await userEvent.keyboard('{End}')
+    expect(document.activeElement).toBe(tabThree)
+
+    await userEvent.keyboard('{Home}')
+    expect(document.activeElement).toBe(tabOne)
+  })
+
+  it('skips disabled tabs during arrow navigation', async () => {
+    const screen = await render(
+      <Tabs defaultValue="one">
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two" disabled>Tab Two</Tab>
+          <Tab value="three">Tab Three</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
+        <TabPanel value="three">Content Three</TabPanel>
+      </Tabs>,
+    )
+    const tabOne = screen.getByRole('tab', { name: 'Tab One' }).element() as HTMLElement
+    const tabThree = screen.getByRole('tab', { name: 'Tab Three' }).element() as HTMLElement
+
+    tabOne.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(document.activeElement).toBe(tabThree)
   })
 })

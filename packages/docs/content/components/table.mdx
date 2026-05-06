@@ -1,0 +1,31 @@
+import { TableBasicDemo } from './table/table-basic'
+
+# Table
+
+`Table` composes semantic table elements inside a sunken Windows 98 frame.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `Table` | `containerClassName`, table props | Root table with a framed scroll container. |
+| `TableRow` | `selected` | Row styling with optional highlight state. |
+| `TableHead`, `TableCell`, `TableHeader`, `TableBody`, `TableFooter`, `TableCaption` | native element props | Semantic table slots. |
+
+## Examples
+
+<ComponentExample name="table-basic" title="Process table">
+  <TableBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+Table keeps native `table`, `thead`, `tbody`, `tr`, `th`, and `td` semantics. Use captions and scopes where your data needs them.
+
+## Keyboard
+
+Table does not add grid-style keyboard navigation. Native focus behavior applies to any interactive descendants inside cells.
+
+## SSR
+
+Table is presentational. Keep row selection deterministic during hydration.

@@ -1,6 +1,4 @@
-// Import standalone CSS entry - Vite/Tailwind will compile all used utility
-// classes into dist/globals.css as a self-contained bundle
-import './standalone.css'
+'use client'
 
 // Button
 export { Button } from './components/button/button'
@@ -25,10 +23,6 @@ export type {
 // Divider
 export { Divider } from './components/divider/divider'
 export type { DividerProps } from './components/divider/divider'
-
-// Dropdown
-export { Dropdown, DropdownNative } from './components/dropdown/dropdown'
-export type { DropdownOption, DropdownProps } from './components/dropdown/dropdown'
 
 // FieldPanel
 export { FieldPanel } from './components/field-panel/field-panel'
@@ -69,6 +63,10 @@ export type {
   ScrollAreaProps,
   UseScrollbarOptions,
 } from './components/scroll-area/scroll-area'
+
+// Select
+export { Select, SelectNative } from './components/select/select'
+export type { SelectNativeProps, SelectOption, SelectProps } from './components/select/select'
 
 // Slider
 export { Slider } from './components/slider/slider'

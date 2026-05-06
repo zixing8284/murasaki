@@ -1,47 +1,46 @@
 {
-  "name": "murasaki-react98",
+  "name": "@murasaki/react98",
   "type": "module",
   "version": "0.0.0",
-  "description": "A Windows 98-themed UI component library built with React and Tailwind CSS",
+  "description": "A Windows 98-themed React UI component library published as @murasaki/react98",
   "author": "sasasa10 <zixing8284@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/zixing8284/murasaki-react98#readme",
+  "homepage": "https://github.com/zixing8284/murasaki#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zixing8284/murasaki-react98.git"
+    "url": "git+https://github.com/zixing8284/murasaki.git"
   },
   "bugs": {
-    "url": "https://github.com/zixing8284/murasaki-react98/issues"
+    "url": "https://github.com/zixing8284/murasaki/issues"
   },
-  "imports": {
-    "#/*": "./src/*"
-  },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
-    ".": "./src/index.ts",
-    "./dist": "./dist/index.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
     "./globals.css": "./dist/globals.css",
-    "./theme.css": "./src/globals.css",
-    "./theme-config.css": "./src/theme-config.css",
-    "./theme-variables.css": "./src/theme-variables.css",
+    "./theme.css": "./src/theme.css",
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "style": "./dist/globals.css",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src/assets",
-    "src/globals.css",
-    "src/theme-config.css",
-    "src/theme-variables.css"
+    "src/theme.css"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "vite build && tsc --emitDeclarationOnly",
-    "dev": "vite build --watch",
+    "build": "vite build && vite build --config vite.styles.config.ts && tsc --emitDeclarationOnly",
+    "build:css": "vite build --config vite.styles.config.ts",
+    "build:js": "vite build",
+    "dev": "pnpm run dev:js & pnpm run dev:css & wait",
+    "dev:css": "vite build --config vite.styles.config.ts --watch",
+    "dev:js": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
@@ -57,7 +56,7 @@
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {
-    "@rollup/plugin-babel": "catalog:cli",
+    "@rolldown/plugin-babel": "catalog:cli",
     "@tailwindcss/vite": "catalog:cli",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",

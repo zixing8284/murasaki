@@ -1,0 +1,32 @@
+import { ProgressIndicatorBasicDemo } from './progress-indicator/progress-indicator-basic'
+
+# ProgressIndicator
+
+`ProgressIndicator` renders a Windows 98 progress bar with smooth or tiled fill.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | required | Progress percentage, clamped from 0 to 100. |
+| `variant` | `'default' \| 'tile'` | `'default'` | Smooth fill or segmented blocks. |
+| `hideValue` | `boolean` | `false` | Hides percentage text. |
+| `shadow` | `boolean` | `true` | Toggles the inner sunken frame. |
+
+## Examples
+
+<ComponentExample name="progress-indicator-basic" title="Progress variants">
+  <ProgressIndicatorBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+ProgressIndicator exposes `role="progressbar"` with `aria-valuemin`, `aria-valuemax`, and `aria-valuenow`.
+
+## Keyboard
+
+ProgressIndicator is read-only and has no keyboard behavior.
+
+## SSR
+
+The tile variant measures width after mount. The value remains accessible before measurement completes.

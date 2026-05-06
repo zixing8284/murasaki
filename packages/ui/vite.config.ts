@@ -1,48 +1,33 @@
 /// <reference types="vitest/config" />
 import { resolve } from 'node:path'
+import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
   root: '.',
-  resolve: {
-    alias: {
-      '#': resolve(__dirname, 'src'),
-    },
-  },
   plugins: [
-    react({
-      babel: { plugins: ['babel-plugin-react-compiler'] },
-    }),
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
   ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
-      fileName: 'index',
+      fileName: () => 'index.js',
     },
-    rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+    rolldownOptions: {
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/compiler-runtime'],
       output: {
-        // Preserve module structure for tree-shaking
+        banner: chunk => (chunk.name === 'index' ? `'use client';` : ''),
         preserveModules: true,
         preserveModulesRoot: 'src',
         entryFileNames: '[name].js',
-        assetFileNames: (assetInfo) => {
-          // Rename CSS output to globals.css for package exports compatibility
-          if (assetInfo.names?.some(name => name.endsWith('.css'))) {
-            return 'globals.css'
-          }
-          return '[name][extname]'
-        },
       },
     },
-    // Inline all assets as base64 (Win98 icons are tiny)
-    assetsInlineLimit: 100 * 1024, // 100kb, include our fonts and icons
-    cssCodeSplit: false,
   },
   test: {
     include: ['tests/**/*.{test,spec}.{js,ts,jsx,tsx}'],

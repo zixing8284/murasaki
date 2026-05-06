@@ -4,7 +4,7 @@ import type { OptionGroupProps } from './option-context'
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 import { RadioBorderIcon, RadioDotIcon } from './option-button-icons'
 import { OptionButtonGroupContext, useOptionButtonGroupContext } from './option-context'
 
@@ -14,7 +14,7 @@ const labelVariants = cva([
   'cursor-pointer',
   'select-none',
   'gap-2',
-  'leading-[13px]',
+  'leading-3.25',
   'relative',
   'text-(--button-text)',
   '[--radio-inner-bg:var(--window)]',
@@ -67,6 +67,7 @@ interface OptionButtonProps
 }
 
 export function OptionButton({
+  checked,
   children,
   className,
   disabled,
@@ -86,6 +87,7 @@ export function OptionButton({
   const inputId = id ?? generatedId
   const isChecked
     = selectedValue !== undefined ? selectedValue === value : undefined
+  const currentChecked = isChecked ?? checked
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange?.(e)
@@ -97,8 +99,10 @@ export function OptionButton({
   return (
     <>
       <input
-        checked={isChecked}
+        checked={currentChecked}
         className={cn(optionButtonVariants({ className }))}
+        data-checked={currentChecked || undefined}
+        data-disabled={disabled || undefined}
         disabled={disabled}
         id={inputId}
         name={name}
@@ -108,8 +112,10 @@ export function OptionButton({
         {...props}
       />
       <OptionButtonLabel
-        checked={isChecked ?? false}
+        checked={currentChecked ?? false}
         className={labelClassName}
+        data-checked={currentChecked || undefined}
+        data-disabled={disabled || undefined}
         disabled={disabled ?? false}
         htmlFor={inputId}
       >

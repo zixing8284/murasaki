@@ -2,7 +2,8 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
+import { useRovingFocus } from '../../primitives'
 
 const treeViewItemStyles = cva(
   [
@@ -21,29 +22,10 @@ const treeViewItemStyles = cva(
       variant: {
         summary: [
           'list-none',
-          'before:block',
-          'before:h-[11px]',
-          'before:w-[11px]',
-          'before:leading-[11px]',
-          'before:pl-px',
-          'before:border',
-          'before:border-(--button-shadow)',
-          'before:text-center',
-          'before:bg-(--window)',
-          'before:text-(--window-text)',
-          'before:flex',
-          'before:cursor-pointer',
-          'before:items-center',
-          'before:justify-center',
-          'before:shrink-0',
           '[&::-webkit-details-marker]:content-none',
           '[&::marker]:content-none',
         ],
         leaf: [],
-      },
-      expanded: {
-        true: 'before:content-[\'-\']',
-        false: 'before:content-[\'+\']',
       },
       disabled: {
         true: 'cursor-not-allowed opacity-50',
@@ -79,6 +61,23 @@ const treeViewItemStyles = cva(
     },
   },
 )
+
+const treeViewDisclosureStyles = cva([
+  'flex',
+  'h-2.75',
+  'w-2.75',
+  'shrink-0',
+  'cursor-pointer',
+  'items-center',
+  'justify-center',
+  'border',
+  'border-(--button-shadow)',
+  'bg-(--window)',
+  'pl-px',
+  'text-center',
+  'leading-2.75',
+  'text-(--window-text)',
+])
 
 interface TreeViewItemProps {
   /** The label to display for this item */
@@ -142,10 +141,16 @@ export function TreeViewItem({
               }}
             >
               <summary
+                role="treeitem"
+                aria-expanded={expanded}
+                aria-disabled={disabled || undefined}
+                data-expanded={expanded || undefined}
+                data-selected={selected || undefined}
+                data-disabled={disabled || undefined}
+                tabIndex={disabled ? -1 : 0}
                 className={cn(
                   treeViewItemStyles({
                     variant: 'summary',
-                    expanded,
                     disabled,
                     selected,
                   }),
@@ -159,18 +164,28 @@ export function TreeViewItem({
                   }
                 }}
               >
+                <span
+                  aria-hidden="true"
+                  data-tree-view-disclosure=""
+                  className={treeViewDisclosureStyles()}
+                >
+                  {expanded ? '-' : '+'}
+                </span>
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>
               </summary>
-              <ul className="list-none pl-4 ml-4 border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[''] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)">
+              <ul role="group" className="list-none pl-4 ml-4 border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[''] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)">
                 {children}
               </ul>
             </details>
           )
         : (
             <div
-              role={onClick ? 'button' : undefined}
-              tabIndex={disabled || !onClick ? undefined : 0}
+              role="treeitem"
+              aria-disabled={disabled || undefined}
+              data-selected={selected || undefined}
+              data-disabled={disabled || undefined}
+              tabIndex={disabled || !onClick ? -1 : 0}
               className={cn(
                 treeViewItemStyles({
                   variant: 'leaf',
@@ -211,8 +226,94 @@ function TreeView({
   children,
   className,
 }: TreeViewProps): React.ReactElement {
+  const ref = React.useRef<HTMLUListElement>(null)
+
+  // Skip treeitems inside collapsed branches. A <summary>'s own <details>
+  // does not count, because the summary itself is visible even when its
+  // children are collapsed.
+  const filterItem = React.useCallback((el: HTMLElement): boolean => {
+    let cursor: HTMLElement | null
+      = el.tagName === 'SUMMARY'
+        ? el.parentElement?.parentElement ?? null
+        : el.parentElement
+    while (cursor) {
+      if (cursor.tagName === 'DETAILS' && !(cursor as HTMLDetailsElement).open)
+        return false
+      cursor = cursor.parentElement
+    }
+    return true
+  }, [])
+
+  useRovingFocus({
+    enabled: true,
+    containerRef: ref,
+    itemSelector: '[role="treeitem"]',
+    orientation: 'vertical',
+    loop: false,
+    filterItem,
+  })
+
+  // ARIA TreeView pattern for the horizontal axis:
+  //   ArrowRight on a collapsed parent expands it; on an expanded parent moves
+  //   focus to the first child treeitem.
+  //   ArrowLeft on an expanded parent collapses it; on a leaf or collapsed
+  //   parent moves focus to its parent treeitem.
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>): void => {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft')
+      return
+    const active = document.activeElement
+    if (!(active instanceof HTMLElement))
+      return
+    if (active.getAttribute('role') !== 'treeitem')
+      return
+    if (!ref.current?.contains(active))
+      return
+
+    const isSummary = active.tagName === 'SUMMARY'
+    const details = isSummary ? (active.parentElement as HTMLDetailsElement | null) : null
+
+    if (event.key === 'ArrowRight') {
+      if (details && !details.open) {
+        event.preventDefault()
+        details.open = true
+        details.dispatchEvent(new Event('toggle'))
+        return
+      }
+      if (details && details.open) {
+        const child = details.querySelector<HTMLElement>(':scope > ul [role="treeitem"]')
+        if (child) {
+          event.preventDefault()
+          child.focus()
+        }
+      }
+      return
+    }
+
+    // ArrowLeft
+    if (details && details.open) {
+      event.preventDefault()
+      details.open = false
+      details.dispatchEvent(new Event('toggle'))
+      return
+    }
+    // Leaf, or summary of a collapsed branch: jump to the summary of the
+    // enclosing details. For a leaf that is `closest('details')`; for a
+    // collapsed summary it is the parent of its own details.
+    const enclosingDetails = isSummary
+      ? active.closest('details')?.parentElement?.closest('details')
+      : active.closest('details')
+    const parentSummary = enclosingDetails?.querySelector<HTMLElement>(':scope > summary[role="treeitem"]')
+    if (parentSummary) {
+      event.preventDefault()
+      parentSummary.focus()
+    }
+  }
+
   return (
     <ul
+      ref={ref}
+      role="tree"
+      onKeyDown={handleKeyDown}
       className={cn(
         'flex',
         'flex-col',

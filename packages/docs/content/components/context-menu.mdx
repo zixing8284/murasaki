@@ -1,0 +1,32 @@
+import { ContextMenuBasicDemo } from './context-menu/context-menu-basic'
+
+# ContextMenu
+
+`ContextMenu` manages right-click menu coordinates and renders menu content in a portal.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `ContextMenu` | `container` | Provider that stores open state and optional boundary element. |
+| `ContextMenuTrigger` | `disabled`, `onlyDirectTarget`, `children` | Opens the surrounding menu from trigger content. Child `contextmenu` handlers can prevent opening. |
+| `ContextMenuContent` | `closeOnItemClick`, div props | Portal layer clamped to the viewport or container. |
+| `useContextMenu` | - | Programmatic access to `openAt` and `close`. |
+
+## Examples
+
+<ComponentExample name="context-menu-basic" title="Right-click menu">
+  <ContextMenuBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+Pair ContextMenuContent with semantic `Menu` and `MenuItem` children. Opening the layer moves focus into the menu and closing restores focus to the previously focused element. Escape, outside pointer, scroll, and resize dismiss the layer.
+
+## Keyboard
+
+When opened with `Menu` children, focus starts on the first enabled menu item. Arrow keys, Home, End, typeahead, Enter, and Space follow the `Menu` keyboard model. Escape closes the layer.
+
+## SSR
+
+ContextMenuContent renders only after the menu opens on the client. The trigger child should be stable during hydration.

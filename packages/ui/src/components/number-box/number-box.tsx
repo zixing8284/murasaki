@@ -3,7 +3,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 const wrapperVariants = cva(['inline-flex'], {
   defaultVariants: {
@@ -37,10 +37,11 @@ const inputVariants = cva([
   'text-(--window-text)',
   'outline-none',
   'border-none',
-  'px-1',
-  'py-[3px]',
+  'pl-2',
+  'pr-1.5',
+  'py-0.75',
   'leading-loose',
-  'h-[21px]',
+  'h-5.25',
   'w-full',
   'min-w-0',
   // Remove default number input spinner
@@ -279,9 +280,17 @@ export function NumberBox({
   const canDecrement = currentValue > min
 
   const inputElement = (
-    <div className={inputWrapperVariants()}>
+    <div
+      className={inputWrapperVariants()}
+      data-disabled={disabled || undefined}
+      data-read-only={readOnly || undefined}
+      data-value={currentValue}
+    >
       <input
         className={cn(inputVariants({ className }))}
+        data-disabled={disabled || undefined}
+        data-read-only={readOnly || undefined}
+        data-value={currentValue}
         disabled={disabled}
         id={inputId}
         onBlur={handleInputBlur}
@@ -295,6 +304,7 @@ export function NumberBox({
         <button
           aria-label="Increment"
           className={spinnerButtonVariants({ direction: 'up' })}
+          data-disabled={(disabled ?? false) || (readOnly ?? false) || !canIncrement || undefined}
           disabled={(disabled ?? false) || (readOnly ?? false) || !canIncrement}
           onClick={handleIncrement}
           tabIndex={-1}
@@ -310,6 +320,7 @@ export function NumberBox({
         <button
           aria-label="Decrement"
           className={spinnerButtonVariants({ direction: 'down' })}
+          data-disabled={(disabled ?? false) || (readOnly ?? false) || !canDecrement || undefined}
           disabled={(disabled ?? false) || (readOnly ?? false) || !canDecrement}
           onClick={handleDecrement}
           tabIndex={-1}

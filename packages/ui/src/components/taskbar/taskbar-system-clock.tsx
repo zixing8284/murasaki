@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 function formatTime(): string {
   return new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })

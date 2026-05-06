@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_VERSION = 'jspaint-v21'
+const CACHE_VERSION = 'jspaint-v22'
 
 self.addEventListener('install', () => {
   self.skipWaiting()

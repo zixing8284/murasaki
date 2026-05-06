@@ -2,9 +2,10 @@
 
 import { cva } from 'class-variance-authority'
 
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 
-import { cn, cnPure } from '#/lib/utils'
+import { cn, cnPure } from '../../lib/utils'
+import { useRovingFocus } from '../../primitives'
 
 import { TabsContext, useTabsContext } from './tabs-context'
 
@@ -28,8 +29,18 @@ const tabListVariants = cva([
 export type TabListProps = React.ComponentProps<'menu'>
 
 export function TabList({ children, className, ...props }: TabListProps): React.ReactElement {
+  const ref = useRef<HTMLMenuElement>(null)
+  // ARIA Tabs pattern: arrow keys move focus only; Enter/Space (handled per
+  // Tab) activates. Disabled tabs are skipped via `aria-disabled`.
+  useRovingFocus({
+    enabled: true,
+    containerRef: ref,
+    itemSelector: '[role="tab"]',
+    orientation: 'horizontal',
+  })
   return (
     <menu
+      ref={ref}
       role="tablist"
       className={cn(tabListVariants(), className)}
       {...props}
@@ -62,6 +73,14 @@ const tabVariants = cva(
           '-mt-0.5',
           '-ml-0.75',
           'first:ml-0',
+          'after:absolute',
+          'after:-bottom-0.5',
+          'after:left-px',
+          'after:right-px',
+          'after:h-0.75',
+          'after:bg-(--button-face)',
+          'after:content-[\'\']',
+          'after:pointer-events-none',
           // Active tab has bottom border matching background
           'shadow-[inset_-1px_0_var(--button-dk-shadow),inset_1px_1px_var(--button-hilight),inset_-2px_0_var(--button-shadow),inset_2px_2px_var(--button-light)]',
         ],
@@ -134,6 +153,8 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
       aria-selected={isSelected}
       aria-controls={panelId}
       aria-disabled={disabled}
+      data-selected={isSelected || undefined}
+      data-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       className={cn(tabVariants({ selected: isSelected }), className)}
       onClick={handleClick}
@@ -200,13 +221,13 @@ export function TabPanel({ children, className, value, ...props }: TabPanelProps
 
 const tabsRootVariants = cva(['inline-flex', 'flex-col'])
 
-export interface TabsProps extends React.ComponentProps<'div'> {
+export interface TabsProps extends Omit<React.ComponentProps<'div'>, 'onChange'> {
   /** The default selected tab value (uncontrolled mode) */
   defaultValue?: string
   /** The selected tab value (controlled mode) */
   value?: string
   /** Callback when the selected tab changes */
-  onValueChange?: (value: string) => void
+  onChange?: (value: string) => void
   /** Keep all panels mounted in the DOM to preserve a stable height */
   keepMounted?: boolean
 }
@@ -216,7 +237,7 @@ export function Tabs({
   className,
   defaultValue = '',
   value,
-  onValueChange,
+  onChange,
   keepMounted = false,
   ...props
 }: TabsProps): React.ReactElement {
@@ -230,7 +251,7 @@ export function Tabs({
     if (!isControlled) {
       setInternalValue(newValue)
     }
-    onValueChange?.(newValue)
+    onChange?.(newValue)
   }
 
   return (

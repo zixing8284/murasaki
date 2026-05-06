@@ -1,6 +1,50 @@
-import type { AppId } from '../../contexts/process'
+import type { ComponentType } from 'react'
+import type { AppId, ProcessComponentProps, ProcessDirectoryEntry } from '../../contexts/process'
 import { Suspense } from 'react'
 import { appDirectory, useProcesses } from '../../contexts/process'
+import { IframeWindow } from './iframe-window'
+import { RndWindow } from './rnd-window'
+
+function renderProcessWindow(
+  windowId: string,
+  entry: ProcessDirectoryEntry | undefined,
+  Component: ComponentType<ProcessComponentProps> | undefined,
+): React.ReactElement | null {
+  const windowConfig = entry?.window
+
+  if (windowConfig?.type === 'iframe') {
+    return (
+      <IframeWindow
+        windowId={windowId}
+        src={windowConfig.src}
+        className={windowConfig.className}
+        disableMaximize={windowConfig.disableMaximize}
+        disableMinimize={windowConfig.disableMinimize}
+        disableResize={windowConfig.disableResize}
+      />
+    )
+  }
+
+  if (windowConfig?.type === 'none') {
+    return Component ? <Component windowId={windowId} /> : null
+  }
+
+  if (!Component) {
+    return null
+  }
+
+  return (
+    <RndWindow
+      windowId={windowId}
+      className={windowConfig?.className}
+      disableMaximize={windowConfig?.disableMaximize}
+      disableMinimize={windowConfig?.disableMinimize}
+      disableResize={windowConfig?.disableResize}
+    >
+      <Component windowId={windowId} />
+    </RndWindow>
+  )
+}
 
 /**
  * Renders only the currently open (running) processes — not all registered apps.
@@ -14,14 +58,16 @@ export function WindowRenderer(): React.ReactElement {
     <>
       {Object.keys(processes).map((pid) => {
         const proc = processes[pid]
+        const entry = appDirectory[proc.appId as AppId]
         // Ephemeral processes carry their own Component; regular ones use the directory
         const Component = proc.Component
-          ?? appDirectory[proc.appId as AppId]?.Component
-        if (!Component)
+          ?? entry?.Component
+        const window = renderProcessWindow(pid, entry, Component)
+        if (!window)
           return null
         return (
           <Suspense key={pid}>
-            <Component windowId={pid} />
+            {window}
           </Suspense>
         )
       })}

@@ -2,6 +2,11 @@ node_modules
 dist
 packages/*/dist
 packages/*/node_modules
+packages/*/.next
+packages/*/out
+packages/playground/public/programs/docs/*
+**/_pagefind/
 **/.vitest-attachments/
+*.md.live.ts
 *.log
 .DS_Store

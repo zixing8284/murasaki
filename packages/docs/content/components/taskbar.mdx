@@ -1,0 +1,33 @@
+import { TaskbarBasicDemo } from './taskbar/taskbar-basic'
+
+# Taskbar
+
+`Taskbar` builds the Windows 98 shell footer and exposes quick launch, dividers, notification area, and clock primitives.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `Taskbar` | footer props | Root shell bar. |
+| `TaskbarQuickLaunch` | `icons`, `defaultVisibleCount`, `iconStepWidth` | Resizable quick launch icon strip. |
+| `TaskbarDivider` | div props | Raised separator. |
+| `TaskbarNotificationArea` | div props | Inset tray container. |
+| `TaskbarSystemClock` | span props | Client clock updated every second. |
+
+## Examples
+
+<ComponentExample name="taskbar-basic" title="Shell taskbar">
+  <TaskbarBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+Taskbar renders a `footer`. Provide accessible names for custom task buttons and meaningful `alt` text for quick launch icons.
+
+## Keyboard
+
+Taskbar primitives do not add global shell shortcuts. Keyboard behavior comes from the buttons, links, and menus you compose inside the taskbar.
+
+## SSR
+
+`TaskbarSystemClock` is client-rendered and updates after mount. Use your own stable timestamp if exact server/client text is required.

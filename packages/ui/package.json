@@ -19,16 +19,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     },
     "./globals.css": "./dist/globals.css",
     "./theme.css": "./src/theme.css",
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "style": "./dist/globals.css",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
@@ -60,7 +56,7 @@
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {
-    "@rollup/plugin-babel": "catalog:cli",
+    "@rolldown/plugin-babel": "catalog:cli",
     "@tailwindcss/vite": "catalog:cli",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",

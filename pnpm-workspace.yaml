@@ -14,22 +14,22 @@ catalog:
 
 catalogs:
   cli:
-    '@rollup/plugin-babel': ^6.1.0
-    '@tailwindcss/vite': ^4.1.18
-    '@vitejs/plugin-react': ^5.1.2
-    '@vitest/browser-playwright': ^4.0.18
+    '@rolldown/plugin-babel': ^0.2.3
+    '@tailwindcss/vite': ^4.2.4
+    '@vitejs/plugin-react': ^6.0.1
+    '@vitest/browser-playwright': ^4.1.5
     babel-plugin-react-compiler: ^1.0.0
     bumpp: ^10.4.0
     pagefind: ^1.4.0
     typescript: ^5.9.3
-    vite: ^7.3.1
-    vitest: ^4.0.18
-    vitest-browser-react: ^2.0.4
+    vite: ^8.0.10
+    vitest: ^4.1.5
+    vitest-browser-react: ^2.2.0
   libs:
     next: ^16.0.0
     react: ^19.2.3
     react-dom: ^19.2.3
-    tailwindcss: ^4.1.18
+    tailwindcss: ^4.2.4
   root:
     '@antfu/eslint-config': ^8.2.0
     '@eslint-react/eslint-plugin': ^3.0.0

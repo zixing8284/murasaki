@@ -9,18 +9,13 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: false,
     copyPublicDir: false,
+    cssCodeSplit: true,
     assetsInlineLimit: 100 * 1024,
-    rollupOptions: {
-      input: resolve(__dirname, 'src/theme.css'),
-      output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.names?.some(name => name.endsWith('.css'))) {
-            return 'globals.css'
-          }
-
-          return 'assets/[name][extname]'
-        },
+    lib: {
+      entry: {
+        globals: resolve(__dirname, 'src/theme.css'),
       },
+      formats: ['es'],
     },
   },
 })

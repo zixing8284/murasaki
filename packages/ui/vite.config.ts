@@ -1,16 +1,16 @@
 /// <reference types="vitest/config" />
 import { resolve } from 'node:path'
+import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
   root: '.',
   plugins: [
-    react({
-      babel: { plugins: ['babel-plugin-react-compiler'] },
-    }),
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
   ],
   build: {
@@ -19,8 +19,8 @@ export default defineConfig({
       formats: ['es'],
       fileName: () => 'index.js',
     },
-    rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+    rolldownOptions: {
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/compiler-runtime'],
       output: {
         banner: chunk => (chunk.name === 'index' ? `'use client';` : ''),
         preserveModules: true,

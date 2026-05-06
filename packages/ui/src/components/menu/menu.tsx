@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { cn } from '../../lib/utils'
+import { useRovingFocus, useTypeahead } from '../../primitives'
 
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
@@ -18,12 +19,99 @@ const menuVariants = cva([
 
 export interface MenuProps extends React.ComponentProps<'menu'> {}
 
-export function Menu({ className, ref, ...props }: MenuProps): React.ReactElement {
+const MENU_ITEM_SELECTOR = '[role="menuitem"]'
+
+function getEnabledMenuItems(menu: HTMLElement): HTMLElement[] {
+  return Array.from(menu.querySelectorAll<HTMLElement>(MENU_ITEM_SELECTOR))
+    .filter(item => item.getAttribute('aria-disabled') !== 'true')
+}
+
+function getMenuItemText(item: HTMLElement): string {
+  return item.textContent?.trim().toLowerCase() ?? ''
+}
+
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement))
+    return false
+
+  if (target.isContentEditable)
+    return true
+
+  return target instanceof HTMLInputElement
+    || target instanceof HTMLTextAreaElement
+    || target instanceof HTMLSelectElement
+}
+
+export function Menu({
+  className,
+  onKeyDown,
+  ref,
+  ...props
+}: MenuProps): React.ReactElement {
+  const menuRef = React.useRef<HTMLMenuElement | null>(null)
+
+  const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
+    menuRef.current = node
+    if (typeof ref === 'function') {
+      ref(node)
+    }
+    else if (ref) {
+      ref.current = node
+    }
+  }, [ref])
+
+  useRovingFocus({
+    enabled: true,
+    containerRef: menuRef,
+    itemSelector: MENU_ITEM_SELECTOR,
+    orientation: 'vertical',
+  })
+
+  const handleTypeaheadMatch = React.useCallback((search: string) => {
+    const menu = menuRef.current
+    if (!menu)
+      return
+
+    const items = getEnabledMenuItems(menu)
+    if (items.length === 0)
+      return
+
+    const active = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null
+    const activeIndex = active ? items.indexOf(active) : -1
+    const orderedItems = activeIndex >= 0
+      ? [...items.slice(activeIndex + 1), ...items.slice(0, activeIndex + 1)]
+      : items
+    const match = orderedItems.find(item => getMenuItemText(item).startsWith(search))
+    match?.focus()
+  }, [])
+
+  const typeahead = useTypeahead({
+    enabled: true,
+    onMatch: handleTypeaheadMatch,
+  })
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLMenuElement>): void => {
+    onKeyDown?.(event)
+    if (event.defaultPrevented)
+      return
+
+    if (event.key.length !== 1 || event.altKey || event.ctrlKey || event.metaKey)
+      return
+
+    if (isTypingTarget(event.target))
+      return
+
+    typeahead.onChar(event.key)
+  }
+
   return (
     <menu
-      ref={ref}
+      ref={setMenuRef}
       role="menu"
       className={cn(menuVariants(), className)}
+      onKeyDown={handleKeyDown}
       {...props}
     />
   )
@@ -74,13 +162,38 @@ export function MenuItem({
   className,
   icon,
   disabled = false,
+  onClick,
+  onKeyDown,
   selected = false,
   reserveIconSpace = false,
+  tabIndex,
   children,
   ref,
   ...props
 }: MenuItemProps): React.ReactElement {
   const showIconSlot = icon != null || reserveIconSpace
+
+  const handleClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+    if (disabled) {
+      event.preventDefault()
+      return
+    }
+
+    onClick?.(event)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>): void => {
+    onKeyDown?.(event)
+    if (event.defaultPrevented)
+      return
+
+    if (event.key !== 'Enter' && event.key !== ' ')
+      return
+
+    event.preventDefault()
+    if (!disabled)
+      event.currentTarget.click()
+  }
 
   return (
     <li
@@ -90,6 +203,9 @@ export function MenuItem({
       data-disabled={disabled || undefined}
       data-selected={selected || undefined}
       className={cn(menuItemVariants({ disabled, selected }), className)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
       {showIconSlot && <span className="w-4 h-4 shrink-0 flex items-center justify-center">{icon}</span>}

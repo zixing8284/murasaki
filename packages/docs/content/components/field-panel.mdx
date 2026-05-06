@@ -20,9 +20,13 @@ Because FieldPanel is a frame primitive, place text inside padded content rather
   <FieldPanelBasicDemo />
 </ComponentExample>
 
-## Accessibility
+## ARIA
 
 FieldPanel does not assign a role. Add `role="listbox"`, `role="region"`, or labels when the content needs semantics.
+
+## Keyboard
+
+FieldPanel does not add keyboard behavior. Keyboard interaction belongs to the content it frames.
 
 ## SSR
 

@@ -113,6 +113,8 @@ export function ProgressIndicator({
       aria-valuemin={0}
       aria-valuemax={100}
       className={cn(containerVariants({ shadow, className }))}
+      data-value={clampedValue}
+      data-variant={variant}
       {...props}
     >
       {/* Progress bar fill */}

@@ -21,9 +21,13 @@ import { NumberBoxBasicDemo } from './number-box/number-box-basic'
   <NumberBoxBasicDemo />
 </ComponentExample>
 
-## Accessibility
+## ARIA
 
 NumberBox renders a native `input type="number"`; spinner buttons are labelled Increment and Decrement.
+
+## Keyboard
+
+The numeric input keeps native browser behavior, including typing, Tab focus movement, and ArrowUp/ArrowDown value changes where supported. The spinner buttons are pointer controls and are removed from the tab order.
 
 ## SSR
 

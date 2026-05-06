@@ -17,9 +17,13 @@ import { TreeViewBasicDemo } from './tree-view/tree-view-basic'
   <TreeViewBasicDemo />
 </ComponentExample>
 
-## Accessibility
+## ARIA
 
 TreeView uses `role="tree"`, `role="treeitem"`, `role="group"`, and `aria-expanded` on branch summaries. Arrow keys move through visible items and expand or collapse branches.
+
+## Keyboard
+
+ArrowUp and ArrowDown move focus through visible enabled items without wrapping. ArrowRight expands a collapsed branch or moves into its first child. ArrowLeft collapses an expanded branch or moves focus to the parent. Home and End move to the first and last visible enabled item. Enter and Space activate clickable leaf items.
 
 ## SSR
 

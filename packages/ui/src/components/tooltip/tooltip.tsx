@@ -26,6 +26,7 @@ export function Tooltip({
 }: TooltipProps): React.ReactElement {
   const [visible, setVisible] = useState(false)
   const wrapperRef = useRef<HTMLSpanElement>(null)
+  const tooltipRef = useRef<HTMLSpanElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const tooltipId = useId()
 
@@ -48,6 +49,7 @@ export function Tooltip({
 
   const position = useLayer({
     anchorRef: wrapperRef,
+    layerRef: tooltipRef,
     open: visible,
     side,
   })
@@ -73,13 +75,13 @@ export function Tooltip({
       {children}
       {visible && position && createPortal(
         <span
+          ref={tooltipRef}
           id={tooltipId}
           role="tooltip"
           className={cn(
             'fixed z-9999 whitespace-nowrap px-1 py-0.5',
             'bg-(--info-window) text-(--info-text) border border-(--window-frame)',
-            'pointer-events-none -translate-x-1/2',
-            position.side === 'top' && '-translate-y-full',
+            'pointer-events-none',
             className,
           )}
           style={{ top: position.y, left: position.x }}

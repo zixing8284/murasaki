@@ -36,7 +36,7 @@ The `Select` component renders a Windows 98 styled custom select with a trigger 
   <SelectScrollableDemo />
 </ComponentExample>
 
-## Accessibility
+## ARIA
 
 The custom select uses combobox and listbox roles. The selected option exposes `aria-selected`, and disabled state is communicated through `aria-disabled`.
 
@@ -47,6 +47,7 @@ The custom select uses combobox and listbox roles. The selected option exposes `
 | `Enter` / `Space` / `ArrowDown` | Opens the custom select. |
 | `ArrowUp` / `ArrowDown` | Moves through options while open. |
 | `Home` / `End` | Jumps to the first or last option. |
+| Printable characters | Moves focus to the next option whose label starts with the typed buffer. |
 | `Escape` | Closes without selecting. |
 | `Tab` | Closes and moves focus onward. |
 

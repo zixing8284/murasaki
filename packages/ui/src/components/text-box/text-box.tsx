@@ -128,6 +128,8 @@ export function TextBox({
             <textarea
               ref={textareaRef}
               className={cn(textareaVariants(), 'flex-1')}
+              data-disabled={disabled || undefined}
+              data-read-only={readOnly || undefined}
               disabled={disabled}
               id={inputId}
               readOnly={readOnly}
@@ -140,6 +142,8 @@ export function TextBox({
     : (
         <input
           className={cn(inputVariants({ className, inputType: type }))}
+          data-disabled={disabled || undefined}
+          data-read-only={readOnly || undefined}
           disabled={disabled}
           id={inputId}
           readOnly={readOnly}

@@ -18,10 +18,14 @@ import { MenuBasicDemo } from './menu/menu-basic'
   <MenuBasicDemo />
 </ComponentExample>
 
-## Accessibility
+## ARIA
 
-Menu uses `role="menu"`; each item uses `role="menuitem"`, and disabled items expose `aria-disabled`.
+Menu uses `role="menu"`; each item uses `role="menuitem"`, and disabled items expose `aria-disabled`. Enabled menu items are focusable and skip disabled rows during roving navigation.
+
+## Keyboard
+
+ArrowUp and ArrowDown move focus between enabled menu items and wrap at the ends. Home and End move to the first and last enabled item. Typing printable characters moves focus to the next enabled item whose text starts with the typed buffer. Enter and Space activate the focused menu item.
 
 ## SSR
 
-Menu is presentational. Keep `selected`, `disabled`, and icon content stable between server and client.
+Keep `selected`, `disabled`, and icon content stable between server and client so focusable menu items hydrate with the same order and labels.

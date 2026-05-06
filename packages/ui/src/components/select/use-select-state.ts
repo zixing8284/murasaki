@@ -21,7 +21,7 @@ interface UseSelectStateReturn<T> {
   listboxRef: React.RefObject<HTMLUListElement | null>
 
   handleOptionClick: (index: number) => void
-  handleOptionKeyDown: (e: React.KeyboardEvent) => void
+  handleOptionKeyDown: (e: React.KeyboardEvent, index: number) => void
   handleOptionMouseEnter: (index: number) => void
 
   // Handlers
@@ -145,38 +145,23 @@ export function useSelectState<T = string>({
     [selectOption],
   )
 
-  // Handle option keyboard events
+  // Handle option keyboard events. Arrow/Home/End navigation is owned by the
+  // shared `useRovingFocus` primitive in the rendering component.
   const handleOptionKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: React.KeyboardEvent, index: number) => {
       switch (e.key) {
         case ' ':
         case 'Enter':
           e.preventDefault()
-          selectOption(activeIndex)
-          break
-        case 'ArrowDown':
-          e.preventDefault()
-          setActiveIndex(prev => Math.min(prev + 1, options.length - 1))
-          break
-        case 'ArrowUp':
-          e.preventDefault()
-          setActiveIndex(prev => Math.max(prev - 1, 0))
-          break
-        case 'End':
-          e.preventDefault()
-          setActiveIndex(options.length - 1)
+          selectOption(index)
           break
         // Escape is handled centrally by `useDismissable` in the consumer.
-        case 'Home':
-          e.preventDefault()
-          setActiveIndex(0)
-          break
         case 'Tab':
           closeSelect()
           break
       }
     },
-    [options.length, activeIndex, selectOption, closeSelect],
+    [selectOption, closeSelect],
   )
 
   // Handle option hover

@@ -72,6 +72,10 @@ _Avoid_: Silent compatibility drift, unrestricted breaking changes
 A package export contract where published entry points resolve to built artifacts and declarations, while source files remain repository-internal implementation details.
 _Avoid_: Source-root export, public TS source entry
 
+**Theme source stylesheet exception**:
+A named exception to **Dist-only public exports** where `@murasaki/react98/theme.css` intentionally resolves to `./src/theme.css` so Tailwind CSS v4 consumers can import the source stylesheet with library-owned theme variables. `@murasaki/react98/globals.css` remains the built CSS entry for consumers that want compiled global styles.
+_Avoid_: Accidental source export, unrecorded package export drift
+
 ## Relationships
 
 - An **RSC-safe Client Component** may be composed by a server-rendered application, but its interactive behavior belongs to the client runtime.
@@ -91,6 +95,7 @@ _Avoid_: Source-root export, public TS source entry
 - A **TSX example module** is the preferred unit for live documentation examples in the **Standalone docs site**.
 - **Scoped breaking changes** may be used to establish the **Compatibility baseline** while the package remains pre-stable.
 - **Dist-only public exports** make the **Compatibility baseline** represent the real package consumption path.
+- A **Theme source stylesheet exception** narrows **Dist-only public exports** to account for Tailwind CSS v4 source stylesheet consumption without reopening source-root public entries.
 
 ## Example dialogue
 
@@ -130,6 +135,9 @@ _Avoid_: Source-root export, public TS source entry
 > **Dev:** "Should consumers import the TypeScript source entry?"
 > **Domain expert:** "No — use **Dist-only public exports** so tests and examples match published package behavior."
 
+> **Dev:** "Why does `@murasaki/react98/theme.css` point at `src/theme.css`?"
+> **Domain expert:** "That is the **Theme source stylesheet exception**: Tailwind CSS v4 consumers need the source stylesheet, while compiled app CSS still comes from `@murasaki/react98/globals.css`."
+
 > **Dev:** "Should the playground own component documentation and generate live demos from markdown?"
 > **Domain expert:** "No — documentation belongs to the **Standalone docs site**. The playground can provide an **Embedded docs window**, but it should not maintain a second docs system."
 
@@ -150,5 +158,6 @@ _Avoid_: Source-root export, public TS source entry
 - "Style support" was resolved as **Explicit global CSS import**, not hidden CSS side effects from component imports.
 - "Compatibility promise" was resolved as allowing **Scoped breaking changes** for SSR support during the pre-stable phase.
 - "Package exports" was resolved as **Dist-only public exports**, not source-root public entry points.
+- "Theme CSS export" was resolved as a **Theme source stylesheet exception**, not a general permission to expose source files from package exports.
 - "Component docs in the playground" was resolved as an **Embedded docs window** for the **Standalone docs site**, not a playground-owned markdown/live-demo system.
 - "Live examples" was resolved as **TSX example modules**, not markdown code fences that generate sidecar modules.

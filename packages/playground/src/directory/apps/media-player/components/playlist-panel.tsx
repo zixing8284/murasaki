@@ -1,7 +1,7 @@
 import type { JSX, RefObject } from 'react'
 import type { Track } from '../use-media-player'
 import { SunkenPanel } from '@murasaki/react98'
-import { formatTime } from '../media-player-utils'
+import { formatTime } from '../format-time'
 import { NowPlayingIndicator } from './now-playing-indicator'
 
 interface PlaylistPanelProps {

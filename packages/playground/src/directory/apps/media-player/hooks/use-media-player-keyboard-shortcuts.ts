@@ -1,5 +1,35 @@
 import { useEffect } from 'react'
-import { isTextEntryTarget } from '../media-player-utils'
+
+const TEXT_ENTRY_INPUT_TYPES = new Set([
+  'date',
+  'datetime-local',
+  'email',
+  'month',
+  'number',
+  'password',
+  'search',
+  'tel',
+  'text',
+  'time',
+  'url',
+  'week',
+])
+
+function isTextEntryTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement))
+    return false
+
+  if (target.isContentEditable || target.closest('[contenteditable="true"], [contenteditable="plaintext-only"], [role="textbox"]'))
+    return true
+
+  if (target instanceof HTMLTextAreaElement)
+    return true
+
+  if (target instanceof HTMLInputElement)
+    return TEXT_ENTRY_INPUT_TYPES.has(target.type)
+
+  return false
+}
 
 interface UseMediaPlayerKeyboardShortcutsOptions {
   enabled: boolean

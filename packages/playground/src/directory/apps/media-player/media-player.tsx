@@ -12,8 +12,9 @@ import { MediaPlayerStatusBar } from './components/media-player-status-bar'
 import { PlaylistPanel } from './components/playlist-panel'
 import { useMediaPlayerKeyboardShortcuts } from './hooks/use-media-player-keyboard-shortcuts'
 import { useVideoFullscreenToggle } from './hooks/use-video-fullscreen-toggle'
-import { SEEK_STEP_SECONDS } from './media-player-constants'
 import { useMediaPlayer } from './use-media-player'
+
+const SEEK_STEP_SECONDS = 5
 
 export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement | null {
   const player = useMediaPlayer()

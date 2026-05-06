@@ -1,7 +1,7 @@
 import type { JSX, PointerEvent as ReactPointerEvent } from 'react'
 import { useCallback, useRef, useState } from 'react'
+import { formatTime } from '../format-time'
 import { SeekThumbIcon } from '../media-player-icons'
-import { formatTime } from '../media-player-utils'
 
 const SEEK_TICK_PERCENTAGES = Array.from({ length: 11 }, (_unused, index) => index * 10)
 

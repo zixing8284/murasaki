@@ -1,8 +1,8 @@
 import type { RefObject } from 'react'
 import type { MediaState, Track } from './media-manager'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { formatTime } from './format-time'
 import { MediaManager } from './media-manager'
-import { formatTime } from './media-player-utils'
 
 export type { Track } from './media-manager'
 

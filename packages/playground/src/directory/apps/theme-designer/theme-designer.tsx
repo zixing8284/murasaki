@@ -8,7 +8,7 @@ export function ThemeDesigner(): React.ReactElement {
   const state = useThemeColors()
 
   return (
-    <div className="flex flex-col gap-1.5 h-full">
+    <div className="flex flex-col gap-1.5 h-full py-1">
       <div className="flex gap-2 flex-1 min-h-0">
         <div className="flex-1 min-w-0">
           <DesignerPreview colors={state.allColors} />

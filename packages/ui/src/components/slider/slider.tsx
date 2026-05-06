@@ -53,8 +53,8 @@ const nativeInputVariants = cva(
 const trackWrapperVariants = cva(['relative'], {
   variants: {
     vertical: {
-      true: 'h-full w-[11px]',
-      false: 'w-full h-[21px]',
+      true: 'h-full w-2.75',
+      false: 'w-full h-5.25',
     },
   },
   defaultVariants: {
@@ -245,7 +245,12 @@ export function Slider({
   }
 
   return (
-    <div className={cn(containerVariants({ vertical }), className)}>
+    <div
+      className={cn(containerVariants({ vertical }), className)}
+      data-disabled={disabled || undefined}
+      data-orientation={vertical ? 'vertical' : 'horizontal'}
+      data-value={currentValue}
+    >
       {/* Track wrapper contains track, thumb, input, and ticks */}
       <div className={cn(trackWrapperVariants({ vertical }))}>
         {/* Hidden native input - handles all interaction */}
@@ -253,6 +258,9 @@ export function Slider({
           ref={inputRef}
           type="range"
           className={cn(nativeInputVariants({ vertical }), disabled && 'cursor-default')}
+          data-disabled={disabled || undefined}
+          data-orientation={vertical ? 'vertical' : 'horizontal'}
+          data-value={currentValue}
           min={min}
           max={max}
           step={step}

@@ -1,6 +1,21 @@
 import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
 
+const dismissableLayerStack: symbol[] = []
+
+function addLayer(layerId: symbol): () => void {
+  dismissableLayerStack.push(layerId)
+  return () => {
+    const index = dismissableLayerStack.indexOf(layerId)
+    if (index !== -1)
+      dismissableLayerStack.splice(index, 1)
+  }
+}
+
+function isTopLayer(layerId: symbol): boolean {
+  return dismissableLayerStack.at(-1) === layerId
+}
+
 export interface UseDismissableOptions {
   /** When `false`, no listeners are attached. */
   enabled: boolean
@@ -21,8 +36,8 @@ export interface UseDismissableOptions {
  * Shared dismissal behavior for transient layers (tooltip, popover, menu).
  *
  * Scope is intentionally minimal:
- * - Escape key on `window` (capture phase) — closes top-most layer first.
- * - Optional pointerdown outside any provided layer refs.
+ * - Escape key on `window` (capture phase) — only the top-most layer closes.
+ * - Optional pointerdown outside any provided layer refs, also top-most only.
  *
  * Focus/scroll-lock are out of scope and belong to `useFocusScope`.
  */
@@ -33,6 +48,8 @@ export function useDismissable({
   outsidePointer = false,
   layerRefs,
 }: UseDismissableOptions): void {
+  const layerIdRef = useRef<symbol>(Symbol('dismissable-layer'))
+
   // Latest-callback ref so subscribers don't tear down on every parent render.
   const onDismissRef = useRef(onDismiss)
   useEffect(() => {
@@ -45,16 +62,23 @@ export function useDismissable({
     if (!escapeKey && !outsidePointer)
       return
 
+    const layerId = layerIdRef.current
+    const removeLayer = addLayer(layerId)
+
     function handleKeyDown(event: KeyboardEvent): void {
       if (!escapeKey)
+        return
+      if (!isTopLayer(layerId))
         return
       if (event.key !== 'Escape')
         return
       onDismissRef.current()
     }
 
-    function handlePointerDown(event: MouseEvent): void {
+    function handlePointerDown(event: PointerEvent): void {
       if (!outsidePointer)
+        return
+      if (!isTopLayer(layerId))
         return
       const target = event.target as Node | null
       if (!target)
@@ -70,12 +94,13 @@ export function useDismissable({
 
     window.addEventListener('keydown', handleKeyDown, true)
     if (outsidePointer)
-      window.addEventListener('mousedown', handlePointerDown, true)
+      window.addEventListener('pointerdown', handlePointerDown, true)
 
     return () => {
+      removeLayer()
       window.removeEventListener('keydown', handleKeyDown, true)
       if (outsidePointer)
-        window.removeEventListener('mousedown', handlePointerDown, true)
+        window.removeEventListener('pointerdown', handlePointerDown, true)
     }
   }, [enabled, escapeKey, outsidePointer, layerRefs])
 }

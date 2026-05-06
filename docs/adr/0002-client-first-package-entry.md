@@ -4,7 +4,7 @@
 
 ## Amendment: server sub-entry
 
-A `@murasaki/react98/server` sub-entry will be added during the API consistency phase (phase 3). It exposes pure presentation primitives — components with no interactive behavior, event handlers, or browser-only APIs — as server-safe exports. The root import remains client-first; the server entry is opt-in for applications that need to render non-interactive primitives in Server Components.
+A `@murasaki/react98/server` sub-entry may be added in a future phase. It would expose pure presentation primitives — components with no interactive behavior, event handlers, or browser-only APIs — as server-safe exports. The root import remains client-first; the server entry would be opt-in for applications that need to render non-interactive primitives in Server Components. This was evaluated but not implemented during phase 3 (API consistency); it is deferred until a consuming application has a verified need.
 
 Scope:
 - Only components verified to have zero client-side dependencies qualify.

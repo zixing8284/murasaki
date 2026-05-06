@@ -265,6 +265,54 @@ describe('select', () => {
     await expect.element(trigger).toHaveTextContent('Banana')
   })
 
+  it('moves focus to first and last options with Home and End', async () => {
+    const screen = await render(
+      <Select name="fruit" options={fruitOptions} />,
+    )
+    const trigger = screen.getByRole('combobox')
+    await trigger.element().focus()
+    await userEvent.keyboard('{Enter}')
+
+    await vi.waitFor(() => {
+      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      expect(focused?.textContent).toBe('Apple')
+    })
+
+    await userEvent.keyboard('{End}')
+    await vi.waitFor(() => {
+      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      expect(focused?.textContent).toBe('Cherry')
+    })
+
+    await userEvent.keyboard('{Home}')
+    await vi.waitFor(() => {
+      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      expect(focused?.textContent).toBe('Apple')
+    })
+  })
+
+  it('moves focus with typeahead and selects the matched option', async () => {
+    const screen = await render(
+      <Select name="fruit" options={fruitOptions} />,
+    )
+    const trigger = screen.getByRole('combobox')
+    await trigger.element().focus()
+    await userEvent.keyboard('{Enter}')
+
+    await userEvent.keyboard('c')
+    await vi.waitFor(() => {
+      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      expect(focused?.textContent).toBe('Cherry')
+    })
+
+    await userEvent.keyboard('{Enter}')
+
+    await vi.waitFor(() => {
+      expect(trigger.element().getAttribute('aria-expanded')).toBe('false')
+    })
+    await expect.element(trigger).toHaveTextContent('Cherry')
+  })
+
   // === Callbacks ===
 
   it('calls onOpen / onClose callbacks', async () => {

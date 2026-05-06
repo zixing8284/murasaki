@@ -9,7 +9,7 @@ import { ContextMenuBasicDemo } from './context-menu/context-menu-basic'
 | Export | Key props | Description |
 |--------|-----------|-------------|
 | `ContextMenu` | `container` | Provider that stores open state and optional boundary element. |
-| `ContextMenuTrigger` | `disabled`, `onlyDirectTarget`, `children` | Adds a `contextmenu` handler to one child element. |
+| `ContextMenuTrigger` | `disabled`, `onlyDirectTarget`, `children` | Opens the surrounding menu from trigger content. Child `contextmenu` handlers can prevent opening. |
 | `ContextMenuContent` | `closeOnItemClick`, div props | Portal layer clamped to the viewport or container. |
 | `useContextMenu` | - | Programmatic access to `openAt` and `close`. |
 
@@ -19,9 +19,13 @@ import { ContextMenuBasicDemo } from './context-menu/context-menu-basic'
   <ContextMenuBasicDemo />
 </ComponentExample>
 
-## Accessibility
+## ARIA
 
-Pair ContextMenuContent with semantic `Menu` and `MenuItem` children. Escape, outside pointer, scroll, and resize dismiss the layer.
+Pair ContextMenuContent with semantic `Menu` and `MenuItem` children. Opening the layer moves focus into the menu and closing restores focus to the previously focused element. Escape, outside pointer, scroll, and resize dismiss the layer.
+
+## Keyboard
+
+When opened with `Menu` children, focus starts on the first enabled menu item. Arrow keys, Home, End, typeahead, Enter, and Space follow the `Menu` keyboard model. Escape closes the layer.
 
 ## SSR
 

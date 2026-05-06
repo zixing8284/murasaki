@@ -35,13 +35,13 @@ function getFocusable(container: HTMLElement): HTMLElement[] {
 /**
  * Focus management primitive for transient layers (popover, menu, dialog).
  *
- * Wave A scope:
+ * Covers:
  * - Move focus into the container on activation (autoFocus).
  * - Trap Tab / Shift-Tab inside the container.
  * - Restore focus to the previously focused element on deactivation.
  *
- * Out of scope (defer until needed): focus guards for portal escape, sentinel
- * nodes for Shadow DOM, programmatic focus return targets.
+ * Out of scope: focus guards for portal escape, sentinel nodes for Shadow DOM,
+ * programmatic focus return targets.
  */
 export function useFocusScope({
   enabled,

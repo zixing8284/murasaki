@@ -4,9 +4,9 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 
-import { useId, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef } from 'react'
 import { cn } from '../../lib/utils'
-import { useDismissable } from '../../primitives'
+import { useCollection, useDismissable, useRovingFocus, useTypeahead } from '../../primitives'
 import { useScrollbar } from '../scroll-area/use-scrollbar'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './select-icons'
 import { useSelectState } from './use-select-state'
@@ -104,6 +104,70 @@ const menuItemVariants = cva(
 const labelVariants = cva(['inline-block', 'mr-2', 'leading-5.25'])
 
 const wrapperVariants = cva(['relative', 'inline-block'])
+
+interface SelectCollectionData {
+  index: number
+  label: string
+}
+
+interface SelectOptionItemProps<T> {
+  active: boolean
+  index: number
+  label: string
+  option: SelectOption<T>
+  optionRef: React.RefObject<(HTMLLIElement | null)[]>
+  register: (ref: React.RefObject<HTMLElement | null>, data: SelectCollectionData) => () => void
+  selected: boolean
+  onClick: (index: number) => void
+  onKeyDown: (event: React.KeyboardEvent, index: number) => void
+  onMouseEnter: (index: number) => void
+}
+
+function SelectOptionItem<T>({
+  active,
+  index,
+  label,
+  option,
+  optionRef,
+  register,
+  selected,
+  onClick,
+  onKeyDown,
+  onMouseEnter,
+}: SelectOptionItemProps<T>): React.ReactElement {
+  const itemRef = useRef<HTMLLIElement | null>(null)
+  const setItemRef = useCallback((node: HTMLLIElement | null) => {
+    itemRef.current = node
+    optionRef.current[index] = node
+  }, [index, optionRef])
+
+  useEffect(() => {
+    return register(itemRef, { index, label })
+  }, [index, label, register])
+
+  return (
+    <li
+      aria-selected={selected}
+      className={cn(menuItemVariants({ active }))}
+      data-index={index}
+      key={`${String(option.value)}-${String(index)}`}
+      onClick={() => {
+        onClick(index)
+      }}
+      onKeyDown={(event) => {
+        onKeyDown(event, index)
+      }}
+      onMouseEnter={() => {
+        onMouseEnter(index)
+      }}
+      ref={setItemRef}
+      role="option"
+      tabIndex={active ? 0 : -1}
+    >
+      {label}
+    </li>
+  )
+}
 
 export interface SelectProps<T = string>
   extends Omit<React.ComponentProps<'div'>, 'defaultValue' | 'onChange'> {
@@ -205,6 +269,7 @@ export function Select<T = string>({
     open,
     optionRef,
     selectedOption,
+    setActiveIndex,
     triggerRef,
   } = useSelectState({
     defaultValue,
@@ -217,6 +282,58 @@ export function Select<T = string>({
   })
 
   useScrollbar(listboxRef, { disabled: !open })
+
+  const collection = useCollection<SelectCollectionData>()
+
+  const handleOptionFocus = useCallback((item: HTMLElement) => {
+    const index = Number(item.getAttribute('data-index'))
+    if (Number.isInteger(index))
+      setActiveIndex(index)
+  }, [setActiveIndex])
+
+  useRovingFocus({
+    enabled: open,
+    containerRef: listboxRef,
+    itemSelector: '[role="option"]',
+    orientation: 'vertical',
+    loop: false,
+    onFocus: handleOptionFocus,
+  })
+
+  const handleTypeaheadMatch = useCallback((search: string) => {
+    const items = collection.getItems()
+    if (items.length === 0)
+      return
+
+    const activeOptionIndex = Math.max(0, activeIndex)
+    const activeCollectionIndex = Math.max(0, items.findIndex(item => item.data.index === activeOptionIndex))
+    const orderedItems = [
+      ...items.slice(activeCollectionIndex + 1),
+      ...items.slice(0, activeCollectionIndex + 1),
+    ]
+    const match = orderedItems.find(({ data }) => {
+      return data.label.toLowerCase().startsWith(search)
+    })
+    if (!match)
+      return
+
+    setActiveIndex(match.data.index)
+    match.ref.current?.focus()
+  }, [activeIndex, collection, setActiveIndex])
+
+  const { onChar: handleTypeaheadChar } = useTypeahead({
+    enabled: open,
+    onMatch: handleTypeaheadMatch,
+  })
+
+  const handleListboxKeyDown = useCallback((event: React.KeyboardEvent<HTMLUListElement>) => {
+    if (event.defaultPrevented)
+      return
+    if (event.key.length !== 1 || event.altKey || event.ctrlKey || event.metaKey)
+      return
+
+    handleTypeaheadChar(event.key)
+  }, [handleTypeaheadChar])
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
 
@@ -298,6 +415,7 @@ export function Select<T = string>({
             role="listbox"
             style={menuStyle}
             tabIndex={-1}
+            onKeyDown={handleListboxKeyDown}
           >
             {options.map((option, index) => {
               const isActive = index === activeIndex
@@ -305,27 +423,19 @@ export function Select<T = string>({
               const optionLabel = option.label ?? String(option.value)
 
               return (
-                <li
-                  aria-selected={isSelected}
-                  className={cn(menuItemVariants({ active: isActive }))}
+                <SelectOptionItem
+                  active={isActive}
+                  index={index}
                   key={`${String(option.value)}-${String(index)}`}
-                  onClick={() => {
-                    handleOptionClick(index)
-                  }}
-                  onKeyDown={(e) => {
-                    handleOptionKeyDown(e)
-                  }}
-                  onMouseEnter={() => {
-                    handleOptionMouseEnter(index)
-                  }}
-                  ref={(el) => {
-                    optionRef.current[index] = el
-                  }}
-                  role="option"
-                  tabIndex={isActive ? 0 : -1}
-                >
-                  {optionLabel}
-                </li>
+                  label={optionLabel}
+                  option={option}
+                  optionRef={optionRef}
+                  register={collection.register}
+                  selected={isSelected}
+                  onClick={handleOptionClick}
+                  onKeyDown={handleOptionKeyDown}
+                  onMouseEnter={handleOptionMouseEnter}
+                />
               )
             })}
           </ul>

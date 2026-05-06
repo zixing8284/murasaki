@@ -12,7 +12,7 @@ const labelVariants = cva([
   'cursor-pointer',
   'select-none',
   'gap-2',
-  'leading-[13px]',
+  'leading-3.25',
   'relative',
   'ml-[calc(var(--checkbox-width)+var(--label-spacing))]',
   // label::before — static box
@@ -52,7 +52,7 @@ const checkmarkVariants = cva([
   'absolute',
   'hidden',
   'text-(--button-text)',
-  'top-[3px]',
+  'top-0.75',
   'left-[calc(-1*(var(--checkbox-width)+var(--label-spacing))+3px)]',
 ])
 
@@ -63,18 +63,38 @@ interface CheckboxProps
 export function Checkbox({
   children,
   className,
+  checked,
+  defaultChecked,
+  disabled,
   id,
+  onChange,
   ...props
 }: CheckboxProps): React.ReactElement {
   const generatedId = React.useId()
   const inputId = id ?? generatedId
+  const isControlled = checked !== undefined
+  const [internalChecked, setInternalChecked] = React.useState(defaultChecked ?? false)
+  const currentChecked = isControlled ? checked : internalChecked
+
+  const handleChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) {
+      setInternalChecked(event.target.checked)
+    }
+
+    onChange?.(event)
+  }, [isControlled, onChange])
 
   return (
     <>
       <input
+        checked={currentChecked}
         className={cn(checkboxVariants({ className }))}
+        data-checked={currentChecked || undefined}
+        data-disabled={disabled || undefined}
+        disabled={disabled}
         id={inputId}
         name={inputId}
+        onChange={handleChange}
         type="checkbox"
         {...props}
       />

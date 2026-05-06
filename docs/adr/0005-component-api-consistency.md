@@ -23,13 +23,13 @@
 
 ## Deferred decisions
 
-- **Selective Slot API** (`asChild` / Slot-style element replacement): deferred until after the internal primitive toolkit is stable. Will be evaluated per-component based on semantic composition needs, not applied library-wide.
-- **Server sub-entry** (`@murasaki/react98/server`): covered by ADR 0002, to be implemented in this phase.
+- **Selective Slot API** (`asChild` / Slot-style element replacement): not currently planned. Will be evaluated per-component if semantic composition needs arise, not applied library-wide.
+- **Server sub-entry** (`@murasaki/react98/server`): covered by ADR 0002. Not implemented during phase 3 — deferred until a consuming application has a verified need.
 
 ## Documentation
 
 Each component page will include three fixed sections:
 
-- **Accessibility** — ARIA roles, states, and properties used.
+- **ARIA** — ARIA roles, states, and properties used.
 - **Keyboard** — all keyboard interactions and their behavior.
 - **SSR** — hydration behavior, server-rendered markup considerations.

@@ -280,9 +280,17 @@ export function NumberBox({
   const canDecrement = currentValue > min
 
   const inputElement = (
-    <div className={inputWrapperVariants()}>
+    <div
+      className={inputWrapperVariants()}
+      data-disabled={disabled || undefined}
+      data-read-only={readOnly || undefined}
+      data-value={currentValue}
+    >
       <input
         className={cn(inputVariants({ className }))}
+        data-disabled={disabled || undefined}
+        data-read-only={readOnly || undefined}
+        data-value={currentValue}
         disabled={disabled}
         id={inputId}
         onBlur={handleInputBlur}
@@ -296,6 +304,7 @@ export function NumberBox({
         <button
           aria-label="Increment"
           className={spinnerButtonVariants({ direction: 'up' })}
+          data-disabled={(disabled ?? false) || (readOnly ?? false) || !canIncrement || undefined}
           disabled={(disabled ?? false) || (readOnly ?? false) || !canIncrement}
           onClick={handleIncrement}
           tabIndex={-1}
@@ -311,6 +320,7 @@ export function NumberBox({
         <button
           aria-label="Decrement"
           className={spinnerButtonVariants({ direction: 'down' })}
+          data-disabled={(disabled ?? false) || (readOnly ?? false) || !canDecrement || undefined}
           disabled={(disabled ?? false) || (readOnly ?? false) || !canDecrement}
           onClick={handleDecrement}
           tabIndex={-1}

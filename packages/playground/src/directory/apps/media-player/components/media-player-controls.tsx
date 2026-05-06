@@ -1,7 +1,6 @@
 import type { JSX } from 'react'
 import type { UseMediaPlayerResult } from '../use-media-player'
 import { Divider, Slider, Tooltip } from '@murasaki/react98'
-import { AudioVisualizer } from '../audio-visualizer'
 import {
   EjectIcon,
   FastForwardIcon,
@@ -19,6 +18,7 @@ import {
   VolumeLowIcon,
   VolumeMutedIcon,
 } from '../media-player-icons'
+import { AudioVisualizer } from './audio-visualizer'
 import { SeekBar } from './seek-bar'
 import { TransportButton } from './transport-button'
 

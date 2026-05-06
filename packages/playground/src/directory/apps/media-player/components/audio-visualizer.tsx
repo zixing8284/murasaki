@@ -1,11 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { useAudioVisualizer } from './use-audio-visualizer'
+import { useAudioVisualizer } from '../hooks/use-audio-visualizer'
 
-// ── Virtual resolution — intentionally low for pixel-art upscaling ──────
 const VIRTUAL_W = 100
 const VIRTUAL_H = 16
-
-// ── 30fps throttle ──────────────────────────────────────────────────────
 const FRAME_INTERVAL = 1000 / 30
 
 interface VisualizerColors {
@@ -14,7 +11,6 @@ interface VisualizerColors {
   center: string
 }
 
-// ── Oscilloscope styling — resolved at draw time from CSS variables ─────
 function getColors(canvas: HTMLCanvasElement): VisualizerColors {
   const style = getComputedStyle(canvas)
   return {
@@ -24,8 +20,6 @@ function getColors(canvas: HTMLCanvasElement): VisualizerColors {
   }
 }
 
-// ── Canvas drawing ──────────────────────────────────────────────────────
-
 function drawWaveform(
   ctx: CanvasRenderingContext2D,
   timeDomain: Uint8Array,
@@ -34,11 +28,9 @@ function drawWaveform(
   ctx.fillStyle = colors.bg
   ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H)
 
-  // Dim center line
   ctx.fillStyle = colors.center
   ctx.fillRect(0, Math.floor(VIRTUAL_H / 2), VIRTUAL_W, 1)
 
-  // Draw waveform — 1px thin line for clean pixel look
   const step = timeDomain.length / VIRTUAL_W
   ctx.fillStyle = colors.wave
 
@@ -48,8 +40,6 @@ function drawWaveform(
     const idx = Math.floor(x * step)
     const value = timeDomain[idx]
     const y = Math.floor((value / 255) * VIRTUAL_H)
-
-    // Connect prevY to y with vertical segment for continuity
     const minY = Math.min(prevY, y)
     const maxY = Math.max(prevY, y)
     ctx.fillRect(x, minY, 1, maxY - minY + 1)
@@ -66,8 +56,6 @@ function drawEmpty(ctx: CanvasRenderingContext2D, colors: Pick<VisualizerColors,
   ctx.fillRect(0, Math.floor(VIRTUAL_H / 2), VIRTUAL_W, 1)
 }
 
-// ── Component ───────────────────────────────────────────────────────────
-
 interface AudioVisualizerProps {
   getMediaElement: () => HTMLMediaElement | null
   isPlaying: boolean
@@ -81,7 +69,6 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
 
   const { analyserRef, dataRef } = useAudioVisualizer({ getMediaElement, isPlaying, isAudio })
 
-  // Animation loop at ~30fps when playing
   useEffect(() => {
     if (!isAudio || !isPlaying)
       return
@@ -117,7 +104,6 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
     }
   }, [isAudio, isPlaying, analyserRef, dataRef])
 
-  // Draw static line whenever the animation loop is not running
   useEffect(() => {
     if (isAudio && isPlaying)
       return

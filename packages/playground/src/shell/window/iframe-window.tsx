@@ -75,7 +75,7 @@ export function IframeWindow({
        *   page when touching inside the iframe area.
        */}
       <div
-        className={`w-full h-full relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
+        className={`w-full h-full pt-1 relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)

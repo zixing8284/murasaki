@@ -1,0 +1,33 @@
+import { FieldPanelBasicDemo } from './field-panel/field-panel-basic'
+
+# FieldPanel
+
+`FieldPanel` frames scrollable white content with the sunken field border used by list boxes and file panes.
+
+Because FieldPanel is a frame primitive, place text inside padded content rather than directly against the inset border.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `disabled` | `boolean` | `false` | Switches to disabled field colors and exposes `aria-disabled`. |
+| `className` | `string` | - | Sets dimensions or extra layout classes. |
+| `children` | `ReactNode` | - | Content rendered inside the scroll area. |
+
+## Examples
+
+<ComponentExample name="field-panel-basic" title="File list field">
+  <FieldPanelBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+FieldPanel does not assign a role. Add `role="listbox"`, `role="region"`, or labels when the content needs semantics.
+
+## Keyboard
+
+FieldPanel does not add keyboard behavior. Keyboard interaction belongs to the content it frames.
+
+## SSR
+
+FieldPanel owns no state. Its custom scrollbars hydrate from measured overflow after mount.

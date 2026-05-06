@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 import { ExpandArrowIcon } from './taskbar-icons'
 
@@ -24,10 +24,9 @@ function ExpandArrowButton({ onClick }: { onClick: () => void }): React.ReactEle
   return (
     <button
       type="button"
-      className="flex items-start justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-(--button-face) active:bg-(--button-shadow) text-(--button-text)"
+      className="flex items-start justify-center w-3 h-5 cursor-pointer bg-transparent border-none p-0 hover:bg-(--button-face) text-(--button-text)"
       onClick={onClick}
       title="Show all Quick Launch icons"
-      style={{ imageRendering: 'pixelated' }}
     >
       <ExpandArrowIcon />
     </button>
@@ -153,18 +152,25 @@ export function TaskbarQuickLaunch({
       {/* Quick Launch Icons */}
       <div
         ref={quickLaunchRef}
-        className="flex flex-row items-center overflow-hidden [&>img]:my-0 [&>img]:mx-0.5 [&>img]:cursor-pointer [&>img]:p-0.5 [&>img]:hover:shadow-[-1px_-1px_var(--button-light),1px_1px_var(--button-shadow)] [&>img]:active:shadow-[1px_1px_var(--button-light),-1px_-1px_var(--button-shadow)]"
+        className="flex flex-row items-center overflow-hidden"
         style={{ width: quickLaunchWidth, minWidth: 0 }}
       >
         {visibleIcons.map(icon => (
-          <img
+          <button
             key={icon.src}
-            src={icon.src}
-            alt={icon.alt}
+            type="button"
             title={icon.title}
             onClick={icon.onClick}
-            draggable={false}
-          />
+            className="mx-0.5 p-0.5 cursor-pointer bg-transparent border-none hover:shadow-(--shadow-raised-outer) active:shadow-(--shadow-sunken-outer)"
+          >
+            <img
+              src={icon.src}
+              alt={icon.alt}
+              draggable={false}
+              className="block"
+              style={{ imageRendering: 'pixelated' }}
+            />
+          </button>
         ))}
       </div>
 

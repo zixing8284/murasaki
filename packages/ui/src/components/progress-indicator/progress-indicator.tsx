@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { useLayoutEffect, useRef, useState } from 'react'
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 const containerVariants = cva(
   [
@@ -113,6 +113,8 @@ export function ProgressIndicator({
       aria-valuemin={0}
       aria-valuemax={100}
       className={cn(containerVariants({ shadow, className }))}
+      data-value={clampedValue}
+      data-variant={variant}
       {...props}
     >
       {/* Progress bar fill */}

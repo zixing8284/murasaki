@@ -1,0 +1,33 @@
+import { TextBoxBasicDemo } from './text-box/text-box-basic'
+
+# TextBox
+
+`TextBox` renders Windows 98 single-line inputs and multiline text areas with optional labels.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` / `children` | `ReactNode` | - | Associated label content. |
+| `labelPosition` | `'left' \| 'top'` | `'left'` | Label layout. |
+| `multiline` | `boolean` | `false` | Renders a textarea with custom scrollbars. |
+| `rows` | `number` | - | Visible textarea rows. |
+| `type` | text-like input type | `'text'` | Native input type for single-line mode. |
+
+## Examples
+
+<ComponentExample name="text-box-basic" title="Input states">
+  <TextBoxBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+When `label` or children are provided, TextBox links the label to the field with `htmlFor` and a generated id.
+
+## Keyboard
+
+TextBox keeps native input and textarea keyboard behavior, including text editing, selection, Tab focus movement, and multiline scrolling.
+
+## SSR
+
+Prefer `defaultValue` for uncontrolled fields or provide a stable controlled `value`. Pixel-font fields reserve left padding so glyphs do not clip against the sunken border.

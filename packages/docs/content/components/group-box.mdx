@@ -1,0 +1,31 @@
+import { GroupBoxBasicDemo } from './group-box/group-box-basic'
+
+# GroupBox
+
+`GroupBox` renders a Windows 98 fieldset with an optional legend label.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `ReactNode` | - | Legend text shown on the top border. |
+| `className` | `string` | - | Adds width, spacing, or layout classes. |
+| `children` | `ReactNode` | - | Grouped controls. |
+
+## Examples
+
+<ComponentExample name="group-box-basic" title="Grouped radio options">
+  <GroupBoxBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+GroupBox renders a native `fieldset`; `label` renders as the `legend`.
+
+## Keyboard
+
+GroupBox has no own keyboard behavior. Keyboard interaction comes from the controls placed inside the fieldset.
+
+## SSR
+
+GroupBox is presentational and renders stable markup.

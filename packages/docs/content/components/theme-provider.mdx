@@ -1,0 +1,32 @@
+import { ThemeProviderBasicDemo } from './theme-provider/theme-provider-basic'
+
+# ThemeProvider
+
+`ThemeProvider` stores the active theme and writes the matching `data-theme` attribute on the document element by default.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultTheme` | `'windows-98' \| 'solarized-dark'` | `'windows-98'` | Initial theme. |
+| `storageKey` | `string \| null` | `'murasaki-theme'` | Local storage key. Use `null` to disable persistence. |
+| `attributeTarget` | `HTMLElement \| null` | `document.documentElement` | Optional element that receives `data-theme` instead of `<html>`. |
+| `children` | `ReactNode` | required | The app subtree. |
+
+## Examples
+
+<ComponentExample name="theme-provider-basic" title="Theme switcher" previewTheme="none">
+  <ThemeProviderBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+ThemeProvider has no own UI. Ensure color contrast remains acceptable for custom theme variables.
+
+## Keyboard
+
+ThemeProvider has no UI and no keyboard behavior.
+
+## SSR
+
+For SSR apps, pass a request-aware `defaultTheme` when possible. Use `storageKey={null}` for isolated previews and examples.

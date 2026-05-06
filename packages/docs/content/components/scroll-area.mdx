@@ -1,0 +1,30 @@
+import { ScrollAreaBasicDemo } from './scroll-area/scroll-area-basic'
+
+# ScrollArea
+
+`ScrollArea` hides native scrollbars and renders Windows 98 scrollbar chrome around overflowing content.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | - | Sets dimensions and frame styling. |
+| `children` | `ReactNode` | - | Scrollable content. |
+
+## Examples
+
+<ComponentExample name="scroll-area-basic" title="Scrollable list">
+  <ScrollAreaBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+ScrollArea keeps the content in normal DOM order. Add roles and labels to the content when needed.
+
+## Keyboard
+
+ScrollArea does not make the frame focusable. Keyboard scrolling depends on the focusable content you place inside it.
+
+## SSR
+
+Scrollbars are measured after mount. Give the root a stable width and height to avoid layout shifts.

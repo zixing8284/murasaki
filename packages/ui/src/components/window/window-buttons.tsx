@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 import { useWindowContext } from './window-context'
 import { CloseIcon, HelpIcon, MaximizeIcon, MinimizeIcon, RestoreIcon } from './window-icons'

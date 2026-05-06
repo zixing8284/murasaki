@@ -1,4 +1,5 @@
 import type { ReactNode, Ref } from 'react'
+import type { ProcessWindowPosition } from '../../contexts/process'
 import {
   WindowButtons,
   WindowCloseButton,
@@ -11,7 +12,7 @@ import {
   WindowResizeGrip,
   WindowTitle,
   WindowTitleBar,
-} from 'murasaki-react98'
+} from '@murasaki/react98'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
 import { AppIcon } from '../app-icon'
 
@@ -25,6 +26,8 @@ export interface BaseWindowProps {
   disableResize?: boolean
   /** Default window dimensions — applied as inline style for initial size */
   defaultSize?: { width?: number, height?: number }
+  /** Default absolute window position — applied as inline style for initial placement */
+  defaultPosition?: ProcessWindowPosition
   /** Whether the window is currently being dragged or resized */
   isInteracting?: boolean
   /** Callback ref for the window frame element (used by RndWindow for drag/resize targeting) */
@@ -44,6 +47,7 @@ export function BaseWindow({
   disableMinimize = false,
   disableResize = false,
   defaultSize,
+  defaultPosition,
   isInteracting = false,
   frameRef,
   dragRef,
@@ -69,7 +73,15 @@ export function BaseWindow({
         <WindowFrame
           ref={frameRef}
           className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0' : ''} ${className ?? ''}`}
-          style={{ zIndex, width: defaultSize?.width, height: defaultSize?.height }}
+          style={{
+            zIndex,
+            width: defaultSize?.width,
+            height: defaultSize?.height,
+            top: defaultPosition?.top,
+            right: defaultPosition?.right,
+            bottom: defaultPosition?.bottom,
+            left: defaultPosition?.left,
+          }}
           onPointerDown={(e) => {
             e.stopPropagation()
             actions.activate(windowId)

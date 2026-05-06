@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { cnPure } from '#/lib/utils'
+import { cnPure } from '../../lib/utils'
 
 import { useScrollAreaContext } from './scroll-area-context'
 

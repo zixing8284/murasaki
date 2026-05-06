@@ -1,0 +1,240 @@
+/* @murasaki/react98 — theme stylesheet.
+   Contains CSS variable tokens, library-computed shadow tokens, and base resets.
+
+   Public exports:
+   - "@murasaki/react98/theme.css"   — this file (Tailwind v4 source).
+   - "@murasaki/react98/globals.css" — pre-compiled bundle for non-Tailwind apps. */
+
+@import "tailwindcss";
+
+/* ==========================================================================
+   1. CSS Variables — consumer-customizable tokens
+   ========================================================================== */
+
+:root,
+[data-theme="windows-98"] {
+  /* Button */
+  --button-alternate-face: rgb(192, 192, 192);
+  --button-dk-shadow: rgb(64, 64, 64);
+  --button-face: rgb(212, 208, 200);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(212, 208, 200);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(34, 34, 34);
+
+  /* Window */
+  --active-border: rgb(212, 208, 200);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(212, 208, 200);
+  --scrollbar: rgb(212, 208, 200);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(0, 0, 0);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(10, 36, 106);
+  --gradient-active-title: rgb(166, 202, 240);
+  --gradient-inactive-title: rgb(192, 192, 192);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(212, 208, 200);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(212, 208, 200);
+  --menu-bar: rgb(192, 192, 192);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(10, 36, 106);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 128);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Spacing */
+  --element-spacing: 8px;
+  --label-spacing: 6px;
+  --grouped-button-spacing: 4px;
+  --grouped-element-spacing: 6px;
+  --checkbox-width: 13px;
+  --option-size: 12px;
+  --range-track-height: 4px;
+  --range-spacing: 10px;
+
+  /* Desktop */
+  --background: rgb(58, 110, 165);
+}
+
+[data-theme="solarized-dark"] {
+  /* Button */
+  --button-alternate-face: rgb(0, 43, 54);
+  --button-dk-shadow: rgb(0, 43, 54);
+  --button-face: rgb(7, 54, 66);
+  --button-hilight: rgb(0, 43, 54);
+  --button-light: rgb(0, 43, 54);
+  --button-shadow: rgb(0, 43, 54);
+  --button-text: rgb(131, 148, 150);
+
+  /* Window */
+  --active-border: rgb(0, 43, 54);
+  --app-workspace: rgb(0, 43, 54);
+  --desktop-text: rgb(131, 148, 150);
+  --inactive-border: rgb(7, 54, 66);
+  --scrollbar: rgb(0, 43, 54);
+  --window: rgb(0, 43, 54);
+  --window-frame: rgb(0, 43, 54);
+  --window-text: rgb(131, 148, 150);
+
+  /* Title Bar */
+  --active-title: rgb(0, 43, 54);
+  --gradient-active-title: rgb(0, 43, 54);
+  --gradient-inactive-title: rgb(7, 54, 66);
+  --inactive-title: rgb(7, 54, 66);
+  --inactive-title-text: rgb(131, 148, 150);
+  --title-text: rgb(108, 113, 196);
+
+  /* Menu */
+  --menu: rgb(7, 54, 66);
+  --menu-bar: rgb(131, 148, 150);
+  --menu-hilight: rgb(211, 54, 130);
+  --menu-text: rgb(131, 148, 150);
+  --gray-text: rgb(88, 110, 117);
+
+  /* Highlight / Selection */
+  --hilight: rgb(211, 54, 130);
+  --hilight-text: rgb(238, 232, 213);
+  --hot-tracking-color: rgb(38, 139, 210);
+
+  /* Tooltip */
+  --info-text: rgb(181, 137, 0);
+  --info-window: rgb(253, 246, 227);
+}
+
+[data-theme="windows-95"] {
+  /* Button */
+  --button-alternate-face: rgb(192, 192, 192);
+  --button-dk-shadow: rgb(0, 0, 0);
+  --button-face: rgb(192, 192, 192);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(223, 223, 223);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(192, 192, 192);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(192, 192, 192);
+  --scrollbar: rgb(192, 192, 192);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(0, 0, 0);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(0, 0, 128);
+  --gradient-active-title: rgb(0, 0, 128);
+  --gradient-inactive-title: rgb(128, 128, 128);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(192, 192, 192);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(192, 192, 192);
+  --menu-bar: rgb(192, 192, 192);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(0, 0, 128);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 128);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(0, 128, 128);
+}
+
+/* ==========================================================================
+   2. Library-computed shadow tokens (not user-customizable)
+   ========================================================================== */
+
+:root,
+[data-theme] {
+  --shadow-raised-outer: inset -1px -1px var(--button-dk-shadow),
+    inset 1px 1px var(--button-hilight);
+  --shadow-raised-inner: inset -2px -2px var(--button-shadow),
+    inset 2px 2px var(--button-light);
+  --shadow-raised: var(--shadow-raised-outer), var(--shadow-raised-inner);
+
+  --shadow-sunken-outer: inset -1px -1px var(--button-hilight),
+    inset 1px 1px var(--button-dk-shadow);
+  --shadow-sunken-inner: inset -2px -2px var(--button-light),
+    inset 2px 2px var(--button-shadow);
+  --shadow-sunken: var(--shadow-sunken-outer), var(--shadow-sunken-inner);
+
+  --shadow-raised-primary: inset -2px -2px var(--window-frame),
+    inset 1px 1px var(--window-frame),
+    inset 2px 2px var(--button-hilight),
+    inset -3px -3px var(--button-shadow),
+    inset 3px 3px var(--button-light);
+
+  --shadow-border-field: inset -1px -1px var(--button-hilight),
+    inset 1px 1px var(--button-shadow),
+    inset -2px -2px var(--button-light),
+    inset 2px 2px var(--button-dk-shadow);
+}
+
+/* ==========================================================================
+   3. Base styles and font faces
+   ========================================================================== */
+
+@layer base {
+  @font-face {
+    font-family: "Marlett";
+    src: url("./assets/fonts/marlett.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pixelated MS Sans Serif";
+    src: url("./assets/fonts/ms_sans_serif.woff2") format("woff2"),
+      url("./assets/fonts/ms_sans_serif.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pixelated MS Sans Serif";
+    src: url("./assets/fonts/ms_sans_serif_bold.woff2") format("woff2"),
+      url("./assets/fonts/ms_sans_serif_bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Pixelated MS Sans Serif", sans-serif;
+    image-rendering: pixelated;
+    text-rendering: optimizeSpeed;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

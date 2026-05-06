@@ -25,16 +25,16 @@ const directory = {
     icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
     defaultSize: { width: 520 },
+    defaultPosition: { top: '10%', left: '10%' },
   },
   docs: {
-    name: 'Component Docs',
-    Component: lazy(() =>
-      import('../../directory/apps/docs/docs').then(m => ({ default: m.DocsApp })),
-    ),
-    defaultTitle: 'Component Docs',
+    name: 'Murasaki UI Library Docs',
+    defaultTitle: 'Murasaki UI Library Docs',
     icon: { sm: '/img/desktop/MyComputer.png', lg: '/img/desktop/MyComputer.png' },
     singleton: true,
     defaultSize: { width: 750 },
+    defaultPosition: { top: '10%', left: '3.75rem' },
+    window: { type: 'iframe', src: '/programs/docs/index.html', className: 'h-[90%]' },
   },
   notepad: {
     name: 'Notepad',
@@ -46,6 +46,7 @@ const directory = {
     singleton: false,
     showOnDesktop: true,
     defaultSize: { width: 400, height: 300 },
+    defaultPosition: { top: '15%', left: '20%' },
   },
   displayproperties: {
     name: 'Display Properties',
@@ -57,17 +58,18 @@ const directory = {
     singleton: true,
     ephemeral: true,
     defaultSize: { width: 420 },
+    defaultPosition: { top: '12%', left: '25%' },
+    window: { disableMaximize: true, disableMinimize: true, disableResize: true },
   },
   jspaint: {
     name: 'JSPaint',
-    Component: lazy(() =>
-      import('../../directory/apps/jspaint').then(m => ({ default: m.JspaintApp })),
-    ),
     defaultTitle: 'JSPaint',
     icon: { sm: '/img/desktop/InternetExplorer.png', lg: '/img/desktop/InternetExplorer.png' },
     singleton: false,
     showOnDesktop: true,
     defaultSize: { width: 900, height: 650 },
+    defaultPosition: { top: '5%', left: '5%' },
+    window: { type: 'iframe', src: '/programs/jspaint/index.html' },
   },
   themedesigner: {
     name: 'Theme Designer',
@@ -79,6 +81,8 @@ const directory = {
     singleton: true,
     showOnDesktop: true,
     defaultSize: { width: 720, height: 584 },
+    defaultPosition: { top: '8%', left: '12%' },
+    window: { disableMaximize: true, disableResize: true },
   },
   mediaplayer: {
     name: 'Media Player',
@@ -90,6 +94,7 @@ const directory = {
     singleton: true,
     showOnDesktop: true,
     defaultSize: { width: 640, height: 480 },
+    defaultPosition: { top: '15%', left: '25%' },
   },
   webamp: {
     name: 'Webamp',
@@ -100,6 +105,7 @@ const directory = {
     icon: { sm: '/img/desktop/Webamp16.png', lg: '/img/desktop/Webamp.png' },
     singleton: true,
     showOnDesktop: true,
+    window: { type: 'none' },
   },
 } satisfies Record<string, ProcessDirectoryEntry>
 

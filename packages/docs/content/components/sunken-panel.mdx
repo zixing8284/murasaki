@@ -1,0 +1,33 @@
+import { SunkenPanelBasicDemo } from './sunken-panel/sunken-panel-basic'
+
+# SunkenPanel
+
+`SunkenPanel` provides a general-purpose inset panel with the library's custom scroll area inside.
+
+Because SunkenPanel is a frame primitive, raw text should live in a padded child element. Keep text away from the inset border when using the 11px pixel font so the first glyph pixels are not visually clipped.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `disabled` | `boolean` | `false` | Switches to disabled colors and exposes `aria-disabled`. |
+| `className` | `string` | - | Sets dimensions, color, or layout classes. |
+| `children` | `ReactNode` | - | Content rendered inside the scroll area. |
+
+## Examples
+
+<ComponentExample name="sunken-panel-basic" title="Inset output panel">
+  <SunkenPanelBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+SunkenPanel is semantic-neutral. Add roles and labels according to the content it frames.
+
+## Keyboard
+
+SunkenPanel does not add focus or keyboard behavior. Keyboard interaction belongs to the framed content.
+
+## SSR
+
+SunkenPanel has no own state. Custom scrollbar geometry is calculated after mount.

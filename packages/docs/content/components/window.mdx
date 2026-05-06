@@ -1,0 +1,35 @@
+import { WindowBasicDemo } from './window/window-basic'
+
+# Window
+
+The Window suite is a set of composable primitives for Windows 98 application chrome.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `WindowProvider` | `active`, `minimized`, `defaultMaximized`, `positioning`, `maximizable` | State and behavior provider. |
+| `WindowFrame` | `positioning`, div props | Outer raised frame. |
+| `WindowTitleBar`, `WindowTitle`, `WindowButtons` | div props | Title bar slots. |
+| `WindowMinimizeButton`, `WindowMaximizeButton`, `WindowCloseButton`, `WindowHelpButton` | button props | Title bar controls. |
+| `WindowMenuBar`, `WindowMenuBarItem` | menu/menuitem props | Top-level window menu. |
+| `WindowContent` | div props | Scroll/content body. |
+| `WindowStatusBar`, `WindowStatusBarField` | div props | Bottom status area. |
+
+## Examples
+
+<ComponentExample name="window-basic" title="Application window">
+  <WindowBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+Window primitives provide visual structure. Add dialog/window roles, labels, focus management, and close behavior at the app shell layer.
+
+## Keyboard
+
+Window chrome primitives do not add global keyboard shortcuts. Title-bar buttons and menu-bar items keep their native button or menu keyboard behavior.
+
+## SSR
+
+WindowProvider owns maximized state. Use `defaultMaximized` for initial layout and keep positioning classes stable across hydration.

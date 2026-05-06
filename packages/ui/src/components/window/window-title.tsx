@@ -1,4 +1,4 @@
-import { cn } from '#/lib/utils'
+import { cn } from '../../lib/utils'
 
 export interface WindowTitleProps extends React.ComponentProps<'div'> {
   /** Icon element to display before title */

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
-import { useDraggable, useResizable } from 'murasaki-react98'
+import { useDraggable, useResizable } from '@murasaki/react98'
 import { useCallback } from 'react'
 import { useProcesses } from '../../contexts/process'
 import directory from '../../contexts/process/directory'
@@ -34,7 +34,9 @@ export function RndWindow({
   const { processes, container } = useProcesses()
   const portalContainer = processes[windowId]?.componentWindow ?? container
   const appId = processes[windowId]?.appId as AppId | undefined
-  const defaultSize = appId ? directory[appId]?.defaultSize : undefined
+  const entry = appId ? directory[appId] : undefined
+  const defaultSize = entry?.defaultSize
+  const defaultPosition = entry?.defaultPosition
 
   const { setTargetRef: setDragTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
@@ -65,6 +67,7 @@ export function RndWindow({
       disableMinimize={disableMinimize}
       disableResize={disableResize}
       defaultSize={defaultSize}
+      defaultPosition={defaultPosition}
       isInteracting={dragging || resizing}
       frameRef={setTargetRef}
       dragRef={setDragRef}

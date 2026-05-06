@@ -2,14 +2,12 @@
 
 import type {
   ComponentProps,
+  CSSProperties,
   MouseEvent,
   ReactElement,
   ReactNode,
 } from 'react'
 import {
-  Children,
-  cloneElement,
-  isValidElement,
   use,
   useCallback,
   useEffect,
@@ -20,6 +18,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { cnPure } from '../../lib/utils'
+import { useDismissable, useFocusScope } from '../../primitives'
 import {
   ContextMenuContext,
 } from './context-menu-context'
@@ -74,26 +73,36 @@ export function ContextMenu({
 
 // ─── ContextMenuTrigger ───────────────────────────────────────────────────────
 
-interface TriggerChildProps {
-  onContextMenu?: (event: MouseEvent<HTMLElement>) => void
-}
-
 export interface ContextMenuTriggerProps {
-  /** Single element child that will receive the contextmenu handler. */
-  children: ReactElement<TriggerChildProps>
+  /** Trigger content. Child `onContextMenu` handlers run before this trigger. */
+  children: ReactNode
   /** When true, right-clicking the child does not open the menu. */
   disabled?: boolean
   /**
-   * When true, the trigger only opens if the right-click target is the child
-   * element itself (i.e. not a descendant). Useful for outer "blank area"
+   * When true, the trigger only opens if the right-click target is the first
+   * child element itself (i.e. not a descendant). Useful for outer "blank area"
    * triggers that should defer to inner triggers on children.
    */
   onlyDirectTarget?: boolean
 }
 
+const CONTENTS_STYLE: CSSProperties = { display: 'contents' }
+
+function shouldOpenFromContextMenu(
+  event: MouseEvent<HTMLElement>,
+  onlyDirectTarget: boolean | undefined,
+): boolean {
+  if (event.defaultPrevented)
+    return false
+
+  if (!onlyDirectTarget)
+    return true
+
+  return event.target === event.currentTarget.firstElementChild
+}
+
 /**
- * Attaches an `onContextMenu` handler to its single child that opens the
- * surrounding `<ContextMenu>` at the pointer position.
+ * Opens the surrounding `<ContextMenu>` at the pointer position.
  */
 export function ContextMenuTrigger({
   children,
@@ -105,25 +114,25 @@ export function ContextMenuTrigger({
     throw new Error('ContextMenuTrigger must be used within a <ContextMenu>')
   }
 
-  const child = Children.only(children)
-  if (!isValidElement<TriggerChildProps>(child)) {
-    return child
+  const handleContextMenu = (event: MouseEvent<HTMLElement>): void => {
+    if (disabled)
+      return
+    if (!shouldOpenFromContextMenu(event, onlyDirectTarget))
+      return
+    event.preventDefault()
+    event.stopPropagation()
+    ctx.openAt(event.clientX, event.clientY)
   }
 
-  const existing = child.props.onContextMenu
-
-  return cloneElement<TriggerChildProps>(child, {
-    onContextMenu: (event: MouseEvent<HTMLElement>) => {
-      existing?.(event)
-      if (event.defaultPrevented || disabled)
-        return
-      if (onlyDirectTarget && event.target !== event.currentTarget)
-        return
-      event.preventDefault()
-      event.stopPropagation()
-      ctx.openAt(event.clientX, event.clientY)
-    },
-  })
+  return (
+    <span
+      data-slot="context-menu-trigger"
+      onContextMenu={handleContextMenu}
+      style={CONTENTS_STYLE}
+    >
+      {children}
+    </span>
+  )
 }
 
 // ─── ContextMenuContent ───────────────────────────────────────────────────────
@@ -134,6 +143,60 @@ export interface ContextMenuContentProps extends ComponentProps<'div'> {
    * automatically closes the menu. Defaults to true.
    */
   closeOnItemClick?: boolean
+}
+
+function getClampedPosition({
+  container,
+  element,
+  x,
+  y,
+}: {
+  container: HTMLElement | null
+  element: HTMLElement
+  x: number
+  y: number
+}): { left: number, top: number } {
+  const menuRect = element.getBoundingClientRect()
+
+  let minX: number, minY: number, maxX: number, maxY: number
+  if (container) {
+    const containerRect = container.getBoundingClientRect()
+    minX = containerRect.left
+    minY = containerRect.top
+    maxX = containerRect.right - menuRect.width
+    maxY = containerRect.bottom - menuRect.height
+  }
+  else {
+    minX = 0
+    minY = 0
+    maxX = window.innerWidth - menuRect.width
+    maxY = window.innerHeight - menuRect.height
+  }
+
+  return {
+    left: Math.max(minX, Math.min(x, maxX)),
+    top: Math.max(minY, Math.min(y, maxY)),
+  }
+}
+
+function applyClampedPosition({
+  container,
+  element,
+  style,
+  x,
+  y,
+}: {
+  container: HTMLElement | null
+  element: HTMLElement
+  style: CSSProperties | undefined
+  x: number
+  y: number
+}): void {
+  const { left, top } = getClampedPosition({ container, element, x, y })
+  if (style?.left === undefined)
+    element.style.left = `${String(left)}px`
+  if (style?.top === undefined)
+    element.style.top = `${String(top)}px`
 }
 
 /**
@@ -158,7 +221,6 @@ export function ContextMenuContent({
   const { open, x, y, container, close } = ctx
 
   const ref = useRef<HTMLDivElement>(null)
-  const [pos, setPos] = useState<{ left: number, top: number }>({ left: x, top: y })
 
   // Clamp the popup so it stays entirely inside the container (or viewport).
   useLayoutEffect(() => {
@@ -168,58 +230,38 @@ export function ContextMenuContent({
     if (!el)
       return
 
-    const menuRect = el.getBoundingClientRect()
-
-    let minX: number, minY: number, maxX: number, maxY: number
-    if (container) {
-      const cr = container.getBoundingClientRect()
-      minX = cr.left
-      minY = cr.top
-      maxX = cr.right - menuRect.width
-      maxY = cr.bottom - menuRect.height
-    }
-    else {
-      minX = 0
-      minY = 0
-      maxX = window.innerWidth - menuRect.width
-      maxY = window.innerHeight - menuRect.height
-    }
-
-    const left = Math.max(minX, Math.min(x, maxX))
-    const top = Math.max(minY, Math.min(y, maxY))
-    setPos({ left, top })
-  }, [open, x, y, container])
+    applyClampedPosition({ container, element: el, style, x, y })
+  }, [open, x, y, container, style])
 
   useEffect(() => {
     if (!open)
       return
 
-    const onDown = (event: Event): void => {
-      const node = ref.current
-      if (node && event.target instanceof Node && !node.contains(event.target)) {
-        close()
-      }
-    }
-    const onKey = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape')
-        close()
-    }
     const onScroll = (): void => close()
 
-    document.addEventListener('mousedown', onDown, true)
-    document.addEventListener('contextmenu', onDown, true)
-    document.addEventListener('keydown', onKey, true)
     window.addEventListener('scroll', onScroll, true)
     window.addEventListener('resize', onScroll)
 
     return () => {
-      document.removeEventListener('mousedown', onDown, true)
-      document.removeEventListener('contextmenu', onDown, true)
-      document.removeEventListener('keydown', onKey, true)
       window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', onScroll)
     }
   }, [open, close])
+
+  // Outside pointerdown (covers right-click since pointerdown fires before
+  // contextmenu) and Escape close the popup via the shared primitive.
+  const layerRefs = useMemo(() => [ref], [])
+  useDismissable({
+    enabled: open,
+    onDismiss: close,
+    outsidePointer: true,
+    layerRefs,
+  })
+
+  useFocusScope({
+    enabled: open,
+    containerRef: ref,
+  })
 
   if (!open)
     return null
@@ -240,9 +282,11 @@ export function ContextMenuContent({
     <div
       ref={ref}
       className={cnPure('fixed z-9999', className)}
-      style={{ left: pos.left, top: pos.top, ...style }}
+      data-open=""
+      style={{ left: x, top: y, ...style }}
       onClick={handleClick}
       onContextMenu={event => event.preventDefault()}
+      tabIndex={-1}
       {...props}
     >
       {children}

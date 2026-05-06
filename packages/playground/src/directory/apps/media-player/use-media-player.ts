@@ -1,5 +1,7 @@
+import type { RefObject } from 'react'
 import type { MediaState, Track } from './media-manager'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { formatTime } from './format-time'
 import { MediaManager } from './media-manager'
 
 export type { Track } from './media-manager'
@@ -39,14 +41,6 @@ function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
 
 let nextLocalId = 1
 
-function formatTime(seconds: number): string {
-  if (Number.isNaN(seconds))
-    return '00:00'
-  const m = Math.floor(seconds / 60)
-  const s = Math.floor(seconds % 60)
-  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-}
-
 // Default playlist from public/media/
 const DEFAULT_PLAYLIST: Track[] = [
   { id: '1', title: 'Bach\'s Brandenburg Concerto No. 3', url: '/media/Bach\'s Brandenburg Concerto No. 3.mp3', artist: 'J.S. Bach' },
@@ -67,7 +61,7 @@ interface PlayerState {
   playOrderIndices: number[]
 }
 
-interface UseMediaPlayerResult {
+export interface UseMediaPlayerResult {
   isPlaying: boolean
   loading: boolean
   currentTime: number
@@ -84,7 +78,7 @@ interface UseMediaPlayerResult {
   shuffle: boolean
   repeat: 'off' | 'one' | 'all'
   mediaRefCallback: (el: HTMLVideoElement | null) => void
-  fileInputRef: React.RefObject<HTMLInputElement | null>
+  fileInputRef: RefObject<HTMLInputElement | null>
   playTrack: (track: Track) => void
   togglePlay: () => void
   stop: () => void
@@ -120,6 +114,7 @@ export function useMediaPlayer(): UseMediaPlayerResult {
 
   useEffect(() => {
     const manager = acquireManager()
+    const objectUrls = objectUrlsRef.current
     managerRef.current = manager
     // Attach element if already mounted (ref callback fires before this effect)
     if (mediaRef.current) {
@@ -145,10 +140,10 @@ export function useMediaPlayer(): UseMediaPlayerResult {
       managerRef.current = null
       releaseManager()
       // Revoke all object URLs on unmount
-      for (const url of objectUrlsRef.current) {
+      for (const url of objectUrls) {
         URL.revokeObjectURL(url)
       }
-      objectUrlsRef.current.clear()
+      objectUrls.clear()
     }
   }, [])
 

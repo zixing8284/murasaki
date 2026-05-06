@@ -1,4 +1,4 @@
-import type { TaskbarQuickLaunchIcon } from 'murasaki-react98'
+import type { TaskbarQuickLaunchIcon } from '@murasaki/react98'
 import {
   Button,
   TaskbarDivider,
@@ -6,7 +6,7 @@ import {
   TaskbarQuickLaunch,
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
-} from 'murasaki-react98'
+} from '@murasaki/react98'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
 import { NetworkIcon } from './notification-area/network-icon'
 import { SwUpdateBalloon } from './notification-area/sw-update-balloon'

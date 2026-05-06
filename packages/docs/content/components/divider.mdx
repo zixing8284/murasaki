@@ -1,0 +1,30 @@
+import { DividerBasicDemo } from './divider/divider-basic'
+
+# Divider
+
+`Divider` draws the paired dark/light rule used to separate Windows 98 control groups.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Chooses the rule direction. |
+| `className` | `string` | - | Adds sizing or layout classes. |
+
+## Examples
+
+<ComponentExample name="divider-basic" title="Horizontal and vertical rules">
+  <DividerBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+Divider is decorative by default. Add `role="separator"` yourself when the divider communicates document structure.
+
+## Keyboard
+
+Divider is not focusable by default and has no keyboard behavior.
+
+## SSR
+
+Divider has no client state and renders stable markup.

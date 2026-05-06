@@ -1,0 +1,30 @@
+import { OptionButtonBasicDemo } from './option-button/option-button-basic'
+
+# OptionButton
+
+`OptionButton` is the Windows 98 radio control. Wrap related options in `OptionGroup` so they share a name and controlled value.
+
+## Props
+
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `OptionGroup` | `name`, `selectedValue`, `onChange` | Provides radio group wiring. |
+| `OptionButton` | `value`, `disabled`, `children` | Individual radio option. |
+
+## Examples
+
+<ComponentExample name="option-button-basic" title="Controlled option group">
+  <OptionButtonBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+OptionButton renders a native radio input and associated label.
+
+## Keyboard
+
+Space selects the focused radio option. Arrow keys follow native browser radio-group behavior for options that share the same name.
+
+## SSR
+
+Controlled groups should provide the same `selectedValue` during server render and hydration.

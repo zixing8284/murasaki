@@ -12,13 +12,13 @@ export interface UseIframeWindowReturn {
   focusIframe: () => void
   /** Sends a cancel interaction message to the iframe */
   cancelIframeInteraction: () => void
-  sandbox: string
+  sandbox?: string
   referrerPolicy: typeof IFRAME_CONFIG.referrerPolicy
 }
 
 /**
  * Attaches a focus listener to the iframe's contentWindow if accessible.
- * Cross-origin iframes may throw a SecurityError here — we guard with try-catch.
+ * Cross-origin and sandboxed iframes may throw a SecurityError here — we guard with try-catch.
  *
  * When the iframe content receives focus (e.g., user clicks inside iframe),
  * we activate the owning window and trigger delayed focus transfer.
@@ -51,13 +51,13 @@ function tryAttachContentWindowFocusListener(
 /**
  * Encapsulates iframe window behavior:
  * - Tracks loading state via iframe load event (exposed as `iframeLoaded` = !isLoading)
- * - Listens to contentWindow focus to activate the owning window and trigger delayed focus (same-origin only)
+ * - Listens to contentWindow focus to activate the owning window and trigger delayed focus (best-effort)
  * - Provides a ref callback to attach to the iframe element
  * - Provides focusIframe() with delayed focus transfer (500ms) to prevent accidental interactions
  *
- * Note: contentWindow focus tracking only works for same-origin iframes
- * due to browser security restrictions. For cross-origin iframes, the
- * iframe wrapper's onPointerDown handles activation and focus.
+ * Note: contentWindow focus tracking only works when browser sandbox and origin
+ * rules allow it. Otherwise the iframe wrapper's onPointerDown handles
+ * activation and focus.
  */
 export function useIframeWindow({
   windowId,
@@ -90,7 +90,7 @@ export function useIframeWindow({
     }
   }, [])
 
-  // Handler called when iframe content receives focus (same-origin only)
+  // Handler called when iframe content receives focus (best-effort)
   const handleContentFocus = useCallback(() => {
     // First: activate the window immediately so it comes to front
     actions.activate(windowId)
@@ -171,7 +171,6 @@ export function useIframeWindow({
     iframeLoaded: !isLoading,
     focusIframe,
     cancelIframeInteraction,
-    sandbox: IFRAME_CONFIG.sandbox,
     referrerPolicy: IFRAME_CONFIG.referrerPolicy,
   }
 }

@@ -25,6 +25,7 @@ export function MediaDisplay({
       <video
         ref={mediaRefCallback}
         className={`max-w-full max-h-full p-1 object-contain aspect-video${hasVideo ? '' : ' hidden'}`}
+        crossOrigin="anonymous"
         playsInline
       >
         <track

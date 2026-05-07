@@ -21,7 +21,7 @@ interface IframeWindowProps {
  * - Loading state display (iframeLoaded controls visibility with opacity-0 until loaded)
  * - Focus management (click → activate + delayed focus iframe)
  * - Pointer-events disabled during drag/resize and when window is inactive
- * - contentWindow focus → activate owning window + delayed focus (same-origin iframes only)
+ * - contentWindow focus → activate owning window + delayed focus (best-effort)
  */
 export function IframeWindow({
   windowId,

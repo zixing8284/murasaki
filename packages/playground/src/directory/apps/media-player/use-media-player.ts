@@ -3,6 +3,7 @@ import type { MediaState, Track } from './media-manager'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { formatTime } from './format-time'
 import { MediaManager } from './media-manager'
+import { DEFAULT_REMOTE_PLAYLIST } from './remote-tracks'
 
 export type { Track } from './media-manager'
 
@@ -41,17 +42,7 @@ function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
 
 let nextLocalId = 1
 
-// Default playlist from public/media/
-const DEFAULT_PLAYLIST: Track[] = [
-  { id: '1', title: 'Bach\'s Brandenburg Concerto No. 3', url: '/media/Bach\'s Brandenburg Concerto No. 3.mp3', artist: 'J.S. Bach' },
-  { id: '2', title: 'Beethoven\'s 5th Symphony', url: '/media/Beethoven\'s 5th Symphony.mp3', artist: 'Beethoven' },
-  { id: '3', title: 'Beethoven\'s Fur Elise', url: '/media/Beethoven\'s Fur Elise.mp3', artist: 'Beethoven' },
-  { id: '4', title: 'Dance of the Sugar-Plum Fairy', url: '/media/Dance of the Sugar-Plum Fairy.mp3', artist: 'Tchaikovsky' },
-  { id: '5', title: 'Debussy\'s Claire de Lune', url: '/media/Debussy\'s Claire de Lune.mp3', artist: 'Debussy' },
-  { id: '6', title: 'In the Hall of the Mountain King', url: '/media/In the Hall of the Mountain King.mp3', artist: 'Grieg' },
-  { id: '7', title: 'Mozart\'s Symphony No. 40', url: '/media/Mozart\'s Symphony No. 40.mp3', artist: 'Mozart' },
-  { id: '8', title: 'The Microsoft Sound', url: '/media/The Microsoft Sound.mp3', artist: 'Microsoft' },
-]
+const DEFAULT_PLAYLIST: Track[] = DEFAULT_REMOTE_PLAYLIST
 
 interface PlayerState {
   playlist: Track[]

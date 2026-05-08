@@ -16,6 +16,7 @@
     "ui:test": "pnpm --filter @murasaki/react98 test",
     "ui:test:watch": "pnpm --filter @murasaki/react98 test:watch",
     "lint": "pnpm eslint .",
+    "release": "pnpm ui:build && cd packages/ui && bumpp",
     "skills:update": "npx skills add vercel-labs/agent-skills"
   },
   "devDependencies": {

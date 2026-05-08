@@ -1,8 +1,8 @@
 import type { ComponentProps } from 'react'
 import { cn } from '../../lib/utils'
-import { SunkenPanel } from '../sunken-panel/sunken-panel'
+import { FieldPanel } from '../field-panel/field-panel'
 
-interface TableProps extends ComponentProps<'table'> {
+export interface TableProps extends ComponentProps<'table'> {
   containerClassName?: string
 }
 
@@ -12,8 +12,9 @@ export function Table({
   ...props
 }: TableProps): React.ReactElement {
   return (
-    <SunkenPanel
+    <FieldPanel
       data-slot="table-container"
+      variant="sunken"
       className={cn('relative bg-(--window)', containerClassName)}
     >
       <table
@@ -24,7 +25,7 @@ export function Table({
         )}
         {...props}
       />
-    </SunkenPanel>
+    </FieldPanel>
   )
 }
 

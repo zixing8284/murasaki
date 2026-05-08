@@ -221,13 +221,13 @@ export function TabPanel({ children, className, value, ...props }: TabPanelProps
 
 const tabsRootVariants = cva(['inline-flex', 'flex-col'])
 
-export interface TabsProps extends Omit<React.ComponentProps<'div'>, 'onChange'> {
+export interface TabsProps extends React.ComponentProps<'div'> {
   /** The default selected tab value (uncontrolled mode) */
   defaultValue?: string
   /** The selected tab value (controlled mode) */
   value?: string
-  /** Callback when the selected tab changes */
-  onChange?: (value: string) => void
+  /** Callback fired with the next selected tab value */
+  onValueChange?: (value: string) => void
   /** Keep all panels mounted in the DOM to preserve a stable height */
   keepMounted?: boolean
 }
@@ -237,7 +237,7 @@ export function Tabs({
   className,
   defaultValue = '',
   value,
-  onChange,
+  onValueChange,
   keepMounted = false,
   ...props
 }: TabsProps): React.ReactElement {
@@ -251,7 +251,7 @@ export function Tabs({
     if (!isControlled) {
       setInternalValue(newValue)
     }
-    onChange?.(newValue)
+    onValueChange?.(newValue)
   }
 
   return (

@@ -11,37 +11,31 @@ import { createPortal } from 'react-dom'
  *
  */
 export function SwUpdateBalloon(): React.ReactElement {
-  const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState<{ bottom: number, right: number } | null>(null)
   const anchorRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    const handler = (): void => setVisible(true)
+    const handler = (): void => {
+      const anchor = anchorRef.current
+      if (!anchor)
+        return
+
+      const rect = anchor.getBoundingClientRect()
+      setPosition({
+        bottom: window.innerHeight - rect.top + 8,
+        right: window.innerWidth - rect.right,
+      })
+    }
     window.addEventListener('sw-update', handler)
     return () => window.removeEventListener('sw-update', handler)
   }, [])
-
-  // Compute portal position from anchor element
-  useEffect(() => {
-    if (!visible)
-      return
-    const anchor = anchorRef.current
-    if (!anchor)
-      return
-
-    const rect = anchor.getBoundingClientRect()
-    setPosition({
-      bottom: window.innerHeight - rect.top + 8,
-      right: window.innerWidth - rect.right,
-    })
-  }, [visible])
 
   const handleRefresh = useCallback(() => {
     window.location.reload()
   }, [])
 
   const handleDismiss = useCallback(() => {
-    setVisible(false)
+    setPosition(null)
   }, [])
 
   return (
@@ -49,7 +43,7 @@ export function SwUpdateBalloon(): React.ReactElement {
       {/* Invisible anchor to measure position */}
       <span ref={anchorRef} className="absolute right-0 top-0 w-0 h-0 pointer-events-none" />
 
-      {visible && position && createPortal(
+      {position && createPortal(
         <div
           className="fixed w-65 z-9999"
           style={{ bottom: position.bottom, right: position.right }}

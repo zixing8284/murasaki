@@ -7,7 +7,7 @@ export function OptionButtonBasicDemo(): React.ReactElement {
   const [choice, setChoice] = useState('compact')
 
   return (
-    <OptionGroup name="density" selectedValue={choice} onChange={setChoice}>
+    <OptionGroup name="density" value={choice} onValueChange={setChoice}>
       <div className="flex flex-col gap-2">
         <OptionButton value="compact">Compact</OptionButton>
         <OptionButton value="comfortable">Comfortable</OptionButton>

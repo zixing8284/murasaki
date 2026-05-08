@@ -8,7 +8,7 @@ export function GroupBoxBasicDemo(): React.ReactElement {
 
   return (
     <GroupBox label="Open mode" className="w-64">
-      <OptionGroup name="open-mode" selectedValue={mode} onChange={setMode}>
+      <OptionGroup name="open-mode" value={mode} onValueChange={setMode}>
         <div className="flex flex-col gap-2">
           <OptionButton value="window">Open in window</OptionButton>
           <OptionButton value="tab">Open in tab</OptionButton>

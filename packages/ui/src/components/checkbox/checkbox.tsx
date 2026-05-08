@@ -56,9 +56,12 @@ const checkmarkVariants = cva([
   'left-[calc(-1*(var(--checkbox-width)+var(--label-spacing))+3px)]',
 ])
 
-interface CheckboxProps
-  extends Omit<React.ComponentProps<'input'>, 'type'>,
-  VariantProps<typeof checkboxVariants> { }
+export interface CheckboxProps
+  extends Omit<React.ComponentProps<'input'>, 'onChange' | 'type'>,
+  VariantProps<typeof checkboxVariants> {
+  /** Callback fired with the next checked state. */
+  onCheckedChange?: (checked: boolean) => void
+}
 
 export function Checkbox({
   children,
@@ -67,7 +70,7 @@ export function Checkbox({
   defaultChecked,
   disabled,
   id,
-  onChange,
+  onCheckedChange,
   ...props
 }: CheckboxProps): React.ReactElement {
   const generatedId = React.useId()
@@ -77,12 +80,14 @@ export function Checkbox({
   const currentChecked = isControlled ? checked : internalChecked
 
   const handleChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const nextChecked = event.target.checked
+
     if (!isControlled) {
-      setInternalChecked(event.target.checked)
+      setInternalChecked(nextChecked)
     }
 
-    onChange?.(event)
-  }, [isControlled, onChange])
+    onCheckedChange?.(nextChecked)
+  }, [isControlled, onCheckedChange])
 
   return (
     <>

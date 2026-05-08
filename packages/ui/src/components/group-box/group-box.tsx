@@ -18,7 +18,7 @@ const groupBoxVariants = cva([
 
 const legendVariants = cva(['bg-(--button-face)', 'px-1'])
 
-interface GroupBoxProps
+export interface GroupBoxProps
   extends React.ComponentProps<'fieldset'>,
   VariantProps<typeof groupBoxVariants> {
   /** Optional label displayed at the top of the group box */

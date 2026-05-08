@@ -160,9 +160,11 @@ export interface TickMark {
   label?: string
 }
 
-interface SliderProps extends Omit<React.ComponentProps<'input'>, 'type'> {
+export interface SliderProps extends Omit<React.ComponentProps<'input'>, 'type'> {
   /** Use a box indicator instead of the default triangle */
   boxIndicator?: boolean
+  /** Callback fired with the next numeric value */
+  onValueChange?: (value: number) => void
   /** Render the slider vertically */
   vertical?: boolean
   /** Tick marks with optional labels */
@@ -179,6 +181,7 @@ export function Slider({
   defaultValue,
   value: controlledValue,
   onChange,
+  onValueChange,
   ticks,
   disabled,
   ...props
@@ -207,9 +210,10 @@ export function Slider({
       if (!isControlled) {
         setInternalValue(newValue)
       }
+      onValueChange?.(newValue)
       onChange?.(e)
     },
-    [isControlled, onChange],
+    [isControlled, onChange, onValueChange],
   )
 
   // Calculate thumb position (centered on track)

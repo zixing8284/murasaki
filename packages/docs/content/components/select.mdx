@@ -14,7 +14,8 @@ The `Select` component renders a Windows 98 styled custom select with a trigger 
 | `options` | `SelectOption[]` | - | Options with `value` and optional `label`. |
 | `value` | `T` | - | Controlled selected value. |
 | `defaultValue` | `T` | - | Initial selected value for uncontrolled usage. |
-| `onChange` | `(option) => void` | - | Selection change callback. |
+| `onValueChange` | `(value, option) => void` | - | Selection value change callback. |
+| `onChange` | `(option) => void` | - | Legacy option change callback. |
 | `label` | `string` | - | Optional visible label. |
 | `disabled` | `boolean` | `false` | Disables the select. |
 | `menuMaxHeight` | `number \| string` | - | Maximum height of the custom option list. |

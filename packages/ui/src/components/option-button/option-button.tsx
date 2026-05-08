@@ -1,12 +1,14 @@
 import type { VariantProps } from 'class-variance-authority'
-
 import type { OptionGroupProps } from './option-context'
+
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 import { cn } from '../../lib/utils'
 import { RadioBorderIcon, RadioDotIcon } from './option-button-icons'
 import { OptionButtonGroupContext, useOptionButtonGroupContext } from './option-context'
+
+export type { OptionGroupProps } from './option-context'
 
 const labelVariants = cva([
   'inline-flex',
@@ -57,7 +59,7 @@ const radioDotVariants = cva([
   'left-[calc(-1*(var(--option-size)+var(--label-spacing))+4px)]',
 ])
 
-interface OptionButtonProps
+export interface OptionButtonProps
   extends Omit<React.ComponentProps<'input'>, 'name' | 'type'>,
   VariantProps<typeof optionButtonVariants> {
   /**
@@ -79,20 +81,20 @@ export function OptionButton({
 }: OptionButtonProps): React.ReactElement {
   const {
     name,
-    onChange: onGroupChange,
-    selectedValue,
+    onValueChange: onGroupValueChange,
+    value: groupValue,
   } = useOptionButtonGroupContext()
 
   const generatedId = React.useId()
   const inputId = id ?? generatedId
   const isChecked
-    = selectedValue !== undefined ? selectedValue === value : undefined
+    = groupValue !== undefined ? groupValue === value : undefined
   const currentChecked = isChecked ?? checked
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange?.(e)
     if (e.target.checked && value !== undefined) {
-      onGroupChange?.(String(value))
+      onGroupValueChange?.(String(value))
     }
   }
 
@@ -159,10 +161,21 @@ function OptionButtonLabel({
 export function OptionGroup(
   props: React.PropsWithChildren<OptionGroupProps>,
 ): React.ReactElement {
-  const { children, name, onChange, selectedValue } = props
+  const { children, defaultValue, name, onValueChange, value } = props
+  const [internalValue, setInternalValue] = React.useState(defaultValue)
+  const isControlled = value !== undefined
+  const currentValue = value ?? internalValue
+
+  const handleValueChange = React.useCallback((nextValue: string) => {
+    if (!isControlled) {
+      setInternalValue(nextValue)
+    }
+
+    onValueChange?.(nextValue)
+  }, [isControlled, onValueChange])
 
   return (
-    <OptionButtonGroupContext value={{ name, onChange, selectedValue }}>
+    <OptionButtonGroupContext value={{ name, onValueChange: handleValueChange, value: currentValue }}>
       {children}
     </OptionButtonGroupContext>
   )

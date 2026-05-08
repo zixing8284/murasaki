@@ -56,6 +56,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Components live under `packages/ui/src/components/`, typically one directory per component.
 - Public exports go through `packages/ui/src/index.ts`.
 - Use **flat named exports** for public primitives.
+- Use value-level callbacks for controlled state (`onValueChange`, `onCheckedChange`); reserve native names like `onChange` for native DOM event passthrough.
 - Use **CVA** for variant-heavy styling.
 - Use `cn()` by default and `cnPure()` only when the base font injection should be skipped.
 - Prefer Tailwind utilities over custom CSS. Add CSS only when Tailwind cannot express the style cleanly.

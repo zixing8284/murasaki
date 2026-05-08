@@ -5,12 +5,13 @@
 ## Prop naming
 
 - Boolean props use positive framing (`disabled`, `open`, `required`) — avoid double-negatives (`!hidden`).
-- Event callbacks follow `on<Event>` convention (`onDismiss`, `onSelect`, `onChange`).
+- Native DOM event passthrough keeps the native prop name (`onChange`, `onClick`).
+- Controlled state callbacks use value-level names that mirror the state prop (`onValueChange`, `onCheckedChange`, `onExpandedChange`) so React state setters can be passed directly.
 - Ref-forwarding props use the element name (`triggerRef`, `contentRef`) rather than generic `ref` when a component exposes multiple ref targets.
 
 ## Controlled / uncontrolled
 
-- Every stateful prop (open, value, selected, etc.) supports both controlled and uncontrolled usage.
+- Every stateful prop (open, value, checked, selected, etc.) supports both controlled and uncontrolled usage.
 - Uncontrolled usage provides a `default*` counterpart (`defaultValue`, `defaultOpen`).
 - When both are provided, the controlled value wins and a dev-mode warning is emitted.
 - Internal state is managed with `useState` + `useEffect` sync, not `useRef` hacks.

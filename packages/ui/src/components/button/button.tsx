@@ -41,14 +41,16 @@ const buttonVariants = cva(
   },
 )
 
+export type ButtonProps = React.ComponentProps<'button'>
+  & VariantProps<typeof buttonVariants>
+
 export function Button({
   children,
   className,
   active,
   primary,
   ...props
-}: React.ComponentProps<'button'>
-  & VariantProps<typeof buttonVariants>): React.ReactElement {
+}: ButtonProps): React.ReactElement {
   return (
     <button className={cn(buttonVariants({ active, primary, className }))} data-active={active || undefined} {...props}>
       {children}

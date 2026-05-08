@@ -143,7 +143,7 @@ const arrowVariants = cva(
   },
 )
 
-interface NumberBoxProps
+export interface NumberBoxProps
   extends Omit<
     React.ComponentProps<'input'>,
       'defaultValue' | 'onChange' | 'type' | 'value'
@@ -159,8 +159,8 @@ interface NumberBoxProps
   max?: number
   /** Minimum allowed value */
   min?: number
-  /** Callback when value changes, receives numeric value */
-  onChange?: (value: number) => void
+  /** Callback fired with the next numeric value. */
+  onValueChange?: (value: number) => void
   /** Step increment/decrement amount */
   step?: number
   /** Current numeric value (controlled) */
@@ -179,7 +179,7 @@ export function NumberBox({
   labelPosition = 'left',
   max = Number.MAX_SAFE_INTEGER,
   min = Number.MIN_SAFE_INTEGER,
-  onChange,
+  onValueChange,
   readOnly,
   step = 1,
   value: controlledValue,
@@ -215,9 +215,9 @@ export function NumberBox({
         setInternalValue(clamped)
       }
 
-      onChange?.(clamped)
+      onValueChange?.(clamped)
     },
-    [clampValue, isControlled, onChange],
+    [clampValue, isControlled, onValueChange],
   )
 
   // Handle input change

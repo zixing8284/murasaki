@@ -31,15 +31,15 @@ describe('slider', () => {
   // === Controlled mode ===
 
   it('reflects controlled value', async () => {
-    const screen = await render(<Slider value={42} onChange={() => {}} />)
+    const screen = await render(<Slider value={42} onValueChange={() => {}} />)
     const input = screen.getByRole('slider')
     expect(input.element().getAttribute('value')).toBe('42')
   })
 
-  it('calls onChange when value changes', async () => {
+  it('calls onValueChange when value changes', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <Slider value={50} onChange={handleChange} />,
+      <Slider value={50} onValueChange={handleChange} />,
     )
     const input = screen.getByRole('slider')
 
@@ -48,7 +48,7 @@ describe('slider', () => {
     await input.element().focus()
     await userEvent.keyboard('{ArrowRight}')
 
-    expect(handleChange).toHaveBeenCalled()
+    expect(handleChange).toHaveBeenCalledWith(51)
   })
 
   // === Uncontrolled mode ===
@@ -94,7 +94,7 @@ describe('slider', () => {
 
   it('positions thumb with bottom in vertical mode', async () => {
     const screen = await render(
-      <Slider vertical value={50} onChange={() => {}} />,
+      <Slider vertical value={50} onValueChange={() => {}} />,
     )
     // The thumb is the pointer-events-none div with inline style
     const trackWrapper = screen.container.querySelector('[class*="h-full w-"]') as HTMLElement
@@ -106,7 +106,7 @@ describe('slider', () => {
 
   it('positions thumb with left in horizontal mode', async () => {
     const screen = await render(
-      <Slider value={50} onChange={() => {}} />,
+      <Slider value={50} onValueChange={() => {}} />,
     )
     const trackWrapper = screen.container.querySelector('[class*="w-full h-"]') as HTMLElement
     const thumb = trackWrapper.querySelector('[style*="left"]') as HTMLElement
@@ -115,10 +115,10 @@ describe('slider', () => {
     expect(thumb.style.transform).toContain('translateY(-50%)')
   })
 
-  it('calls onChange on keyboard interaction in vertical mode', async () => {
+  it('calls onValueChange on keyboard interaction in vertical mode', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <Slider vertical value={50} onChange={handleChange} />,
+      <Slider vertical value={50} onValueChange={handleChange} />,
     )
     const input = screen.getByRole('slider')
 
@@ -130,7 +130,7 @@ describe('slider', () => {
 
   it('reflects controlled value in vertical mode', async () => {
     const screen = await render(
-      <Slider vertical value={75} onChange={() => {}} />,
+      <Slider vertical value={75} onValueChange={() => {}} />,
     )
     const input = screen.getByRole('slider')
     expect((input.element() as HTMLInputElement).value).toBe('75')
@@ -232,7 +232,7 @@ describe('slider', () => {
 
   it('matches screenshot for horizontal slider', async () => {
     const screen = await render(
-      <Slider value={50} onChange={() => {}} />,
+      <Slider value={50} onValueChange={() => {}} />,
     )
     const container = screen.container.firstElementChild as HTMLElement
     await expect.element(container).toMatchScreenshot('slider-horizontal')
@@ -240,7 +240,7 @@ describe('slider', () => {
 
   it('matches screenshot for vertical slider', async () => {
     const screen = await render(
-      <Slider vertical value={50} onChange={() => {}} />,
+      <Slider vertical value={50} onValueChange={() => {}} />,
     )
     const container = screen.container.firstElementChild as HTMLElement
     await expect.element(container).toMatchScreenshot('slider-vertical')
@@ -254,7 +254,7 @@ describe('slider', () => {
     ]
     const screen = await render(
       <div style={{ padding: '16px' }}>
-        <Slider vertical value={30} onChange={() => {}} ticks={ticks} />
+        <Slider vertical value={30} onValueChange={() => {}} ticks={ticks} />
       </div>,
     )
     const wrapper = screen.container.firstElementChild!.firstElementChild as HTMLElement
@@ -263,7 +263,7 @@ describe('slider', () => {
 
   it('matches screenshot for vertical slider with boxIndicator', async () => {
     const screen = await render(
-      <Slider vertical boxIndicator value={60} onChange={() => {}} />,
+      <Slider vertical boxIndicator value={60} onValueChange={() => {}} />,
     )
     const container = screen.container.firstElementChild as HTMLElement
     await expect.element(container).toMatchScreenshot('slider-vertical-box')
@@ -274,7 +274,7 @@ describe('slider', () => {
   it('extends native input hit area beyond track wrapper (horizontal)', async () => {
     const screen = await render(
       <div style={{ padding: '20px' }}>
-        <Slider value={0} onChange={() => {}} />
+        <Slider value={0} onValueChange={() => {}} />
       </div>,
     )
     const input = screen.getByRole('slider').element() as HTMLInputElement
@@ -292,7 +292,7 @@ describe('slider', () => {
   it('extends native input hit area beyond track wrapper (vertical)', async () => {
     const screen = await render(
       <div style={{ padding: '20px' }}>
-        <Slider vertical value={0} onChange={() => {}} />
+        <Slider vertical value={0} onValueChange={() => {}} />
       </div>,
     )
     const input = screen.getByRole('slider').element() as HTMLInputElement

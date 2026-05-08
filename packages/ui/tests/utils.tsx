@@ -20,9 +20,9 @@ interface TabsWrapperProps {
   children: ReactNode
   defaultValue?: string
   value?: string
-  onChange?: (value: string) => void
+  onValueChange?: (value: string) => void
 }
 
 export function TabsWrapper({ children, ...props }: TabsWrapperProps): ReactElement {
-  return <Tabs defaultValue={props.defaultValue} value={props.value} onChange={props.onChange}>{children}</Tabs>
+  return <Tabs defaultValue={props.defaultValue} value={props.value} onValueChange={props.onValueChange}>{children}</Tabs>
 }

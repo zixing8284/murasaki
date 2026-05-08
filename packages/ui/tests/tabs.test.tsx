@@ -8,7 +8,7 @@ describe('tabs', () => {
   function renderTabs(props?: {
     defaultValue?: string
     value?: string
-    onChange?: (v: string) => void
+    onValueChange?: (v: string) => void
   }) {
     return render(
       <Tabs {...props}>
@@ -87,14 +87,14 @@ describe('tabs', () => {
   // === Controlled mode ===
 
   it('reflects controlled value prop', async () => {
-    const screen = await renderTabs({ value: 'two', onChange: () => {} })
+    const screen = await renderTabs({ value: 'two', onValueChange: () => {} })
     await expect.element(screen.getByText('Content Two')).toBeInTheDocument()
     expect(screen.container.textContent).not.toContain('Content One')
   })
 
-  it('calls onChange when a tab is clicked (controlled)', async () => {
+  it('calls onValueChange when a tab is clicked (controlled)', async () => {
     const handleChange = vi.fn()
-    const screen = await renderTabs({ value: 'one', onChange: handleChange })
+    const screen = await renderTabs({ value: 'one', onValueChange: handleChange })
 
     await screen.getByRole('tab', { name: 'Tab Two' }).click()
     expect(handleChange).toHaveBeenCalledWith('two')

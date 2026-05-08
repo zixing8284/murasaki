@@ -7,7 +7,7 @@ export function CheckboxControlledDemo(): React.ReactElement {
   const [checked, setChecked] = useState(false)
 
   return (
-    <Checkbox checked={checked} onChange={event => setChecked(event.target.checked)}>
+    <Checkbox checked={checked} onCheckedChange={setChecked}>
       {checked ? 'Checked' : 'Unchecked'}
     </Checkbox>
   )

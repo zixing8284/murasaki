@@ -155,27 +155,28 @@ describe('select', () => {
         name="fruit"
         options={fruitOptions}
         value="cherry"
-        onChange={() => {}}
+        onValueChange={() => {}}
       />,
     )
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Cherry')
   })
 
-  it('calls onChange when an option is selected', async () => {
+  it('calls onValueChange when an option is selected', async () => {
     const handleChange = vi.fn()
     const screen = await render(
       <Select
         name="fruit"
         options={fruitOptions}
         value="apple"
-        onChange={handleChange}
+        onValueChange={handleChange}
       />,
     )
     await screen.getByRole('combobox').click()
     await screen.getByRole('option', { name: 'Cherry' }).click()
 
     expect(handleChange).toHaveBeenCalledWith(
+      'cherry',
       expect.objectContaining({ value: 'cherry', label: 'Cherry' }),
     )
   })

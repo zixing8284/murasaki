@@ -13,20 +13,29 @@ const fieldPanelVariants = cva(
     'before:shadow-(--shadow-border-field)',
     'before:pointer-events-none',
     'before:z-[1]',
-    'bg-(--window)',
-    'text-(--window-text)',
     'p-0.5',
     'overflow-hidden',
   ],
   {
+    defaultVariants: {
+      variant: 'field',
+    },
     variants: {
       disabled: {
-        true: [
-          'bg-(--button-face)',
-          'text-(--gray-text)',
-        ],
+        true: [],
+        false: [],
+      },
+      variant: {
+        field: ['bg-(--window)', 'text-(--window-text)'],
+        sunken: ['bg-(--button-face)'],
       },
     },
+    compoundVariants: [
+      {
+        disabled: true,
+        className: ['bg-(--button-face)', 'text-(--gray-text)'],
+      },
+    ],
   },
 )
 
@@ -38,11 +47,12 @@ export function FieldPanel({
   children,
   className,
   disabled,
+  variant,
   ...props
 }: FieldPanelProps): React.ReactElement {
   return (
     <div
-      className={cn(fieldPanelVariants({ disabled, className }))}
+      className={cn(fieldPanelVariants({ disabled, variant, className }))}
       aria-disabled={disabled || undefined}
       {...props}
     >

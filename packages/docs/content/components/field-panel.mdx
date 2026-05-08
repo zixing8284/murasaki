@@ -1,8 +1,9 @@
 import { FieldPanelBasicDemo } from './field-panel/field-panel-basic'
+import { FieldPanelSunkenDemo } from './field-panel/field-panel-sunken'
 
 # FieldPanel
 
-`FieldPanel` frames scrollable white content with the sunken field border used by list boxes and file panes.
+`FieldPanel` frames content with the sunken inset border used by list boxes, file panes, and output areas.
 
 Because FieldPanel is a frame primitive, place text inside padded content rather than directly against the inset border.
 
@@ -10,14 +11,19 @@ Because FieldPanel is a frame primitive, place text inside padded content rather
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `variant` | `'field' \| 'sunken'` | `'field'` | `field` uses the window background; `sunken` uses the button-face background for output/display panels. |
 | `disabled` | `boolean` | `false` | Switches to disabled field colors and exposes `aria-disabled`. |
 | `className` | `string` | - | Sets dimensions or extra layout classes. |
-| `children` | `ReactNode` | - | Content rendered inside the scroll area. |
+| `children` | `ReactNode` | - | Content rendered inside the panel. |
 
 ## Examples
 
 <ComponentExample name="field-panel-basic" title="File list field">
   <FieldPanelBasicDemo />
+</ComponentExample>
+
+<ComponentExample name="field-panel-sunken" title="Sunken output panel">
+  <FieldPanelSunkenDemo />
 </ComponentExample>
 
 ## ARIA

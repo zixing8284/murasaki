@@ -1,6 +1,6 @@
 import type { JSX, RefObject } from 'react'
 import type { Track } from '../use-media-player'
-import { SunkenPanel } from '@murasaki/react98'
+import { FieldPanel } from '@murasaki/react98'
 import { formatTime } from '../format-time'
 import { NowPlayingIndicator } from './now-playing-indicator'
 
@@ -26,7 +26,7 @@ export function PlaylistPanel({
   return (
     <div className={`grid transition-[grid-template-rows] duration-100 ease-in-out ${visible ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
       <div className="min-h-0 overflow-hidden">
-        <SunkenPanel className="h-40 overflow-y-auto bg-(--window)">
+        <FieldPanel variant="sunken" className="h-40 overflow-y-auto bg-(--window)">
           {playlist.map((track) => {
             const isActive = currentTrackId === track.id
             const isNowPlaying = isActive && isPlaying
@@ -65,7 +65,7 @@ export function PlaylistPanel({
               </div>
             )
           })}
-        </SunkenPanel>
+        </FieldPanel>
       </div>
     </div>
   )

@@ -170,7 +170,7 @@ function SelectOptionItem<T>({
 }
 
 export interface SelectProps<T = string>
-  extends Omit<React.ComponentProps<'div'>, 'defaultValue' | 'onChange'> {
+  extends Omit<React.ComponentProps<'div'>, 'defaultValue'> {
   /**
    * Default selected value (uncontrolled mode).
    */
@@ -200,9 +200,9 @@ export interface SelectProps<T = string>
    */
   name: string
   /**
-   * Callback fired when selection changes.
+   * Callback fired with the next selected value and option.
    */
-  onChange?: (option: SelectOption<T>) => void
+  onValueChange?: (value: T, option: SelectOption<T>) => void
   /**
    * Callback fired when select closes.
    */
@@ -243,7 +243,7 @@ export function Select<T = string>({
   labelClassName,
   menuMaxHeight,
   name,
-  onChange,
+  onValueChange,
   onClose,
   onOpen,
   options,
@@ -274,7 +274,7 @@ export function Select<T = string>({
   } = useSelectState({
     defaultValue,
     disabled,
-    onChange,
+    onValueChange,
     onClose,
     onOpen,
     options,

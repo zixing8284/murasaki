@@ -82,7 +82,7 @@ const textareaVariants = cva([
   'w-full',
 ])
 
-interface TextBoxProps
+export interface TextBoxProps
   extends Omit<React.ComponentProps<'input'>, 'type'>,
   VariantProps<typeof textBoxWrapperVariants> {
   /** Label content (alternative to label prop) */

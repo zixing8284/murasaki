@@ -60,7 +60,7 @@ const radioDotVariants = cva([
 ])
 
 export interface OptionButtonProps
-  extends Omit<React.ComponentProps<'input'>, 'name' | 'type'>,
+  extends Omit<React.ComponentProps<'input'>, 'name' | 'onChange' | 'type'>,
   VariantProps<typeof optionButtonVariants> {
   /**
    * Additional className for the label element.
@@ -75,7 +75,6 @@ export function OptionButton({
   disabled,
   id,
   labelClassName,
-  onChange,
   value,
   ...props
 }: OptionButtonProps): React.ReactElement {
@@ -92,7 +91,6 @@ export function OptionButton({
   const currentChecked = isChecked ?? checked
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    onChange?.(e)
     if (e.target.checked && value !== undefined) {
       onGroupValueChange?.(String(value))
     }
@@ -108,10 +106,10 @@ export function OptionButton({
         disabled={disabled}
         id={inputId}
         name={name}
-        onChange={handleChange}
         type="radio"
         value={value}
         {...props}
+        onChange={handleChange}
       />
       <OptionButtonLabel
         checked={currentChecked ?? false}

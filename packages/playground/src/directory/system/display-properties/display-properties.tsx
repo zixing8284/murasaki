@@ -89,13 +89,13 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         <TabPanel value="appearance" className="flex flex-col gap-3">
           <Checkbox
             checked={crtEnabled}
-            onChange={e => setCrtEnabled(e.target.checked)}
+            onCheckedChange={setCrtEnabled}
           >
             Enable CRT monitor effect
           </Checkbox>
           <Checkbox
             checked={gradientEnabled}
-            onChange={e => setGradientEnabled(e.target.checked)}
+            onCheckedChange={setGradientEnabled}
           >
             Use gradient title bars
           </Checkbox>

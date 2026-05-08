@@ -9,6 +9,7 @@ interface PlaylistPanelProps {
   playlist: Track[]
   currentTrackId: string | undefined
   isPlaying: boolean
+  loading: boolean
   activeItemRef: RefObject<HTMLDivElement | null>
   onPlayTrack: (track: Track) => void
 }
@@ -18,6 +19,7 @@ export function PlaylistPanel({
   playlist,
   currentTrackId,
   isPlaying,
+  loading,
   activeItemRef,
   onPlayTrack,
 }: PlaylistPanelProps): JSX.Element {
@@ -28,6 +30,7 @@ export function PlaylistPanel({
           {playlist.map((track) => {
             const isActive = currentTrackId === track.id
             const isNowPlaying = isActive && isPlaying
+            const isLoading = isActive && loading
 
             return (
               <div
@@ -40,19 +43,25 @@ export function PlaylistPanel({
                 onDoubleClick={() => onPlayTrack(track)}
               >
                 <span className="flex w-4 shrink-0 items-center justify-center">
-                  {isNowPlaying ? <NowPlayingIndicator /> : null}
+                  {isNowPlaying || isLoading ? <NowPlayingIndicator loading={isLoading} /> : null}
                 </span>
                 <span className="min-w-0 truncate pl-0.5">
                   {track.title}
                   {track.artist ? ` - ${track.artist}` : ''}
                 </span>
-                {track.duration != null && track.duration > 0
+                {isLoading
                   ? (
-                      <span className="ml-auto pl-2 shrink-0 tabular-nums">
-                        {formatTime(track.duration)}
+                      <span className="ml-auto pl-2 shrink-0 animate-pulse opacity-60">
+                        loading...
                       </span>
                     )
-                  : null}
+                  : track.duration != null && track.duration > 0
+                    ? (
+                        <span className="ml-auto pl-2 shrink-0 tabular-nums">
+                          {formatTime(track.duration)}
+                        </span>
+                      )
+                    : null}
               </div>
             )
           })}

@@ -142,6 +142,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
         playlist={player.playlist}
         currentTrackId={currentTrackId}
         isPlaying={player.isPlaying}
+        loading={player.loading}
         activeItemRef={activeItemRef}
         onPlayTrack={player.playTrack}
       />

@@ -161,7 +161,7 @@ export function MediaPlayerControls({
             max={100}
             boxIndicator
             value={player.muted ? 0 : player.volume}
-            onChange={event => player.setVolume(Number(event.target.value))}
+            onValueChange={player.setVolume}
             aria-label="Volume"
           />
         </div>

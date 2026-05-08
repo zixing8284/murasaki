@@ -81,13 +81,13 @@ export function ColorControls({ state }: ColorControlsProps): React.ReactElement
       <div className="flex flex-col gap-1 pb-1 border-b border-(--button-shadow)">
         <Checkbox
           checked={linkElements}
-          onChange={e => setLinkElements(e.target.checked)}
+          onCheckedChange={setLinkElements}
         >
           Link elements
         </Checkbox>
         <Checkbox
           checked={titlebarGradients}
-          onChange={e => setTitlebarGradients(e.target.checked)}
+          onCheckedChange={setTitlebarGradients}
         >
           Title bar gradients
         </Checkbox>

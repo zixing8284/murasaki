@@ -69,12 +69,20 @@ describe('text-box', () => {
 
   // === Interaction ===
 
-  it('calls onChange handler', async () => {
+  it('calls onValueChange with the next input value', async () => {
     const handleChange = vi.fn()
-    const screen = await render(<TextBox onChange={handleChange} />)
+    const screen = await render(<TextBox onValueChange={handleChange} />)
     const input = screen.getByRole('textbox')
     await input.fill('hello')
-    expect(handleChange).toHaveBeenCalled()
+    expect(handleChange).toHaveBeenLastCalledWith('hello')
+  })
+
+  it('calls onValueChange with the next textarea value', async () => {
+    const handleChange = vi.fn()
+    const screen = await render(<TextBox multiline onValueChange={handleChange} />)
+    const textarea = screen.getByRole('textbox')
+    await textarea.fill('hello')
+    expect(handleChange).toHaveBeenLastCalledWith('hello')
   })
 
   // === Disabled state ===

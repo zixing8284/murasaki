@@ -2,6 +2,14 @@
 
 The documentation site lists the public component surface with live examples and usage notes for each primitive.
 
+## API Conventions
+
+Stateful components support controlled and uncontrolled usage with matching `value` / `defaultValue`, `checked` / `defaultChecked`, or component-specific pairs.
+
+Controlled state callbacks are value-level callbacks such as `onValueChange`, `onCheckedChange`, and `onExpandedChange`, so React state setters can be passed directly.
+
+Native `onChange` remains the right API for actual native controls such as `SelectNative` or raw DOM inputs. Library-owned stateful primitives expose their state changes through value-level callbacks instead.
+
 ## Component Reference
 
 <ul className="m98-component-list">

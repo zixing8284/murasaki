@@ -1,5 +1,8 @@
+/* Tailwind v4 does not scan node_modules by default. Include the built package
+   so utilities used by @murasaki/react98 components are emitted here. */
 @source "../node_modules/@murasaki/react98/dist";
-@source "../../ui/src"; /* dev only */
+/* Also scan local source during workspace development before dist is rebuilt. */
+@source "../../ui/src";
 
 @import "tailwindcss";
 @import "tw-animate-css";

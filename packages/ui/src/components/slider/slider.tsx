@@ -160,7 +160,7 @@ export interface TickMark {
   label?: string
 }
 
-export interface SliderProps extends Omit<React.ComponentProps<'input'>, 'type'> {
+export interface SliderProps extends Omit<React.ComponentProps<'input'>, 'onChange' | 'type'> {
   /** Use a box indicator instead of the default triangle */
   boxIndicator?: boolean
   /** Callback fired with the next numeric value */
@@ -180,7 +180,6 @@ export function Slider({
   step = 1,
   defaultValue,
   value: controlledValue,
-  onChange,
   onValueChange,
   ticks,
   disabled,
@@ -211,9 +210,8 @@ export function Slider({
         setInternalValue(newValue)
       }
       onValueChange?.(newValue)
-      onChange?.(e)
     },
-    [isControlled, onChange, onValueChange],
+    [isControlled, onValueChange],
   )
 
   // Calculate thumb position (centered on track)
@@ -269,12 +267,12 @@ export function Slider({
           max={max}
           step={step}
           value={currentValue}
-          onChange={handleChange}
           list={ticks ? datalistId : undefined}
           // Use dir attribute for RTL instead of CSS direction property (MDN recommendation)
           dir={vertical ? 'rtl' : undefined}
           disabled={disabled}
           {...props}
+          onChange={handleChange}
         />
 
         {/* Native datalist for accessibility */}

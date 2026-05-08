@@ -99,9 +99,9 @@ export function Checkbox({
         disabled={disabled}
         id={inputId}
         name={inputId}
-        onChange={handleChange}
         type="checkbox"
         {...props}
+        onChange={handleChange}
       />
       <CheckboxLabel htmlFor={inputId}>{children}</CheckboxLabel>
     </>

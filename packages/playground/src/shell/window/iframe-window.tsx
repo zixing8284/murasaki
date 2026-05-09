@@ -8,6 +8,7 @@ interface IframeWindowProps {
   windowId: string
   src: string
   className?: string
+  contentClassName?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
   disableMinimize?: boolean
@@ -27,6 +28,7 @@ export function IframeWindow({
   windowId,
   src,
   className,
+  contentClassName,
   titleIcon,
   disableMaximize = false,
   disableMinimize = false,
@@ -53,6 +55,7 @@ export function IframeWindow({
     <RndWindow
       windowId={windowId}
       className={className}
+      contentClassName={contentClassName}
       titleIcon={titleIcon}
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
@@ -75,7 +78,7 @@ export function IframeWindow({
        *   page when touching inside the iframe area.
        */}
       <div
-        className={`w-full h-full pt-1 relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
+        className={`w-full h-full relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)

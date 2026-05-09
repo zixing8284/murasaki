@@ -10,6 +10,7 @@ interface RndWindowProps {
   windowId: string
   children: ReactNode
   className?: string
+  contentClassName?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
   disableMinimize?: boolean
@@ -24,6 +25,7 @@ export function RndWindow({
   windowId,
   children,
   className,
+  contentClassName,
   titleIcon,
   disableMaximize = false,
   disableMinimize = false,
@@ -62,6 +64,7 @@ export function RndWindow({
     <BaseWindow
       windowId={windowId}
       className={className}
+      contentClassName={contentClassName}
       titleIcon={titleIcon}
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}

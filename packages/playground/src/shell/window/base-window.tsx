@@ -20,6 +20,7 @@ export interface BaseWindowProps {
   windowId: string
   children: ReactNode
   className?: string
+  contentClassName?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
   disableMinimize?: boolean
@@ -42,6 +43,7 @@ export function BaseWindow({
   windowId,
   children,
   className,
+  contentClassName,
   titleIcon,
   disableMaximize = false,
   disableMinimize = false,
@@ -100,7 +102,7 @@ export function BaseWindow({
               <WindowCloseButton onClick={() => actions.close(windowId)} />
             </WindowButtons>
           </WindowTitleBar>
-          <WindowContent>{children}</WindowContent>
+          <WindowContent className={contentClassName}>{children}</WindowContent>
           {!disableResize && <WindowResizeGrip ref={resizeRef} />}
         </WindowFrame>
       </WindowPortal>

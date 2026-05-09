@@ -7,7 +7,7 @@ export function MyComputer(): React.ReactElement {
   const [checked, setChecked] = useState(false)
 
   return (
-    <div className="p-2">
+    <>
       <p>Window content here...</p>
       <OptionGroup name="demo" value={selected} onValueChange={setSelected}>
         <div className="flex flex-col gap-2">
@@ -23,6 +23,6 @@ export function MyComputer(): React.ReactElement {
           {checked ? 'Checked' : 'Unchecked'}
         </Checkbox>
       </div>
-    </div>
+    </>
   )
 }

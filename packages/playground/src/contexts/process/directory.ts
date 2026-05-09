@@ -26,6 +26,7 @@ const directory = {
     singleton: true,
     defaultSize: { width: 520 },
     defaultPosition: { top: '10%', left: '10%' },
+    window: { contentClassName: 'p-2' },
   },
   docs: {
     name: 'Murasaki UI Library Docs',

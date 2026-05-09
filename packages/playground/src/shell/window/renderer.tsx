@@ -18,6 +18,7 @@ function renderProcessWindow(
         windowId={windowId}
         src={windowConfig.src}
         className={windowConfig.className}
+        contentClassName={windowConfig.contentClassName}
         disableMaximize={windowConfig.disableMaximize}
         disableMinimize={windowConfig.disableMinimize}
         disableResize={windowConfig.disableResize}
@@ -37,6 +38,7 @@ function renderProcessWindow(
     <RndWindow
       windowId={windowId}
       className={windowConfig?.className}
+      contentClassName={windowConfig?.contentClassName}
       disableMaximize={windowConfig?.disableMaximize}
       disableMinimize={windowConfig?.disableMinimize}
       disableResize={windowConfig?.disableResize}

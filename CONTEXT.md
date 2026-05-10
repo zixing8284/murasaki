@@ -47,3 +47,7 @@ _Avoid_: Source-root export, public TS source entry
 **Theme source stylesheet exception**:
 A named exception to **Dist-only public exports** where `@murasaki/react98/theme.css` intentionally resolves to `./src/theme.css` so Tailwind CSS v4 consumers can import the source stylesheet with library-owned theme variables. `@murasaki/react98/globals.css` remains the built CSS entry for consumers that want compiled global styles.
 _Avoid_: Accidental source export, unrecorded package export drift
+
+**Pixel-font clipping safety**:
+A layout rule for Windows 98 pixel-font text where the element that clips text also keeps a small left inset before the first glyph, preventing fractional device-pixel alignment from dropping the glyph's leftmost column.
+_Avoid_: Flush clipped glyph, nested zero-padding overflow clip, font-smoothing workaround

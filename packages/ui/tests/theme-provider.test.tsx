@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { themeIds, ThemeProvider, useTheme } from '../src'
+import { themeIds, themeLabels, ThemeProvider, useTheme } from '../src'
 
 function ThemeIdConsumer(): React.ReactElement {
   const { themeId } = useTheme()
@@ -19,7 +19,7 @@ function SetThemeConsumer(): React.ReactElement {
 
 function StorageKeyConsumer(): React.ReactElement {
   const { setTheme } = useTheme()
-  return <button onClick={() => setTheme('solarized-dark')}>Switch</button>
+  return <button onClick={() => setTheme('rainy-day')}>Switch</button>
 }
 
 describe('theme-provider', () => {
@@ -40,11 +40,30 @@ describe('theme-provider', () => {
 
   // === Theme IDs ===
 
-  it('exports all three theme IDs', () => {
-    expect(themeIds).toContain('windows-98')
-    expect(themeIds).toContain('windows-95')
-    expect(themeIds).toContain('solarized-dark')
-    expect(themeIds.length).toBe(3)
+  it('exports all built-in theme IDs', () => {
+    expect(themeIds).toEqual([
+      'windows-95',
+      'windows-98',
+      'windows-standard',
+      'rainy-day',
+      'rose',
+      'slate',
+      'spruce',
+      'desert',
+    ])
+  })
+
+  it('exports built-in theme labels', () => {
+    expect(themeLabels).toEqual({
+      'windows-95': 'Windows 95',
+      'windows-98': 'Windows 98',
+      'windows-standard': 'Windows Standard',
+      'rainy-day': 'Rainy Day',
+      'rose': 'Rose',
+      'slate': 'Slate',
+      'spruce': 'Spruce',
+      'desert': 'Desert',
+    })
   })
 
   // === Default theme ===
@@ -63,11 +82,11 @@ describe('theme-provider', () => {
 
   it('applies non-default theme to documentElement', async () => {
     await render(
-      <ThemeProvider defaultTheme="solarized-dark">
+      <ThemeProvider defaultTheme="rainy-day">
         <div>content</div>
       </ThemeProvider>,
     )
-    expect(document.documentElement.getAttribute('data-theme')).toBe('solarized-dark')
+    expect(document.documentElement.getAttribute('data-theme')).toBe('rainy-day')
   })
 
   it('applies windows-95 theme to documentElement', async () => {
@@ -79,16 +98,34 @@ describe('theme-provider', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe('windows-95')
   })
 
+  it('applies windows-standard theme to documentElement', async () => {
+    await render(
+      <ThemeProvider defaultTheme="windows-standard">
+        <div>content</div>
+      </ThemeProvider>,
+    )
+    expect(document.documentElement.getAttribute('data-theme')).toBe('windows-standard')
+  })
+
+  it('applies rainy-day theme to documentElement', async () => {
+    await render(
+      <ThemeProvider defaultTheme="rainy-day">
+        <div>content</div>
+      </ThemeProvider>,
+    )
+    expect(document.documentElement.getAttribute('data-theme')).toBe('rainy-day')
+  })
+
   // === useTheme hook ===
 
   it('provides theme context via useTheme', async () => {
     const screen = await render(
-      <ThemeProvider defaultTheme="solarized-dark">
+      <ThemeProvider defaultTheme="rainy-day">
         <ThemeIdConsumer />
       </ThemeProvider>,
     )
     const el = screen.getByTestId('theme')
-    await expect.element(el).toHaveTextContent('solarized-dark')
+    await expect.element(el).toHaveTextContent('rainy-day')
   })
 
   it('provides setTheme via useTheme', async () => {
@@ -111,12 +148,12 @@ describe('theme-provider', () => {
     document.body.appendChild(target)
 
     await render(
-      <ThemeProvider defaultTheme="solarized-dark" attributeTarget={target}>
+      <ThemeProvider defaultTheme="rainy-day" attributeTarget={target}>
         <div>content</div>
       </ThemeProvider>,
     )
 
-    expect(target.getAttribute('data-theme')).toBe('solarized-dark')
+    expect(target.getAttribute('data-theme')).toBe('rainy-day')
     // documentElement should not be affected
     expect(document.documentElement.getAttribute('data-theme')).toBeNull()
 

@@ -18,7 +18,7 @@ interface ComponentExampleClientProps {
   children?: ReactNode
 }
 
-type ExampleTheme = 'windows-98' | 'solarized-dark'
+type ExampleTheme = 'windows-98' | 'slate'
 
 function getDocsExampleTheme(): ExampleTheme {
   if (typeof document === 'undefined')
@@ -32,7 +32,7 @@ function getDocsExampleTheme(): ExampleTheme {
     || root.style.colorScheme === 'dark'
     || rootStyle.colorScheme === 'dark'
   ) {
-    return 'solarized-dark'
+    return 'slate'
   }
 
   return 'windows-98'

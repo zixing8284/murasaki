@@ -58,10 +58,10 @@ function App() {
 
 ## Themes
 
-Three built-in themes: `windows-98` (default), `windows-95`, `solarized-dark`.
+Built-in themes include `windows-98` (default), `windows-95`, `windows-standard`, `rainy-day`, `rose`, `slate`, `spruce`, and `desert`.
 
 ```tsx
-<ThemeProvider defaultTheme="solarized-dark">
+<ThemeProvider defaultTheme="slate">
   {/* your app */}
 </ThemeProvider>
 ```

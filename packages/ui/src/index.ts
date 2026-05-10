@@ -107,7 +107,7 @@ export { TextBox } from './components/text-box/text-box'
 export type { TextBoxProps } from './components/text-box/text-box'
 
 // Theme
-export { themeIds, ThemeProvider, useTheme } from './components/theme-provider/theme-provider'
+export { themeIds, themeLabels, ThemeProvider, useTheme } from './components/theme-provider/theme-provider'
 export type { ThemeContextValue, ThemeId, ThemeProviderProps } from './components/theme-provider/theme-provider'
 
 // Tooltip

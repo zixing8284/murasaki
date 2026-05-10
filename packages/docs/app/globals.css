@@ -63,11 +63,7 @@ body {
   color: var(--window-text);
 }
 
-.m98-example__preview[data-theme="windows-98"] {
-  --m98-docs-preview-bg: var(--button-face);
-}
-
-.m98-example__preview[data-theme="solarized-dark"] {
+.m98-example__preview[data-theme] {
   --m98-docs-preview-bg: var(--button-face);
 }
 

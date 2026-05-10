@@ -70,51 +70,6 @@
   --background: rgb(58, 110, 165);
 }
 
-[data-theme="solarized-dark"] {
-  /* Button */
-  --button-alternate-face: rgb(0, 43, 54);
-  --button-dk-shadow: rgb(0, 43, 54);
-  --button-face: rgb(7, 54, 66);
-  --button-hilight: rgb(0, 43, 54);
-  --button-light: rgb(0, 43, 54);
-  --button-shadow: rgb(0, 43, 54);
-  --button-text: rgb(131, 148, 150);
-
-  /* Window */
-  --active-border: rgb(0, 43, 54);
-  --app-workspace: rgb(0, 43, 54);
-  --desktop-text: rgb(131, 148, 150);
-  --inactive-border: rgb(7, 54, 66);
-  --scrollbar: rgb(0, 43, 54);
-  --window: rgb(0, 43, 54);
-  --window-frame: rgb(0, 43, 54);
-  --window-text: rgb(131, 148, 150);
-
-  /* Title Bar */
-  --active-title: rgb(0, 43, 54);
-  --gradient-active-title: rgb(0, 43, 54);
-  --gradient-inactive-title: rgb(7, 54, 66);
-  --inactive-title: rgb(7, 54, 66);
-  --inactive-title-text: rgb(131, 148, 150);
-  --title-text: rgb(108, 113, 196);
-
-  /* Menu */
-  --menu: rgb(7, 54, 66);
-  --menu-bar: rgb(131, 148, 150);
-  --menu-hilight: rgb(211, 54, 130);
-  --menu-text: rgb(131, 148, 150);
-  --gray-text: rgb(88, 110, 117);
-
-  /* Highlight / Selection */
-  --hilight: rgb(211, 54, 130);
-  --hilight-text: rgb(238, 232, 213);
-  --hot-tracking-color: rgb(38, 139, 210);
-
-  /* Tooltip */
-  --info-text: rgb(181, 137, 0);
-  --info-window: rgb(253, 246, 227);
-}
-
 [data-theme="windows-95"] {
   /* Button */
   --button-alternate-face: rgb(192, 192, 192);
@@ -161,6 +116,294 @@
 
   /* Desktop */
   --background: rgb(0, 128, 128);
+}
+
+[data-theme="windows-standard"] {
+  /* Button */
+  --button-alternate-face: rgb(180, 180, 180);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(212, 208, 200);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(223, 223, 223);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(192, 192, 192);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(192, 192, 192);
+  --scrollbar: rgb(212, 208, 200);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(0, 0, 128);
+  --gradient-active-title: rgb(16, 132, 208);
+  --gradient-inactive-title: rgb(181, 181, 181);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(212, 208, 200);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(212, 208, 200);
+  --menu-bar: rgb(212, 208, 200);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(0, 0, 128);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(0, 128, 128);
+}
+
+[data-theme="rainy-day"] {
+  /* Button */
+  --button-alternate-face: rgb(184, 180, 160);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(184, 180, 160);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(208, 205, 184);
+  --button-shadow: rgb(128, 128, 112);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(184, 180, 160);
+  --app-workspace: rgb(128, 128, 112);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(184, 180, 160);
+  --scrollbar: rgb(184, 180, 160);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(123, 143, 158);
+  --gradient-active-title: rgb(176, 190, 200);
+  --gradient-inactive-title: rgb(190, 192, 180);
+  --inactive-title: rgb(160, 168, 152);
+  --inactive-title-text: rgb(184, 180, 160);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(184, 180, 160);
+  --menu-bar: rgb(184, 180, 160);
+  --menu-hilight: rgb(123, 143, 158);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 112);
+
+  /* Highlight / Selection */
+  --hilight: rgb(123, 143, 158);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(128, 128, 128);
+}
+
+[data-theme="rose"] {
+  /* Button */
+  --button-alternate-face: rgb(212, 184, 188);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(212, 184, 188);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(232, 208, 212);
+  --button-shadow: rgb(156, 120, 120);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(212, 184, 188);
+  --app-workspace: rgb(156, 120, 120);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(212, 184, 188);
+  --scrollbar: rgb(212, 184, 188);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(156, 96, 112);
+  --gradient-active-title: rgb(212, 160, 168);
+  --gradient-inactive-title: rgb(212, 184, 188);
+  --inactive-title: rgb(192, 160, 168);
+  --inactive-title-text: rgb(212, 184, 188);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(212, 184, 188);
+  --menu-bar: rgb(212, 184, 188);
+  --menu-hilight: rgb(156, 96, 112);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(156, 120, 120);
+
+  /* Highlight / Selection */
+  --hilight: rgb(156, 96, 112);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(156, 96, 112);
+}
+
+[data-theme="slate"] {
+  /* Button */
+  --button-alternate-face: rgb(168, 176, 184);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(168, 176, 184);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(200, 208, 216);
+  --button-shadow: rgb(112, 128, 144);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(168, 176, 184);
+  --app-workspace: rgb(112, 128, 144);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(168, 176, 184);
+  --scrollbar: rgb(168, 176, 184);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(112, 128, 144);
+  --gradient-active-title: rgb(154, 170, 184);
+  --gradient-inactive-title: rgb(176, 184, 188);
+  --inactive-title: rgb(144, 152, 152);
+  --inactive-title-text: rgb(168, 176, 184);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(168, 176, 184);
+  --menu-bar: rgb(168, 176, 184);
+  --menu-hilight: rgb(112, 128, 144);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(112, 128, 144);
+
+  /* Highlight / Selection */
+  --hilight: rgb(112, 128, 144);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(64, 80, 96);
+}
+
+[data-theme="spruce"] {
+  /* Button */
+  --button-alternate-face: rgb(160, 184, 160);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(160, 184, 160);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(192, 212, 192);
+  --button-shadow: rgb(96, 128, 96);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(160, 184, 160);
+  --app-workspace: rgb(96, 128, 96);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(160, 184, 160);
+  --scrollbar: rgb(160, 184, 160);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(58, 102, 69);
+  --gradient-active-title: rgb(122, 170, 130);
+  --gradient-inactive-title: rgb(154, 184, 158);
+  --inactive-title: rgb(106, 136, 112);
+  --inactive-title-text: rgb(160, 184, 160);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(160, 184, 160);
+  --menu-bar: rgb(160, 184, 160);
+  --menu-hilight: rgb(58, 102, 69);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(96, 128, 96);
+
+  /* Highlight / Selection */
+  --hilight: rgb(58, 102, 69);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(42, 80, 48);
+}
+
+[data-theme="desert"] {
+  /* Button */
+  --button-alternate-face: rgb(192, 176, 128);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(192, 176, 128);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(224, 216, 184);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(192, 192, 192);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(192, 192, 192);
+  --scrollbar: rgb(192, 176, 128);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(0, 128, 128);
+  --gradient-active-title: rgb(192, 176, 128);
+  --gradient-inactive-title: rgb(181, 181, 181);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(192, 176, 128);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(192, 176, 128);
+  --menu-bar: rgb(192, 176, 128);
+  --menu-hilight: rgb(0, 128, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(0, 128, 128);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(95, 158, 160);
 }
 
 /* ==========================================================================

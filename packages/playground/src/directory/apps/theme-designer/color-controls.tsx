@@ -27,6 +27,7 @@ const COLOR_GROUPS: Array<{ label: string, items: Array<{ key: string, label: st
       { key: 'window-frame', label: 'WindowFrame' },
       { key: 'window-text', label: 'WindowText' },
       { key: 'background', label: 'Background' },
+      { key: 'desktop-text', label: 'DesktopText' },
       // Derived when linked: active-border, inactive-border, scrollbar, app-workspace
       { key: 'active-border', label: 'ActiveBorder' },
       { key: 'inactive-border', label: 'InactiveBorder' },

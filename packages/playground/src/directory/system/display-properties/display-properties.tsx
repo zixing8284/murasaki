@@ -3,12 +3,13 @@ import type { ProcessComponentProps } from '../../../contexts/process'
 import {
   Button,
   Checkbox,
-  SelectNative,
+  Select,
   Tab,
   TabList,
   TabPanel,
   Tabs,
   themeIds,
+  themeLabels,
   useTheme,
 } from '@murasaki/react98'
 import { useState } from 'react'
@@ -17,10 +18,10 @@ import { useCrtEffect } from '../../../hooks/use-crt-effect'
 import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'
 import { ThemePreview } from './theme-preview'
 
-const themeLabels: Record<ThemeId, string> = {
-  'windows-98': 'Windows 98',
-  'solarized-dark': 'Solarized Dark',
-}
+const themeOptions = themeIds.map(id => ({
+  label: themeLabels[id],
+  value: id,
+}))
 
 export function DisplayProperties({ windowId }: ProcessComponentProps): React.ReactElement | null {
   const { themeId: currentThemeId, setTheme } = useTheme()
@@ -61,19 +62,14 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
             <label className="text-(--button-text)" htmlFor="theme-select">
               Selected Theme:
             </label>
-            <SelectNative
+            <Select
               id="theme-select"
               name="theme"
-              value={selectedTheme}
-              onChange={e => setSelectedTheme(e.target.value as ThemeId)}
               className="w-full"
-            >
-              {themeIds.map(id => (
-                <option key={id} value={id}>
-                  {themeLabels[id]}
-                </option>
-              ))}
-            </SelectNative>
+              options={themeOptions}
+              value={selectedTheme}
+              onValueChange={value => setSelectedTheme(value)}
+            />
           </div>
 
           <div className="flex flex-col gap-1">

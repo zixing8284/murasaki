@@ -1,3 +1,5 @@
+import type { ThemeId } from '@murasaki/react98'
+
 // ---------------------------------------------------------------------------
 // RGB ↔ HSL Conversion
 // ---------------------------------------------------------------------------
@@ -95,14 +97,21 @@ export function rgbToCss({ r, g, b }: RGB): string {
 }
 
 export function cssToRgb(css: string): RGB | null {
-  const match = css.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/)
+  const match = css.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/)
   if (!match)
     return null
   return { r: Number(match[1]), g: Number(match[2]), b: Number(match[3]) }
 }
 
 export function cssToHex(css: string): string {
-  const rgb = cssToRgb(css)
+  const trimmed = css.trim().toLowerCase()
+  if (/^#[0-9a-f]{6}$/.test(trimmed))
+    return trimmed
+  if (/^#[0-9a-f]{3}$/.test(trimmed)) {
+    return `#${trimmed.slice(1).split('').map(char => `${char}${char}`).join('')}`
+  }
+
+  const rgb = cssToRgb(trimmed)
   if (!rgb)
     return '#000000'
   return rgbToHex(rgb)
@@ -180,6 +189,7 @@ export const THEME_TO_CSS: Record<string, string> = {
   ActiveBorder: 'active-border',
   AppWorkspace: 'app-workspace',
   Background: 'background',
+  DesktopText: 'desktop-text',
   InactiveBorder: 'inactive-border',
   Scrollbar: 'scrollbar',
   Window: 'window',
@@ -209,42 +219,63 @@ export const CSS_TO_THEME: Record<string, string> = Object.fromEntries(
 )
 
 // ---------------------------------------------------------------------------
-// Default Colors (Windows 98 Standard)
+// CSS Theme Source Bridge
 // ---------------------------------------------------------------------------
 
-export const DEFAULT_COLORS: Record<string, string> = {
-  'button-alternate-face': '#c0c0c0',
-  'button-dk-shadow': '#404040',
-  'button-face': '#d4d0c8',
-  'button-hilight': '#ffffff',
-  'button-light': '#d4d0c8',
-  'button-shadow': '#808080',
-  'button-text': '#000000',
-  'active-border': '#d4d0c8',
-  'app-workspace': '#808080',
-  'background': '#3a6ea5',
-  'inactive-border': '#d4d0c8',
-  'scrollbar': '#d4d0c8',
-  'window': '#ffffff',
-  'window-frame': '#000000',
-  'window-text': '#000000',
-  'active-title': '#0a246a',
-  'gradient-active-title': '#a6caf0',
-  'gradient-inactive-title': '#c0c0c0',
-  'inactive-title': '#808080',
-  'inactive-title-text': '#d4d0c8',
-  'title-text': '#ffffff',
-  'menu': '#d4d0c8',
-  'menu-bar': '#c0c0c0',
-  'menu-hilight': '#000080',
-  'menu-text': '#000000',
-  'gray-text': '#808080',
-  'hilight': '#0a246a',
-  'hilight-text': '#ffffff',
-  'hot-tracking-color': '#000080',
-  'info-text': '#000000',
-  'info-window': '#ffffe1',
+/** CSS color variable keys used by the classic theme system. */
+export const ALL_COLOR_KEYS = Object.values(THEME_TO_CSS)
+
+function createFallbackThemeColors(): Record<string, string> {
+  return Object.fromEntries(ALL_COLOR_KEYS.map(key => [key, '#000000']))
 }
 
-/** All 31 CSS variable keys used in the theme system. */
-export const ALL_COLOR_KEYS = Object.keys(DEFAULT_COLORS)
+function normalizeCssColor(css: string, colorProbe: HTMLElement | null): string {
+  const trimmed = css.trim()
+  if (!trimmed)
+    return '#000000'
+
+  if (/^(?:#|rgba?\()/i.test(trimmed))
+    return cssToHex(trimmed)
+
+  if (!colorProbe)
+    return cssToHex(trimmed)
+
+  colorProbe.style.color = ''
+  colorProbe.style.color = trimmed
+  if (!colorProbe.style.color)
+    return cssToHex(trimmed)
+
+  return cssToHex(getComputedStyle(colorProbe).color)
+}
+
+export function readThemeColorsFromCss(themeId: ThemeId): Record<string, string> {
+  if (typeof document === 'undefined')
+    return createFallbackThemeColors()
+
+  const root = document.body ?? document.documentElement
+  const themeProbe = document.createElement('div')
+  const colorProbe = document.createElement('span')
+
+  themeProbe.setAttribute('data-theme', themeId)
+  themeProbe.style.position = 'absolute'
+  themeProbe.style.width = '0'
+  themeProbe.style.height = '0'
+  themeProbe.style.overflow = 'hidden'
+  themeProbe.style.pointerEvents = 'none'
+  themeProbe.style.opacity = '0'
+  themeProbe.appendChild(colorProbe)
+  root.appendChild(themeProbe)
+
+  try {
+    const computed = getComputedStyle(themeProbe)
+    return Object.fromEntries(
+      ALL_COLOR_KEYS.map((key) => {
+        const rawValue = computed.getPropertyValue(`--${key}`)
+        return [key, normalizeCssColor(rawValue, colorProbe)]
+      }),
+    )
+  }
+  finally {
+    root.removeChild(themeProbe)
+  }
+}

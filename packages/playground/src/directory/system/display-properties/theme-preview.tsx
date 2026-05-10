@@ -11,6 +11,7 @@ import {
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki/react98'
+import { PreviewTaskbar } from '../../shared/preview-taskbar'
 
 interface ThemePreviewProps {
   themeId: ThemeId
@@ -37,7 +38,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
 
       {/* Inactive Window — with content area + scrollbar */}
       <WindowProvider active={false} positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-3 left-13 w-64 min-w-0! min-h-0!">
+        <WindowFrame className="top-3 left-13 w-68 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Inactive Window</WindowTitle>
             <WindowButtons>
@@ -56,7 +57,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
 
       {/* Active Window — overlaps Inactive, offset down-right */}
       <WindowProvider active positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-9 left-14 w-64 min-w-0! min-h-0!">
+        <WindowFrame className="top-9 left-14 w-68 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Active Window</WindowTitle>
             <WindowButtons>
@@ -86,7 +87,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
 
       {/* Message Box — overlaps Active Window content area */}
       <WindowProvider active positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-26 left-18 w-46 min-w-0! min-h-0!">
+        <WindowFrame className="top-26 left-18 w-52 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Message Box</WindowTitle>
             <WindowButtons>
@@ -101,16 +102,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
         </WindowFrame>
       </WindowProvider>
 
-      {/* Taskbar */}
-      <div className="absolute bottom-0 left-0 right-0 h-5.5 flex items-center px-0.5 shadow-(--shadow-raised) bg-(--button-face)">
-        <div className="h-4 px-1 flex items-center shadow-(--shadow-raised) bg-(--button-face) text-(--button-text)">
-          <span>Start</span>
-        </div>
-        <div className="flex-1" />
-        <div className="h-4 px-2 flex items-center text-(--button-text)">
-          12:56
-        </div>
-      </div>
+      <PreviewTaskbar />
     </div>
   )
 }

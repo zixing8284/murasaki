@@ -81,6 +81,7 @@ const EXPORT_ORDER = [
   'ActiveBorder',
   'AppWorkspace',
   'Background',
+  'DesktopText',
   'InactiveBorder',
   'Scrollbar',
   'Window',

@@ -71,6 +71,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Keep styling theme-first: use CSS variable-backed utilities such as `bg-(--button-face)` and `text-(--window-text)`.
 - Treat shared theme config as library-owned and theme variable values as consumer-customizable.
 - Pixel-font text in sunken/input-like fields must have left breathing room. Avoid placing text flush against a 1px inset border; prefer at least `pl-2` on native fields or a small inner text offset for list rows.
+- For clipped pixel-font text, follow ADR 0008: the text display element should own both left padding and `overflow-hidden`/ellipsis, or otherwise keep the clip rect away from the first glyph. Avoid nested zero-padding clipped spans as a font-smoothing workaround.
 - `@murasaki/react98/theme.css` is the named source stylesheet export exception: it intentionally resolves to `packages/ui/src/theme.css` for Tailwind CSS v4 consumers. Do not treat it as permission to expose other source files.
 
 ## Playground Architecture

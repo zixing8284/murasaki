@@ -8,7 +8,7 @@ import { ThemeProviderBasicDemo } from './theme-provider/theme-provider-basic'
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `defaultTheme` | `'windows-98' \| 'solarized-dark'` | `'windows-98'` | Initial theme. |
+| `defaultTheme` | `ThemeId` | `'windows-98'` | Initial theme. |
 | `storageKey` | `string \| null` | `'murasaki-theme'` | Local storage key. Use `null` to disable persistence. |
 | `attributeTarget` | `HTMLElement \| null` | `document.documentElement` | Optional element that receives `data-theme` instead of `<html>`. |
 | `children` | `ReactNode` | required | The app subtree. |

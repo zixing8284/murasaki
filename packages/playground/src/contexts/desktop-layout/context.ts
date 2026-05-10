@@ -4,11 +4,7 @@ import { createContext } from 'react'
 
 /** Width of a desktop grid cell (px). */
 export const CELL_WIDTH = 72
-/**
- * Minimum height of a desktop grid cell (px). Sized to fit the icon plus a
- * 2-line label. Actual row height stretches to fill the desktop via
- * `grid-template-rows: repeat(auto-fill, minmax(CELL_HEIGHT, 1fr))`.
- */
+/** Height of a desktop grid cell (px). Sized to fit the icon plus a 2-line label. */
 export const CELL_HEIGHT = 68
 /** Horizontal gap between cells (px). */
 export const COLUMN_GAP = 4

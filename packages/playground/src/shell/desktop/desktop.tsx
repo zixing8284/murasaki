@@ -28,7 +28,7 @@ interface IconEntry {
 const gridStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: `repeat(auto-fill, ${CELL_WIDTH}px)`,
-  gridTemplateRows: `repeat(auto-fill, minmax(${CELL_HEIGHT}px, 1fr))`,
+  gridTemplateRows: `repeat(auto-fill, ${CELL_HEIGHT}px)`,
   gridAutoFlow: 'column',
   alignContent: 'start',
   justifyContent: 'start',

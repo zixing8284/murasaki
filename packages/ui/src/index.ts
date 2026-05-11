@@ -35,8 +35,15 @@ export { GroupBox } from './components/group-box/group-box'
 export type { GroupBoxProps } from './components/group-box/group-box'
 
 // Menu
-export { Menu, MenuItem, MenuSeparator } from './components/menu/menu'
-export type { MenuItemProps, MenuProps, MenuSeparatorProps } from './components/menu/menu'
+export { Menu, MenuItem, MenuSeparator, MenuSub, MenuSubContent, MenuSubTrigger } from './components/menu/menu'
+export type {
+  MenuItemProps,
+  MenuProps,
+  MenuSeparatorProps,
+  MenuSubContentProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
+} from './components/menu/menu'
 
 // NumberBox
 export { NumberBox } from './components/number-box/number-box'

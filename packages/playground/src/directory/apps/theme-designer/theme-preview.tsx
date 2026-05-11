@@ -48,7 +48,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Inactive Window */}
       <WindowProvider active={false} positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-3 left-13 w-68 min-w-0! min-h-0!">
+        <WindowFrame className="top-3 left-13 w-84 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Inactive Window</WindowTitle>
             <WindowButtons>
@@ -67,7 +67,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Active Window */}
       <WindowProvider active positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-9 left-14 w-68 min-w-0! min-h-0!">
+        <WindowFrame className="top-9 left-14 w-92 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Active Window</WindowTitle>
             <WindowButtons>
@@ -97,7 +97,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Message Box */}
       <WindowProvider active positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-24 left-18 w-48 min-w-0! min-h-0!">
+        <WindowFrame className="top-24 left-18 w-64 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Message Box</WindowTitle>
             <WindowButtons>

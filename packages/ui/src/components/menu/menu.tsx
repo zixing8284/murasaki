@@ -1,8 +1,9 @@
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
-import { useRovingFocus, useTypeahead } from '../../primitives'
+import { useDismissable, useLayer, useRovingFocus, useTypeahead } from '../../primitives'
 
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
@@ -235,5 +236,376 @@ export function MenuSeparator({ className, ref, ...props }: MenuSeparatorProps):
       className={cn(menuSeparatorVariants(), className)}
       {...props}
     />
+  )
+}
+
+// ─── MenuSub ──────────────────────────────────────────────────────────────────
+
+interface MenuSubContextValue {
+  open: boolean
+  setOpen: (open: boolean) => void
+  triggerRef: React.RefObject<HTMLLIElement | null>
+  contentRef: React.RefObject<HTMLElement | null>
+  /** Scheduled hover-close timer; cancelled when pointer re-enters trigger or content. */
+  scheduleClose: () => void
+  cancelClose: () => void
+  scheduleOpen: () => void
+  cancelOpen: () => void
+}
+
+const MenuSubContext = React.createContext<MenuSubContextValue | null>(null)
+
+export interface MenuSubProps {
+  children: React.ReactNode
+  /** Controlled open state. When omitted, the submenu manages its own state. */
+  open?: boolean
+  /** Called with the next open value when the user opens or closes the submenu. */
+  onOpenChange?: (open: boolean) => void
+  /** Pixel delay before hover opens the submenu. Defaults to 120ms. */
+  hoverOpenDelay?: number
+  /** Pixel delay before hover closes the submenu. Defaults to 200ms. */
+  hoverCloseDelay?: number
+}
+
+/**
+ * Root for a nested submenu. Pair with `<MenuSubTrigger>` (an item inside the
+ * parent `<Menu>`) and `<MenuSubContent>` (the portalled child menu).
+ */
+export function MenuSub({
+  children,
+  open: openProp,
+  onOpenChange,
+  hoverOpenDelay = 120,
+  hoverCloseDelay = 200,
+}: MenuSubProps): React.ReactElement {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
+  const isControlled = openProp !== undefined
+  const open = isControlled ? openProp : uncontrolledOpen
+
+  const triggerRef = React.useRef<HTMLLIElement | null>(null)
+  const contentRef = React.useRef<HTMLElement | null>(null)
+  const openTimerRef = React.useRef<number | null>(null)
+  const closeTimerRef = React.useRef<number | null>(null)
+
+  const setOpen = React.useCallback((next: boolean) => {
+    if (!isControlled)
+      setUncontrolledOpen(next)
+    onOpenChange?.(next)
+  }, [isControlled, onOpenChange])
+
+  const cancelOpen = React.useCallback(() => {
+    if (openTimerRef.current !== null) {
+      window.clearTimeout(openTimerRef.current)
+      openTimerRef.current = null
+    }
+  }, [])
+
+  const cancelClose = React.useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }, [])
+
+  const scheduleOpen = React.useCallback(() => {
+    cancelClose()
+    if (open || openTimerRef.current !== null)
+      return
+    openTimerRef.current = window.setTimeout(() => {
+      openTimerRef.current = null
+      setOpen(true)
+    }, hoverOpenDelay)
+  }, [open, hoverOpenDelay, setOpen, cancelClose])
+
+  const scheduleClose = React.useCallback(() => {
+    cancelOpen()
+    if (!open || closeTimerRef.current !== null)
+      return
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null
+      setOpen(false)
+    }, hoverCloseDelay)
+  }, [open, hoverCloseDelay, setOpen, cancelOpen])
+
+  React.useEffect(() => {
+    return () => {
+      if (openTimerRef.current !== null)
+        window.clearTimeout(openTimerRef.current)
+      if (closeTimerRef.current !== null)
+        window.clearTimeout(closeTimerRef.current)
+    }
+  }, [])
+
+  const value = React.useMemo<MenuSubContextValue>(() => ({
+    open,
+    setOpen,
+    triggerRef,
+    contentRef,
+    scheduleClose,
+    cancelClose,
+    scheduleOpen,
+    cancelOpen,
+  }), [open, setOpen, scheduleClose, cancelClose, scheduleOpen, cancelOpen])
+
+  return <MenuSubContext value={value}>{children}</MenuSubContext>
+}
+
+function useMenuSubContext(component: string): MenuSubContextValue {
+  const ctx = React.use(MenuSubContext)
+  if (!ctx)
+    throw new Error(`${component} must be used within a <MenuSub>`)
+  return ctx
+}
+
+// ─── MenuSubTrigger ───────────────────────────────────────────────────────────
+
+function MenuSubChevron({ className }: { className?: string }): React.ReactElement {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 4 7"
+      width="4"
+      height="7"
+      className={className}
+      shapeRendering="crispEdges"
+    >
+      <path d="M0 0h1v1h1v1h1v1h1v1h-1v1h-1v1h-1v1H0V6h1V5h1V4h1V3H2V2H1V1H0z" fill="currentColor" />
+    </svg>
+  )
+}
+
+export interface MenuSubTriggerProps extends Omit<React.ComponentProps<'li'>, 'onChange'> {
+  icon?: React.ReactNode
+  disabled?: boolean
+  /**
+   * When true, always reserve space for the icon column even when `icon` is
+   * `null` / `undefined`. Useful so submenu trigger labels stay aligned with
+   * sibling `<MenuItem>` rows that have icons.
+   */
+  reserveIconSpace?: boolean
+}
+
+export function MenuSubTrigger({
+  className,
+  icon,
+  disabled = false,
+  reserveIconSpace = false,
+  tabIndex,
+  children,
+  onClick,
+  onKeyDown,
+  onPointerEnter,
+  onPointerLeave,
+  ref,
+  ...props
+}: MenuSubTriggerProps): React.ReactElement {
+  const sub = useMenuSubContext('MenuSubTrigger')
+
+  const setTriggerRef = React.useCallback((node: HTMLLIElement | null) => {
+    sub.triggerRef.current = node
+    if (typeof ref === 'function')
+      ref(node)
+    else if (ref)
+      ref.current = node
+  }, [ref, sub.triggerRef])
+
+  const showIconSlot = icon != null || reserveIconSpace
+
+  const handleClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+    onClick?.(event)
+    if (event.defaultPrevented || disabled)
+      return
+    sub.cancelOpen()
+    sub.cancelClose()
+    sub.setOpen(!sub.open)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>): void => {
+    onKeyDown?.(event)
+    if (event.defaultPrevented || disabled)
+      return
+
+    if (event.key === 'ArrowRight' || event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      // Stop the event from reaching the parent <Menu> typeahead handler.
+      event.stopPropagation()
+      sub.cancelClose()
+      sub.cancelOpen()
+      sub.setOpen(true)
+    }
+    else if (event.key === 'ArrowLeft' && sub.open) {
+      event.preventDefault()
+      event.stopPropagation()
+      sub.cancelOpen()
+      sub.setOpen(false)
+    }
+  }
+
+  const handlePointerEnter = (event: React.PointerEvent<HTMLLIElement>): void => {
+    onPointerEnter?.(event)
+    if (disabled || event.pointerType === 'touch')
+      return
+    sub.scheduleOpen()
+  }
+
+  const handlePointerLeave = (event: React.PointerEvent<HTMLLIElement>): void => {
+    onPointerLeave?.(event)
+    if (disabled || event.pointerType === 'touch')
+      return
+    sub.cancelOpen()
+    if (sub.open)
+      sub.scheduleClose()
+  }
+
+  const chevronClass = sub.open
+    ? 'text-(--hilight-text)'
+    : 'text-(--menu-text) group-hover:text-(--hilight-text)'
+
+  return (
+    <li
+      ref={setTriggerRef}
+      role="menuitem"
+      aria-haspopup="menu"
+      aria-expanded={sub.open}
+      aria-disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
+      data-state={sub.open ? 'open' : 'closed'}
+      className={cn(
+        'group',
+        menuItemVariants({ disabled, selected: sub.open }),
+        className,
+      )}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      {...props}
+    >
+      {showIconSlot && <span className="w-4 h-4 shrink-0 flex items-center justify-center">{icon}</span>}
+      <span className="flex-1">{children}</span>
+      <MenuSubChevron className={cn('shrink-0', chevronClass)} />
+    </li>
+  )
+}
+
+// ─── MenuSubContent ───────────────────────────────────────────────────────────
+
+export interface MenuSubContentProps extends Omit<MenuProps, 'ref'> {
+  /** Pixel offset along the side axis. Defaults to -2 for a slight overlap (Win98 feel). */
+  sideOffset?: number
+  /** Estimated submenu width for first-paint flip calculations. Defaults to 180. */
+  estimatedWidth?: number
+  /** Estimated submenu height for first-paint flip calculations. Defaults to 200. */
+  estimatedHeight?: number
+}
+
+export function MenuSubContent({
+  className,
+  style,
+  onPointerEnter,
+  onPointerLeave,
+  onKeyDown,
+  sideOffset = -2,
+  estimatedWidth = 180,
+  estimatedHeight = 200,
+  children,
+  ...props
+}: MenuSubContentProps): React.ReactElement | null {
+  const sub = useMenuSubContext('MenuSubContent')
+
+  const menuRef = React.useRef<HTMLMenuElement | null>(null)
+  const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
+    menuRef.current = node
+    sub.contentRef.current = node
+  }, [sub.contentRef])
+
+  const position = useLayer({
+    anchorRef: sub.triggerRef,
+    layerRef: menuRef,
+    open: sub.open,
+    side: 'right',
+    align: 'start',
+    gap: sideOffset,
+    estimatedWidth,
+    estimatedHeight,
+  })
+
+  // Dismiss on Escape or outside pointerdown. Trigger + content are "inside".
+  const layerRefs = React.useMemo(
+    () => [menuRef, sub.triggerRef],
+    [sub.triggerRef],
+  )
+  useDismissable({
+    enabled: sub.open,
+    onDismiss: () => sub.setOpen(false),
+    outsidePointer: true,
+    layerRefs,
+  })
+
+  // Focus first enabled item when the submenu opens.
+  React.useLayoutEffect(() => {
+    if (!sub.open)
+      return
+    const menu = menuRef.current
+    if (!menu)
+      return
+    const first = menu.querySelector<HTMLElement>(
+      '[role="menuitem"]:not([aria-disabled="true"])',
+    )
+    first?.focus()
+  }, [sub.open])
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLMenuElement>): void => {
+    onKeyDown?.(event)
+    if (event.defaultPrevented)
+      return
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      event.stopPropagation()
+      sub.setOpen(false)
+      sub.triggerRef.current?.focus()
+    }
+  }
+
+  const handlePointerEnter = (event: React.PointerEvent<HTMLMenuElement>): void => {
+    onPointerEnter?.(event)
+    sub.cancelClose()
+  }
+
+  const handlePointerLeave = (event: React.PointerEvent<HTMLMenuElement>): void => {
+    onPointerLeave?.(event)
+    if (event.pointerType === 'touch')
+      return
+    sub.scheduleClose()
+  }
+
+  if (!sub.open)
+    return null
+
+  // Until `useLayer` computes a position (runs in rAF), render offscreen so
+  // the layer is still focusable but not visible at the wrong spot.
+  const positioned = position !== null
+  const layerStyle: React.CSSProperties = {
+    position: 'fixed',
+    left: positioned ? position.x : -9999,
+    top: positioned ? position.y : -9999,
+    zIndex: 9999,
+    ...style,
+  }
+
+  return createPortal(
+    <Menu
+      ref={setMenuRef}
+      className={cn('min-w-[var(--menu-sub-min-width,160px)]', className)}
+      style={layerStyle}
+      onKeyDown={handleKeyDown}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      {...props}
+    >
+      {children}
+    </Menu>,
+    document.body,
   )
 }

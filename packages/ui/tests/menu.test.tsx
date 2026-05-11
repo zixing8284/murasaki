@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { Menu, MenuItem, MenuSeparator } from '../src'
+import { Menu, MenuItem, MenuSeparator, MenuSub, MenuSubContent, MenuSubTrigger } from '../src'
 
 describe('menu', () => {
   async function renderMenu() {
@@ -100,5 +100,85 @@ describe('menu', () => {
     disabledItem.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
 
     expect(onDelete).not.toHaveBeenCalled()
+  })
+})
+
+describe('menu submenu', () => {
+  async function renderSubmenu() {
+    const onSubItem = vi.fn()
+    const screen = await render(
+      <Menu>
+        <MenuItem>Open</MenuItem>
+        <MenuSub hoverOpenDelay={20} hoverCloseDelay={20}>
+          <MenuSubTrigger>Programs</MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem onClick={onSubItem}>Notepad</MenuItem>
+            <MenuItem>Calculator</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+      </Menu>,
+    )
+    return { screen, onSubItem }
+  }
+
+  it('renders subtrigger with aria-haspopup and aria-expanded=false', async () => {
+    const { screen } = await renderSubmenu()
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+    expect(trigger.getAttribute('aria-haspopup')).toBe('menu')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('opens submenu on ArrowRight and focuses first item', async () => {
+    const { screen } = await renderSubmenu()
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    const notepad = screen.getByRole('menuitem', { name: 'Notepad' })
+    await expect.element(notepad).toBeInTheDocument()
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+    expect(document.activeElement).toBe(notepad.element())
+  })
+
+  it('closes submenu on ArrowLeft and returns focus to trigger', async () => {
+    const { screen } = await renderSubmenu()
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    await userEvent.keyboard('{ArrowLeft}')
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('closes submenu on Escape', async () => {
+    const { screen } = await renderSubmenu()
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    await userEvent.keyboard('{Escape}')
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('renders submenu content in a portal under document.body', async () => {
+    const { screen } = await renderSubmenu()
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    const notepad = screen.getByRole('menuitem', { name: 'Notepad' }).element() as HTMLElement
+    const parentMenu = trigger.closest('menu')
+    expect(parentMenu?.contains(notepad)).toBe(false)
+    expect(document.body.contains(notepad)).toBe(true)
+  })
+
+  it('invokes onClick handler for items inside the submenu', async () => {
+    const { screen, onSubItem } = await renderSubmenu()
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    const notepad = screen.getByRole('menuitem', { name: 'Notepad' }).element() as HTMLElement
+    notepad.click()
+    expect(onSubItem).toHaveBeenCalledOnce()
   })
 })

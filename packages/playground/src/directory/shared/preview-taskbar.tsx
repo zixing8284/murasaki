@@ -15,8 +15,14 @@ export function PreviewTaskbar({ startLabel = 'Start' }: PreviewTaskbarProps): R
       <Taskbar className="h-5.5">
         <Button
           tabIndex={-1}
-          className="h-4 min-h-0 min-w-0 px-1 py-0 leading-none"
+          className="inline-flex items-center gap-0.5 h-4 min-h-0 min-w-0 px-1 py-0 leading-none"
         >
+          <img
+            src="/icons/windows98-icons/ico/windows.ico"
+            alt=""
+            className="h-3 w-3 shrink-0"
+            aria-hidden="true"
+          />
           <span className="font-bold">{startLabel}</span>
         </Button>
         <div className="flex-1" />

@@ -5,7 +5,16 @@ export type LayerSide = 'top' | 'bottom' | 'left' | 'right'
 export type LayerAlign = 'start' | 'center' | 'end'
 
 export interface UseLayerOptions {
-  anchorRef: RefObject<Element | null>
+  /**
+   * Reference to the anchor element. Either this or `anchorRect` is required.
+   */
+  anchorRef?: RefObject<Element | null>
+  /**
+   * Virtual anchor: a function that returns a `DOMRect`-like rectangle to
+   * position against. Useful for pointer-anchored layers (e.g. context menus)
+   * where there is no real anchor element.
+   */
+  anchorRect?: () => DOMRect | null
   /** Optional layer element used for exact collision detection and ResizeObserver updates. */
   layerRef?: RefObject<Element | null>
   /** Whether the layer is currently visible. Position is only computed while open. */
@@ -25,6 +34,12 @@ export interface UseLayerOptions {
   estimatedHeight?: number
   /** Estimated layer width used for viewport flip before measurement. */
   estimatedWidth?: number
+  /**
+   * Optional element whose bounding rect is used as the collision boundary in
+   * place of the viewport. When omitted, falls back to `window.innerWidth` /
+   * `window.innerHeight`.
+   */
+  boundaryRef?: RefObject<Element | null> | undefined
 }
 
 export interface LayerPosition {
@@ -34,6 +49,15 @@ export interface LayerPosition {
   y: number
   /** Side actually used after viewport flipping. */
   side: LayerSide
+  /**
+   * Pixels of usable height available to the layer on the resolved side,
+   * after `collisionPadding`. Capped to the available space when the layer
+   * exceeds the boundary so consumers can apply `max-height` and engage
+   * internal scrolling.
+   */
+  availableHeight: number
+  /** Pixels of usable width available to the layer on the resolved side. */
+  availableWidth: number
 }
 
 const DEFAULT_GAP = 4
@@ -44,6 +68,15 @@ const DEFAULT_COLLISION_PADDING = 4
 interface LayerSize {
   height: number
   width: number
+}
+
+interface Boundary {
+  top: number
+  left: number
+  right: number
+  bottom: number
+  width: number
+  height: number
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -69,34 +102,59 @@ function getLayerSize(
   }
 }
 
+function getBoundary(boundaryRef: RefObject<Element | null> | undefined): Boundary {
+  const node = boundaryRef?.current
+  if (node) {
+    const rect = node.getBoundingClientRect()
+    return {
+      top: rect.top,
+      left: rect.left,
+      right: rect.right,
+      bottom: rect.bottom,
+      width: rect.width,
+      height: rect.height,
+    }
+  }
+  const width = window.innerWidth
+  const height = window.innerHeight
+  return { top: 0, left: 0, right: width, bottom: height, width, height }
+}
+
 function resolveSide({
   anchorRect,
+  boundary,
   collisionPadding,
   gap,
   side,
   size,
 }: {
   anchorRect: DOMRect
+  boundary: Boundary
   collisionPadding: number
   gap: number
   side: LayerSide
   size: LayerSize
 }): LayerSide {
-  if (side === 'top') {
-    return anchorRect.top - gap - size.height < collisionPadding ? 'bottom' : 'top'
+  if (side === 'top' || side === 'bottom') {
+    const topSpace = anchorRect.top - gap - boundary.top - collisionPadding
+    const bottomSpace = boundary.bottom - anchorRect.bottom - gap - collisionPadding
+    const preferred = side === 'top' ? topSpace : bottomSpace
+    if (preferred >= size.height)
+      return side
+    return topSpace > bottomSpace ? 'top' : 'bottom'
   }
-  if (side === 'bottom') {
-    return anchorRect.bottom + gap + size.height > window.innerHeight - collisionPadding ? 'top' : 'bottom'
-  }
-  if (side === 'left') {
-    return anchorRect.left - gap - size.width < collisionPadding ? 'right' : 'left'
-  }
-  return anchorRect.right + gap + size.width > window.innerWidth - collisionPadding ? 'left' : 'right'
+  const leftSpace = anchorRect.left - gap - boundary.left - collisionPadding
+  const rightSpace = boundary.right - anchorRect.right - gap - collisionPadding
+  const preferred = side === 'left' ? leftSpace : rightSpace
+  if (preferred >= size.width)
+    return side
+  return leftSpace > rightSpace ? 'left' : 'right'
 }
 
 function getAlignedPosition({
   align,
   anchorRect,
+  boundary,
   collisionPadding,
   gap,
   side,
@@ -104,6 +162,7 @@ function getAlignedPosition({
 }: {
   align: LayerAlign
   anchorRect: DOMRect
+  boundary: Boundary
   collisionPadding: number
   gap: number
   side: LayerSide
@@ -111,29 +170,73 @@ function getAlignedPosition({
 }): LayerPosition {
   let x: number
   let y: number
+  let availableHeight: number
+  let availableWidth: number
 
   if (side === 'top' || side === 'bottom') {
-    y = side === 'top' ? anchorRect.top - gap - size.height : anchorRect.bottom + gap
+    // Side axis = vertical; cap availableHeight to space on the resolved side.
+    if (side === 'top') {
+      const space = anchorRect.top - gap - boundary.top - collisionPadding
+      availableHeight = Math.max(0, Math.min(size.height, space))
+      y = anchorRect.top - gap - availableHeight
+    }
+    else {
+      const space = boundary.bottom - anchorRect.bottom - gap - collisionPadding
+      availableHeight = Math.max(0, Math.min(size.height, space))
+      y = anchorRect.bottom + gap
+    }
+
+    // Cross axis = horizontal; clamp inside boundary.
     if (align === 'start')
       x = anchorRect.left
     else if (align === 'end')
       x = anchorRect.right - size.width
     else
       x = anchorRect.left + anchorRect.width / 2 - size.width / 2
-    x = clamp(x, collisionPadding, window.innerWidth - collisionPadding - size.width)
+
+    const minX = boundary.left + collisionPadding
+    const maxX = boundary.right - collisionPadding - size.width
+    if (maxX < minX) {
+      x = minX
+      availableWidth = Math.max(0, boundary.width - 2 * collisionPadding)
+    }
+    else {
+      x = clamp(x, minX, maxX)
+      availableWidth = size.width
+    }
   }
   else {
-    x = side === 'left' ? anchorRect.left - gap - size.width : anchorRect.right + gap
+    if (side === 'left') {
+      const space = anchorRect.left - gap - boundary.left - collisionPadding
+      availableWidth = Math.max(0, Math.min(size.width, space))
+      x = anchorRect.left - gap - availableWidth
+    }
+    else {
+      const space = boundary.right - anchorRect.right - gap - collisionPadding
+      availableWidth = Math.max(0, Math.min(size.width, space))
+      x = anchorRect.right + gap
+    }
+
     if (align === 'start')
       y = anchorRect.top
     else if (align === 'end')
       y = anchorRect.bottom - size.height
     else
       y = anchorRect.top + anchorRect.height / 2 - size.height / 2
-    y = clamp(y, collisionPadding, window.innerHeight - collisionPadding - size.height)
+
+    const minY = boundary.top + collisionPadding
+    const maxY = boundary.bottom - collisionPadding - size.height
+    if (maxY < minY) {
+      y = minY
+      availableHeight = Math.max(0, boundary.height - 2 * collisionPadding)
+    }
+    else {
+      y = clamp(y, minY, maxY)
+      availableHeight = size.height
+    }
   }
 
-  return { x, y, side }
+  return { x, y, side, availableHeight, availableWidth }
 }
 
 /**
@@ -142,12 +245,15 @@ function getAlignedPosition({
  * Scope:
  * - Sides: top | bottom | left | right
  * - Alignment: start | center | end
- * - Viewport flip and collision-aware cross-axis shifts
+ * - Viewport (or `boundaryRef`) flip and collision-aware cross-axis shifts
+ * - Reports `availableHeight` / `availableWidth` on the resolved side so
+ *   consumers can apply `max-height` and engage internal scrolling
  * - Optional exact layer measurement via `layerRef` and ResizeObserver
  * - Recomputes on `scroll` (capture) and `resize` while open
  */
 export function useLayer({
   anchorRef,
+  anchorRect: anchorRectFn,
   layerRef,
   open,
   side = 'top',
@@ -156,15 +262,26 @@ export function useLayer({
   collisionPadding = DEFAULT_COLLISION_PADDING,
   estimatedHeight = DEFAULT_ESTIMATED_HEIGHT,
   estimatedWidth = DEFAULT_ESTIMATED_WIDTH,
+  boundaryRef,
 }: UseLayerOptions): LayerPosition | null {
   const [position, setPosition] = useState<LayerPosition | null>(null)
+
+  useLayoutEffect(() => {
+    if (open)
+      return
+
+    const frameId = window.requestAnimationFrame(() => {
+      setPosition(null)
+    })
+
+    return () => window.cancelAnimationFrame(frameId)
+  }, [open])
 
   useLayoutEffect(() => {
     if (!open)
       return
 
-    const anchor = anchorRef.current
-    if (!anchor)
+    if (!anchorRef?.current && !anchorRectFn)
       return
 
     const resizeObserver = typeof ResizeObserver !== 'undefined'
@@ -184,16 +301,24 @@ export function useLayer({
     }
 
     function compute(): void {
-      const node = anchorRef.current
-      if (!node)
+      let anchorRect: DOMRect | null = null
+      const node = anchorRef?.current
+      if (node) {
+        anchorRect = node.getBoundingClientRect()
+      }
+      else if (anchorRectFn) {
+        anchorRect = anchorRectFn()
+      }
+      if (!anchorRect)
         return
       observeLayer()
-      const anchorRect = node.getBoundingClientRect()
       const size = getLayerSize(layerRef, estimatedHeight, estimatedWidth)
-      const resolvedSide = resolveSide({ anchorRect, collisionPadding, gap, side, size })
+      const boundary = getBoundary(boundaryRef)
+      const resolvedSide = resolveSide({ anchorRect, boundary, collisionPadding, gap, side, size })
       setPosition(getAlignedPosition({
         align,
         anchorRect,
+        boundary,
         collisionPadding,
         gap,
         side: resolvedSide,
@@ -201,7 +326,10 @@ export function useLayer({
       }))
     }
 
-    const frameIds = [
+    // Schedule the first compute outside the effect's synchronous body so
+    // React does not receive a layout-effect state update, then refine once
+    // more after intrinsic sizing has settled.
+    const frameIds: number[] = [
       window.requestAnimationFrame(() => {
         compute()
         frameIds.push(window.requestAnimationFrame(compute))
@@ -216,7 +344,7 @@ export function useLayer({
       window.removeEventListener('scroll', compute, true)
       window.removeEventListener('resize', compute)
     }
-  }, [anchorRef, layerRef, open, side, align, gap, collisionPadding, estimatedHeight, estimatedWidth])
+  }, [anchorRef, anchorRectFn, layerRef, open, side, align, gap, collisionPadding, estimatedHeight, estimatedWidth, boundaryRef])
 
   return open ? position : null
 }

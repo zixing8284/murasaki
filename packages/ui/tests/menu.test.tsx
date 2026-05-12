@@ -1,7 +1,39 @@
+import * as React from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
 import { Menu, MenuItem, MenuSeparator, MenuSub, MenuSubContent, MenuSubTrigger } from '../src'
+
+const MANY_ITEMS = Array.from({ length: 36 }, (_, index) => `Item ${index + 1}`)
+
+function getScrollList(menu: HTMLElement): HTMLElement {
+  const list = menu.querySelector<HTMLElement>('[data-menu-scroll-list]')
+  if (!list)
+    throw new Error('Expected overflow-enabled menu list')
+  return list
+}
+
+function BoundarySubmenu(): React.ReactElement {
+  const boundaryRef = React.useRef<HTMLDivElement>(null)
+
+  return (
+    <div
+      ref={boundaryRef}
+      data-testid="submenu-boundary"
+      style={{ position: 'fixed', left: 80, top: 80, width: 180, height: 140 }}
+    >
+      <Menu style={{ position: 'absolute', right: 4, bottom: 4 }}>
+        <MenuSub>
+          <MenuSubTrigger>More</MenuSubTrigger>
+          <MenuSubContent boundaryRef={boundaryRef} estimatedWidth={180} estimatedHeight={120}>
+            <MenuItem>Child</MenuItem>
+            <MenuItem>Properties</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+      </Menu>
+    </div>
+  )
+}
 
 describe('menu', () => {
   async function renderMenu() {
@@ -101,6 +133,51 @@ describe('menu', () => {
 
     expect(onDelete).not.toHaveBeenCalled()
   })
+
+  it('shows scroll arrows for max-height menus and steps by one row', async () => {
+    const screen = await render(
+      <Menu maxHeight={96}>
+        {MANY_ITEMS.map(item => <MenuItem key={item}>{item}</MenuItem>)}
+      </Menu>,
+    )
+    const menu = screen.getByRole('menu').element() as HTMLElement
+    const list = getScrollList(menu)
+
+    await vi.waitFor(() => {
+      expect(menu.querySelector('[data-menu-scroll="down"]')).not.toBeNull()
+    })
+    expect(menu.querySelector('[data-menu-scroll="up"]')).toBeNull()
+    expect(menu.querySelectorAll('[role="menuitem"]')).toHaveLength(MANY_ITEMS.length)
+
+    const downArrow = menu.querySelector('[data-menu-scroll="down"]') as HTMLElement
+    downArrow.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'mouse' }))
+    downArrow.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true, pointerType: 'mouse' }))
+
+    await vi.waitFor(() => {
+      expect(list.scrollTop).toBeGreaterThan(0)
+      expect(menu.querySelector('[data-menu-scroll="up"]')).not.toBeNull()
+    })
+  })
+
+  it('scrolls the focused item into view during keyboard navigation', async () => {
+    const screen = await render(
+      <Menu maxHeight={96}>
+        {MANY_ITEMS.map(item => <MenuItem key={item}>{item}</MenuItem>)}
+      </Menu>,
+    )
+    const menu = screen.getByRole('menu').element() as HTMLElement
+    const list = getScrollList(menu)
+    const firstItem = screen.getByRole('menuitem', { name: 'Item 1', exact: true }).element() as HTMLElement
+    const lastItem = screen.getByRole('menuitem', { name: 'Item 36', exact: true }).element() as HTMLElement
+
+    firstItem.focus()
+    await userEvent.keyboard('{End}')
+
+    expect(document.activeElement).toBe(lastItem)
+    await vi.waitFor(() => {
+      expect(list.scrollTop).toBeGreaterThan(0)
+    })
+  })
 })
 
 describe('menu submenu', () => {
@@ -180,5 +257,78 @@ describe('menu submenu', () => {
     const notepad = screen.getByRole('menuitem', { name: 'Notepad' }).element() as HTMLElement
     notepad.click()
     expect(onSubItem).toHaveBeenCalledOnce()
+  })
+
+  it('flips submenu content away from the right viewport edge', async () => {
+    const screen = await render(
+      <Menu style={{ position: 'fixed', left: window.innerWidth - 72, top: 20 }}>
+        <MenuSub>
+          <MenuSubTrigger>Programs</MenuSubTrigger>
+          <MenuSubContent estimatedWidth={180}>
+            <MenuItem>Child</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+      </Menu>,
+    )
+    const trigger = screen.getByRole('menuitem', { name: /Programs/ }).element() as HTMLElement
+
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    const child = screen.getByRole('menuitem', { name: 'Child' }).element() as HTMLElement
+    const submenu = child.closest('menu') as HTMLElement
+    const triggerRect = trigger.getBoundingClientRect()
+
+    await vi.waitFor(() => {
+      const submenuRect = submenu.getBoundingClientRect()
+      expect(submenuRect.left).toBeLessThan(triggerRect.left)
+      expect(submenuRect.right).toBeLessThanOrEqual(window.innerWidth + 0.5)
+    })
+  })
+
+  it('clamps submenu content to a provided boundary', async () => {
+    const screen = await render(<BoundarySubmenu />)
+    const boundary = screen.getByTestId('submenu-boundary').element() as HTMLElement
+    const trigger = screen.getByRole('menuitem', { name: /More/ }).element() as HTMLElement
+
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    const child = screen.getByRole('menuitem', { name: 'Child' }).element() as HTMLElement
+    const submenu = child.closest('menu') as HTMLElement
+    const boundaryRect = boundary.getBoundingClientRect()
+
+    await vi.waitFor(() => {
+      const submenuRect = submenu.getBoundingClientRect()
+      expect(submenuRect.right).toBeLessThanOrEqual(boundaryRect.right + 0.5)
+      expect(submenuRect.bottom).toBeLessThanOrEqual(boundaryRect.bottom + 0.5)
+      expect(submenuRect.left).toBeGreaterThanOrEqual(boundaryRect.left - 0.5)
+      expect(submenuRect.top).toBeGreaterThanOrEqual(boundaryRect.top - 0.5)
+    })
+  })
+
+  it('caps tall submenu content and shows scroll arrows', async () => {
+    const screen = await render(
+      <Menu style={{ position: 'fixed', left: 12, top: 12 }}>
+        <MenuSub>
+          <MenuSubTrigger>Accessories</MenuSubTrigger>
+          <MenuSubContent estimatedHeight={900}>
+            {MANY_ITEMS.map(item => <MenuItem key={item}>{item}</MenuItem>)}
+          </MenuSubContent>
+        </MenuSub>
+      </Menu>,
+    )
+    const trigger = screen.getByRole('menuitem', { name: /Accessories/ }).element() as HTMLElement
+
+    trigger.focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    const submenuItem = screen.getByRole('menuitem', { name: 'Item 1', exact: true }).element() as HTMLElement
+    const submenu = submenuItem.closest('menu') as HTMLElement
+
+    await vi.waitFor(() => {
+      expect(submenu.querySelector('[data-menu-scroll="down"]')).not.toBeNull()
+    })
+    expect(submenu.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight + 0.5)
   })
 })

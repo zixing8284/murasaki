@@ -4,6 +4,7 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
 import { useDismissable, useLayer, useRovingFocus, useTypeahead } from '../../primitives'
+import { MenuScrollArrow, useMenuOverflow } from './menu-scroll'
 
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
@@ -18,7 +19,15 @@ const menuVariants = cva([
   'm-0',
 ])
 
-export interface MenuProps extends React.ComponentProps<'menu'> {}
+export interface MenuProps extends React.ComponentProps<'menu'> {
+  /**
+   * When set, the menu engages a vertical max-height with Win98-style
+   * up/down scroll-arrow steppers at the top and bottom edges. Items
+   * outside the visible window are clipped and reached via the arrows
+   * or keyboard navigation (focus auto-scrolls into view).
+   */
+  maxHeight?: number | undefined
+}
 
 const MENU_ITEM_SELECTOR = '[role="menuitem"]'
 
@@ -45,11 +54,16 @@ function isTypingTarget(target: EventTarget | null): boolean {
 
 export function Menu({
   className,
+  style,
   onKeyDown,
+  maxHeight,
+  children,
   ref,
   ...props
 }: MenuProps): React.ReactElement {
   const menuRef = React.useRef<HTMLMenuElement | null>(null)
+  const overflowListRef = React.useRef<HTMLDivElement | null>(null)
+  const wasMaxHeightRef = React.useRef(false)
 
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
     menuRef.current = node
@@ -98,6 +112,17 @@ export function Menu({
     if (event.defaultPrevented)
       return
 
+    // Auto-scroll the focused item into view as roving focus moves; harmless
+    // when the menu isn't overflowing.
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
+      window.requestAnimationFrame(() => {
+        const active = document.activeElement
+        if (active instanceof HTMLElement && menuRef.current?.contains(active)) {
+          active.scrollIntoView({ block: 'nearest' })
+        }
+      })
+    }
+
     if (event.key.length !== 1 || event.altKey || event.ctrlKey || event.metaKey)
       return
 
@@ -107,14 +132,51 @@ export function Menu({
     typeahead.onChar(event.key)
   }
 
+  const hasMaxHeight = typeof maxHeight === 'number' && Number.isFinite(maxHeight)
+  const { canScrollUp, canScrollDown, scrollByStep } = useMenuOverflow(overflowListRef, hasMaxHeight)
+  const menuStyle = hasMaxHeight
+    ? { ...style, maxHeight }
+    : style
+
+  React.useLayoutEffect(() => {
+    if (hasMaxHeight && !wasMaxHeightRef.current) {
+      overflowListRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+    }
+    wasMaxHeightRef.current = hasMaxHeight
+  }, [hasMaxHeight])
+
   return (
     <menu
       ref={setMenuRef}
       role="menu"
-      className={cn(menuVariants(), className)}
+      className={cn(menuVariants(), hasMaxHeight && 'overflow-hidden', className)}
+      style={menuStyle}
       onKeyDown={handleKeyDown}
       {...props}
-    />
+    >
+      {hasMaxHeight && canScrollUp && (
+        <MenuScrollArrow direction="up" onStep={() => scrollByStep(-1)} />
+      )}
+      <div
+        ref={overflowListRef}
+        role="presentation"
+        data-menu-scroll-list={hasMaxHeight ? '' : undefined}
+        className={cn(
+          'flex flex-col items-stretch list-none m-0 p-0 min-h-0',
+          hasMaxHeight && [
+            'flex-1 overflow-y-auto overflow-x-hidden',
+            '[scroll-snap-type:y_mandatory]',
+            '[&>[role=menuitem]]:[scroll-snap-align:start]',
+            '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          ],
+        )}
+      >
+        {children}
+      </div>
+      {hasMaxHeight && canScrollDown && (
+        <MenuScrollArrow direction="down" onStep={() => scrollByStep(1)} />
+      )}
+    </menu>
   )
 }
 
@@ -498,6 +560,8 @@ export interface MenuSubContentProps extends Omit<MenuProps, 'ref'> {
   estimatedWidth?: number
   /** Estimated submenu height for first-paint flip calculations. Defaults to 200. */
   estimatedHeight?: number
+  /** Optional collision boundary for submenu positioning. Defaults to the viewport. */
+  boundaryRef?: React.RefObject<Element | null>
 }
 
 export function MenuSubContent({
@@ -509,6 +573,8 @@ export function MenuSubContent({
   sideOffset = -2,
   estimatedWidth = 180,
   estimatedHeight = 200,
+  boundaryRef,
+  maxHeight: maxHeightProp,
   children,
   ...props
 }: MenuSubContentProps): React.ReactElement | null {
@@ -529,6 +595,7 @@ export function MenuSubContent({
     gap: sideOffset,
     estimatedWidth,
     estimatedHeight,
+    boundaryRef,
   })
 
   // Dismiss on Escape or outside pointerdown. Trigger + content are "inside".
@@ -586,6 +653,9 @@ export function MenuSubContent({
   // Until `useLayer` computes a position (runs in rAF), render offscreen so
   // the layer is still focusable but not visible at the wrong spot.
   const positioned = position !== null
+  const resolvedMaxHeight = position
+    ? Math.min(maxHeightProp ?? position.availableHeight, position.availableHeight)
+    : maxHeightProp
   const layerStyle: React.CSSProperties = {
     position: 'fixed',
     left: positioned ? position.x : -9999,
@@ -599,6 +669,7 @@ export function MenuSubContent({
       ref={setMenuRef}
       className={cn('min-w-[var(--menu-sub-min-width,160px)]', className)}
       style={layerStyle}
+      maxHeight={resolvedMaxHeight}
       onKeyDown={handleKeyDown}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}

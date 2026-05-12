@@ -1,5 +1,6 @@
 import type { AppId } from '../contexts/process'
 import { appDirectory, DEFAULT_ICON } from '../contexts/process'
+import { assetPath } from '../lib/asset-path'
 
 const sizeClass = {
   sm: 'w-4 h-4',
@@ -19,7 +20,7 @@ export function AppIcon({ appId, size, className }: AppIconProps): React.ReactEl
 
   return (
     <img
-      src={src}
+      src={assetPath(src)}
       alt=""
       className={`${sizeClass[size]} pixelated shrink-0${className ? ` ${className}` : ''}`}
       draggable={false}

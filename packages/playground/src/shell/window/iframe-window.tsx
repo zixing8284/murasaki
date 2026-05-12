@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process'
+import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
 import { RndWindow } from './rnd-window'
 
@@ -96,7 +97,7 @@ export function IframeWindow({
         )}
         <iframe
           ref={iframeRef}
-          src={src}
+          src={assetPath(src)}
           sandbox={sandbox}
           referrerPolicy={referrerPolicy}
           className={`w-full h-full border-none block ${isInteracting ? 'pointer-events-none' : ''}`}

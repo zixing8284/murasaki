@@ -12,6 +12,7 @@ import {
   WindowTitleBar,
 } from '@murasaki/react98'
 import { useMemo } from 'react'
+import { assetPath } from '../../../lib/asset-path'
 import { PreviewTaskbar } from '../../shared/preview-taskbar'
 
 interface DesignerPreviewProps {
@@ -36,7 +37,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
       {/* Desktop icon */}
       <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">
         <img
-          src="/img/desktop/RecyclingBin.png"
+          src={assetPath('/img/desktop/RecyclingBin.png')}
           alt="Trash"
           className="w-8 h-8 pixelated"
           draggable={false}

@@ -14,6 +14,7 @@ import {
   WindowTitleBar,
 } from '@murasaki/react98'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
+import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'
 
 export interface BaseWindowProps {
@@ -66,7 +67,7 @@ export function BaseWindow({
   const { process: proc, isActive, zIndex } = win
 
   const defaultIcon = proc.icon
-    ? <img src={proc.icon.sm} alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
+    ? <img src={assetPath(proc.icon.sm)} alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
     : <AppIcon appId={proc.appId} size="sm" />
 
   return (

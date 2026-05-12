@@ -1,6 +1,7 @@
 import type { JSX } from 'react'
+import { assetPath } from '../../../../lib/asset-path'
 
-const EMPTY_STATE_ICON_SRC = '/img/media-player/mediaplayer-bg.png'
+const EMPTY_STATE_ICON_SRC = assetPath('/img/media-player/mediaplayer-bg.png')
 const EMPTY_CAPTIONS_TRACK_SRC = 'data:text/vtt;charset=utf-8,WEBVTT%0A%0A'
 
 interface MediaDisplayProps {

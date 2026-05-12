@@ -4,12 +4,17 @@ import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/deskto
 import { APP_ID, useProcessActions } from '../contexts/process'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
+import { assetPath } from '../lib/asset-path'
 import { Desktop } from './desktop/desktop'
 import { StartMenu } from './start-menu/start-menu'
 import { Taskbar } from './taskbar/taskbar'
 import { WindowRenderer } from './window/renderer'
 
 const DEFAULT_STARTUP_APPS = [APP_ID.MY_COMPUTER, APP_ID.DOCS] as const
+
+const ANIMSPACE_BACKGROUND_STYLE: React.CSSProperties = {
+  backgroundImage: `url('${assetPath('/img/animspace.gif')}')`,
+}
 
 function hasFilePayload(dataTransfer: DataTransfer | null): boolean {
   if (!dataTransfer) {
@@ -112,7 +117,10 @@ export function Shell(): React.ReactElement {
   }, [importFiles])
 
   return (
-    <div className={`h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-(--hilight) selection:text-(--hilight-text) bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed ${crtEnabled ? 'scanline-overlay' : ''} ${gradientEnabled ? '' : 'no-gradient-titlebar'}`}>
+    <div
+      className={`h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-(--hilight) selection:text-(--hilight-text) bg-size-[initial] bg-repeat bg-center bg-fixed ${crtEnabled ? 'scanline-overlay' : ''} ${gradientEnabled ? '' : 'no-gradient-titlebar'}`}
+      style={ANIMSPACE_BACKGROUND_STYLE}
+    >
       <div ref={screenRef} className="relative flex h-full min-h-0 w-full flex-col">
         {/* Desktop Area */}
         <div className="flex-1 overflow-hidden relative">

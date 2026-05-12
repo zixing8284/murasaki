@@ -1,17 +1,27 @@
 import type { Connect, Plugin } from 'vite'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, resolve, sep } from 'node:path'
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-const docsRequestPrefix = '/programs/docs'
+// Subpath prefix used by GitHub Pages (e.g. `/murasaki`). Local dev/build
+// stays at `/` unless `DEPLOY_BASE_PATH` is set. Always normalize to a
+// trailing slash so `import.meta.env.BASE_URL` follows Vite's contract.
+const deployBasePath = process.env.DEPLOY_BASE_PATH ?? ''
+const base = deployBasePath
+  ? `${deployBasePath.replace(/\/+$/, '')}/`
+  : '/'
+
+const docsRequestPrefix = `${base.replace(/\/$/, '')}/programs/docs`
 const playgroundRoot = dirname(fileURLToPath(import.meta.url))
 const embeddedDocsRoot = resolve(playgroundRoot, 'public/programs/docs')
 
 export default defineConfig({
   root: '.',
+  base,
   plugins: [
     react({
       include: /\.(jsx|js|tsx|ts)$/,

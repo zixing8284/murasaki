@@ -4,6 +4,7 @@ import {
   TaskbarNotificationArea,
   TaskbarSystemClock,
 } from '@murasaki/react98'
+import { assetPath } from '../../lib/asset-path'
 
 interface PreviewTaskbarProps {
   startLabel?: string
@@ -18,7 +19,7 @@ export function PreviewTaskbar({ startLabel = 'Start' }: PreviewTaskbarProps): R
           className="inline-flex items-center gap-0.5 h-4 min-h-0 min-w-0 px-1 py-0 leading-none"
         >
           <img
-            src="/icons/windows98-icons/ico/windows.ico"
+            src={assetPath('/icons/windows98-icons/ico/windows.ico')}
             alt=""
             className="h-3 w-3 shrink-0"
             aria-hidden="true"

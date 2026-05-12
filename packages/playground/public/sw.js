@@ -2,6 +2,11 @@
 
 const CACHE_VERSION = 'jspaint-v22'
 
+// Derive the `programs/` prefix from the worker's registration scope so the
+// service worker cache rule works whether the app is served at `/` or under
+// a subpath like `/murasaki/` (GitHub Pages).
+const PROGRAMS_PREFIX = new URL('programs/', self.registration.scope).pathname
+
 self.addEventListener('install', () => {
   self.skipWaiting()
 })
@@ -21,8 +26,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
 
-  // Only cache resources under /programs/
-  if (!url.pathname.startsWith('/programs/')) {
+  // Only cache resources under `<base>/programs/`
+  if (!url.pathname.startsWith(PROGRAMS_PREFIX)) {
     return
   }
 

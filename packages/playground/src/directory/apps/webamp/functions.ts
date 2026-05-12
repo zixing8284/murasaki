@@ -11,6 +11,8 @@
  * cluster bounds clamp daedalOS does not need — see `webamp-bounds.ts`).
  */
 
+import { assetPath } from '../../../lib/asset-path'
+
 // ---------------------------------------------------------------------------
 // Webamp public + private surface we rely on.
 // `_actionEmitter` is technically internal but stable across versions and
@@ -116,10 +118,10 @@ declare global {
 // Constants
 // ---------------------------------------------------------------------------
 
-export const WEBAMP_SCRIPT_SRC = '/programs/webamp/webamp.bundle.min.js'
-export const WEBAMP_BUTTERCHURN_MODULE_SRC = '/programs/webamp/webamp.butterchurn-bundle.min.mjs'
-export const BUTTERCHURN_SCRIPT_SRC = '/programs/webamp/butterchurn.min.js'
-export const BUTTERCHURN_PRESETS_SCRIPT_SRC = '/programs/webamp/butterchurn-presets.min.js'
+export const WEBAMP_SCRIPT_SRC = assetPath('/programs/webamp/webamp.bundle.min.js')
+export const WEBAMP_BUTTERCHURN_MODULE_SRC = assetPath('/programs/webamp/webamp.butterchurn-bundle.min.mjs')
+export const BUTTERCHURN_SCRIPT_SRC = assetPath('/programs/webamp/butterchurn.min.js')
+export const BUTTERCHURN_PRESETS_SCRIPT_SRC = assetPath('/programs/webamp/butterchurn-presets.min.js')
 
 export const MAIN_WINDOW_SELECTOR = '#main-window'
 export const PLAYLIST_WINDOW_SELECTOR = '#playlist-window'

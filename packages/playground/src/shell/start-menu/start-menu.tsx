@@ -10,6 +10,7 @@ import {
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { APP_ID } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
+import { assetPath } from '../../lib/asset-path'
 
 interface StartMenuProps {
   onClose: () => void
@@ -31,7 +32,7 @@ interface StartIconProps {
 function StartIcon({ src }: StartIconProps): React.ReactElement {
   return (
     <img
-      src={src}
+      src={assetPath(src)}
       alt=""
       className="w-4 h-4 pixelated"
       draggable={false}

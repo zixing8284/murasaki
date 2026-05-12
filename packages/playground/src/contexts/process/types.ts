@@ -24,6 +24,8 @@ export interface ProcessWindowPosition {
 }
 
 export interface ProcessBaseWindowConfig {
+  /** Class applied to the framework-owned WindowContent wrapper */
+  contentClassName?: string
   className?: string
   disableMaximize?: boolean
   disableMinimize?: boolean

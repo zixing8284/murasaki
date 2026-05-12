@@ -1,6 +1,7 @@
 import { SelectBasicDemo } from './select/select-basic'
 import { SelectNativeDemo } from './select/select-native'
 import { SelectScrollableDemo } from './select/select-scrollable'
+import { SelectEdgeTestDemo } from './select/select-edge-test'
 
 # Select
 
@@ -14,7 +15,7 @@ The `Select` component renders a Windows 98 styled custom select with a trigger 
 | `options` | `SelectOption[]` | - | Options with `value` and optional `label`. |
 | `value` | `T` | - | Controlled selected value. |
 | `defaultValue` | `T` | - | Initial selected value for uncontrolled usage. |
-| `onChange` | `(option) => void` | - | Selection change callback. |
+| `onValueChange` | `(value, option) => void` | - | Selection value change callback. |
 | `label` | `string` | - | Optional visible label. |
 | `disabled` | `boolean` | `false` | Disables the select. |
 | `menuMaxHeight` | `number \| string` | - | Maximum height of the custom option list. |
@@ -34,6 +35,10 @@ The `Select` component renders a Windows 98 styled custom select with a trigger 
 <ComponentExample name="select-scrollable" title="Scrollable options"
   previewClassName="m98-example__preview--select">
   <SelectScrollableDemo />
+</ComponentExample>
+
+<ComponentExample name="select-edge-test" title="Viewport edge detection">
+  <SelectEdgeTestDemo />
 </ComponentExample>
 
 ## ARIA

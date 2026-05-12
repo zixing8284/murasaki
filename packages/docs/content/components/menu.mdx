@@ -1,8 +1,11 @@
 import { MenuBasicDemo } from './menu/menu-basic'
+import { MenuSubmenuDemo } from './menu/menu-submenu'
+import { MenuScrollArrowsDemo } from './menu/menu-scroll-arrows'
+import { MenuEdgeTestDemo } from './menu/menu-edge-test'
 
 # Menu
 
-`Menu` renders a raised Windows 98 command menu. Use `MenuItem` for actions and `MenuSeparator` for grouped commands.
+`Menu` renders a raised Windows 98 command menu. Use `MenuItem` for actions and `MenuSeparator` for grouped commands. For nested commands, wrap a trigger and content pair in `MenuSub` to get a side-expanding submenu.
 
 ## Props
 
@@ -11,6 +14,9 @@ import { MenuBasicDemo } from './menu/menu-basic'
 | `Menu` | HTML `menu` props | Root command list with `role="menu"`. |
 | `MenuItem` | `icon`, `disabled`, `selected`, `reserveIconSpace` | Interactive or disabled menu row. |
 | `MenuSeparator` | HTML `li` props | Horizontal divider between command groups. |
+| `MenuSub` | `open`, `onOpenChange`, `hoverOpenDelay`, `hoverCloseDelay` | Owns submenu open state and hover timers. |
+| `MenuSubTrigger` | `icon`, `disabled`, `reserveIconSpace` | Menu row that opens a submenu, with a built-in right-side chevron. |
+| `MenuSubContent` | `sideOffset`, plus `Menu` props | Portal-rendered submenu positioned to the right of the trigger, flipping to the left at the viewport edge. |
 
 ## Examples
 
@@ -18,14 +24,26 @@ import { MenuBasicDemo } from './menu/menu-basic'
   <MenuBasicDemo />
 </ComponentExample>
 
+<ComponentExample name="menu-submenu" title="Submenus">
+  <MenuSubmenuDemo />
+</ComponentExample>
+
+<ComponentExample name="menu-scroll-arrows" title="Scroll-arrow steppers">
+  <MenuScrollArrowsDemo />
+</ComponentExample>
+
+<ComponentExample name="menu-edge-test" title="Viewport edge detection">
+  <MenuEdgeTestDemo />
+</ComponentExample>
+
 ## ARIA
 
-Menu uses `role="menu"`; each item uses `role="menuitem"`, and disabled items expose `aria-disabled`. Enabled menu items are focusable and skip disabled rows during roving navigation.
+Menu uses `role="menu"`; each item uses `role="menuitem"`, and disabled items expose `aria-disabled`. `MenuSubTrigger` adds `aria-haspopup="menu"` and toggles `aria-expanded` as the submenu opens. Enabled menu items are focusable and skip disabled rows during roving navigation.
 
 ## Keyboard
 
-ArrowUp and ArrowDown move focus between enabled menu items and wrap at the ends. Home and End move to the first and last enabled item. Typing printable characters moves focus to the next enabled item whose text starts with the typed buffer. Enter and Space activate the focused menu item.
+ArrowUp and ArrowDown move focus between enabled menu items and wrap at the ends. Home and End move to the first and last enabled item. Typing printable characters moves focus to the next enabled item whose text starts with the typed buffer. Enter and Space activate the focused menu item. On a `MenuSubTrigger`, ArrowRight (or Enter / Space) opens the submenu and focuses the first enabled item; inside `MenuSubContent`, ArrowLeft closes the submenu and returns focus to the trigger. Escape dismisses the innermost open submenu.
 
 ## SSR
 
-Keep `selected`, `disabled`, and icon content stable between server and client so focusable menu items hydrate with the same order and labels.
+Keep `selected`, `disabled`, and icon content stable between server and client so focusable menu items hydrate with the same order and labels. `MenuSubContent` portals to `document.body` on mount, so it renders client-side only.

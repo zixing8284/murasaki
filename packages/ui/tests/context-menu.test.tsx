@@ -11,6 +11,8 @@ import {
   useContextMenu,
 } from '../src'
 
+const MANY_ITEMS = Array.from({ length: 80 }, (_, index) => `Item ${index + 1}`)
+
 function AutoOpenMenu({ testId, x }: { testId: string, x: number }): React.ReactElement {
   const { openAt } = useContextMenu()
 
@@ -43,6 +45,40 @@ function renderBasic(onOpen = vi.fn()): ReturnType<typeof render> {
       </ContextMenu>
       <button type="button">outside</button>
     </div>,
+  )
+}
+
+function AvailableHeightMenu(): React.ReactElement {
+  const { availableHeight } = useContextMenu()
+
+  return (
+    <Menu data-testid="available-height-menu" maxHeight={availableHeight ?? undefined}>
+      {MANY_ITEMS.map(item => <MenuItem key={item}>{item}</MenuItem>)}
+    </Menu>
+  )
+}
+
+function ContainerBoundedContextMenu(): React.ReactElement {
+  const [container, setContainer] = React.useState<HTMLDivElement | null>(null)
+
+  return (
+    <ContextMenu container={container}>
+      <ContextMenuTrigger>
+        <div
+          ref={setContainer}
+          data-testid="boundary"
+          style={{ position: 'fixed', left: 80, top: 80, width: 180, height: 140 }}
+        >
+          target
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent data-testid="menu-content">
+        <Menu>
+          <MenuItem>Open</MenuItem>
+          <MenuItem>Properties</MenuItem>
+        </Menu>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }
 
@@ -273,8 +309,63 @@ describe('context-menu', () => {
 
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
     const content = screen.getByTestId('menu-content').element() as HTMLElement
-    const rect = content.getBoundingClientRect()
-    expect(rect.right).toBeLessThanOrEqual(vw + 0.5)
-    expect(rect.bottom).toBeLessThanOrEqual(vh + 0.5)
+    await vi.waitFor(() => {
+      const rect = content.getBoundingClientRect()
+      expect(rect.right).toBeLessThanOrEqual(vw + 0.5)
+      expect(rect.bottom).toBeLessThanOrEqual(vh + 0.5)
+    })
+  })
+
+  it('publishes available height so child menus can show scroll arrows', async () => {
+    const screen = await render(
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <button type="button">target</button>
+        </ContextMenuTrigger>
+        <ContextMenuContent data-testid="menu-content">
+          <AvailableHeightMenu />
+        </ContextMenuContent>
+      </ContextMenu>,
+    )
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: vw - 4,
+        clientY: vh - 4,
+      }),
+    )
+
+    await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
+    const menu = screen.getByTestId('available-height-menu').element() as HTMLElement
+    await vi.waitFor(() => {
+      expect(menu.querySelector('[data-menu-scroll="down"]')).not.toBeNull()
+    })
+    expect(menu.getBoundingClientRect().bottom).toBeLessThanOrEqual(vh + 0.5)
+  })
+
+  it('clamps content to the provided container boundary', async () => {
+    const screen = await render(<ContainerBoundedContextMenu />)
+    const boundary = screen.getByTestId('boundary').element() as HTMLElement
+    const boundaryRect = boundary.getBoundingClientRect()
+    boundary.dispatchEvent(new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+      clientX: boundaryRect.right - 1,
+      clientY: boundaryRect.bottom - 1,
+    }))
+
+    await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
+    const content = screen.getByTestId('menu-content').element() as HTMLElement
+    await vi.waitFor(() => {
+      const rect = content.getBoundingClientRect()
+
+      expect(rect.right).toBeLessThanOrEqual(boundaryRect.right + 0.5)
+      expect(rect.bottom).toBeLessThanOrEqual(boundaryRect.bottom + 0.5)
+      expect(rect.left).toBeGreaterThanOrEqual(boundaryRect.left - 0.5)
+      expect(rect.top).toBeGreaterThanOrEqual(boundaryRect.top - 0.5)
+    })
   })
 })

@@ -7,7 +7,7 @@ describe('option-button', () => {
 
   it('renders a radio input and a label', async () => {
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a">
+      <OptionGroup name="test" value="a">
         <OptionButton value="a">Option A</OptionButton>
       </OptionGroup>,
     )
@@ -18,7 +18,7 @@ describe('option-button', () => {
 
   it('links input and label via matching id/htmlFor', async () => {
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a">
+      <OptionGroup name="test" value="a">
         <OptionButton value="a">Option A</OptionButton>
       </OptionGroup>,
     )
@@ -31,7 +31,7 @@ describe('option-button', () => {
 
   it('uses custom id when provided', async () => {
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a">
+      <OptionGroup name="test" value="a">
         <OptionButton id="my-radio" value="a">Custom</OptionButton>
       </OptionGroup>,
     )
@@ -43,7 +43,7 @@ describe('option-button', () => {
 
   it('shows dot SVG when radio is checked', async () => {
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a">
+      <OptionGroup name="test" value="a">
         <OptionButton value="a">Option A</OptionButton>
         <OptionButton value="b">Option B</OptionButton>
       </OptionGroup>,
@@ -70,9 +70,9 @@ describe('option-button', () => {
   })
 
   it('shows dot after clicking to select a different option', async () => {
-    const onChange = vi.fn()
+    const onValueChange = vi.fn()
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a" onChange={onChange}>
+      <OptionGroup name="test" value="a" onValueChange={onValueChange}>
         <OptionButton value="a">Option A</OptionButton>
         <OptionButton value="b">Option B</OptionButton>
       </OptionGroup>,
@@ -80,11 +80,11 @@ describe('option-button', () => {
 
     // Click Option B label
     await screen.getByText('Option B').click()
-    expect(onChange).toHaveBeenCalledWith('b')
+    expect(onValueChange).toHaveBeenCalledWith('b')
 
-    // Re-render with updated selectedValue
-    screen.rerender(
-      <OptionGroup name="test" selectedValue="b" onChange={onChange}>
+    // Re-render with updated value
+    await screen.rerender(
+      <OptionGroup name="test" value="b" onValueChange={onValueChange}>
         <OptionButton value="a">Option A</OptionButton>
         <OptionButton value="b">Option B</OptionButton>
       </OptionGroup>,
@@ -107,9 +107,9 @@ describe('option-button', () => {
 
   // === Controlled mode ===
 
-  it('reflects controlled selectedValue', async () => {
+  it('reflects controlled value', async () => {
     const screen = await render(
-      <OptionGroup name="test" selectedValue="b">
+      <OptionGroup name="test" value="b">
         <OptionButton value="a">A</OptionButton>
         <OptionButton value="b">B</OptionButton>
       </OptionGroup>,
@@ -120,10 +120,10 @@ describe('option-button', () => {
     await expect.element(radioB).toBeChecked()
   })
 
-  it('calls onChange when clicked', async () => {
+  it('calls onValueChange when clicked', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a" onChange={handleChange}>
+      <OptionGroup name="test" value="a" onValueChange={handleChange}>
         <OptionButton value="a">A</OptionButton>
         <OptionButton value="b">B</OptionButton>
       </OptionGroup>,
@@ -136,7 +136,7 @@ describe('option-button', () => {
 
   it('renders as disabled', async () => {
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a">
+      <OptionGroup name="test" value="a">
         <OptionButton value="a" disabled>Disabled</OptionButton>
       </OptionGroup>,
     )
@@ -144,10 +144,10 @@ describe('option-button', () => {
     await expect.element(radio).toBeDisabled()
   })
 
-  it('does not fire onChange when disabled', async () => {
+  it('does not fire onValueChange when disabled', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <OptionGroup name="test" selectedValue="a" onChange={handleChange}>
+      <OptionGroup name="test" value="a" onValueChange={handleChange}>
         <OptionButton value="b" disabled>Disabled</OptionButton>
       </OptionGroup>,
     )

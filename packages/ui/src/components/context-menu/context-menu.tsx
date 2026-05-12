@@ -11,14 +11,13 @@ import {
   use,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
 import { cnPure } from '../../lib/utils'
-import { useDismissable, useFocusScope } from '../../primitives'
+import { useDismissable, useFocusScope, useLayer } from '../../primitives'
 import {
   ContextMenuContext,
 } from './context-menu-context'
@@ -54,6 +53,10 @@ export function ContextMenu({
     x: 0,
     y: 0,
   })
+  const [size, setSize] = useState<{ availableHeight: number | null, availableWidth: number | null }>({
+    availableHeight: null,
+    availableWidth: null,
+  })
 
   const openAt = useCallback((x: number, y: number) => {
     setState({ open: true, x, y })
@@ -63,9 +66,27 @@ export function ContextMenu({
     setState(prev => (prev.open ? { ...prev, open: false } : prev))
   }, [])
 
+  const setAvailableSize = useCallback((availableHeight: number | null, availableWidth: number | null) => {
+    setSize(prev =>
+      prev.availableHeight === availableHeight && prev.availableWidth === availableWidth
+        ? prev
+        : { availableHeight, availableWidth },
+    )
+  }, [])
+
   const value = useMemo(
-    () => ({ open: state.open, x: state.x, y: state.y, container, openAt, close }),
-    [state.open, state.x, state.y, container, openAt, close],
+    () => ({
+      open: state.open,
+      x: state.x,
+      y: state.y,
+      container,
+      availableHeight: size.availableHeight,
+      availableWidth: size.availableWidth,
+      openAt,
+      close,
+      setAvailableSize,
+    }),
+    [state.open, state.x, state.y, container, size.availableHeight, size.availableWidth, openAt, close, setAvailableSize],
   )
 
   return <ContextMenuContext value={value}>{children}</ContextMenuContext>
@@ -145,65 +166,13 @@ export interface ContextMenuContentProps extends ComponentProps<'div'> {
   closeOnItemClick?: boolean
 }
 
-function getClampedPosition({
-  container,
-  element,
-  x,
-  y,
-}: {
-  container: HTMLElement | null
-  element: HTMLElement
-  x: number
-  y: number
-}): { left: number, top: number } {
-  const menuRect = element.getBoundingClientRect()
-
-  let minX: number, minY: number, maxX: number, maxY: number
-  if (container) {
-    const containerRect = container.getBoundingClientRect()
-    minX = containerRect.left
-    minY = containerRect.top
-    maxX = containerRect.right - menuRect.width
-    maxY = containerRect.bottom - menuRect.height
-  }
-  else {
-    minX = 0
-    minY = 0
-    maxX = window.innerWidth - menuRect.width
-    maxY = window.innerHeight - menuRect.height
-  }
-
-  return {
-    left: Math.max(minX, Math.min(x, maxX)),
-    top: Math.max(minY, Math.min(y, maxY)),
-  }
-}
-
-function applyClampedPosition({
-  container,
-  element,
-  style,
-  x,
-  y,
-}: {
-  container: HTMLElement | null
-  element: HTMLElement
-  style: CSSProperties | undefined
-  x: number
-  y: number
-}): void {
-  const { left, top } = getClampedPosition({ container, element, x, y })
-  if (style?.left === undefined)
-    element.style.left = `${String(left)}px`
-  if (style?.top === undefined)
-    element.style.top = `${String(top)}px`
-}
-
 /**
  * Portal-rendered content container for a `<ContextMenu>`.
  *
- * Positions itself at the pointer coordinates recorded when the menu opened,
- * clamped to the container element (or viewport when no container is set).
+ * Positions itself at the pointer coordinates recorded when the menu opened
+ * via the shared `useLayer` primitive, which clamps the popup to stay inside
+ * the container element (or viewport when no container is set) and reports
+ * `availableHeight` so callers can engage scrolling for tall content.
  * Closes on Escape, outside mousedown, scroll, and resize.
  */
 export function ContextMenuContent({
@@ -218,35 +187,43 @@ export function ContextMenuContent({
   if (!ctx) {
     throw new Error('ContextMenuContent must be used within a <ContextMenu>')
   }
-  const { open, x, y, container, close } = ctx
+  const { open, x, y, container, close, setAvailableSize } = ctx
 
   const ref = useRef<HTMLDivElement>(null)
+  const containerRef = useMemo(() => ({
+    get current(): HTMLElement | null {
+      return container ?? null
+    },
+  }), [container])
 
-  // Clamp the popup so it stays entirely inside the container (or viewport).
-  useLayoutEffect(() => {
-    if (!open)
-      return
-    const el = ref.current
-    if (!el)
-      return
+  // Virtual 1×1 anchor at the recorded pointer position. Pure (no React
+  // state); re-evaluated on every recompute so `useLayer` always sees
+  // fresh coordinates.
+  const anchorRect = useCallback((): DOMRect => {
+    return new DOMRect(x, y, 0, 0)
+  }, [x, y])
 
-    applyClampedPosition({ container, element: el, style, x, y })
-  }, [open, x, y, container, style])
+  const position = useLayer({
+    anchorRect,
+    layerRef: ref,
+    open,
+    side: 'bottom',
+    align: 'start',
+    gap: 0,
+    boundaryRef: containerRef,
+  })
 
+  // Publish the resolved usable size up to the context so consumers can wire
+  // a child `<Menu maxHeight={…}>` from `useContextMenu().availableHeight`.
   useEffect(() => {
-    if (!open)
+    if (!open) {
+      setAvailableSize(null, null)
       return
-
-    const onScroll = (): void => close()
-
-    window.addEventListener('scroll', onScroll, true)
-    window.addEventListener('resize', onScroll)
-
-    return () => {
-      window.removeEventListener('scroll', onScroll, true)
-      window.removeEventListener('resize', onScroll)
     }
-  }, [open, close])
+    if (position) {
+      setAvailableSize(position.availableHeight, position.availableWidth)
+    }
+  }, [open, position, setAvailableSize])
 
   // Outside pointerdown (covers right-click since pointerdown fires before
   // contextmenu) and Escape close the popup via the shared primitive.
@@ -278,12 +255,19 @@ export function ContextMenuContent({
     }
   }
 
+  // Until `useLayer` resolves a position (runs in rAF), render at the raw
+  // pointer coords so the layer is focusable and visually anchored.
+  const positioned = position !== null
+  const left = positioned ? position.x : x
+  const top = positioned ? position.y : y
+
   return createPortal(
     <div
       ref={ref}
       className={cnPure('fixed z-9999', className)}
       data-open=""
-      style={{ left: x, top: y, ...style }}
+      data-context-menu-available-height={position?.availableHeight ?? ''}
+      style={{ left, top, ...style }}
       onClick={handleClick}
       onContextMenu={event => event.preventDefault()}
       tabIndex={-1}

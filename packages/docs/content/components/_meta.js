@@ -13,7 +13,6 @@ export default {
   'progress-indicator': 'ProgressIndicator',
   'scroll-area': 'ScrollArea',
   'slider': 'Slider',
-  'sunken-panel': 'SunkenPanel',
   'table': 'Table',
   'tabs': 'Tabs',
   'taskbar': 'Taskbar',

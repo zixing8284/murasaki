@@ -13,10 +13,11 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
 import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
+import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 
-const DESKTOP_MEDIA_ICON = '/img/desktop/MyDocuments.png'
+const DESKTOP_MEDIA_ICON = assetPath('/img/desktop/MyDocuments.png')
 
 interface IconEntry {
   id: string
@@ -28,7 +29,7 @@ interface IconEntry {
 const gridStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: `repeat(auto-fill, ${CELL_WIDTH}px)`,
-  gridTemplateRows: `repeat(auto-fill, minmax(${CELL_HEIGHT}px, 1fr))`,
+  gridTemplateRows: `repeat(auto-fill, ${CELL_HEIGHT}px)`,
   gridAutoFlow: 'column',
   alignContent: 'start',
   justifyContent: 'start',

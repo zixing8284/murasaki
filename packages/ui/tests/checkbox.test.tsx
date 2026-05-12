@@ -56,20 +56,20 @@ describe('checkbox', () => {
 
   it('reflects controlled checked prop', async () => {
     const screen = await render(
-      <Checkbox checked onChange={() => {}}>Controlled</Checkbox>,
+      <Checkbox checked onCheckedChange={() => {}}>Controlled</Checkbox>,
     )
     const checkbox = screen.getByRole('checkbox')
     await expect.element(checkbox).toBeChecked()
   })
 
-  it('calls onChange when clicked in controlled mode', async () => {
+  it('calls onCheckedChange with the next checked state', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <Checkbox checked={false} onChange={handleChange}>Controlled</Checkbox>,
+      <Checkbox checked={false} onCheckedChange={handleChange}>Controlled</Checkbox>,
     )
     // Click the label (the input is visually hidden with opacity-0)
     await screen.getByText('Controlled').click()
-    expect(handleChange).toHaveBeenCalledOnce()
+    expect(handleChange).toHaveBeenCalledWith(true)
   })
 
   // === Disabled state ===
@@ -83,7 +83,7 @@ describe('checkbox', () => {
   it('does not toggle when disabled', async () => {
     const handleChange = vi.fn()
     const screen = await render(
-      <Checkbox disabled onChange={handleChange}>Disabled</Checkbox>,
+      <Checkbox disabled onCheckedChange={handleChange}>Disabled</Checkbox>,
     )
     // Native click on label — Playwright refuses to click labels linked to disabled inputs.
     // This verifies that the disabled input ignores the forwarded click.

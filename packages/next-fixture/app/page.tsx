@@ -18,7 +18,7 @@ import {
 const options = [
   { label: 'Windows 98', value: 'windows-98' },
   { label: 'Windows 95', value: 'windows-95' },
-  { label: 'Solarized Dark', value: 'solarized-dark' },
+  { label: 'Slate', value: 'slate' },
 ]
 
 const rows = Array.from(

@@ -8,7 +8,7 @@ describe('tabs', () => {
   function renderTabs(props?: {
     defaultValue?: string
     value?: string
-    onChange?: (v: string) => void
+    onValueChange?: (v: string) => void
   }) {
     return render(
       <Tabs {...props}>
@@ -87,14 +87,14 @@ describe('tabs', () => {
   // === Controlled mode ===
 
   it('reflects controlled value prop', async () => {
-    const screen = await renderTabs({ value: 'two', onChange: () => {} })
+    const screen = await renderTabs({ value: 'two', onValueChange: () => {} })
     await expect.element(screen.getByText('Content Two')).toBeInTheDocument()
     expect(screen.container.textContent).not.toContain('Content One')
   })
 
-  it('calls onChange when a tab is clicked (controlled)', async () => {
+  it('calls onValueChange when a tab is clicked (controlled)', async () => {
     const handleChange = vi.fn()
-    const screen = await renderTabs({ value: 'one', onChange: handleChange })
+    const screen = await renderTabs({ value: 'one', onValueChange: handleChange })
 
     await screen.getByRole('tab', { name: 'Tab Two' }).click()
     expect(handleChange).toHaveBeenCalledWith('two')
@@ -161,6 +161,23 @@ describe('tabs', () => {
 
     const disabledTab = screen.getByRole('tab', { name: 'Tab Two' })
     await expect.element(disabledTab).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  it('applies disabled label styling using theme tokens', async () => {
+    const screen = await render(
+      <Tabs defaultValue="one">
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two" disabled>Tab Two</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
+      </Tabs>,
+    )
+
+    const disabledLabel = screen.getByText('Tab Two')
+    await expect.element(disabledLabel).toHaveClass('text-(--gray-text)')
+    await expect.element(disabledLabel).toHaveClass('[text-shadow:1px_1px_0_var(--button-hilight)]')
   })
 
   // === Edge case: no panels rendered when no tab matches ===

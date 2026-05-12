@@ -1,4 +1,5 @@
 import type { TaskbarQuickLaunchIcon } from '@murasaki/react98'
+import type { RefObject } from 'react'
 import {
   Button,
   TaskbarDivider,
@@ -7,29 +8,32 @@ import {
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
 } from '@murasaki/react98'
+import { assetPath } from '../../lib/asset-path'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
 import { NetworkIcon } from './notification-area/network-icon'
 import { SwUpdateBalloon } from './notification-area/sw-update-balloon'
 import { RunningTasks } from './running-tasks/running-tasks'
 
 const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = [
-  { src: '/img/desktop.png', alt: 'Show Desktop', title: 'Show Desktop' },
-  { src: '/img/express.png', alt: 'Email Me', title: 'Outlook Express' },
-  { src: '/img/world.png', alt: 'Internet', title: 'Internet Explorer' },
-  { src: '/img/computer.png', alt: 'Computer', title: 'My Computer' },
+  { src: assetPath('/img/desktop.png'), alt: 'Show Desktop', title: 'Show Desktop' },
+  { src: assetPath('/img/express.png'), alt: 'Email Me', title: 'Outlook Express' },
+  { src: assetPath('/img/world.png'), alt: 'Internet', title: 'Internet Explorer' },
+  { src: assetPath('/img/computer.png'), alt: 'Computer', title: 'My Computer' },
 ]
 
 interface TaskbarProps {
+  startButtonRef: RefObject<HTMLButtonElement | null>
   showStartMenu: boolean
   onStartMenuToggle: () => void
 }
 
-export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
+export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
   return (
     <TaskbarRoot className="mt-auto">
       {/* Start Button */}
       <div>
         <Button
+          ref={startButtonRef}
           active={showStartMenu}
           onClick={onStartMenuToggle}
         >

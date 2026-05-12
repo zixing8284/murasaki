@@ -4,7 +4,7 @@ import type { ThemeId } from './theme-context'
 import { useCallback, useEffect, useState } from 'react'
 import { ThemeContext, themeIds } from './theme-context'
 
-export { themeIds, useTheme } from './theme-context'
+export { themeIds, themeLabels, useTheme } from './theme-context'
 export type { ThemeContextValue, ThemeId } from './theme-context'
 
 const STORAGE_KEY = 'murasaki-theme'

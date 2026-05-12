@@ -82,8 +82,8 @@ const textareaVariants = cva([
   'w-full',
 ])
 
-interface TextBoxProps
-  extends Omit<React.ComponentProps<'input'>, 'type'>,
+export interface TextBoxProps
+  extends Omit<React.ComponentProps<'input'>, 'onChange' | 'type'>,
   VariantProps<typeof textBoxWrapperVariants> {
   /** Label content (alternative to label prop) */
   children?: React.ReactNode
@@ -93,6 +93,8 @@ interface TextBoxProps
   multiline?: boolean
   /** Number of visible text rows (only for multiline) */
   rows?: number
+  /** Callback fired with the next text value. */
+  onValueChange?: (value: string) => void
   /** Input type */
   type?: TextBoxInputType
   /** Additional class for wrapper */
@@ -107,6 +109,7 @@ export function TextBox({
   label,
   labelPosition = 'left',
   multiline = false,
+  onValueChange,
   readOnly,
   rows,
   type = 'text',
@@ -120,6 +123,14 @@ export function TextBox({
 
   // Label content: prefer children, fallback to label prop
   const labelContent = children ?? label
+
+  const handleInputChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    onValueChange?.(event.target.value)
+  }, [onValueChange])
+
+  const handleTextareaChange = React.useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onValueChange?.(event.target.value)
+  }, [onValueChange])
 
   const fieldElement = multiline
     ? (
@@ -135,6 +146,7 @@ export function TextBox({
               readOnly={readOnly}
               rows={rows}
               {...(props as React.ComponentProps<'textarea'>)}
+              onChange={handleTextareaChange}
             />
           </div>
         </div>
@@ -149,6 +161,7 @@ export function TextBox({
           readOnly={readOnly}
           type={type}
           {...props}
+          onChange={handleInputChange}
         />
       )
 

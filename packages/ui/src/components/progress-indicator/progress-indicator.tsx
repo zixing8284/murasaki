@@ -46,7 +46,7 @@ function debounce<T extends (...args: never[]) => void>(
   }
 }
 
-interface ProgressIndicatorProps
+export interface ProgressIndicatorProps
   extends Omit<React.ComponentProps<'div'>, 'children'>,
   VariantProps<typeof containerVariants> {
   /** Progress value from 0 to 100 */

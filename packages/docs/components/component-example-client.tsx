@@ -1,7 +1,9 @@
 'use client'
 
-import type { ReactElement, ReactNode } from 'react'
-import { useId, useState, useSyncExternalStore } from 'react'
+import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
+import { Code } from 'nextra/components'
+import { evaluate } from 'nextra/evaluate'
+import { useId, useMemo, useState, useSyncExternalStore } from 'react'
 
 type ComponentExamplePreviewTheme = 'auto' | 'none'
 
@@ -14,11 +16,13 @@ interface ComponentExampleClientProps {
   previewTheme: ComponentExamplePreviewTheme
   /** Raw source shown in the Code tab. */
   source: string
+  /** Nextra-compiled highlighted code block source. */
+  compiledSource: string
   /** MDX children: the live demo JSX. */
   children?: ReactNode
 }
 
-type ExampleTheme = 'windows-98' | 'solarized-dark'
+type ExampleTheme = 'windows-98' | 'slate'
 
 function getDocsExampleTheme(): ExampleTheme {
   if (typeof document === 'undefined')
@@ -32,7 +36,7 @@ function getDocsExampleTheme(): ExampleTheme {
     || root.style.colorScheme === 'dark'
     || rootStyle.colorScheme === 'dark'
   ) {
-    return 'solarized-dark'
+    return 'slate'
   }
 
   return 'windows-98'
@@ -70,11 +74,31 @@ function getExampleChildren(children: ReactNode): ReactNode[] {
   })
 }
 
+function ComponentExampleCodePre({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLPreElement>): ReactElement {
+  const preClassName = ['m98-example__highlighted-pre', className].filter(Boolean).join(' ')
+
+  return (
+    <pre className={preClassName} {...props}>
+      {children}
+    </pre>
+  )
+}
+
+const codeBlockComponents = {
+  code: Code,
+  pre: ComponentExampleCodePre,
+}
+
 export function ComponentExampleClient({
   title,
   previewClassName,
   previewTheme,
   source,
+  compiledSource,
   children,
 }: ComponentExampleClientProps): ReactElement {
   const exampleTheme = useSyncExternalStore(
@@ -83,8 +107,13 @@ export function ComponentExampleClient({
     getServerDocsExampleTheme,
   )
   const previewElements = getExampleChildren(children)
+  const HighlightedCode = useMemo(
+    () => evaluate(compiledSource, codeBlockComponents).default,
+    [compiledSource],
+  )
 
   const [tab, setTab] = useState<'preview' | 'code'>('preview')
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
   const baseId = useId()
   const previewId = `${baseId}-preview`
   const codeId = `${baseId}-code`
@@ -92,6 +121,32 @@ export function ComponentExampleClient({
   const codeTabId = `${baseId}-code-tab`
 
   const frameClassName = ['m98-example__preview', previewClassName].filter(Boolean).join(' ')
+
+  async function handleCopyCode(): Promise<void> {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText != null) {
+        await navigator.clipboard.writeText(source)
+      }
+      else {
+        const fallback = document.createElement('textarea')
+        fallback.value = source
+        fallback.style.position = 'fixed'
+        fallback.style.opacity = '0'
+        document.body.appendChild(fallback)
+        fallback.focus()
+        fallback.select()
+        document.execCommand('copy')
+        fallback.remove()
+      }
+
+      setCopyStatus('copied')
+      window.setTimeout(setCopyStatus, 1800, 'idle')
+    }
+    catch {
+      setCopyStatus('failed')
+      window.setTimeout(setCopyStatus, 2200, 'idle')
+    }
+  }
 
   return (
     <section className="m98-example">
@@ -161,7 +216,19 @@ export function ComponentExampleClient({
         hidden={tab !== 'code'}
         className="m98-example__panel m98-example__panel--code"
       >
-        <pre className="m98-example__source"><code>{source}</code></pre>
+        <div className="m98-example__source">
+          <button
+            type="button"
+            className="m98-example__copy"
+            onClick={() => void handleCopyCode()}
+            aria-label="Copy example code"
+          >
+            {copyStatus === 'copied' ? 'COPIED' : copyStatus === 'failed' ? 'FAILED' : 'COPY'}
+          </button>
+          <div className="m98-example__source-rendered">
+            <HighlightedCode />
+          </div>
+        </div>
       </div>
     </section>
   )

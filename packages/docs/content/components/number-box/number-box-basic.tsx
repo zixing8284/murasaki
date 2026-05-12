@@ -8,7 +8,7 @@ export function NumberBoxBasicDemo(): React.ReactElement {
 
   return (
     <div className="flex flex-col gap-3">
-      <NumberBox label="Copies" min={1} max={10} value={quantity} onChange={setQuantity} />
+      <NumberBox label="Copies" min={1} max={10} value={quantity} onValueChange={setQuantity} />
       <NumberBox label="Disabled" defaultValue={5} disabled />
     </div>
   )

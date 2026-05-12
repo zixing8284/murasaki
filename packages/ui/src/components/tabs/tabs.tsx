@@ -106,12 +106,20 @@ const tabLabelVariants = cva(
   ],
   {
     variants: {
+      disabled: {
+        true: [
+          'text-(--gray-text)',
+          '[text-shadow:1px_1px_0_var(--button-hilight)]',
+        ],
+        false: [],
+      },
       selected: {
         true: ['focus-visible:outline-none'],
         false: [],
       },
     },
     defaultVariants: {
+      disabled: false,
       selected: false,
     },
   },
@@ -161,7 +169,7 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
       onKeyDown={handleKeyDown}
       {...props}
     >
-      <span className={cn(tabLabelVariants({ selected: isSelected }))}>
+      <span className={cn(tabLabelVariants({ disabled, selected: isSelected }))}>
         {children}
       </span>
     </li>
@@ -221,13 +229,13 @@ export function TabPanel({ children, className, value, ...props }: TabPanelProps
 
 const tabsRootVariants = cva(['inline-flex', 'flex-col'])
 
-export interface TabsProps extends Omit<React.ComponentProps<'div'>, 'onChange'> {
+export interface TabsProps extends React.ComponentProps<'div'> {
   /** The default selected tab value (uncontrolled mode) */
   defaultValue?: string
   /** The selected tab value (controlled mode) */
   value?: string
-  /** Callback when the selected tab changes */
-  onChange?: (value: string) => void
+  /** Callback fired with the next selected tab value */
+  onValueChange?: (value: string) => void
   /** Keep all panels mounted in the DOM to preserve a stable height */
   keepMounted?: boolean
 }
@@ -237,7 +245,7 @@ export function Tabs({
   className,
   defaultValue = '',
   value,
-  onChange,
+  onValueChange,
   keepMounted = false,
   ...props
 }: TabsProps): React.ReactElement {
@@ -251,7 +259,7 @@ export function Tabs({
     if (!isControlled) {
       setInternalValue(newValue)
     }
-    onChange?.(newValue)
+    onValueChange?.(newValue)
   }
 
   return (

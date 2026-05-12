@@ -2,9 +2,11 @@
 
 // Button
 export { Button } from './components/button/button'
+export type { ButtonProps } from './components/button/button'
 
 // Checkbox
 export { Checkbox, CheckboxLabel } from './components/checkbox/checkbox'
+export type { CheckboxProps } from './components/checkbox/checkbox'
 
 // ContextMenu
 export {
@@ -30,39 +32,34 @@ export { FieldPanel } from './components/field-panel/field-panel'
 export type { FieldPanelProps } from './components/field-panel/field-panel'
 // GroupBox
 export { GroupBox } from './components/group-box/group-box'
+export type { GroupBoxProps } from './components/group-box/group-box'
 
 // Menu
-export { Menu, MenuItem, MenuSeparator } from './components/menu/menu'
-export type { MenuItemProps, MenuProps, MenuSeparatorProps } from './components/menu/menu'
+export { Menu, MenuItem, MenuSeparator, MenuSub, MenuSubContent, MenuSubTrigger } from './components/menu/menu'
+export type {
+  MenuItemProps,
+  MenuProps,
+  MenuSeparatorProps,
+  MenuSubContentProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
+} from './components/menu/menu'
 
 // NumberBox
 export { NumberBox } from './components/number-box/number-box'
+export type { NumberBoxProps } from './components/number-box/number-box'
 
 // OptionButton
 export { OptionButton, OptionGroup } from './components/option-button/option-button'
+export type { OptionButtonProps, OptionGroupProps } from './components/option-button/option-button'
 
 // ProgressIndicator
 export { ProgressIndicator } from './components/progress-indicator/progress-indicator'
+export type { ProgressIndicatorProps } from './components/progress-indicator/progress-indicator'
 
 // ScrollArea
-export {
-  ArrowDownIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  ScrollArea,
-  ScrollAreaCorner,
-  ScrollAreaLegacy,
-  ScrollAreaScrollbar,
-  ScrollAreaThumb,
-  useScrollAreaContext,
-  useScrollbar,
-} from './components/scroll-area/scroll-area'
-export type {
-  ScrollAreaContextValue,
-  ScrollAreaProps,
-  UseScrollbarOptions,
-} from './components/scroll-area/scroll-area'
+export { ScrollArea, ScrollAreaLegacy } from './components/scroll-area/scroll-area'
+export type { ScrollAreaProps } from './components/scroll-area/scroll-area'
 
 // Select
 export { Select, SelectNative } from './components/select/select'
@@ -70,11 +67,7 @@ export type { SelectNativeProps, SelectOption, SelectProps } from './components/
 
 // Slider
 export { Slider } from './components/slider/slider'
-export type { TickMark } from './components/slider/slider'
-
-// SunkenPanel
-export { SunkenPanel } from './components/sunken-panel/sunken-panel'
-export type { SunkenPanelProps } from './components/sunken-panel/sunken-panel'
+export type { SliderProps, TickMark } from './components/slider/slider'
 
 // Table
 export {
@@ -87,6 +80,7 @@ export {
   TableHeader,
   TableRow,
 } from './components/table/table'
+export type { TableProps } from './components/table/table'
 
 // Tabs
 export { Tab, TabList, TabPanel, Tabs, useTabsContext } from './components/tabs/tabs'
@@ -117,9 +111,10 @@ export type {
 
 // TextBox
 export { TextBox } from './components/text-box/text-box'
+export type { TextBoxProps } from './components/text-box/text-box'
 
 // Theme
-export { themeIds, ThemeProvider, useTheme } from './components/theme-provider/theme-provider'
+export { themeIds, themeLabels, ThemeProvider, useTheme } from './components/theme-provider/theme-provider'
 export type { ThemeContextValue, ThemeId, ThemeProviderProps } from './components/theme-provider/theme-provider'
 
 // Tooltip

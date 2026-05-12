@@ -12,6 +12,8 @@ import {
   WindowTitleBar,
 } from '@murasaki/react98'
 import { useMemo } from 'react'
+import { assetPath } from '../../../lib/asset-path'
+import { PreviewTaskbar } from '../../shared/preview-taskbar'
 
 interface DesignerPreviewProps {
   colors: Record<string, string>
@@ -35,7 +37,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
       {/* Desktop icon */}
       <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">
         <img
-          src="/img/desktop/RecyclingBin.png"
+          src={assetPath('/img/desktop/RecyclingBin.png')}
           alt="Trash"
           className="w-8 h-8 pixelated"
           draggable={false}
@@ -47,7 +49,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Inactive Window */}
       <WindowProvider active={false} positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-3 left-13 w-56 min-w-0! min-h-0!">
+        <WindowFrame className="top-3 left-13 w-84 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Inactive Window</WindowTitle>
             <WindowButtons>
@@ -66,7 +68,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Active Window */}
       <WindowProvider active positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-9 left-14 w-56 min-w-0! min-h-0!">
+        <WindowFrame className="top-9 left-14 w-92 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Active Window</WindowTitle>
             <WindowButtons>
@@ -96,7 +98,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
       {/* Message Box */}
       <WindowProvider active positioning="absolute" maximizable={false}>
-        <WindowFrame className="top-24 left-18 w-40 min-w-0! min-h-0!">
+        <WindowFrame className="top-24 left-18 w-64 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Message Box</WindowTitle>
             <WindowButtons>
@@ -118,16 +120,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
         Tooltip
       </div>
 
-      {/* Taskbar */}
-      <div className="absolute bottom-0 left-0 right-0 h-5.5 flex items-center px-0.5 shadow-(--shadow-raised) bg-(--button-face)">
-        <div className="h-4 px-1 flex items-center shadow-(--shadow-raised) bg-(--button-face) text-(--button-text)">
-          <span className="font-bold">Start</span>
-        </div>
-        <div className="flex-1" />
-        <div className="h-4 px-2 flex items-center shadow-(--shadow-sunken) text-(--button-text)">
-          12:56
-        </div>
-      </div>
+      <PreviewTaskbar />
     </div>
   )
 }

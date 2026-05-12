@@ -21,20 +21,12 @@ const triggerVariants = cva([
   'box-border',
   'h-5.25',
   'w-full',
-  'py-0.75',
-  'pl-2',
-  'pr-4.5',
+  'p-0',
   // Colors
   'bg-(--window)',
   'text-(--window-text)',
   'text-left',
-  // Border effect (on pseudo-element to prevent child overlap)
-  'before:content-[\'\']',
-  'before:absolute',
-  'before:inset-0',
-  'before:shadow-(--shadow-border-field)',
-  'before:pointer-events-none',
-  'before:z-1',
+  'shadow-(--shadow-border-field)',
   // Position context for arrow icon
   'relative',
   'group',
@@ -44,10 +36,25 @@ const triggerVariants = cva([
   'disabled:bg-(--button-face)',
   'disabled:text-(--gray-text)',
   'disabled:cursor-not-allowed',
-  // Text overflow
+])
+
+// Mirrors win99.dev: a single element owns padding + overflow + ellipsis,
+// so the clip rect never lands on the glyph's left stem column. Avoids
+// pixel-font left-edge clipping when AA is disabled and the layout box
+// falls on a fractional device pixel.
+const triggerLabelVariants = cva([
+  'flex',
+  'box-border',
+  'h-full',
+  'w-full',
+  'items-center',
   'overflow-hidden',
   'whitespace-nowrap',
   'text-ellipsis',
+  'leading-none',
+  'py-0.5',
+  'pl-1',
+  'pr-4.5',
 ])
 
 // Select menu wrapper (positioning context for scrollbar)
@@ -170,7 +177,7 @@ function SelectOptionItem<T>({
 }
 
 export interface SelectProps<T = string>
-  extends Omit<React.ComponentProps<'div'>, 'defaultValue' | 'onChange'> {
+  extends Omit<React.ComponentProps<'div'>, 'defaultValue'> {
   /**
    * Default selected value (uncontrolled mode).
    */
@@ -200,9 +207,9 @@ export interface SelectProps<T = string>
    */
   name: string
   /**
-   * Callback fired when selection changes.
+   * Callback fired with the next selected value and option.
    */
-  onChange?: (option: SelectOption<T>) => void
+  onValueChange?: (value: T, option: SelectOption<T>) => void
   /**
    * Callback fired when select closes.
    */
@@ -243,7 +250,7 @@ export function Select<T = string>({
   labelClassName,
   menuMaxHeight,
   name,
-  onChange,
+  onValueChange,
   onClose,
   onOpen,
   options,
@@ -274,7 +281,7 @@ export function Select<T = string>({
   } = useSelectState({
     defaultValue,
     disabled,
-    onChange,
+    onValueChange,
     onClose,
     onOpen,
     options,
@@ -393,7 +400,7 @@ export function Select<T = string>({
         role="combobox"
         type="button"
       >
-        {displayLabel}
+        <span className={cn(triggerLabelVariants())}>{displayLabel}</span>
         <ButtonDownIcon
           className={cn(
             'absolute right-0.5 top-0.5 pointer-events-none',

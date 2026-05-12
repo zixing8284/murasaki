@@ -9,7 +9,7 @@ import { SliderBasicDemo } from './slider/slider-basic'
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `value` / `defaultValue` | `number` | `min` | Controlled or uncontrolled value. |
-| `onChange` | `ChangeEventHandler<HTMLInputElement>` | - | Receives the native range change event. |
+| `onValueChange` | `(value: number) => void` | - | Value-level change callback for controlled usage. |
 | `min` / `max` / `step` | input range props | `0` / `100` / `1` | Range bounds and increments. |
 | `vertical` | `boolean` | `false` | Renders a vertical slider. |
 | `boxIndicator` | `boolean` | `false` | Uses the rectangular thumb variant. |

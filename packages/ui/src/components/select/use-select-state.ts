@@ -8,7 +8,7 @@ export interface SelectOption<T = string> {
 interface UseSelectStateOptions<T> {
   defaultValue?: T | undefined
   disabled?: boolean | undefined
-  onChange?: ((option: SelectOption<T>) => void) | undefined
+  onValueChange?: ((value: T, option: SelectOption<T>) => void) | undefined
   onClose?: (() => void) | undefined
   onOpen?: (() => void) | undefined
   options: SelectOption<T>[]
@@ -39,7 +39,7 @@ interface UseSelectStateReturn<T> {
 export function useSelectState<T = string>({
   defaultValue,
   disabled = false,
-  onChange,
+  onValueChange,
   onClose,
   onOpen,
   options,
@@ -97,10 +97,10 @@ export function useSelectState<T = string>({
       if (value === undefined) {
         setInternalValue(option.value)
       }
-      onChange?.(option)
+      onValueChange?.(option.value, option)
       closeSelect()
     },
-    [options, value, onChange, closeSelect],
+    [options, value, onValueChange, closeSelect],
   )
 
   // Toggle select

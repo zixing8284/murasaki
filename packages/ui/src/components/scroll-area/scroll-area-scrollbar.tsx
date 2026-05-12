@@ -12,6 +12,7 @@ export interface ScrollAreaScrollbarProps extends React.ComponentProps<'div'> {
 }
 
 interface TrackProps {
+  ref?: React.Ref<HTMLDivElement>
   axis: 'v' | 'h'
   children: React.ReactNode
   scrollPage: (axis: 'v' | 'h', direction: -1 | 1) => void
@@ -23,50 +24,57 @@ interface TrackProps {
   thumbLeft?: number
 }
 
-const Track = React.forwardRef<HTMLDivElement, TrackProps>(
-  ({ axis, children, scrollPage, btnHeight, thumbTop, barSize, thumbLeft }, ref) => {
-    const isVertical = axis === 'v'
+function Track({
+  ref,
+  axis,
+  children,
+  scrollPage,
+  btnHeight,
+  thumbTop,
+  barSize,
+  thumbLeft,
+}: TrackProps): React.ReactElement {
+  const isVertical = axis === 'v'
 
-    const onMouseDown = (e: React.MouseEvent): void => {
-      // Don't page-scroll if the click was on the thumb itself
-      const target = e.target as HTMLElement
-      if (target.closest('[data-murasaki-thumb]'))
-        return
+  const onMouseDown = (e: React.MouseEvent): void => {
+    // Don't page-scroll if the click was on the thumb itself
+    const target = e.target as HTMLElement
+    if (target.closest('[data-murasaki-thumb]'))
+      return
 
-      if (isVertical) {
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        const clickPos = e.clientY - rect.top
-        scrollPage('v', clickPos < (thumbTop ?? 0) ? -1 : 1)
-      }
-      else {
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        const clickPos = e.clientX - rect.left
-        scrollPage('h', clickPos < (thumbLeft ?? 0) ? -1 : 1)
-      }
+    if (isVertical) {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      const clickPos = e.clientY - rect.top
+      scrollPage('v', clickPos < (thumbTop ?? 0) ? -1 : 1)
     }
+    else {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      const clickPos = e.clientX - rect.left
+      scrollPage('h', clickPos < (thumbLeft ?? 0) ? -1 : 1)
+    }
+  }
 
-    const positionStyle: React.CSSProperties = isVertical
-      ? { top: btnHeight, bottom: btnHeight, left: 0, right: 0 }
-      : { left: barSize, right: barSize, top: 0, bottom: 0 }
+  const positionStyle: React.CSSProperties = isVertical
+    ? { top: btnHeight, bottom: btnHeight, left: 0, right: 0 }
+    : { left: barSize, right: barSize, top: 0, bottom: 0 }
 
-    return (
-      <div
-        ref={ref}
-        data-murasaki-track={axis}
-        className="absolute cursor-default"
-        style={{
-          backgroundImage: TRACK_BG_IMAGE,
-          backgroundSize: TRACK_BG_SIZE,
-          backgroundColor: TRACK_BG_COLOR,
-          ...positionStyle,
-        }}
-        onMouseDown={onMouseDown}
-      >
-        {children}
-      </div>
-    )
-  },
-)
+  return (
+    <div
+      ref={ref}
+      data-murasaki-track={axis}
+      className="absolute cursor-default"
+      style={{
+        backgroundImage: TRACK_BG_IMAGE,
+        backgroundSize: TRACK_BG_SIZE,
+        backgroundColor: TRACK_BG_COLOR,
+        ...positionStyle,
+      }}
+      onMouseDown={onMouseDown}
+    >
+      {children}
+    </div>
+  )
+}
 
 /**
  * A single scrollbar (vertical or horizontal) with arrow buttons, track, and thumb.

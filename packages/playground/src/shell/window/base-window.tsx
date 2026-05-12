@@ -14,12 +14,14 @@ import {
   WindowTitleBar,
 } from '@murasaki/react98'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
+import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'
 
 export interface BaseWindowProps {
   windowId: string
   children: ReactNode
   className?: string
+  contentClassName?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
   disableMinimize?: boolean
@@ -42,6 +44,7 @@ export function BaseWindow({
   windowId,
   children,
   className,
+  contentClassName,
   titleIcon,
   disableMaximize = false,
   disableMinimize = false,
@@ -64,7 +67,7 @@ export function BaseWindow({
   const { process: proc, isActive, zIndex } = win
 
   const defaultIcon = proc.icon
-    ? <img src={proc.icon.sm} alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
+    ? <img src={assetPath(proc.icon.sm)} alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
     : <AppIcon appId={proc.appId} size="sm" />
 
   return (
@@ -100,7 +103,7 @@ export function BaseWindow({
               <WindowCloseButton onClick={() => actions.close(windowId)} />
             </WindowButtons>
           </WindowTitleBar>
-          <WindowContent>{children}</WindowContent>
+          <WindowContent className={contentClassName}>{children}</WindowContent>
           {!disableResize && <WindowResizeGrip ref={resizeRef} />}
         </WindowFrame>
       </WindowPortal>

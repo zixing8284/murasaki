@@ -9,6 +9,8 @@ import { TextBoxBasicDemo } from './text-box/text-box-basic'
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` / `children` | `ReactNode` | - | Associated label content. |
+| `value` / `defaultValue` | `string` | - | Controlled or uncontrolled text value. |
+| `onValueChange` | `(value: string) => void` | - | Value-level text change callback for controlled usage. |
 | `labelPosition` | `'left' \| 'top'` | `'left'` | Label layout. |
 | `multiline` | `boolean` | `false` | Renders a textarea with custom scrollbars. |
 | `rows` | `number` | - | Visible textarea rows. |

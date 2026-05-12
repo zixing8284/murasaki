@@ -56,6 +56,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Components live under `packages/ui/src/components/`, typically one directory per component.
 - Public exports go through `packages/ui/src/index.ts`.
 - Use **flat named exports** for public primitives.
+- Use value-level callbacks for controlled state (`onValueChange`, `onCheckedChange`); reserve native names like `onChange` for native DOM event passthrough.
 - Use **CVA** for variant-heavy styling.
 - Use `cn()` by default and `cnPure()` only when the base font injection should be skipped.
 - Prefer Tailwind utilities over custom CSS. Add CSS only when Tailwind cannot express the style cleanly.
@@ -68,6 +69,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Keep styling theme-first: use CSS variable-backed utilities such as `bg-(--button-face)` and `text-(--window-text)`.
 - Treat shared theme config as library-owned and theme variable values as consumer-customizable.
 - Pixel-font text in sunken/input-like fields must have left breathing room. Avoid placing text flush against a 1px inset border; prefer at least `pl-2` on native fields or a small inner text offset for list rows.
+- For clipped pixel-font text, follow ADR 0008: the text display element should own both left padding and `overflow-hidden`/ellipsis, or otherwise keep the clip rect away from the first glyph. Avoid nested zero-padding clipped spans as a font-smoothing workaround.
 - `@murasaki/react98/theme.css` is the named source stylesheet export exception: it intentionally resolves to `packages/ui/src/theme.css` for Tailwind CSS v4 consumers. Do not treat it as permission to expose other source files.
 
 ## Playground Architecture

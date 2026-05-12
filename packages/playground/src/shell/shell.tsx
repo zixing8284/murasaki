@@ -4,12 +4,17 @@ import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/deskto
 import { APP_ID, useProcessActions } from '../contexts/process'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
+import { assetPath } from '../lib/asset-path'
 import { Desktop } from './desktop/desktop'
 import { StartMenu } from './start-menu/start-menu'
 import { Taskbar } from './taskbar/taskbar'
 import { WindowRenderer } from './window/renderer'
 
 const DEFAULT_STARTUP_APPS = [APP_ID.MY_COMPUTER, APP_ID.DOCS] as const
+
+const ANIMSPACE_BACKGROUND_STYLE: React.CSSProperties = {
+  backgroundImage: `url('${assetPath('/img/animspace.gif')}')`,
+}
 
 function hasFilePayload(dataTransfer: DataTransfer | null): boolean {
   if (!dataTransfer) {
@@ -42,7 +47,9 @@ function hasSupportedFiles(fileList: FileList | null): boolean {
 export function Shell(): React.ReactElement {
   const [showStartMenu, setShowStartMenu] = useState(false)
   const [isDragActive, setIsDragActive] = useState(false)
+  const screenRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const startButtonRef = useRef<HTMLButtonElement>(null)
   const dragDepthRef = useRef(0)
   const [crtEnabled] = useCrtEffect()
   const [gradientEnabled] = useGradientTitlebar()
@@ -110,44 +117,54 @@ export function Shell(): React.ReactElement {
   }, [importFiles])
 
   return (
-    <div className={`h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-(--hilight) selection:text-(--hilight-text) bg-[url('/img/animspace.gif')] bg-size-[initial] bg-repeat bg-center bg-fixed ${crtEnabled ? 'scanline-overlay' : ''} ${gradientEnabled ? '' : 'no-gradient-titlebar'}`}>
-      {/* Desktop Area */}
-      <div className="flex-1 overflow-hidden relative">
-        <div
-          className="h-full relative"
-          ref={setContainerRef}
-          onPointerDown={handleDesktopClick}
-          onDragEnter={handleDragEnter}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          {/* Desktop Icons */}
-          <Desktop />
+    <div
+      className={`h-screen w-full flex flex-col bg-[#111] border-[3em] border-[#111] relative select-none selection:bg-(--hilight) selection:text-(--hilight-text) bg-size-[initial] bg-repeat bg-center bg-fixed ${crtEnabled ? 'scanline-overlay' : ''} ${gradientEnabled ? '' : 'no-gradient-titlebar'}`}
+      style={ANIMSPACE_BACKGROUND_STYLE}
+    >
+      <div ref={screenRef} className="relative flex h-full min-h-0 w-full flex-col">
+        {/* Desktop Area */}
+        <div className="flex-1 overflow-hidden relative">
+          <div
+            className="h-full relative"
+            ref={setContainerRef}
+            onPointerDown={handleDesktopClick}
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {/* Desktop Icons */}
+            <Desktop />
 
-          {isDragActive && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
-              <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
-                Drop audio or video files to add them to the desktop
+            {isDragActive && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
+                <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
+                  Drop audio or video files to add them to the desktop
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* All managed windows */}
-          <WindowRenderer />
+            {/* All managed windows */}
+            <WindowRenderer />
+          </div>
         </div>
+
+        {/* Start Menu */}
+        {showStartMenu && (
+          <StartMenu
+            anchorRef={startButtonRef}
+            screenRef={screenRef}
+            onClose={() => setShowStartMenu(false)}
+          />
+        )}
+
+        {/* Taskbar */}
+        <Taskbar
+          startButtonRef={startButtonRef}
+          showStartMenu={showStartMenu}
+          onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
+        />
       </div>
-
-      {/* Start Menu */}
-      {showStartMenu && (
-        <StartMenu onClose={() => setShowStartMenu(false)} />
-      )}
-
-      {/* Taskbar */}
-      <Taskbar
-        showStartMenu={showStartMenu}
-        onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
-      />
     </div>
   )
 }

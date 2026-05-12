@@ -1,8 +1,28 @@
 import { createContext, use } from 'react'
 
-export type ThemeId = 'solarized-dark' | 'windows-98'
+export const themeIds = [
+  'windows-95',
+  'windows-98',
+  'windows-standard',
+  'rainy-day',
+  'rose',
+  'slate',
+  'spruce',
+  'desert',
+] as const
 
-export const themeIds: ThemeId[] = ['windows-98', 'solarized-dark']
+export type ThemeId = typeof themeIds[number]
+
+export const themeLabels: Record<ThemeId, string> = {
+  'windows-95': 'Windows 95',
+  'windows-98': 'Windows 98',
+  'windows-standard': 'Windows Standard',
+  'rainy-day': 'Rainy Day',
+  'rose': 'Rose',
+  'slate': 'Slate',
+  'spruce': 'Spruce',
+  'desert': 'Desert',
+}
 
 export interface ThemeContextValue {
   /** Currently applied theme id. */

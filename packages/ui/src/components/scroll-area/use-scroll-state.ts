@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import { BAR_SIZE, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
 
@@ -24,6 +24,15 @@ const EMPTY_METRICS: ScrollMetrics = {
   vThumbHeight: 0,
   hThumbLeft: 0,
   hThumbWidth: 0,
+}
+
+function areMetricsEqual(a: ScrollMetrics, b: ScrollMetrics): boolean {
+  return a.hasVertical === b.hasVertical
+    && a.hasHorizontal === b.hasHorizontal
+    && a.vThumbTop === b.vThumbTop
+    && a.vThumbHeight === b.vThumbHeight
+    && a.hThumbLeft === b.hThumbLeft
+    && a.hThumbWidth === b.hThumbWidth
 }
 
 // ─── Compute layout from native scroll metrics ──────────────────────────────
@@ -90,10 +99,21 @@ export function useScrollState(
 ): UseScrollStateResult {
   const vTrackRef = useRef<HTMLDivElement>(null)
   const hTrackRef = useRef<HTMLDivElement>(null)
-  const [metrics, setMetrics] = useState<ScrollMetrics>(EMPTY_METRICS)
   const metricsRef = useRef<ScrollMetrics>(EMPTY_METRICS)
+  const listenersRef = useRef(new Set<() => void>())
   const rafIdRef = useRef<number | null>(null)
   const [scrollbarId] = useState(() => String(++_idCounter))
+
+  const subscribe = useCallback((listener: () => void) => {
+    listenersRef.current.add(listener)
+    return () => {
+      listenersRef.current.delete(listener)
+    }
+  }, [])
+
+  const getMetricsSnapshot = useCallback(() => metricsRef.current, [])
+
+  const metrics = useSyncExternalStore(subscribe, getMetricsSnapshot, getMetricsSnapshot)
 
   // ── Sync layout ──
   const syncLayout = useCallback(() => {
@@ -104,26 +124,26 @@ export function useScrollState(
     const vTrackH = vTrackRef.current?.clientHeight ?? 0
     const hTrackW = hTrackRef.current?.clientWidth ?? 0
     const next = computeMetrics(el, vTrackH, hTrackW)
+    const prev = metricsRef.current
 
-    // Always update the ref (used by imperative drag/thumb positioning)
+    if (areMetricsEqual(prev, next))
+      return
+
     metricsRef.current = next
-
-    // Only trigger React re-render when visibility or thumb geometry changed.
-    // Comparing individual fields avoids object identity churn.
-    setMetrics((prev) => {
-      if (
-        prev.hasVertical === next.hasVertical
-        && prev.hasHorizontal === next.hasHorizontal
-        && prev.vThumbTop === next.vThumbTop
-        && prev.vThumbHeight === next.vThumbHeight
-        && prev.hThumbLeft === next.hThumbLeft
-        && prev.hThumbWidth === next.hThumbWidth
-      ) {
-        return prev
-      }
-      return next
+    listenersRef.current.forEach((listener) => {
+      listener()
     })
   }, [viewportRef])
+
+  const requestLayoutSync = useCallback(() => {
+    if (rafIdRef.current != null)
+      return
+
+    rafIdRef.current = requestAnimationFrame(() => {
+      rafIdRef.current = null
+      syncLayout()
+    })
+  }, [syncLayout])
 
   // ── Hide native scrollbar + observe scroll/resize/mutation ──
   useEffect(() => {
@@ -140,9 +160,6 @@ export function useScrollState(
     hideStyle.textContent = `[data-murasaki-scrollbar-id="${scrollbarId}"]::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}`
     document.head.appendChild(hideStyle)
 
-    // Initial sync
-    syncLayout()
-
     // Scroll listener
     const onScroll = (): void => {
       syncLayout()
@@ -152,14 +169,7 @@ export function useScrollState(
     // ResizeObserver
     let resizeObs: ResizeObserver | null = null
     if (window.ResizeObserver) {
-      resizeObs = new ResizeObserver(() => {
-        if (rafIdRef.current != null)
-          return
-        rafIdRef.current = requestAnimationFrame(() => {
-          rafIdRef.current = null
-          syncLayout()
-        })
-      })
+      resizeObs = new ResizeObserver(requestLayoutSync)
       resizeObs.observe(el)
       if (el.parentNode instanceof HTMLElement) {
         resizeObs.observe(el.parentNode)
@@ -170,15 +180,7 @@ export function useScrollState(
     }
 
     // MutationObserver — content changes
-    let mutRafId: number | null = null
-    const mutObs = new MutationObserver(() => {
-      if (mutRafId != null)
-        return
-      mutRafId = requestAnimationFrame(() => {
-        mutRafId = null
-        syncLayout()
-      })
-    })
+    const mutObs = new MutationObserver(requestLayoutSync)
     mutObs.observe(el, { childList: true, subtree: true })
 
     return () => {
@@ -187,14 +189,24 @@ export function useScrollState(
       mutObs.disconnect()
       if (rafIdRef.current != null)
         cancelAnimationFrame(rafIdRef.current)
-      if (mutRafId != null)
-        cancelAnimationFrame(mutRafId)
+      rafIdRef.current = null
       hideStyle.parentNode?.removeChild(hideStyle)
       el.style.removeProperty('scrollbar-width')
       el.style.removeProperty('-ms-overflow-style')
       el.removeAttribute('data-murasaki-scrollbar-id')
     }
-  }, [viewportRef, scrollbarId, syncLayout])
+  }, [viewportRef, scrollbarId, syncLayout, requestLayoutSync])
+
+  useLayoutEffect(() => {
+    syncLayout()
+  }, [syncLayout])
+
+  useLayoutEffect(() => {
+    if (!metrics.hasVertical && !metrics.hasHorizontal)
+      return
+
+    syncLayout()
+  }, [metrics.hasVertical, metrics.hasHorizontal, syncLayout])
 
   // ── Scroll actions ──
   const scrollStep = useCallback((axis: 'v' | 'h', direction: -1 | 1) => {
@@ -272,11 +284,6 @@ export function useScrollState(
     const id = setInterval(action, REPEAT_MS)
     return () => clearInterval(id)
   }, [])
-
-  // ── Sync on first layout (after DOM is ready) ──
-  useLayoutEffect(() => {
-    syncLayout()
-  })
 
   return {
     metrics,

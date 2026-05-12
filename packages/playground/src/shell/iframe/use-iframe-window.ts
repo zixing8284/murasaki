@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProcessActions } from '../../contexts/process'
 import { IFRAME_CONFIG } from './iframe-config'
 
@@ -17,47 +17,20 @@ export interface UseIframeWindowReturn {
 }
 
 /**
- * Attaches a focus listener to the iframe's contentWindow if accessible.
- * Cross-origin and sandboxed iframes may throw a SecurityError here — we guard with try-catch.
- *
- * When the iframe content receives focus (e.g., user clicks inside iframe),
- * we activate the owning window and trigger delayed focus transfer.
- */
-function tryAttachContentWindowFocusListener(
-  iframe: HTMLIFrameElement,
-  onContentFocus: () => void,
-): () => void {
-  try {
-    const contentWindow = iframe.contentWindow
-    if (contentWindow) {
-      contentWindow.addEventListener('focus', onContentFocus)
-      return () => {
-        try {
-          contentWindow?.removeEventListener('focus', onContentFocus)
-        }
-        catch {
-          // contentWindow may be inaccessible after iframe unmount or navigation
-        }
-      }
-    }
-  }
-  catch {
-    // Cross-origin iframes may deny access to contentWindow — skip focus tracking.
-    // Window activation will still work via the iframe wrapper's onPointerDown.
-  }
-  return () => {}
-}
-
-/**
  * Encapsulates iframe window behavior:
- * - Tracks loading state via iframe load event (exposed as `iframeLoaded` = !isLoading)
- * - Listens to contentWindow focus to activate the owning window and trigger delayed focus (best-effort)
- * - Provides a ref callback to attach to the iframe element
- * - Provides focusIframe() with delayed focus transfer (500ms) to prevent accidental interactions
+ * - Tracks loading state via iframe load event (exposed as `iframeLoaded`).
+ * - Detects iframe activation via the host window's `blur` event combined with
+ *   `document.activeElement === iframeEl`. Works for both same-origin and
+ *   cross-origin iframes without subscribing to `contentWindow` focus events,
+ *   which avoids cross-origin SecurityErrors and — more importantly — avoids
+ *   the delayed-focus ping-pong that occurs when a stale `setTimeout` calls
+ *   `contentWindow.focus()` after the user has already switched windows.
+ * - Exposes a synchronous `focusIframe()`. The wrapper's `onPointerDown`
+ *   activates the window and routes keyboard focus into the iframe in the
+ *   same tick, so there is no deferred work that can outlive a deactivation.
  *
- * Note: contentWindow focus tracking only works when browser sandbox and origin
- * rules allow it. Otherwise the iframe wrapper's onPointerDown handles
- * activation and focus.
+ * Reference: daedalOS `useIFrameFocuser` uses the same
+ * blur + `document.activeElement` pattern to detect iframe activation.
  */
 export function useIframeWindow({
   windowId,
@@ -65,53 +38,13 @@ export function useIframeWindow({
   const actions = useProcessActions()
   const [isLoading, setIsLoading] = useState(true)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
-  // Keep latest callback in a ref so the effect doesn't need to re-run
-  const onContentFocusRef = useRef<() => void>(() => {})
-  // Track the pending focus timeout so it can be cancelled before rescheduling or on unmount
-  const focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Delayed focus transfer to prevent accidental interactions when switching windows
   const focusIframe = useCallback(() => {
-    if (focusTimeoutRef.current != null) {
-      clearTimeout(focusTimeoutRef.current)
-    }
-    focusTimeoutRef.current = setTimeout(() => {
-      focusTimeoutRef.current = null
-      iframeRef.current?.contentWindow?.focus()
-    }, 500)
+    iframeRef.current?.focus()
   }, [])
-
-  // Cancel any pending focus timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (focusTimeoutRef.current != null) {
-        clearTimeout(focusTimeoutRef.current)
-      }
-    }
-  }, [])
-
-  // Handler called when iframe content receives focus (best-effort)
-  const handleContentFocus = useCallback(() => {
-    // First: activate the window immediately so it comes to front
-    actions.activate(windowId)
-    // Then: trigger delayed focus transfer to iframe content
-    // (the contentWindow already has focus, but this ensures consistent timing)
-    focusIframe()
-  }, [actions, windowId, focusIframe])
-
-  // Keep onContentFocusRef in sync before paint
-  useLayoutEffect(() => {
-    onContentFocusRef.current = handleContentFocus
-  }, [handleContentFocus])
 
   const handleIframeLoad = useCallback(() => {
     setIsLoading(false)
-
-    // Re-attach contentWindow listener after load (best-effort)
-    const iframe = iframeRef.current
-    if (iframe) {
-      tryAttachContentWindowFocusListener(iframe, onContentFocusRef.current)
-    }
   }, [])
 
   useEffect(() => {
@@ -121,14 +54,30 @@ export function useIframeWindow({
 
     iframe.addEventListener('load', handleIframeLoad)
 
-    // Try to attach contentWindow listener immediately (best-effort for same-origin)
-    const detach = tryAttachContentWindowFocusListener(iframe, onContentFocusRef.current)
-
     return () => {
       iframe.removeEventListener('load', handleIframeLoad)
-      detach()
     }
   }, [handleIframeLoad])
+
+  // Detect iframe activation via host-window blur. When focus moves into an
+  // iframe (e.g. a click inside cross-origin content), the parent window blurs
+  // and `document.activeElement` becomes that iframe element. We then activate
+  // the owning process synchronously — no timeouts, so there is no stale work
+  // that can fight a subsequent user-initiated window switch.
+  useEffect(() => {
+    const handleHostBlur = (): void => {
+      const iframe = iframeRef.current
+      if (!iframe)
+        return
+      if (iframe.ownerDocument.activeElement === iframe) {
+        actions.activate(windowId)
+      }
+    }
+    window.addEventListener('blur', handleHostBlur)
+    return () => {
+      window.removeEventListener('blur', handleHostBlur)
+    }
+  }, [actions, windowId])
 
   /**
    * Cancel any ongoing interaction inside the iframe.

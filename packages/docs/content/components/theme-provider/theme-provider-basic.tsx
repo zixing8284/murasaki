@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, FieldPanel, ThemeProvider, useTheme } from '@murasaki/react98'
+import { Button, FieldPanel, themeIds, themeLabels, ThemeProvider, useTheme } from '@murasaki/react98'
 import { useState } from 'react'
 
 function ThemeControls(): React.ReactElement {
@@ -12,9 +12,12 @@ function ThemeControls(): React.ReactElement {
         Active theme:
         {themeId}
       </div>
-      <div className="flex gap-2">
-        <Button onClick={() => setTheme('windows-98')}>Windows 98</Button>
-        <Button onClick={() => setTheme('solarized-dark')}>Solarized</Button>
+      <div className="flex flex-wrap gap-2">
+        {themeIds.map(id => (
+          <Button key={id} onClick={() => setTheme(id)}>
+            {themeLabels[id]}
+          </Button>
+        ))}
       </div>
     </div>
   )

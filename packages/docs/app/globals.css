@@ -3,6 +3,10 @@
   --m98-docs-border: #808080;
   --m98-docs-border-light: #ffffff;
   --m98-docs-code-bg: #f7f7f7;
+  --m98-docs-code-text: #1b2024;
+  --m98-docs-code-copy-bg: #e6e6e6;
+  --m98-docs-code-copy-border: #9d9d9d;
+  --m98-docs-code-copy-hover: #d6d6d6;
   --m98-docs-example-padding: 20px;
   --m98-docs-preview-bg: var(--button-face);
 }
@@ -11,6 +15,10 @@ html.dark {
   --m98-docs-border: #586e75;
   --m98-docs-border-light: #073642;
   --m98-docs-code-bg: #002b36;
+  --m98-docs-code-text: #d9e4ea;
+  --m98-docs-code-copy-bg: #073642;
+  --m98-docs-code-copy-border: #2b5b65;
+  --m98-docs-code-copy-hover: #0b4a57;
 }
 
 body,
@@ -63,11 +71,7 @@ body {
   color: var(--window-text);
 }
 
-.m98-example__preview[data-theme="windows-98"] {
-  --m98-docs-preview-bg: var(--button-face);
-}
-
-.m98-example__preview[data-theme="solarized-dark"] {
+.m98-example__preview[data-theme] {
   --m98-docs-preview-bg: var(--button-face);
 }
 
@@ -90,6 +94,26 @@ body {
 .m98-example__preview--select {
   height: 240px;
   min-height: 240px;
+}
+
+.m98-example__preview--context-menu-edge {
+  height: 320px;
+  min-height: 320px;
+}
+
+.m98-example__preview--context-menu-edge .m98-example__preview-inner {
+  height: 100%;
+  padding: 0;
+}
+
+.m98-example__preview--tooltip-edge {
+  height: 320px;
+  min-height: 320px;
+}
+
+.m98-example__preview--tooltip-edge .m98-example__preview-inner {
+  height: 100%;
+  padding: 0;
 }
 
 .m98-example__tabs {
@@ -136,19 +160,53 @@ body {
 }
 
 .m98-example__source {
+  position: relative;
   max-height: 360px;
   overflow: auto;
-  padding: 12px;
+  padding: 40px 12px 12px;
   background: var(--m98-docs-code-bg);
   box-shadow: var(--shadow-border-field);
-  color: inherit;
+  color: var(--m98-docs-code-text);
 }
 
-.m98-example__source code {
+.m98-example__source-rendered .m98-example__highlighted-pre {
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+  font-family: var(--m98-docs-font-mono);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.m98-example__source-rendered code.nextra-code {
+  display: block;
   font-family: var(--m98-docs-font-mono);
   font-size: 12px;
   line-height: 1.45;
   white-space: pre;
+}
+
+.m98-example__copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 1px solid var(--m98-docs-code-copy-border);
+  background: var(--m98-docs-code-copy-bg);
+  color: var(--m98-docs-code-text);
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.m98-example__copy:hover {
+  background: var(--m98-docs-code-copy-hover);
+}
+
+.m98-example__copy:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
 }
 
 /* Minimal docs-side utility set for TSX examples. The docs site does not run

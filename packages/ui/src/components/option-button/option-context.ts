@@ -2,18 +2,22 @@ import { createContext, use } from 'react'
 
 export interface OptionGroupProps {
   /**
+   * Default selected value for uncontrolled groups.
+   */
+  defaultValue?: string | undefined
+  /**
    * provides the name attribute for each option button in the group
    */
   name: string
   /**
-   * callback fired when an option button is selected
+   * callback fired with the next selected value.
    * @param value the value of the selected option button
    */
-  onChange?: ((value: string) => void) | undefined
+  onValueChange?: ((value: string) => void) | undefined
   /**
-   * the currently selected value in the option button group
+   * The currently selected value for controlled groups.
    */
-  selectedValue?: string | undefined
+  value?: string | undefined
 }
 
 export const OptionButtonGroupContext = createContext<

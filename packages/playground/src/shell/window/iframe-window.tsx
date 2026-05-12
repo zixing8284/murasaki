@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process'
+import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
 import { RndWindow } from './rnd-window'
 
@@ -8,6 +9,7 @@ interface IframeWindowProps {
   windowId: string
   src: string
   className?: string
+  contentClassName?: string
   titleIcon?: ReactNode
   disableMaximize?: boolean
   disableMinimize?: boolean
@@ -27,6 +29,7 @@ export function IframeWindow({
   windowId,
   src,
   className,
+  contentClassName,
   titleIcon,
   disableMaximize = false,
   disableMinimize = false,
@@ -53,6 +56,7 @@ export function IframeWindow({
     <RndWindow
       windowId={windowId}
       className={className}
+      contentClassName={contentClassName}
       titleIcon={titleIcon}
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
@@ -75,7 +79,7 @@ export function IframeWindow({
        *   page when touching inside the iframe area.
        */}
       <div
-        className={`w-full h-full pt-1 relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
+        className={`w-full h-full relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)
@@ -93,7 +97,7 @@ export function IframeWindow({
         )}
         <iframe
           ref={iframeRef}
-          src={src}
+          src={assetPath(src)}
           sandbox={sandbox}
           referrerPolicy={referrerPolicy}
           className={`w-full h-full border-none block ${isInteracting ? 'pointer-events-none' : ''}`}

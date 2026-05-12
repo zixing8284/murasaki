@@ -12,10 +12,11 @@ import {
 import { Fragment } from 'react'
 
 const TARGETS = [
-  { id: 'top', label: 'Right click (top)', style: { gridColumn: 2, gridRow: 1 } },
-  { id: 'right', label: 'Right click (right)', style: { gridColumn: 3, gridRow: 2 } },
-  { id: 'bottom', label: 'Right click (bottom)', style: { gridColumn: 2, gridRow: 3 } },
-  { id: 'left', label: 'Right click (left)', style: { gridColumn: 1, gridRow: 2 } },
+  { id: 'top-left', label: 'Top-left corner', style: { gridColumn: 1, gridRow: 1 } },
+  { id: 'top-right', label: 'Top-right corner', style: { gridColumn: 3, gridRow: 1 } },
+  { id: 'center', label: 'Center area', style: { gridColumn: 2, gridRow: 2 } },
+  { id: 'bottom-left', label: 'Bottom-left corner', style: { gridColumn: 1, gridRow: 3 } },
+  { id: 'bottom-right', label: 'Bottom-right corner', style: { gridColumn: 3, gridRow: 3 } },
 ] as const
 
 const ITEMS = [
@@ -50,15 +51,18 @@ function RightClickTarget({
           ...style,
           alignItems: 'center',
           background: 'var(--button-face)',
+          boxSizing: 'border-box',
           boxShadow: 'var(--shadow-raised)',
           color: 'var(--button-text)',
           display: 'flex',
           fontSize: 12,
-          height: 64,
+          height: '100%',
           justifyContent: 'center',
-          minWidth: 136,
+          minHeight: 72,
+          minWidth: 0,
           padding: '0 12px',
           textAlign: 'center',
+          width: '100%',
         }}
       >
         {label}
@@ -81,15 +85,15 @@ export function ContextMenuEdgeTestDemo(): React.ReactElement {
     <ContextMenu>
       <div
         style={{
-          alignItems: 'center',
           background: 'var(--window)',
+          boxSizing: 'border-box',
           boxShadow: 'var(--shadow-border-field)',
           display: 'grid',
           gap: 12,
-          gridTemplateColumns: '1fr auto 1fr',
-          gridTemplateRows: 'auto auto auto',
-          maxWidth: 520,
-          minHeight: 300,
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          gridTemplateRows: 'repeat(3, minmax(0, 1fr))',
+          height: '100%',
+          minHeight: 280,
           padding: 12,
           width: '100%',
         }}
@@ -102,12 +106,13 @@ export function ContextMenuEdgeTestDemo(): React.ReactElement {
             color: 'var(--gray-text)',
             fontSize: 11,
             gridColumn: 2,
-            gridRow: 2,
+            gridRow: 3,
+            placeSelf: 'end center',
             textAlign: 'center',
-            width: 136,
+            width: '100%',
           }}
         >
-          ContextMenuContent
+          Right-click any target to see adaptive placement.
         </div>
       </div>
       <ContextMenuContent>

@@ -106,12 +106,20 @@ const tabLabelVariants = cva(
   ],
   {
     variants: {
+      disabled: {
+        true: [
+          'text-(--gray-text)',
+          '[text-shadow:1px_1px_0_var(--button-hilight)]',
+        ],
+        false: [],
+      },
       selected: {
         true: ['focus-visible:outline-none'],
         false: [],
       },
     },
     defaultVariants: {
+      disabled: false,
       selected: false,
     },
   },
@@ -161,7 +169,7 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
       onKeyDown={handleKeyDown}
       {...props}
     >
-      <span className={cn(tabLabelVariants({ selected: isSelected }))}>
+      <span className={cn(tabLabelVariants({ disabled, selected: isSelected }))}>
         {children}
       </span>
     </li>

@@ -151,6 +151,29 @@ describe('tooltip', () => {
     await expect.element(screen.getByText('Detailed description')).toBeInTheDocument()
   })
 
+  it('supports left and right preferred sides', async () => {
+    const leftScreen = await render(
+      <Tooltip text="Left side" side="left" delay={0}>
+        <button>Left trigger</button>
+      </Tooltip>,
+    )
+
+    await userEvent.hover(leftScreen.getByRole('button', { name: 'Left trigger' }).element())
+    await expect.element(leftScreen.getByText('Left side')).toBeInTheDocument()
+
+    await userEvent.unhover(leftScreen.getByRole('button', { name: 'Left trigger' }).element())
+    await expect.poll(() => document.querySelector('[role="tooltip"]')).toBeNull()
+
+    const rightScreen = await render(
+      <Tooltip text="Right side" side="right" delay={0}>
+        <button>Right trigger</button>
+      </Tooltip>,
+    )
+
+    await userEvent.hover(rightScreen.getByRole('button', { name: 'Right trigger' }).element())
+    await expect.element(rightScreen.getByText('Right side')).toBeInTheDocument()
+  })
+
   // === Event forwarding ===
 
   it('forwards existing event handlers on the trigger', async () => {

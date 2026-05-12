@@ -163,6 +163,23 @@ describe('tabs', () => {
     await expect.element(disabledTab).toHaveAttribute('aria-disabled', 'true')
   })
 
+  it('applies disabled label styling using theme tokens', async () => {
+    const screen = await render(
+      <Tabs defaultValue="one">
+        <TabList>
+          <Tab value="one">Tab One</Tab>
+          <Tab value="two" disabled>Tab Two</Tab>
+        </TabList>
+        <TabPanel value="one">Content One</TabPanel>
+        <TabPanel value="two">Content Two</TabPanel>
+      </Tabs>,
+    )
+
+    const disabledLabel = screen.getByText('Tab Two')
+    await expect.element(disabledLabel).toHaveClass('text-(--gray-text)')
+    await expect.element(disabledLabel).toHaveClass('[text-shadow:1px_1px_0_var(--button-hilight)]')
+  })
+
   // === Edge case: no panels rendered when no tab matches ===
 
   it('renders no panel when no tab matches the value', async () => {

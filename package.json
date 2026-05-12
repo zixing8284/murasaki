@@ -2,6 +2,7 @@
   "name": "@murasaki/react98-workspace",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.27.0",
   "scripts": {
     "play": "pnpm --filter @murasaki/react98-playground dev",
     "play:build": "pnpm --filter @murasaki/react98-playground build",

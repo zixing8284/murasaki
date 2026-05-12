@@ -1,4 +1,5 @@
 import type { TaskbarQuickLaunchIcon } from '@murasaki/react98'
+import type { RefObject } from 'react'
 import {
   Button,
   TaskbarDivider,
@@ -20,16 +21,18 @@ const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = [
 ]
 
 interface TaskbarProps {
+  startButtonRef: RefObject<HTMLButtonElement | null>
   showStartMenu: boolean
   onStartMenuToggle: () => void
 }
 
-export function Taskbar({ showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
+export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
   return (
     <TaskbarRoot className="mt-auto">
       {/* Start Button */}
       <div>
         <Button
+          ref={startButtonRef}
           active={showStartMenu}
           onClick={onStartMenuToggle}
         >

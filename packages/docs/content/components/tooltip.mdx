@@ -11,7 +11,7 @@ import { TooltipEdgeTestDemo } from './tooltip/tooltip-edge-test'
 |------|------|---------|-------------|
 | `text` | `string` | required | Tooltip text. |
 | `delay` | `number` | `400` | Delay before showing in milliseconds. |
-| `side` | `'top' \| 'bottom'` | `'top'` | Preferred placement, with viewport flipping. |
+| `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Preferred placement, with viewport flipping. |
 | `className` | `string` | - | Popup classes. |
 | `children` | `ReactNode` | required | Trigger content. |
 
@@ -21,7 +21,11 @@ import { TooltipEdgeTestDemo } from './tooltip/tooltip-edge-test'
   <TooltipBasicDemo />
 </ComponentExample>
 
-<ComponentExample name="tooltip-edge-test" title="Viewport edge detection">
+<ComponentExample
+  name="tooltip-edge-test"
+  title="Viewport edge detection"
+  previewClassName="m98-example__preview--tooltip-edge"
+>
   <TooltipEdgeTestDemo />
 </ComponentExample>
 

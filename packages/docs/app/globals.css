@@ -88,6 +88,26 @@ body {
   min-height: 240px;
 }
 
+.m98-example__preview--context-menu-edge {
+  height: 320px;
+  min-height: 320px;
+}
+
+.m98-example__preview--context-menu-edge .m98-example__preview-inner {
+  height: 100%;
+  padding: 0;
+}
+
+.m98-example__preview--tooltip-edge {
+  height: 320px;
+  min-height: 320px;
+}
+
+.m98-example__preview--tooltip-edge .m98-example__preview-inner {
+  height: 100%;
+  padding: 0;
+}
+
 .m98-example__tabs {
   display: inline-flex;
   gap: 4px;

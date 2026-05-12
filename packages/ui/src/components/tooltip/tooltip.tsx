@@ -10,7 +10,7 @@ export interface TooltipProps {
   /** Delay in ms before showing the tooltip (default: 400) */
   delay?: number
   /** Preferred positioning side relative to the trigger (flips if it overflows the viewport) */
-  side?: 'top' | 'bottom'
+  side?: 'top' | 'bottom' | 'left' | 'right'
   /** Optional className for the tooltip popup */
   className?: string
   /** Trigger element(s) */

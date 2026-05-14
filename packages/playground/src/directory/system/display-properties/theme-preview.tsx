@@ -28,7 +28,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
       {/* Desktop icon */}
       <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">
         <img
-          src={assetPath('/img/desktop/RecyclingBin.png')}
+          src={assetPath('/icons/windows98-icons/ico/recycle_bin_empty.ico')}
           alt="Trash"
           className="w-8 h-8 pixelated"
         />

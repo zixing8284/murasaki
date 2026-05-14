@@ -2,7 +2,7 @@
  * Resolve a public asset path against Vite's runtime `base`.
  *
  * Vite rewrites asset URLs inside `index.html` and processed CSS, but it
- * does NOT rewrite plain string literals in JS/TSX (e.g. `'/img/foo.png'`).
+ * does NOT rewrite plain string literals in JS/TSX (e.g. `'/icons/foo.ico'`).
  * Wrap such paths in `assetPath()` so they work both locally (`base = '/'`)
  * and when deployed under a subpath (e.g. GitHub Pages at `/murasaki/`).
  */

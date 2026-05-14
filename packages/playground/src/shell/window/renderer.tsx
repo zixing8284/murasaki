@@ -3,6 +3,7 @@ import type { AppId, ProcessComponentProps, ProcessDirectoryEntry } from '../../
 import { Suspense } from 'react'
 import { appDirectory, useProcesses } from '../../contexts/process'
 import { IframeWindow } from './iframe-window'
+import { InternetExplorerWindow } from './internet-explorer-window'
 import { RndWindow } from './rnd-window'
 
 function renderProcessWindow(
@@ -13,6 +14,20 @@ function renderProcessWindow(
   const windowConfig = entry?.window
 
   if (windowConfig?.type === 'iframe') {
+    if (windowConfig.chrome === 'ie2') {
+      return (
+        <InternetExplorerWindow
+          windowId={windowId}
+          src={windowConfig.src}
+          className={windowConfig.className}
+          contentClassName={windowConfig.contentClassName}
+          disableMaximize={windowConfig.disableMaximize}
+          disableMinimize={windowConfig.disableMinimize}
+          disableResize={windowConfig.disableResize}
+        />
+      )
+    }
+
     return (
       <IframeWindow
         windowId={windowId}

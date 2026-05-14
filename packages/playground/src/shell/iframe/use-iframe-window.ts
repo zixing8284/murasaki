@@ -43,6 +43,10 @@ export function useIframeWindow({
     iframeRef.current?.focus()
   }, [])
 
+  const setIframeRef = useCallback((el: HTMLIFrameElement | null) => {
+    iframeRef.current = el
+  }, [])
+
   const handleIframeLoad = useCallback(() => {
     setIsLoading(false)
   }, [])
@@ -114,9 +118,7 @@ export function useIframeWindow({
   }, [])
 
   return {
-    iframeRef: (el) => {
-      iframeRef.current = el
-    },
+    iframeRef: setIframeRef,
     iframeLoaded: !isLoading,
     focusIframe,
     cancelIframeInteraction,

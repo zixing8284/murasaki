@@ -2,8 +2,8 @@ import type { AppIcon, ProcessDirectoryEntry } from './types'
 import { lazy } from 'react'
 
 export const DEFAULT_ICON: AppIcon = {
-  sm: '/img/desktop/ProgMan.png',
-  lg: '/img/desktop/ProgMan.png',
+  sm: '/icons/windows98-icons/ico/program_manager.ico',
+  lg: '/icons/windows98-icons/ico/program_manager.ico',
 }
 
 /**
@@ -30,13 +30,13 @@ const directory = {
   },
   docs: {
     name: 'Murasaki UI Library Docs',
-    defaultTitle: 'Murasaki UI Library Docs',
-    icon: { sm: '/icons/windows98-icons/ico/document.ico', lg: '/icons/windows98-icons/ico/document.ico' },
+    defaultTitle: 'Murasaki UI Library Docs - Microsoft Internet Explorer',
+    icon: { sm: '/icons/windows98-icons/ico/msie2.ico', lg: '/icons/windows98-icons/ico/msie2.ico' },
     singleton: true,
     showOnDesktop: true,
     defaultSize: { width: 750 },
     defaultPosition: { top: '10%', left: '3.75rem' },
-    window: { type: 'iframe', src: '/programs/docs/index.html', className: 'h-[90%]' },
+    window: { type: 'iframe', src: '/programs/docs/index.html', chrome: 'ie2', className: 'h-[90%]' },
   },
   notepad: {
     name: 'Notepad',
@@ -104,7 +104,7 @@ const directory = {
       import('../../directory/apps/webamp/webamp').then(m => ({ default: m.WebampApp })),
     ),
     defaultTitle: 'Webamp',
-    icon: { sm: '/img/desktop/Webamp16.png', lg: '/img/desktop/Webamp.png' },
+    icon: { sm: '/icons/desktop/Webamp16.png', lg: '/icons/desktop/Webamp.png' },
     singleton: true,
     showOnDesktop: true,
     window: { type: 'none' },

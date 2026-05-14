@@ -80,6 +80,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - App metadata is registered in `packages/playground/src/contexts/process/directory.ts`.
 - Window implementations live under `packages/playground/src/directory/`.
 - The Component Docs playground app is an iframe wrapper around `/programs/docs/index.html`; it should not own a second docs runtime.
+- Playground reusable icons belong under `packages/playground/public/icons/` (especially `icons/windows98-icons/ico/`). Use `packages/playground/public/img/` for content imagery, wallpapers, backgrounds, and app-specific bitmaps. For small symbolic UI assets, search `public/icons/` first.
 
 ## Docs Architecture
 

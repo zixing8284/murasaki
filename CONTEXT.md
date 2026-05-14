@@ -51,3 +51,7 @@ _Avoid_: Accidental source export, unrecorded package export drift
 **Pixel-font clipping safety**:
 A layout rule for Windows 98 pixel-font text where the element that clips text also keeps a small left inset before the first glyph, preventing fractional device-pixel alignment from dropping the glyph's leftmost column.
 _Avoid_: Flush clipped glyph, nested zero-padding overflow clip, font-smoothing workaround
+
+**Playground public asset boundary**:
+A playground convention that keeps reusable semantic icons under `packages/playground/public/icons/` and content/decorative bitmaps under `packages/playground/public/img/`; the `img` directory name stays singular.
+_Avoid_: New semantic icons in `public/img`, unsearchable one-off asset paths

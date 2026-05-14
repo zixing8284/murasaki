@@ -39,6 +39,7 @@ export interface ProcessDefaultWindowConfig extends ProcessBaseWindowConfig {
 export interface ProcessIframeWindowConfig extends ProcessBaseWindowConfig {
   type: 'iframe'
   src: string
+  chrome?: 'ie2'
 }
 
 export interface ProcessNoWindowConfig {

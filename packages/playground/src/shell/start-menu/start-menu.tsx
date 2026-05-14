@@ -42,14 +42,14 @@ function StartIcon({ src }: StartIconProps): React.ReactElement {
 
 const ICON = {
   windowsUpdate: '/icons/windows98-icons/ico/windows_update_small.ico',
-  programs: '/img/startmenu/Programs.png',
-  documents: '/img/startmenu/Documents.png',
-  settings: '/img/startmenu/Settings.png',
-  find: '/img/startmenu/Find.png',
-  help: '/img/startmenu/Help.png',
-  run: '/img/startmenu/Run.png',
-  logOff: '/img/startmenu/LogOff.png',
-  shutDown: '/img/startmenu/ShutDown.png',
+  programs: '/icons/windows98-icons/ico/directory_program_group.ico',
+  documents: '/icons/windows98-icons/ico/directory_open_file_mydocs.ico',
+  settings: '/icons/windows98-icons/ico/settings_gear.ico',
+  find: '/icons/windows98-icons/ico/search_file.ico',
+  help: '/icons/windows98-icons/ico/help_book_small.ico',
+  run: '/icons/windows98-icons/ico/console_prompt.ico',
+  logOff: '/icons/windows98-icons/ico/users_key.ico',
+  shutDown: '/icons/windows98-icons/ico/shut_down_normal.ico',
   // programs submenu
   accessories: '/icons/windows98-icons/ico/directory_program_group.ico',
   notepad: '/icons/windows98-icons/ico/notepad.ico',
@@ -58,7 +58,7 @@ const ICON = {
   internetExplorer: '/icons/windows98-icons/ico/msie2.ico',
   myComputer: '/icons/windows98-icons/ico/computer.ico',
   mediaPlayer: '/icons/windows98-icons/ico/media_player.ico',
-  webamp: '/img/desktop/Webamp16.png',
+  webamp: '/icons/desktop/Webamp16.png',
   themeDesigner: '/icons/windows98-icons/ico/themes.ico',
   // settings submenu
   controlPanel: '/icons/windows98-icons/ico/directory_control_panel.ico',

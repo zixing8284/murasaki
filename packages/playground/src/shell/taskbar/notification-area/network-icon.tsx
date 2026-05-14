@@ -3,11 +3,11 @@ import { assetPath } from '../../../lib/asset-path'
 import { useNetworkStatus } from './use-network-status'
 
 const NETWORK_ONLINE_ICONS = [
-  assetPath('/img/conn_pcs_on_off.png'),
-  assetPath('/img/conn_pcs_off_on.png'),
-  assetPath('/img/conn_pcs_on_on.png'),
+  assetPath('/icons/windows98-icons/ico/conn_pcs_on_off.ico'),
+  assetPath('/icons/windows98-icons/ico/conn_pcs_off_on.ico'),
+  assetPath('/icons/windows98-icons/ico/conn_pcs_on_on.ico'),
 ]
-const NETWORK_OFFLINE_ICON = assetPath('/img/conn_pcs_no_network.png')
+const NETWORK_OFFLINE_ICON = assetPath('/icons/windows98-icons/ico/conn_pcs_no_network.ico')
 
 export function NetworkIcon(): React.ReactElement {
   const isOnline = useNetworkStatus()

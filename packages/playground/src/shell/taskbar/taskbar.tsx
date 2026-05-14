@@ -15,10 +15,10 @@ import { SwUpdateBalloon } from './notification-area/sw-update-balloon'
 import { RunningTasks } from './running-tasks/running-tasks'
 
 const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = [
-  { src: assetPath('/icons/windows98-icons/ico/desktop.ico'), alt: 'Show Desktop', title: 'Show Desktop' },
-  { src: assetPath('/icons/windows98-icons/ico/outlook_express.ico'), alt: 'Email Me', title: 'Outlook Express' },
-  { src: assetPath('/icons/windows98-icons/ico/msie2.ico'), alt: 'Internet', title: 'Internet Explorer' },
-  { src: assetPath('/icons/windows98-icons/ico/computer.ico'), alt: 'Computer', title: 'My Computer' },
+  { src: assetPath('/icons/windows98-icons/png/desktop-3.png'), alt: 'Show Desktop', title: 'Show Desktop' },
+  { src: assetPath('/icons/windows98-icons/png/outlook_express-2.png'), alt: 'Email Me', title: 'Outlook Express' },
+  { src: assetPath('/icons/windows98-icons/png/msie2-3.png'), alt: 'Internet', title: 'Internet Explorer' },
+  { src: assetPath('/icons/windows98-icons/png/computer-0.png'), alt: 'Computer', title: 'My Computer' },
 ]
 
 interface TaskbarProps {

@@ -12,15 +12,15 @@ const FALLBACK_PAGE_TITLE = 'New Tab - Microsoft Internet Explorer'
 const IE_MENUS = ['File', 'Edit', 'View', 'Go', 'Favorites', 'Help'] as const
 
 const ICONS = {
-  favorites: '/icons/windows98-icons/ico/directory_favorites.ico',
-  home: '/icons/windows98-icons/ico/homepage.ico',
-  html: '/icons/windows98-icons/ico/html.ico',
-  mail: '/icons/windows98-icons/ico/mailbox_world.ico',
-  print: '/icons/windows98-icons/ico/printer.ico',
-  refresh: '/icons/windows98-icons/ico/directory_open_refresh.ico',
-  search: '/icons/windows98-icons/ico/search_web.ico',
-  stop: '/icons/windows98-icons/ico/no.ico',
-  windows: '/icons/windows98-icons/ico/windows.ico',
+  favorites: '/icons/windows98-icons/png/directory_favorites-1.png',
+  home: '/icons/windows98-icons/png/homepage-1.png',
+  html: '/icons/windows98-icons/png/html-0.png',
+  mail: '/icons/windows98-icons/png/mailbox_world-1.png',
+  print: '/icons/windows98-icons/png/printer-1.png',
+  refresh: '/icons/windows98-icons/png/overlay_refresh-1.png',
+  search: '/icons/windows98-icons/png/search_web-1.png',
+  stop: '/icons/windows98-icons/png/no-0.png',
+  windows: '/icons/windows98-icons/png/windows-4.png',
 } as const
 
 interface InternetExplorerWindowProps {

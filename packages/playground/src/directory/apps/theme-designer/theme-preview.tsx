@@ -37,7 +37,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
       {/* Desktop icon */}
       <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">
         <img
-          src={assetPath('/icons/windows98-icons/ico/recycle_bin_empty.ico')}
+          src={assetPath('/icons/windows98-icons/png/recycle_bin_empty-0.png')}
           alt="Trash"
           className="w-8 h-8 pixelated"
           draggable={false}

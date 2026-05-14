@@ -2,8 +2,8 @@ import type { AppIcon, ProcessDirectoryEntry } from './types'
 import { lazy } from 'react'
 
 export const DEFAULT_ICON: AppIcon = {
-  sm: '/icons/windows98-icons/ico/program_manager.ico',
-  lg: '/icons/windows98-icons/ico/program_manager.ico',
+  sm: '/icons/windows98-icons/png/program_manager-0.png',
+  lg: '/icons/windows98-icons/png/program_manager-0.png',
 }
 
 /**
@@ -22,7 +22,7 @@ const directory = {
       import('../../directory/apps/my-computer').then(m => ({ default: m.MyComputer })),
     ),
     defaultTitle: 'My Computer',
-    icon: { sm: '/icons/windows98-icons/ico/computer.ico', lg: '/icons/windows98-icons/ico/computer.ico' },
+    icon: { sm: '/icons/windows98-icons/png/computer-0.png', lg: '/icons/windows98-icons/png/computer-2.png' },
     singleton: true,
     defaultSize: { width: 520 },
     defaultPosition: { top: '10%', left: '10%' },
@@ -31,7 +31,7 @@ const directory = {
   docs: {
     name: 'Murasaki UI Library Docs',
     defaultTitle: 'Murasaki UI Library Docs - Microsoft Internet Explorer',
-    icon: { sm: '/icons/windows98-icons/ico/msie2.ico', lg: '/icons/windows98-icons/ico/msie2.ico' },
+    icon: { sm: '/icons/windows98-icons/png/msie2-3.png', lg: '/icons/windows98-icons/png/msie2-0.png' },
     singleton: true,
     showOnDesktop: true,
     defaultSize: { width: 750 },
@@ -44,7 +44,7 @@ const directory = {
       import('../../directory/apps/notepad').then(m => ({ default: m.Notepad })),
     ),
     defaultTitle: 'Untitled - Notepad',
-    icon: { sm: '/icons/windows98-icons/ico/notepad.ico', lg: '/icons/windows98-icons/ico/notepad.ico' },
+    icon: { sm: '/icons/windows98-icons/png/notepad-0.png', lg: '/icons/windows98-icons/png/notepad-1.png' },
     singleton: false,
     showOnDesktop: true,
     defaultSize: { width: 400, height: 300 },
@@ -56,7 +56,7 @@ const directory = {
       import('../../directory/system/display-properties/display-properties').then(m => ({ default: m.DisplayProperties })),
     ),
     defaultTitle: 'Display Properties',
-    icon: { sm: '/icons/windows98-icons/ico/display_properties.ico', lg: '/icons/windows98-icons/ico/display_properties.ico' },
+    icon: { sm: '/icons/windows98-icons/png/display_properties-0.png', lg: '/icons/windows98-icons/png/display_properties-2.png' },
     singleton: true,
     ephemeral: true,
     defaultSize: { width: 420 },
@@ -66,7 +66,7 @@ const directory = {
   jspaint: {
     name: 'JSPaint',
     defaultTitle: 'JSPaint',
-    icon: { sm: '/icons/windows98-icons/ico/paint.ico', lg: '/icons/windows98-icons/ico/paint.ico' },
+    icon: { sm: '/icons/windows98-icons/png/paint_old-1.png', lg: '/icons/windows98-icons/png/paint_old-0.png' },
     singleton: false,
     showOnDesktop: true,
     defaultSize: { width: 900, height: 650 },
@@ -79,7 +79,7 @@ const directory = {
       import('../../directory/apps/theme-designer/theme-designer').then(m => ({ default: m.ThemeDesigner })),
     ),
     defaultTitle: 'Windows Classic Theme Designer',
-    icon: { sm: '/icons/windows98-icons/ico/themes.ico', lg: '/icons/windows98-icons/ico/themes.ico' },
+    icon: { sm: '/icons/windows98-icons/png/themes-1.png', lg: '/icons/windows98-icons/png/themes-0.png' },
     singleton: true,
     showOnDesktop: true,
     defaultSize: { width: 720, height: 584 },
@@ -92,7 +92,7 @@ const directory = {
       import('../../directory/apps/media-player/media-player').then(m => ({ default: m.MediaPlayer })),
     ),
     defaultTitle: 'Media Player',
-    icon: { sm: '/icons/windows98-icons/ico/media_player.ico', lg: '/icons/windows98-icons/ico/media_player.ico' },
+    icon: { sm: '/icons/windows98-icons/png/media_player-1.png', lg: '/icons/windows98-icons/png/media_player-0.png' },
     singleton: true,
     showOnDesktop: true,
     defaultSize: { width: 640, height: 480 },

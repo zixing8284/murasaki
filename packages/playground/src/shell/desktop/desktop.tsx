@@ -17,7 +17,7 @@ import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 
-const DESKTOP_MEDIA_ICON = assetPath('/icons/windows98-icons/ico/directory_open_file_mydocs.ico')
+const DESKTOP_MEDIA_ICON = assetPath('/icons/windows98-icons/png/directory_open_file_mydocs-0.png')
 
 interface IconEntry {
   id: string

@@ -22,7 +22,7 @@ interface ThemePreviewProps {
 export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewProps): React.ReactElement {
   return (
     <div
-      className={`relative h-65 overflow-hidden border border-(--button-dk-shadow) bg-(--background) ${gradientTitlebar ? '' : 'no-gradient-titlebar'}`}
+      className={`relative h-65 overflow-hidden border border-(--button-dk-shadow) bg-(--background) ${gradientTitlebar ? '' : '[--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
       data-theme={themeId}
     >
       {/* Desktop icon */}

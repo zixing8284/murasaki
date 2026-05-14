@@ -69,24 +69,3 @@ body {
   width: clamp(460px, 100%, 100%);
   font-size: 11px;
 }
-
-/* Scanline CRT effect overlay */
-.scanline-overlay::after {
-  content: "";
-  z-index: 9999;
-  display: block;
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  /* background-image: var(--scan-line-dot); */
-  background-size: 100% 1px, 2px 100%;
-  background-color: #a4979721;
-  pointer-events: none;
-  opacity: 0.9;
-}
-
-/* Disable gradient on title bars — makes them solid color */
-.no-gradient-titlebar {
-  --gradient-active-title: var(--active-title);
-  --gradient-inactive-title: var(--inactive-title);
-}

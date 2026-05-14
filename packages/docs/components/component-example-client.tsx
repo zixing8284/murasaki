@@ -3,7 +3,7 @@
 import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
 import { Code } from 'nextra/components'
 import { evaluate } from 'nextra/evaluate'
-import { useId, useMemo, useState, useSyncExternalStore } from 'react'
+import { useId, useState, useSyncExternalStore } from 'react'
 
 type ComponentExamplePreviewTheme = 'auto' | 'none'
 
@@ -93,6 +93,11 @@ const codeBlockComponents = {
   pre: ComponentExampleCodePre,
 }
 
+function CompiledCode({ compiledSource }: { compiledSource: string }): ReactElement {
+  const Component = evaluate(compiledSource, codeBlockComponents).default
+  return <Component />
+}
+
 export function ComponentExampleClient({
   title,
   previewClassName,
@@ -107,10 +112,6 @@ export function ComponentExampleClient({
     getServerDocsExampleTheme,
   )
   const previewElements = getExampleChildren(children)
-  const HighlightedCode = useMemo(
-    () => evaluate(compiledSource, codeBlockComponents).default,
-    [compiledSource],
-  )
 
   const [tab, setTab] = useState<'preview' | 'code'>('preview')
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
@@ -226,7 +227,7 @@ export function ComponentExampleClient({
             {copyStatus === 'copied' ? 'COPIED' : copyStatus === 'failed' ? 'FAILED' : 'COPY'}
           </button>
           <div className="m98-example__source-rendered">
-            <HighlightedCode />
+            <CompiledCode compiledSource={compiledSource} />
           </div>
         </div>
       </div>

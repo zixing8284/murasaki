@@ -62,29 +62,34 @@ export function Tooltip({
   // Clean up timer on unmount
   useEffect(() => clearTimer, [clearTimer])
 
+  const tooltipStyle: React.CSSProperties = position
+    ? { top: position.y, left: position.x }
+    : { top: 0, left: 0, visibility: 'hidden' }
+
   return (
     <span
       ref={wrapperRef}
       className="inline-flex"
-      aria-describedby={visible ? tooltipId : undefined}
+      aria-describedby={visible && position ? tooltipId : undefined}
       onPointerEnter={show}
       onPointerLeave={hide}
       onFocus={show}
       onBlur={hide}
     >
       {children}
-      {visible && position && createPortal(
+      {visible && createPortal(
         <span
           ref={tooltipRef}
           id={tooltipId}
-          role="tooltip"
+          role={position ? 'tooltip' : undefined}
+          aria-hidden={position ? undefined : true}
           className={cn(
             'fixed z-9999 whitespace-nowrap px-1 py-0.5',
             'bg-(--info-window) text-(--info-text) border border-(--window-frame)',
             'pointer-events-none',
             className,
           )}
-          style={{ top: position.y, left: position.x }}
+          style={tooltipStyle}
         >
           {text}
         </span>,

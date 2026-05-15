@@ -337,8 +337,8 @@ export function MenuSub({
   children,
   open: openProp,
   onOpenChange,
-  hoverOpenDelay = 120,
-  hoverCloseDelay = 200,
+  hoverOpenDelay = 46,
+  hoverCloseDelay = 0,
 }: MenuSubProps): React.ReactElement {
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
   const isControlled = openProp !== undefined

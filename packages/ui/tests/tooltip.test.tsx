@@ -3,6 +3,46 @@ import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
 import { Tooltip } from '../src'
 
+function installAnimationFrameController(): {
+  count: () => number
+  flushPending: () => void
+  restore: () => void
+} {
+  const originalRequestAnimationFrame = window.requestAnimationFrame
+  const originalCancelAnimationFrame = window.cancelAnimationFrame
+  const callbacks = new Map<number, FrameRequestCallback>()
+  let nextId = 1
+
+  window.requestAnimationFrame = ((callback: FrameRequestCallback): number => {
+    const id = nextId++
+    callbacks.set(id, callback)
+    return id
+  }) as typeof window.requestAnimationFrame
+
+  window.cancelAnimationFrame = ((id: number): void => {
+    callbacks.delete(id)
+  }) as typeof window.cancelAnimationFrame
+
+  return {
+    count: () => callbacks.size,
+    flushPending: () => {
+      const pendingIds = Array.from(callbacks.keys())
+      for (const id of pendingIds) {
+        const callback = callbacks.get(id)
+        if (!callback)
+          continue
+        callbacks.delete(id)
+        callback(performance.now())
+      }
+    },
+    restore: () => {
+      callbacks.clear()
+      window.requestAnimationFrame = originalRequestAnimationFrame
+      window.cancelAnimationFrame = originalCancelAnimationFrame
+    },
+  }
+}
+
 describe('tooltip', () => {
   // === Rendering ===
 
@@ -172,6 +212,42 @@ describe('tooltip', () => {
 
     await userEvent.hover(rightScreen.getByRole('button', { name: 'Right trigger' }).element())
     await expect.element(rightScreen.getByText('Right side')).toBeInTheDocument()
+  })
+
+  it('uses the measured tooltip width for the first visible position', async () => {
+    const screen = await render(
+      <div style={{ paddingLeft: 220, paddingTop: 120 }}>
+        <Tooltip text="Short" side="bottom" delay={0}>
+          <button>Measured trigger</button>
+        </Tooltip>
+      </div>,
+    )
+    const trigger = screen.getByRole('button', { name: 'Measured trigger' }).element()
+    const frames = installAnimationFrameController()
+
+    try {
+      await userEvent.hover(trigger)
+      await vi.waitFor(() => {
+        const measuringTooltip = Array.from(document.body.querySelectorAll<HTMLElement>('span'))
+          .find(element => element.textContent === 'Short' && element.getAttribute('aria-hidden') === 'true')
+        expect(measuringTooltip).not.toBeNull()
+      })
+      await vi.waitFor(() => expect(frames.count()).toBeGreaterThan(0))
+      frames.flushPending()
+      await vi.waitFor(() => expect(document.querySelector('[role="tooltip"]')).not.toBeNull())
+
+      const tooltip = document.querySelector<HTMLElement>('[role="tooltip"]')
+      expect(tooltip).not.toBeNull()
+
+      const wrapperRect = trigger.parentElement!.getBoundingClientRect()
+      const tooltipWidth = tooltip!.getBoundingClientRect().width
+      const expectedLeft = wrapperRect.left + wrapperRect.width / 2 - tooltipWidth / 2
+
+      expect(Number.parseFloat(tooltip!.style.left)).toBeCloseTo(expectedLeft, 0)
+    }
+    finally {
+      frames.restore()
+    }
   })
 
   // === Event forwarding ===

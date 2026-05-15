@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { assetPath } from '../../../lib/asset-path'
+import {
+  NETWORK_OFFLINE_ICON as NETWORK_OFFLINE_ICON_PATH,
+  NETWORK_ONLINE_ICONS as NETWORK_ONLINE_ICON_PATHS,
+} from '../../../lib/playground-assets'
 import { useNetworkStatus } from './use-network-status'
 
-const NETWORK_ONLINE_ICONS = [
-  assetPath('/icons/windows98-icons/png/conn_pcs_on_off.png'),
-  assetPath('/icons/windows98-icons/png/conn_pcs_off_on.png'),
-  assetPath('/icons/windows98-icons/png/conn_pcs_on_on.png'),
-]
-const NETWORK_OFFLINE_ICON = assetPath('/icons/windows98-icons/png/conn_pcs_no_network.png')
+const NETWORK_ONLINE_ICONS = NETWORK_ONLINE_ICON_PATHS.map(path => assetPath(path))
+const NETWORK_OFFLINE_ICON = assetPath(NETWORK_OFFLINE_ICON_PATH)
 
 export function NetworkIcon(): React.ReactElement {
   const isOnline = useNetworkStatus()

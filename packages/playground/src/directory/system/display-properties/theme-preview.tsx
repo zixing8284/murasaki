@@ -12,6 +12,7 @@ import {
   WindowTitleBar,
 } from '@murasaki/react98'
 import { assetPath } from '../../../lib/asset-path'
+import { THEME_PREVIEW_RECYCLE_BIN } from '../../../lib/playground-assets'
 import { PreviewTaskbar } from '../../shared/preview-taskbar'
 
 interface ThemePreviewProps {
@@ -28,7 +29,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
       {/* Desktop icon */}
       <div className="absolute top-2 left-2 flex flex-col items-center gap-0.5">
         <img
-          src={assetPath('/icons/windows98-icons/png/recycle_bin_empty-0.png')}
+          src={assetPath(THEME_PREVIEW_RECYCLE_BIN)}
           alt="Trash"
           className="w-8 h-8 pixelated"
         />

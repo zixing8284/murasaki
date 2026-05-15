@@ -17,6 +17,7 @@
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {
+    "@rolldown/plugin-babel": "catalog:cli",
     "@tailwindcss/vite": "catalog:cli",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",

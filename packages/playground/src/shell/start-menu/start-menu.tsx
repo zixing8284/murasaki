@@ -11,6 +11,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 import { APP_ID } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
+import { START_MENU_ICONS } from '../../lib/playground-assets'
 
 interface StartMenuProps {
   onClose: () => void
@@ -40,35 +41,7 @@ function StartIcon({ src }: StartIconProps): React.ReactElement {
   )
 }
 
-const ICON = {
-  windowsUpdate: '/icons/windows98-icons/png/windows_update_small-0.png',
-  programs: '/icons/windows98-icons/png/file_program_group-1.png',
-  documents: '/icons/windows98-icons/png/directory_open_file_mydocs-2.png',
-  settings: '/icons/windows98-icons/png/settings_gear-1.png',
-  find: '/icons/windows98-icons/png/search_file-2.png',
-  help: '/icons/windows98-icons/png/help_book_small-1.png',
-  run: '/icons/windows98-icons/png/console_prompt-1.png',
-  logOff: '/icons/windows98-icons/png/users_key-1.png',
-  shutDown: '/icons/windows98-icons/png/shut_down_normal-1.png',
-  // programs submenu
-  accessories: '/icons/windows98-icons/png/file_program_group-1.png',
-  notepad: '/icons/windows98-icons/png/notepad-0.png',
-  calculator: '/icons/windows98-icons/png/calculator-1.png',
-  paint: '/icons/windows98-icons/png/paint_old-1.png',
-  internetExplorer: '/icons/windows98-icons/png/msie2-3.png',
-  myComputer: '/icons/windows98-icons/png/computer-0.png',
-  mediaPlayer: '/icons/windows98-icons/png/media_player-1.png',
-  webamp: '/icons/desktop/Webamp16.png',
-  themeDesigner: '/icons/windows98-icons/png/themes-1.png',
-  // settings submenu
-  controlPanel: '/icons/windows98-icons/png/directory_control_panel-1.png',
-  printers: '/icons/windows98-icons/png/printer-1.png',
-  taskbar: '/icons/windows98-icons/png/start_menu_shortcuts.png',
-  // find submenu
-  findFiles: '/icons/windows98-icons/png/search_file-2.png',
-  findComputer: '/icons/windows98-icons/png/search_computer-1.png',
-  findWeb: '/icons/windows98-icons/png/search_web-1.png',
-} as const
+const ICON = START_MENU_ICONS
 
 export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): React.ReactElement {
   const { open } = useProcessActions()

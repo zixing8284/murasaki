@@ -14,10 +14,11 @@ import { useDesktopFiles } from '../../contexts/desktop-files'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
 import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
 import { assetPath } from '../../lib/asset-path'
+import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 
-const DESKTOP_MEDIA_ICON = assetPath('/icons/windows98-icons/png/directory_open_file_mydocs-0.png')
+const DESKTOP_MEDIA_ICON = assetPath(DESKTOP_MEDIA_ICON_PATH)
 
 interface IconEntry {
   id: string

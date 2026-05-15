@@ -3,6 +3,7 @@ import { Divider, Tooltip, WindowMenuBar, WindowMenuBarItem, WindowStatusBar, Wi
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process'
 import { assetPath } from '../../lib/asset-path'
+import { IE_TOOLBAR_ICONS } from '../../lib/playground-assets'
 import { useIframeWindow } from '../iframe/use-iframe-window'
 import { InactiveClickGuard } from './inactive-click-guard'
 import { RndWindow } from './rnd-window'
@@ -11,17 +12,7 @@ const IE_TITLE_SUFFIX = 'Microsoft Internet Explorer'
 const FALLBACK_PAGE_TITLE = 'New Tab - Microsoft Internet Explorer'
 const IE_MENUS = ['File', 'Edit', 'View', 'Go', 'Favorites', 'Help'] as const
 
-const ICONS = {
-  favorites: '/icons/windows98-icons/png/directory_favorites-1.png',
-  home: '/icons/windows98-icons/png/homepage-1.png',
-  html: '/icons/windows98-icons/png/html-0.png',
-  mail: '/icons/windows98-icons/png/mailbox_world-1.png',
-  print: '/icons/windows98-icons/png/printer-1.png',
-  refresh: '/icons/windows98-icons/png/overlay_refresh-1.png',
-  search: '/icons/windows98-icons/png/search_web-1.png',
-  stop: '/icons/windows98-icons/png/no-0.png',
-  windows: '/icons/windows98-icons/png/windows-4.png',
-} as const
+const ICONS = IE_TOOLBAR_ICONS
 
 interface InternetExplorerWindowProps {
   windowId: string

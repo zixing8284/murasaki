@@ -216,6 +216,9 @@ importers:
         specifier: 'catalog:'
         version: 1.4.0
     devDependencies:
+      '@rolldown/plugin-babel':
+        specifier: catalog:cli
+        version: 0.2.3(@babel/core@7.28.6)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(yaml@2.8.2))
       '@tailwindcss/vite':
         specifier: catalog:cli
         version: 4.2.4(vite@8.0.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(yaml@2.8.2))
@@ -5618,8 +5621,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.56.1(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.59.0(typescript@5.9.3)
-      '@typescript-eslint/types': 8.59.0
+      '@typescript-eslint/tsconfig-utils': 8.59.3(typescript@5.9.3)
+      '@typescript-eslint/types': 8.59.3
       debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:

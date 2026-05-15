@@ -9,17 +9,23 @@ import {
   TaskbarSystemClock,
 } from '@murasaki/react98'
 import { assetPath } from '../../lib/asset-path'
+import { TASKBAR_QUICK_LAUNCH_ICONS } from '../../lib/playground-assets'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
 import { NetworkIcon } from './notification-area/network-icon'
 import { SwUpdateBalloon } from './notification-area/sw-update-balloon'
 import { RunningTasks } from './running-tasks/running-tasks'
 
-const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = [
-  { src: assetPath('/icons/windows98-icons/png/desktop-3.png'), alt: 'Show Desktop', title: 'Show Desktop' },
-  { src: assetPath('/icons/windows98-icons/png/outlook_express-2.png'), alt: 'Email Me', title: 'Outlook Express' },
-  { src: assetPath('/icons/windows98-icons/png/msie2-3.png'), alt: 'Internet', title: 'Internet Explorer' },
-  { src: assetPath('/icons/windows98-icons/png/computer-0.png'), alt: 'Computer', title: 'My Computer' },
+const QUICK_LAUNCH_LABELS = [
+  { alt: 'Show Desktop', title: 'Show Desktop' },
+  { alt: 'Email Me', title: 'Outlook Express' },
+  { alt: 'Internet', title: 'Internet Explorer' },
+  { alt: 'Computer', title: 'My Computer' },
 ]
+
+const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
+  src: assetPath(path),
+  ...QUICK_LAUNCH_LABELS[index],
+}))
 
 interface TaskbarProps {
   startButtonRef: RefObject<HTMLButtonElement | null>

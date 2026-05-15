@@ -1,15 +1,19 @@
 import type { DragEvent } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/desktop-files'
-import { APP_ID, useProcessActions } from '../contexts/process'
+import { useProcessActions } from '../contexts/process'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
+import { assetPath } from '../lib/asset-path'
+import { DESKTOP_WALLPAPER_IMAGE } from '../lib/playground-assets'
+import { warmServiceWorkerCache } from '../sw-register'
 import { Desktop } from './desktop/desktop'
 import { StartMenu } from './start-menu/start-menu'
+import { DEFAULT_STARTUP_APPS } from './startup/startup-assets'
+import { StartupScreen } from './startup/startup-screen'
+import { useStartupPreload } from './startup/use-startup-preload'
 import { Taskbar } from './taskbar/taskbar'
 import { WindowRenderer } from './window/renderer'
-
-const DEFAULT_STARTUP_APPS = [APP_ID.MY_COMPUTER, APP_ID.DOCS] as const
 
 function hasFilePayload(dataTransfer: DataTransfer | null): boolean {
   if (!dataTransfer) {
@@ -48,10 +52,13 @@ export function Shell(): React.ReactElement {
   const dragDepthRef = useRef(0)
   const [crtEnabled] = useCrtEffect()
   const [gradientEnabled] = useGradientTitlebar()
-  const { importFiles } = useDesktopFiles()
+  const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
 
   // const { open, deactivateAll, setContainer, linkElement } = useProcessActions()
   const { open, deactivateAll, setContainer } = useProcessActions()
+
+  const preload = useStartupPreload()
+  const isBooted = preload.ready && !desktopFilesLoading
 
   // Set container ref to store on mount
   const setContainerRef = useCallback((el: HTMLDivElement | null) => {
@@ -59,10 +66,14 @@ export function Shell(): React.ReactElement {
     setContainer(el)
   }, [setContainer])
 
-  // Open default windows on mount
+  // Open default windows once boot is complete, and ask the SW to warm
+  // its cache in the background so repeat visits are instant.
   useEffect(() => {
+    if (!isBooted)
+      return
     DEFAULT_STARTUP_APPS.forEach(appId => open(appId))
-  }, [open])
+    warmServiceWorkerCache(['critical', 'warm'])
+  }, [isBooted, open])
 
   const handleDesktopClick = (): void => {
     deactivateAll()
@@ -127,50 +138,62 @@ export function Shell(): React.ReactElement {
           {/* Desktop */}
           <div
             ref={screenRef}
-            className={`relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[url(/img/animspace.gif)] bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
+            className={`relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
+            style={isBooted ? { backgroundImage: `url(${assetPath(DESKTOP_WALLPAPER_IMAGE)})` } : undefined}
           >
-            {/* Desktop Area */}
-            <div className="flex-1 overflow-hidden relative">
-              <div
-                className="h-full relative"
-                ref={setContainerRef}
-                onPointerDown={handleDesktopClick}
-                onDragEnter={handleDragEnter}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-              >
-                {/* Desktop Icons */}
-                <Desktop />
+            {!isBooted
+              ? (
+                  <StartupScreen
+                    preload={preload}
+                    waitingForDesktopFiles={preload.ready && desktopFilesLoading}
+                  />
+                )
+              : (
+                  <>
+                    {/* Desktop Area */}
+                    <div className="flex-1 overflow-hidden relative">
+                      <div
+                        className="h-full relative"
+                        ref={setContainerRef}
+                        onPointerDown={handleDesktopClick}
+                        onDragEnter={handleDragEnter}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                      >
+                        {/* Desktop Icons */}
+                        <Desktop />
 
-                {isDragActive && (
-                  <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
-                    <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
-                      Drop audio or video files to add them to the desktop
+                        {isDragActive && (
+                          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
+                            <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
+                              Drop audio or video files to add them to the desktop
+                            </div>
+                          </div>
+                        )}
+
+                        {/* All managed windows */}
+                        <WindowRenderer />
+                      </div>
                     </div>
-                  </div>
+
+                    {/* Start Menu */}
+                    {showStartMenu && (
+                      <StartMenu
+                        anchorRef={startButtonRef}
+                        screenRef={screenRef}
+                        onClose={() => setShowStartMenu(false)}
+                      />
+                    )}
+
+                    {/* Taskbar */}
+                    <Taskbar
+                      startButtonRef={startButtonRef}
+                      showStartMenu={showStartMenu}
+                      onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
+                    />
+                  </>
                 )}
-
-                {/* All managed windows */}
-                <WindowRenderer />
-              </div>
-            </div>
-
-            {/* Start Menu */}
-            {showStartMenu && (
-              <StartMenu
-                anchorRef={startButtonRef}
-                screenRef={screenRef}
-                onClose={() => setShowStartMenu(false)}
-              />
-            )}
-
-            {/* Taskbar */}
-            <Taskbar
-              startButtonRef={startButtonRef}
-              showStartMenu={showStartMenu}
-              onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
-            />
           </div>
         </div>
       </div>

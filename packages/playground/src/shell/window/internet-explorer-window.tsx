@@ -108,6 +108,11 @@ function ToolbarButton({
   disabled = false,
   onClick,
 }: ToolbarButtonProps): ReactElement {
+  const iconClassName = [
+    'flex size-4 items-center justify-center overflow-hidden',
+    disabled ? '[&_img]:grayscale [&_img]:opacity-55 [&_img]:contrast-75' : undefined,
+  ].filter(Boolean).join(' ')
+
   return (
     <Tooltip text={label} side="bottom">
       <button
@@ -115,10 +120,10 @@ function ToolbarButton({
         aria-label={label}
         disabled={disabled}
         title={label}
-        className="size-7 shrink-0 border-none bg-(--button-face) shadow-(--shadow-raised) flex items-center justify-center p-0 text-(--button-text) active:not-disabled:shadow-(--shadow-sunken) disabled:opacity-55 disabled:grayscale focus:outline-dotted focus:outline-1 focus:outline-(--button-text) focus:-outline-offset-3"
+        className="size-7 shrink-0 border-none bg-(--button-face) shadow-(--shadow-raised) flex items-center justify-center p-0 text-(--button-text) active:not-disabled:shadow-(--shadow-sunken) disabled:text-(--gray-text) disabled:[text-shadow:1px_1px_0_var(--button-hilight)] focus:outline-dotted focus:outline-1 focus:outline-(--button-text) focus:-outline-offset-3"
         onClick={onClick}
       >
-        <span className="flex size-4 items-center justify-center overflow-hidden">
+        <span className={iconClassName}>
           {children}
         </span>
       </button>
@@ -284,10 +289,10 @@ export function InternetExplorerWindow({
         <div className="flex items-center gap-0 bg-(--button-face) px-0.5 py-1 min-w-0">
           <ToolbarGrip />
           <ToolbarButton label="Back" disabled>
-            <span aria-hidden className="font-[Marlett] text-sm leading-none text-(--button-text)">3</span>
+            <span aria-hidden className="font-[Marlett] text-sm leading-none">3</span>
           </ToolbarButton>
           <ToolbarButton label="Forward" disabled>
-            <span aria-hidden className="font-[Marlett] text-sm leading-none text-(--button-text)">4</span>
+            <span aria-hidden className="font-[Marlett] text-sm leading-none">4</span>
           </ToolbarButton>
           <ToolbarSeparator />
           <ToolbarButton label="Stop" disabled>

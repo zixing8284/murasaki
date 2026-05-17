@@ -1,3 +1,5 @@
+import { PLAYGROUND_INDEXED_DB } from '../../lib/persistence'
+
 export type DesktopMediaKind = 'audio' | 'video'
 
 export interface DesktopMediaFileEntry {
@@ -14,9 +16,9 @@ interface StoredDesktopMediaFile extends DesktopMediaFileEntry {
   blob: Blob
 }
 
-const DATABASE_NAME = 'murasaki-playground'
-const DATABASE_VERSION = 1
-const STORE_NAME = 'desktop-media-files'
+const DATABASE_NAME = PLAYGROUND_INDEXED_DB.name
+const DATABASE_VERSION = PLAYGROUND_INDEXED_DB.version
+const STORE_NAME = PLAYGROUND_INDEXED_DB.stores.desktopMediaFiles
 
 function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

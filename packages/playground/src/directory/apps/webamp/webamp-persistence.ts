@@ -18,69 +18,38 @@
 
 import type { Point, WebampCI } from './functions'
 import { useEffect } from 'react'
+import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, removeStorageItem, writeJsonStorageItem } from '../../../lib/persistence'
 import {
   clearStoredSkinMuseumUrl,
 } from './functions'
 
-const STORAGE_KEY = 'webamp:position:v1'
 const WRITE_DEBOUNCE_MS = 200
 
 interface StoredPosition {
   main: Point
 }
 
-function safeStorage(): Storage | null {
-  try {
-    return typeof window !== 'undefined' ? window.sessionStorage : null
-  }
-  catch {
+function parseStoredPosition(value: unknown): StoredPosition | null {
+  if (!value || typeof value !== 'object')
     return null
-  }
+  const main = (value as Partial<StoredPosition>).main
+  if (!main || typeof main.x !== 'number' || typeof main.y !== 'number')
+    return null
+  if (!Number.isFinite(main.x) || !Number.isFinite(main.y))
+    return null
+  return { main: { x: main.x, y: main.y } }
 }
 
 export function readStoredMainPosition(): Point | null {
-  const storage = safeStorage()
-  if (!storage)
-    return null
-  try {
-    const raw = storage.getItem(STORAGE_KEY)
-    if (!raw)
-      return null
-    const parsed = JSON.parse(raw) as Partial<StoredPosition>
-    const main = parsed.main
-    if (!main || typeof main.x !== 'number' || typeof main.y !== 'number')
-      return null
-    if (!Number.isFinite(main.x) || !Number.isFinite(main.y))
-      return null
-    return { x: main.x, y: main.y }
-  }
-  catch {
-    return null
-  }
+  return readJsonStorageItem('session', PLAYGROUND_STORAGE_KEYS.webampPosition, parseStoredPosition)?.main ?? null
 }
 
 export function writeStoredMainPosition(main: Point): void {
-  const storage = safeStorage()
-  if (!storage)
-    return
-  try {
-    storage.setItem(STORAGE_KEY, JSON.stringify({ main } satisfies StoredPosition))
-  }
-  catch {
-    // Quota / private mode — silently drop.
-  }
+  writeJsonStorageItem('session', PLAYGROUND_STORAGE_KEYS.webampPosition, { main } satisfies StoredPosition)
 }
 
 export function clearStoredMainPosition(): void {
-  const storage = safeStorage()
-  if (!storage)
-    return
-  try {
-    storage.removeItem(STORAGE_KEY)
-  }
-  catch {
-    // ignore
-  }
+  removeStorageItem('session', PLAYGROUND_STORAGE_KEYS.webampPosition)
 }
 
 /**

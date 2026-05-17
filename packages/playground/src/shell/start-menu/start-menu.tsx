@@ -205,7 +205,12 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 Settings
               </MenuSubTrigger>
               <MenuSubContent boundaryRef={screenRef}>
-                <MenuItem icon={<StartIcon src={ICON.controlPanel} />} disabled>Control Panel</MenuItem>
+                <MenuItem
+                  icon={<StartIcon src={ICON.controlPanel} />}
+                  onClick={() => launch(APP_ID.SETTINGS)}
+                >
+                  Control Panel
+                </MenuItem>
                 <MenuItem icon={<StartIcon src={ICON.printers} />} disabled>Printers</MenuItem>
                 <MenuItem icon={<StartIcon src={ICON.taskbar} />} disabled>Taskbar...</MenuItem>
               </MenuSubContent>

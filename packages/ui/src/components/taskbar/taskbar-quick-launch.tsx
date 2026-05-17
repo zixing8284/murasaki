@@ -14,11 +14,19 @@ export interface TaskbarQuickLaunchIcon {
 export interface TaskbarQuickLaunchProps extends Omit<React.ComponentProps<'div'>, 'children'> {
   icons: TaskbarQuickLaunchIcon[]
   defaultVisibleCount?: number
+  visibleCount?: number
+  onVisibleCountChange?: (visibleCount: number) => void
   iconStepWidth?: number
 }
 
 const ICON_STEP_WIDTH_DEFAULT = 24
 const DEFAULT_VISIBLE_COUNT_DEFAULT = 2
+
+function clampVisibleCount(value: number, max: number): number {
+  if (!Number.isFinite(value))
+    return 0
+  return Math.max(0, Math.min(Math.round(value), max))
+}
 
 function ExpandArrowButton({ onClick }: { onClick: () => void }): React.ReactElement {
   return (
@@ -68,18 +76,30 @@ function QuickLaunchDivider({
 export function TaskbarQuickLaunch({
   icons,
   defaultVisibleCount = DEFAULT_VISIBLE_COUNT_DEFAULT,
+  visibleCount,
+  onVisibleCountChange,
   iconStepWidth = ICON_STEP_WIDTH_DEFAULT,
   className,
   ref,
   ...props
 }: TaskbarQuickLaunchProps): React.ReactElement {
-  const [quickLaunchWidth, setQuickLaunchWidth] = useState(() => {
-    return iconStepWidth * defaultVisibleCount
-  })
+  const [uncontrolledVisibleCount, setUncontrolledVisibleCount] = useState(() => clampVisibleCount(defaultVisibleCount, icons.length))
+  const [dragWidth, setDragWidth] = useState<number | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const quickLaunchRef = useRef<HTMLDivElement>(null)
 
   const maxQuickLaunchWidth = icons.length * iconStepWidth
+  const minVisibleCount = Math.min(clampVisibleCount(defaultVisibleCount, icons.length), icons.length)
+  const resolvedVisibleCount = clampVisibleCount(visibleCount ?? uncontrolledVisibleCount, icons.length)
+  const quickLaunchWidth = dragWidth ?? resolvedVisibleCount * iconStepWidth
+
+  const setVisibleIconCount = useCallback((nextCount: number) => {
+    const clamped = clampVisibleCount(nextCount, icons.length)
+    if (visibleCount === undefined) {
+      setUncontrolledVisibleCount(clamped)
+    }
+    onVisibleCountChange?.(clamped)
+  }, [icons.length, onVisibleCountChange, visibleCount])
 
   const visibleIconsCount = useMemo(() => {
     return Math.max(0, Math.floor(quickLaunchWidth / iconStepWidth))
@@ -92,8 +112,9 @@ export function TaskbarQuickLaunch({
   const hasHiddenIcons = visibleIconsCount < icons.length
 
   const handleExpandQuickLaunch = useCallback(() => {
-    setQuickLaunchWidth(maxQuickLaunchWidth)
-  }, [maxQuickLaunchWidth])
+    setDragWidth(null)
+    setVisibleIconCount(icons.length)
+  }, [icons.length, setVisibleIconCount])
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
@@ -114,14 +135,15 @@ export function TaskbarQuickLaunch({
       const snappedWidth = Math.round(newWidth / iconStepWidth) * iconStepWidth
 
       const elasticMax = maxQuickLaunchWidth + iconStepWidth
-      const minQuickLaunchWidth = iconStepWidth * defaultVisibleCount
+      const minQuickLaunchWidth = iconStepWidth * minVisibleCount
       const clampedWidth = Math.max(minQuickLaunchWidth, Math.min(snappedWidth, elasticMax))
 
-      setQuickLaunchWidth(clampedWidth)
+      setDragWidth(clampedWidth)
+      setVisibleIconCount(Math.min(Math.floor(clampedWidth / iconStepWidth), icons.length))
     }
 
     const handleMouseUp = (): void => {
-      setQuickLaunchWidth(prev => Math.min(prev, maxQuickLaunchWidth))
+      setDragWidth(null)
       setIsDragging(false)
     }
 
@@ -132,7 +154,7 @@ export function TaskbarQuickLaunch({
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [isDragging, maxQuickLaunchWidth, iconStepWidth, defaultVisibleCount])
+  }, [icons.length, isDragging, maxQuickLaunchWidth, iconStepWidth, minVisibleCount, setVisibleIconCount])
 
   useEffect(() => {
     if (isDragging) {

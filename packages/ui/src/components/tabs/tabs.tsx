@@ -58,7 +58,6 @@ const tabVariants = cva(
   [
     'relative',
     'z-1',
-    'pb-0.5',
     'rounded-t-[3px]',
     'bg-(--button-face)',
     'cursor-pointer',
@@ -70,6 +69,7 @@ const tabVariants = cva(
       selected: {
         true: [
           'z-8',
+          'pb-0.5',
           '-mt-0.5',
           '-ml-0.75',
           'first:ml-0',
@@ -97,6 +97,7 @@ const tabLabelVariants = cva(
   [
     'block',
     'm-1.5',
+    'leading-none',
     'text-(--button-text)',
     'select-none',
     'outline-none',

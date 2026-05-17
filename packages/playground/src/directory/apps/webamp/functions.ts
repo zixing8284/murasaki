@@ -12,6 +12,12 @@
  */
 
 import { assetPath } from '../../../lib/asset-path'
+import {
+  PLAYGROUND_STORAGE_KEYS,
+  readJsonStorageItem,
+  removeStorageItem,
+  writeJsonStorageItem,
+} from '../../../lib/persistence'
 
 // ---------------------------------------------------------------------------
 // Webamp public + private surface we rely on.
@@ -178,37 +184,22 @@ interface StoredSkinMuseumSkin {
 const WINAMP_SKIN_MUSEUM_GRAPHQL_URL = 'https://skins.webamp.org/graphql'
 const WINAMP_SKIN_MUSEUM_DEFAULT_NAME = 'Random (Winamp Skin Museum)'
 const WINAMP_SKIN_MUSEUM_MAX_OFFSET = 1000
-const WINAMP_SKIN_MUSEUM_STORAGE_KEY = 'webamp:skin-museum:last-success:v1'
 const WINAMP_SKIN_MUSEUM_FALLBACK_URL = 'https://archive.org/cors/winampskin_Expensive_Hi-Fi_1_2/ExpensiveHi-Fi.wsz?source=skin-museum-fallback'
 let recentRandomSkinMuseumUrlAccess: { at: number, url: string } | null = null
 
-function safeLocalStorage(): Storage | null {
-  try {
-    return typeof window !== 'undefined' ? window.localStorage : null
-  }
-  catch {
+function parseStoredSkinMuseumSkin(value: unknown): StoredSkinMuseumSkin | null {
+  if (!value || typeof value !== 'object')
     return null
-  }
+  const url = (value as Partial<StoredSkinMuseumSkin>).url
+  return typeof url === 'string' && url.length > 0 ? { url } : null
 }
 
 export function readStoredSkinMuseumUrl(): string | null {
-  const storage = safeLocalStorage()
-  if (!storage)
-    return null
-
-  try {
-    const raw = storage.getItem(WINAMP_SKIN_MUSEUM_STORAGE_KEY)
-    if (!raw)
-      return null
-    const parsed = JSON.parse(raw) as Partial<StoredSkinMuseumSkin>
-
-    return typeof parsed.url === 'string' && parsed.url.length > 0
-      ? parsed.url
-      : null
-  }
-  catch {
-    return null
-  }
+  return readJsonStorageItem(
+    'local',
+    PLAYGROUND_STORAGE_KEYS.webampSkinMuseumLastSuccess,
+    parseStoredSkinMuseumSkin,
+  )?.url ?? null
 }
 
 export function readStoredSkinMuseumInitialSkin(): { url: string } | undefined {
@@ -217,32 +208,11 @@ export function readStoredSkinMuseumInitialSkin(): { url: string } | undefined {
 }
 
 export function writeStoredSkinMuseumUrl(url: string): void {
-  const storage = safeLocalStorage()
-  if (!storage)
-    return
-
-  try {
-    storage.setItem(
-      WINAMP_SKIN_MUSEUM_STORAGE_KEY,
-      JSON.stringify({ url } satisfies StoredSkinMuseumSkin),
-    )
-  }
-  catch {
-    // Quota / private mode — ignore.
-  }
+  writeJsonStorageItem('local', PLAYGROUND_STORAGE_KEYS.webampSkinMuseumLastSuccess, { url } satisfies StoredSkinMuseumSkin)
 }
 
 export function clearStoredSkinMuseumUrl(): void {
-  const storage = safeLocalStorage()
-  if (!storage)
-    return
-
-  try {
-    storage.removeItem(WINAMP_SKIN_MUSEUM_STORAGE_KEY)
-  }
-  catch {
-    // ignore
-  }
+  removeStorageItem('local', PLAYGROUND_STORAGE_KEYS.webampSkinMuseumLastSuccess)
 }
 
 function noteRandomSkinMuseumUrlAccess(url: string): void {

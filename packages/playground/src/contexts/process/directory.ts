@@ -49,6 +49,7 @@ const directory = {
     showOnDesktop: true,
     defaultSize: { width: 400, height: 300 },
     defaultPosition: { top: '15%', left: '20%' },
+    window: { contentClassName: 'p-1' },
   },
   displayproperties: {
     name: 'Display Properties',
@@ -61,7 +62,19 @@ const directory = {
     ephemeral: true,
     defaultSize: { width: 420 },
     defaultPosition: { top: '12%', left: '25%' },
-    window: { disableMaximize: true, disableMinimize: true, disableResize: true },
+    window: { disableMaximize: true, disableMinimize: true, disableResize: true, contentClassName: 'p-2' },
+  },
+  settings: {
+    name: 'Settings',
+    Component: lazy(() =>
+      import('../../directory/system/settings/settings').then(m => ({ default: m.Settings })),
+    ),
+    defaultTitle: 'Settings',
+    icon: { sm: '/icons/windows98-icons/png/settings_gear-1.png', lg: '/icons/windows98-icons/png/directory_control_panel-1.png' },
+    singleton: true,
+    defaultSize: { width: 398, height: 520 },
+    defaultPosition: { top: '8%', left: '22%' },
+    window: { disableMaximize: true, disableResize: true, contentClassName: 'p-2' },
   },
   jspaint: {
     name: 'JSPaint',
@@ -127,6 +140,7 @@ export const APP_ID = {
   DOCS: 'docs',
   NOTEPAD: 'notepad',
   DISPLAY_PROPERTIES: 'displayproperties',
+  SETTINGS: 'settings',
   JSPaintApp: 'jspaint',
   THEME_DESIGNER: 'themedesigner',
   MEDIA_PLAYER: 'mediaplayer',

@@ -25,6 +25,7 @@
 
 import type { WebampCI, WebampWindowKey } from './functions'
 import { useEffect } from 'react'
+import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, writeJsonStorageItem } from '../../../lib/persistence'
 import {
   findMilkdropSpot,
   getButterchurnGlobal,
@@ -36,7 +37,6 @@ import {
   PRESET_CYCLE_MS,
 } from './functions'
 
-const BLACKLIST_STORAGE_KEY = 'webamp:milkdrop-blacklist:v1'
 const BLACKLIST_MAX = 200
 
 interface ButterchurnPreset {
@@ -44,44 +44,19 @@ interface ButterchurnPreset {
   preset: unknown
 }
 
-function safeStorage(): Storage | null {
-  try {
-    return typeof window !== 'undefined' ? window.sessionStorage : null
-  }
-  catch {
-    return null
-  }
+function parseBlacklist(value: unknown): string[] | null {
+  if (!Array.isArray(value))
+    return []
+  return value.filter((item): item is string => typeof item === 'string')
 }
 
 function readBlacklist(): Set<string> {
-  const storage = safeStorage()
-  if (!storage)
-    return new Set()
-  try {
-    const raw = storage.getItem(BLACKLIST_STORAGE_KEY)
-    if (!raw)
-      return new Set()
-    const parsed = JSON.parse(raw) as unknown
-    if (!Array.isArray(parsed))
-      return new Set()
-    return new Set(parsed.filter((v): v is string => typeof v === 'string'))
-  }
-  catch {
-    return new Set()
-  }
+  return new Set(readJsonStorageItem('session', PLAYGROUND_STORAGE_KEYS.webampMilkdropBlacklist, parseBlacklist) ?? [])
 }
 
 function writeBlacklist(blacklist: ReadonlySet<string>): void {
-  const storage = safeStorage()
-  if (!storage)
-    return
-  try {
-    const arr = Array.from(blacklist).slice(-BLACKLIST_MAX)
-    storage.setItem(BLACKLIST_STORAGE_KEY, JSON.stringify(arr))
-  }
-  catch {
-    // ignore quota / private mode
-  }
+  const arr = Array.from(blacklist).slice(-BLACKLIST_MAX)
+  writeJsonStorageItem('session', PLAYGROUND_STORAGE_KEYS.webampMilkdropBlacklist, arr)
 }
 
 /** Append a preset name to the session-scoped blacklist. */

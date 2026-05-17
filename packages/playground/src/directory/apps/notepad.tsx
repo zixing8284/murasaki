@@ -1,7 +1,8 @@
 export function Notepad(): React.ReactElement {
   return (
     <textarea
-      className="w-full h-full resize-none border-none outline-none bg-(--window) p-1 font-mono text-xs"
+      id="notepad-textarea"
+      className="w-full h-full resize-none border-none outline-none bg-(--window) p-1"
       placeholder="Type here..."
     />
   )

@@ -1,6 +1,9 @@
 import type { ThemeId } from '@murasaki/react98'
-import { useCallback, useMemo, useState } from 'react'
+import { themeIds } from '@murasaki/react98'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, removeStorageItem, writeJsonStorageItem } from '../../../lib/persistence'
 import {
+  ALL_COLOR_KEYS,
   BUTTON_FACE_DERIVED_KEYS,
   deriveFromButtonFace,
   readThemeColorsFromCss,
@@ -9,6 +12,62 @@ import {
 import { parseThemeFile } from './theme-file'
 
 export type ThemeSchemeSelection = ThemeId | 'custom'
+
+interface StoredThemeDesignerDraft {
+  colors: Record<string, string>
+  linkElements: boolean
+  titlebarGradients: boolean
+  currentSchemeId: ThemeSchemeSelection
+}
+
+const THEME_DRAFT_WRITE_DEBOUNCE_MS = 200
+
+function isHexColor(value: string): boolean {
+  return /^#[0-9a-f]{6}$/i.test(value)
+}
+
+function isThemeSchemeSelection(value: unknown): value is ThemeSchemeSelection {
+  return value === 'custom' || (typeof value === 'string' && themeIds.includes(value as ThemeId))
+}
+
+function parseThemeDesignerDraft(value: unknown): StoredThemeDesignerDraft | null {
+  if (!value || typeof value !== 'object')
+    return null
+
+  const draft = value as Partial<StoredThemeDesignerDraft>
+  if (
+    typeof draft.linkElements !== 'boolean'
+    || typeof draft.titlebarGradients !== 'boolean'
+    || !isThemeSchemeSelection(draft.currentSchemeId)
+    || !draft.colors
+    || typeof draft.colors !== 'object'
+  ) {
+    return null
+  }
+
+  const colors: Record<string, string> = {}
+  for (const key of ALL_COLOR_KEYS) {
+    const color = draft.colors[key]
+    if (typeof color === 'string' && isHexColor(color)) {
+      colors[key] = color.toLowerCase()
+    }
+  }
+
+  return {
+    colors,
+    linkElements: draft.linkElements,
+    titlebarGradients: draft.titlebarGradients,
+    currentSchemeId: draft.currentSchemeId,
+  }
+}
+
+function readStoredThemeDesignerDraft(): StoredThemeDesignerDraft | null {
+  return readJsonStorageItem(
+    'local',
+    PLAYGROUND_STORAGE_KEYS.themeDesignerDraft,
+    parseThemeDesignerDraft,
+  )
+}
 
 export interface ThemeColorsState {
   /** All theme color values (CSS variable name → hex), including derived */
@@ -36,10 +95,16 @@ export interface ThemeColorsState {
 }
 
 export function useThemeColors(): ThemeColorsState {
-  const [colors, setColors] = useState<Record<string, string>>(() => readThemeColorsFromCss('windows-98'))
-  const [linkElements, setLinkElements] = useState(false)
-  const [titlebarGradients, setTitlebarGradients] = useState(true)
-  const [currentSchemeId, setCurrentSchemeId] = useState<ThemeSchemeSelection>('windows-98')
+  const [initialDraft] = useState(() => readStoredThemeDesignerDraft())
+  const [colors, setColors] = useState<Record<string, string>>(() => ({
+    ...readThemeColorsFromCss('windows-98'),
+    ...(initialDraft?.colors ?? {}),
+  }))
+  const [linkElements, setLinkElements] = useState(initialDraft?.linkElements ?? false)
+  const [titlebarGradients, setTitlebarGradients] = useState(initialDraft?.titlebarGradients ?? true)
+  const [currentSchemeId, setCurrentSchemeId] = useState<ThemeSchemeSelection>(initialDraft?.currentSchemeId ?? 'windows-98')
+  const skipNextPersistRef = useRef(true)
+  const clearDraftRef = useRef(false)
 
   // Compute derived colors from current ButtonFace + settings
   const allColors = useMemo(() => {
@@ -57,6 +122,29 @@ export function useThemeColors(): ThemeColorsState {
 
     return result
   }, [colors, linkElements, titlebarGradients])
+
+  useEffect(() => {
+    if (skipNextPersistRef.current) {
+      skipNextPersistRef.current = false
+      return undefined
+    }
+
+    if (clearDraftRef.current) {
+      clearDraftRef.current = false
+      return undefined
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      writeJsonStorageItem('local', PLAYGROUND_STORAGE_KEYS.themeDesignerDraft, {
+        colors,
+        linkElements,
+        titlebarGradients,
+        currentSchemeId,
+      } satisfies StoredThemeDesignerDraft)
+    }, THEME_DRAFT_WRITE_DEBOUNCE_MS)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [colors, currentSchemeId, linkElements, titlebarGradients])
 
   const setColor = useCallback((key: string, hex: string) => {
     setColors(prev => ({ ...prev, [key]: hex }))
@@ -87,6 +175,8 @@ export function useThemeColors(): ThemeColorsState {
   }, [])
 
   const resetToDefaults = useCallback(() => {
+    clearDraftRef.current = true
+    removeStorageItem('local', PLAYGROUND_STORAGE_KEYS.themeDesignerDraft)
     setColors(readThemeColorsFromCss('windows-98'))
     setLinkElements(false)
     setTitlebarGradients(true)

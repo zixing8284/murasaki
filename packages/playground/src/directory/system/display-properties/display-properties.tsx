@@ -44,7 +44,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <Tabs defaultValue="theme" className="w-full" keepMounted>
         <TabList>
           <Tab value="theme">Theme</Tab>
@@ -52,7 +52,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
           <Tab value="appearance">Appearance</Tab>
         </TabList>
 
-        <TabPanel value="theme" className="flex flex-col gap-2">
+        <TabPanel value="theme" className="flex flex-col gap-3 p-3">
           <p className="text-(--button-text) leading-snug">
             A theme is a set of icons, visual styles, and sounds to alter the
             core experience of the user interface.
@@ -78,11 +78,11 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
           </div>
         </TabPanel>
 
-        <TabPanel value="wallpaper">
+        <TabPanel value="wallpaper" className="flex flex-col gap-3 p-3">
           <p className="text-(--button-text)">Wallpaper settings are not available.</p>
         </TabPanel>
 
-        <TabPanel value="appearance" className="flex flex-col gap-3">
+        <TabPanel value="appearance" className="flex flex-col gap-3 p-3">
           <Checkbox
             checked={crtEnabled}
             onCheckedChange={setCrtEnabled}

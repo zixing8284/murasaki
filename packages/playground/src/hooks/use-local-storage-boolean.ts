@@ -1,4 +1,5 @@
 import { useCallback, useSyncExternalStore } from 'react'
+import { readBooleanStorageItem, writeBooleanStorageItem } from '../lib/persistence'
 
 /**
  * Boolean-valued, localStorage-backed store with cross-instance sync.
@@ -38,14 +39,14 @@ export function useLocalStorageBoolean(
   }, [storageKey])
 
   const getSnapshot = useCallback(
-    (): boolean => localStorage.getItem(storageKey) !== 'false',
+    (): boolean => readBooleanStorageItem('local', storageKey),
     [storageKey],
   )
 
   const enabled = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
   const setEnabled = useCallback((value: boolean) => {
-    localStorage.setItem(storageKey, String(value))
+    writeBooleanStorageItem('local', storageKey, value)
     for (const listener of listenersFor(storageKey)) listener()
   }, [storageKey])
 

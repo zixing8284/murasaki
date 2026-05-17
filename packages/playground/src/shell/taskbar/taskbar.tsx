@@ -8,6 +8,7 @@ import {
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
 } from '@murasaki/react98'
+import { usePersistentQuickLaunchVisibleCount } from '../../hooks/use-persistent-quick-launch-visible-count'
 import { assetPath } from '../../lib/asset-path'
 import { TASKBAR_QUICK_LAUNCH_ICONS } from '../../lib/playground-assets'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
@@ -34,6 +35,8 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
+  const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = usePersistentQuickLaunchVisibleCount()
+
   return (
     <TaskbarRoot className="mt-auto">
       {/* Start Button */}
@@ -51,7 +54,11 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle }: Ta
       <TaskbarDivider />
 
       {/* Quick Launch */}
-      <TaskbarQuickLaunch icons={QUICK_LAUNCH_ICONS} />
+      <TaskbarQuickLaunch
+        icons={QUICK_LAUNCH_ICONS}
+        visibleCount={quickLaunchVisibleCount}
+        onVisibleCountChange={setQuickLaunchVisibleCount}
+      />
 
       {/* Running Tasks */}
       <RunningTasks />

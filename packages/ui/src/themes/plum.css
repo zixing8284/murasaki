@@ -1,0 +1,47 @@
+[data-theme="plum"] {
+  /* Button */
+  --button-alternate-face: #a89890;
+  --button-dk-shadow: #000000;
+  --button-face: #a89890;
+  --button-hilight: #d8d0c8;
+  --button-light: #a89890;
+  --button-shadow: #786058;
+  --button-text: #000000;
+
+  /* Window */
+  --active-border: #a89890;
+  --app-workspace: #786058;
+  --desktop-text: #ffffff;
+  --inactive-border: #a89890;
+  --scrollbar: #a89890;
+  --window: #d8d0c8;
+  --window-frame: #000000;
+  --window-text: #000000;
+
+  /* Title Bar */
+  --active-title: #484060;
+  --gradient-active-title: #484060;
+  --gradient-inactive-title: #786058;
+  --inactive-title: #786058;
+  --inactive-title-text: #d0c8c0;
+  --title-text: #f8f0f8;
+
+  /* Menu */
+  --menu: #a89890;
+  --menu-bar: #a89890;
+  --menu-hilight: #284848;
+  --menu-text: #000000;
+  --gray-text: #786058;
+
+  /* Highlight / Selection */
+  --hilight: #284848;
+  --hilight-text: #d8d0c8;
+  --hot-tracking-color: #284848;
+
+  /* Tooltip */
+  --info-text: #000000;
+  --info-window: #ffffe1;
+
+  /* Desktop */
+  --background: #402840;
+}

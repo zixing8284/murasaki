@@ -9,6 +9,17 @@ export const themeIds = [
   'slate',
   'spruce',
   'desert',
+  'brick',
+  'eggplant',
+  'lilac',
+  'maple',
+  'marine',
+  'plum',
+  'pumpkin',
+  'red-white-and-blue',
+  'storm',
+  'teal',
+  'wheat',
 ] as const
 
 export type ThemeId = typeof themeIds[number]
@@ -22,6 +33,17 @@ export const themeLabels: Record<ThemeId, string> = {
   'slate': 'Slate',
   'spruce': 'Spruce',
   'desert': 'Desert',
+  'brick': 'Brick',
+  'eggplant': 'Eggplant',
+  'lilac': 'Lilac',
+  'maple': 'Maple',
+  'marine': 'Marine',
+  'plum': 'Plum',
+  'pumpkin': 'Pumpkin',
+  'red-white-and-blue': 'Red, White, and Blue',
+  'storm': 'Storm',
+  'teal': 'Teal',
+  'wheat': 'Wheat',
 }
 
 export interface ThemeContextValue {

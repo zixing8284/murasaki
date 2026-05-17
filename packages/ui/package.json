@@ -23,13 +23,16 @@
     },
     "./globals.css": "./dist/globals.css",
     "./theme.css": "./src/theme.css",
+    "./themes": "./src/themes/index.css",
+    "./themes/*.css": "./src/themes/*.css",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src/assets",
-    "src/theme.css"
+    "src/theme.css",
+    "src/themes"
   ],
   "publishConfig": {
     "access": "public"

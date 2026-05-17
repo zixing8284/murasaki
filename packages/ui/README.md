@@ -58,13 +58,21 @@ function App() {
 
 ## Themes
 
-Built-in themes include `windows-98` (default), `windows-95`, `windows-standard`, `rainy-day`, `rose`, `slate`, `spruce`, and `desert`.
+The library ships 19 named skins. `windows-98` is applied by default; switch via `ThemeProvider`:
 
 ```tsx
 <ThemeProvider defaultTheme="slate">
   {/* your app */}
 </ThemeProvider>
 ```
+
+**Windows classics:** `windows-98` (default), `windows-95`, `windows-standard`.
+
+**Hand-tuned palettes:** `rainy-day`, `rose`, `slate`, `spruce`, `desert`.
+
+**Ported from `nielssp/classic-stylesheets`:** `brick`, `eggplant`, `lilac`, `maple`, `marine`, `plum`, `pumpkin`, `red-white-and-blue`, `storm`, `teal`, `wheat`.
+
+Each named skin is also exported as a standalone stylesheet at `@murasaki/react98/themes/<id>.css` (e.g. `@murasaki/react98/themes/marine.css`). The default `theme.css` and pre-built `globals.css` already bundle every skin; the per-skin exports exist for advanced setups that want to assemble a trimmed bundle.
 
 ## API Basics
 

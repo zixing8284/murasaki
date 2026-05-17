@@ -1,0 +1,47 @@
+[data-theme="brick"] {
+  /* Button */
+  --button-alternate-face: #c2bfa5;
+  --button-dk-shadow: #000000;
+  --button-face: #c2bfa5;
+  --button-hilight: #e1e0d2;
+  --button-light: #c2bfa5;
+  --button-shadow: #8d8961;
+  --button-text: #000000;
+
+  /* Window */
+  --active-border: #c2bfa5;
+  --app-workspace: #8d8961;
+  --desktop-text: #ffffff;
+  --inactive-border: #c2bfa5;
+  --scrollbar: #c2bfa5;
+  --window: #ffffff;
+  --window-frame: #000000;
+  --window-text: #000000;
+
+  /* Title Bar */
+  --active-title: #800000;
+  --gradient-active-title: #800000;
+  --gradient-inactive-title: #8d8961;
+  --inactive-title: #8d8961;
+  --inactive-title-text: #e1e0d2;
+  --title-text: #e1e0d2;
+
+  /* Menu */
+  --menu: #c2bfa5;
+  --menu-bar: #c2bfa5;
+  --menu-hilight: #8d8961;
+  --menu-text: #000000;
+  --gray-text: #8d8961;
+
+  /* Highlight / Selection */
+  --hilight: #8d8961;
+  --hilight-text: #ffffff;
+  --hot-tracking-color: #8d8961;
+
+  /* Tooltip */
+  --info-text: #000000;
+  --info-window: #ffffe1;
+
+  /* Desktop */
+  --background: #420000;
+}

@@ -1,0 +1,47 @@
+[data-theme="windows-standard"] {
+  /* Button */
+  --button-alternate-face: rgb(180, 180, 180);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(212, 208, 200);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(223, 223, 223);
+  --button-shadow: rgb(128, 128, 128);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(192, 192, 192);
+  --app-workspace: rgb(128, 128, 128);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(192, 192, 192);
+  --scrollbar: rgb(212, 208, 200);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(0, 0, 128);
+  --gradient-active-title: rgb(16, 132, 208);
+  --gradient-inactive-title: rgb(181, 181, 181);
+  --inactive-title: rgb(128, 128, 128);
+  --inactive-title-text: rgb(212, 208, 200);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(212, 208, 200);
+  --menu-bar: rgb(212, 208, 200);
+  --menu-hilight: rgb(0, 0, 128);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 128);
+
+  /* Highlight / Selection */
+  --hilight: rgb(0, 0, 128);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(0, 128, 128);
+}

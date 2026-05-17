@@ -1,0 +1,47 @@
+[data-theme="marine"] {
+  /* Button */
+  --button-alternate-face: #88c0b8;
+  --button-dk-shadow: #000000;
+  --button-face: #88c0b8;
+  --button-hilight: #c4dfdb;
+  --button-light: #88c0b8;
+  --button-shadow: #4b8d84;
+  --button-text: #000000;
+
+  /* Window */
+  --active-border: #88c0b8;
+  --app-workspace: #4b8d84;
+  --desktop-text: #ffffff;
+  --inactive-border: #88c0b8;
+  --scrollbar: #88c0b8;
+  --window: #c8e0d8;
+  --window-frame: #000000;
+  --window-text: #000000;
+
+  /* Title Bar */
+  --active-title: #000080;
+  --gradient-active-title: #000080;
+  --gradient-inactive-title: #4b8d84;
+  --inactive-title: #4b8d84;
+  --inactive-title-text: #d0ccd0;
+  --title-text: #ffffff;
+
+  /* Menu */
+  --menu: #88c0b8;
+  --menu-bar: #88c0b8;
+  --menu-hilight: #006cc8;
+  --menu-text: #000000;
+  --gray-text: #4b8d84;
+
+  /* Highlight / Selection */
+  --hilight: #006cc8;
+  --hilight-text: #ffffff;
+  --hot-tracking-color: #006cc8;
+
+  /* Tooltip */
+  --info-text: #000000;
+  --info-window: #ffffe1;
+
+  /* Desktop */
+  --background: #2c4e47;
+}

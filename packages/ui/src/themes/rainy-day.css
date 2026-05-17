@@ -1,0 +1,47 @@
+[data-theme="rainy-day"] {
+  /* Button */
+  --button-alternate-face: rgb(184, 180, 160);
+  --button-dk-shadow: rgb(10, 10, 10);
+  --button-face: rgb(184, 180, 160);
+  --button-hilight: rgb(255, 255, 255);
+  --button-light: rgb(208, 205, 184);
+  --button-shadow: rgb(128, 128, 112);
+  --button-text: rgb(0, 0, 0);
+
+  /* Window */
+  --active-border: rgb(184, 180, 160);
+  --app-workspace: rgb(128, 128, 112);
+  --desktop-text: rgb(255, 255, 255);
+  --inactive-border: rgb(184, 180, 160);
+  --scrollbar: rgb(184, 180, 160);
+  --window: rgb(255, 255, 255);
+  --window-frame: rgb(10, 10, 10);
+  --window-text: rgb(0, 0, 0);
+
+  /* Title Bar */
+  --active-title: rgb(123, 143, 158);
+  --gradient-active-title: rgb(176, 190, 200);
+  --gradient-inactive-title: rgb(190, 192, 180);
+  --inactive-title: rgb(160, 168, 152);
+  --inactive-title-text: rgb(184, 180, 160);
+  --title-text: rgb(255, 255, 255);
+
+  /* Menu */
+  --menu: rgb(184, 180, 160);
+  --menu-bar: rgb(184, 180, 160);
+  --menu-hilight: rgb(123, 143, 158);
+  --menu-text: rgb(0, 0, 0);
+  --gray-text: rgb(128, 128, 112);
+
+  /* Highlight / Selection */
+  --hilight: rgb(123, 143, 158);
+  --hilight-text: rgb(255, 255, 255);
+  --hot-tracking-color: rgb(0, 0, 255);
+
+  /* Tooltip */
+  --info-text: rgb(0, 0, 0);
+  --info-window: rgb(255, 255, 225);
+
+  /* Desktop */
+  --background: rgb(128, 128, 128);
+}

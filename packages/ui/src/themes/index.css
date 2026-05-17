@@ -1,0 +1,33 @@
+/* Aggregator of all named skins.
+
+   The default `windows-98` skin lives in `../theme.css` under
+   `html, [data-theme="windows-98"]` so apps work with zero data-theme attribute.
+   Each file below defines exactly one `[data-theme="<id>"] { … }` block.
+
+   Adding a new skin:
+   1. Create `themes/<id>.css` with a single `[data-theme="<id>"]` ruleset.
+   2. Add an `@import` line below.
+   3. Register the id + label in `src/components/theme-provider/theme-context.ts`. */
+
+@import "./windows-95.css";
+@import "./windows-standard.css";
+
+/* Hand-tuned classic palettes. */
+@import "./rainy-day.css";
+@import "./rose.css";
+@import "./slate.css";
+@import "./spruce.css";
+@import "./desert.css";
+
+/* Ported from nielssp/classic-stylesheets `themes/win9x/skins`. */
+@import "./brick.css";
+@import "./eggplant.css";
+@import "./lilac.css";
+@import "./maple.css";
+@import "./marine.css";
+@import "./plum.css";
+@import "./pumpkin.css";
+@import "./red-white-and-blue.css";
+@import "./storm.css";
+@import "./teal.css";
+@import "./wheat.css";

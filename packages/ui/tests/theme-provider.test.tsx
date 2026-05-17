@@ -50,6 +50,17 @@ describe('theme-provider', () => {
       'slate',
       'spruce',
       'desert',
+      'brick',
+      'eggplant',
+      'lilac',
+      'maple',
+      'marine',
+      'plum',
+      'pumpkin',
+      'red-white-and-blue',
+      'storm',
+      'teal',
+      'wheat',
     ])
   })
 
@@ -63,6 +74,17 @@ describe('theme-provider', () => {
       'slate': 'Slate',
       'spruce': 'Spruce',
       'desert': 'Desert',
+      'brick': 'Brick',
+      'eggplant': 'Eggplant',
+      'lilac': 'Lilac',
+      'maple': 'Maple',
+      'marine': 'Marine',
+      'plum': 'Plum',
+      'pumpkin': 'Pumpkin',
+      'red-white-and-blue': 'Red, White, and Blue',
+      'storm': 'Storm',
+      'teal': 'Teal',
+      'wheat': 'Wheat',
     })
   })
 
@@ -87,6 +109,17 @@ describe('theme-provider', () => {
       </ThemeProvider>,
     )
     expect(document.documentElement.getAttribute('data-theme')).toBe('rainy-day')
+  })
+
+  it('lets non-default theme variables override the document default', async () => {
+    await render(
+      <ThemeProvider defaultTheme="marine">
+        <div>content</div>
+      </ThemeProvider>,
+    )
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('marine')
+    expect(getComputedStyle(document.documentElement).getPropertyValue('--button-face').trim()).toBe('#88c0b8')
   })
 
   it('applies windows-95 theme to documentElement', async () => {

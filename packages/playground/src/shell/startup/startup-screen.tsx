@@ -1,8 +1,18 @@
 import type { StartupPreloadState } from './use-startup-preload'
+import { ProgressIndicator } from '@murasaki/react98'
+import { LOADINGBAR_DATA_URL, STARTUP_ARTWORK_DATA_URL } from './startup-artwork-data'
 
 interface StartupScreenProps {
   preload: StartupPreloadState
   waitingForDesktopFiles: boolean
+}
+
+const ARTWORK_SCANLINE_STYLE = {
+  backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 1) 1px, transparent 1px, transparent 4px)',
+}
+
+const LOADING_BAR_STYLE = {
+  backgroundImage: `url('${LOADINGBAR_DATA_URL}')`,
 }
 
 function fileLabel(path: string | null): string {
@@ -19,44 +29,61 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
   const percent = preload.total > 0
     ? Math.min(100, Math.round((preload.loaded / preload.total) * 100))
     : 0
+  const progressLabel = preload.total > 0
+    ? `${preload.loaded} of ${preload.total} files`
+    : 'Scanning startup files'
   const status = waitingForDesktopFiles
     ? 'Preparing desktop files...'
     : fileLabel(preload.currentAsset)
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-(--background) text-(--desktop-text)">
-      <div className="w-[min(22rem,calc(100%-2rem))] bg-(--button-face) p-3 shadow-(--shadow-raised)">
-        <div className="mb-2 flex items-center gap-2">
-          <div className="grid size-8 shrink-0 place-items-center bg-(--window) shadow-(--shadow-sunken)">
-            <span className="font-bold text-(--active-title)">98</span>
+    <div className="flex h-full w-full cursor-wait items-center justify-center bg-(--background) px-4 py-6 text-(--button-text)">
+      <div className="w-full max-w-107.5 bg-(--button-face) shadow-(--shadow-raised)">
+        <div className="p-1">
+          <div className="mb-3 shadow-(--shadow-sunken)">
+            <div className="relative">
+              <img
+                alt=""
+                className="block aspect-video w-full object-cover"
+                decoding="sync"
+                draggable={false}
+                src={STARTUP_ARTWORK_DATA_URL}
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-60 mix-blend-soft-light"
+                style={ARTWORK_SCANLINE_STYLE}
+              />
+            </div>
+            <div
+              aria-hidden="true"
+              className="h-1.25 w-full shrink-0 animate-startup-loading-bar bg-repeat-x bg-size-[413px_5px] [image-rendering:crisp-edges] motion-reduce:animate-none"
+              style={LOADING_BAR_STYLE}
+            />
           </div>
-          <div className="min-w-0">
-            <div className="font-bold text-(--button-text)">Starting up...</div>
-            <div className="truncate text-(--gray-text)" aria-live="polite">{status}</div>
+          <div className="mb-2 flex items-center gap-2 px-1">
+            <div className="min-w-0 flex-1">
+              <div className="font-bold">Starting up...</div>
+              <div className="truncate text-(--gray-text) p-0.5" aria-live="polite">{status}</div>
+            </div>
+            <div className="shrink-0 text-right font-bold">
+              {percent}
+              %
+            </div>
           </div>
-        </div>
-        <div
-          className="h-4 bg-(--window) p-px shadow-(--shadow-sunken)"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={percent}
-        >
-          <div
-            className="h-full bg-(--hilight) transition-[width] duration-150"
-            style={{ width: `${percent}%` }}
+
+          <ProgressIndicator
+            aria-label="Startup progress"
+            className="h-5"
+            hideValue
+            value={percent}
+            variant="tile"
           />
-        </div>
-        <div className="mt-1 flex justify-between text-(--button-text)">
-          <span>
-            {preload.loaded}
-            /
-            {preload.total}
-          </span>
-          <span>
-            {percent}
-            %
-          </span>
+
+          <div className="mt-2 flex items-center justify-between gap-3 text-(--button-text) px-1">
+            <span className="truncate">{progressLabel}</span>
+            <span className="shrink-0">Please wait...</span>
+          </div>
         </div>
       </div>
     </div>

@@ -26,6 +26,7 @@
 
 @theme {
   --animate-now-playing-bar: now-playing-bar 0.8s ease-in-out infinite;
+  --animate-startup-loading-bar: startup-loading-bar 1.4s steps(15) infinite;
 
   @keyframes now-playing-bar {
     0%, 100% {
@@ -34,6 +35,16 @@
 
     50% {
       transform: scaleY(var(--now-playing-bar-max, 0.96));
+    }
+  }
+
+  @keyframes startup-loading-bar {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: 413px 0;
     }
   }
 }

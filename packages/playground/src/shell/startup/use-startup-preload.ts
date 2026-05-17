@@ -8,9 +8,9 @@ const CRITICAL_CONCURRENCY = 8
 /** Lower concurrency for background warmup so it doesn't fight foreground work. */
 const WARM_CONCURRENCY = 4
 /** Minimum splash time so the startup screen isn't a sub-frame flash. */
-const MIN_SPLASH_MS = 450
+const MIN_SPLASH_MS = 2460
 /** Maximum time we block on critical preload before letting the desktop in. */
-const CRITICAL_BUDGET_MS = 3000
+const CRITICAL_BUDGET_MS = 8000
 
 export type StartupPhase = 'manifest' | 'critical' | 'ready' | 'warm'
 
@@ -56,10 +56,6 @@ async function fetchManifest(signal: AbortSignal): Promise<AssetManifest | null>
   }
 }
 
-function decodeImage(image: HTMLImageElement): Promise<void> {
-  return image.decode ? image.decode().catch(() => undefined) : Promise.resolve()
-}
-
 function preloadImage(path: string, signal: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal.aborted) {
@@ -68,28 +64,19 @@ function preloadImage(path: string, signal: AbortSignal): Promise<void> {
     }
 
     const image = new Image()
-    let onAbort: () => void = () => {}
-
     const settle = (error?: Error): void => {
       image.onload = null
       image.onerror = null
-      signal.removeEventListener('abort', onAbort)
-      if (error) {
-        reject(error)
-        return
-      }
-      resolve()
-    }
-    onAbort = () => {
-      settle()
+      error ? reject(error) : resolve()
     }
 
     image.decoding = 'async'
-    image.onload = () => {
-      decodeImage(image).then(() => settle())
-    }
+    image.onload = () => image.decode().catch(() => undefined).then(() => settle())
     image.onerror = () => settle(new Error(`Unable to preload ${path}`))
-    signal.addEventListener('abort', onAbort, { once: true })
+    signal.addEventListener('abort', () => {
+      image.src = ''
+      settle()
+    }, { once: true })
     image.src = assetPath(path)
   })
 }
@@ -97,7 +84,6 @@ function preloadImage(path: string, signal: AbortSignal): Promise<void> {
 interface PreloadOptions {
   signal: AbortSignal
   concurrency: number
-  onStart?: (path: string) => void
   onComplete?: (path: string, error?: Error) => void
 }
 
@@ -113,7 +99,6 @@ async function preloadAll(paths: readonly string[], options: PreloadOptions): Pr
       if (path == null)
         return
 
-      options.onStart?.(path)
       try {
         await preloadImage(path, options.signal)
         options.onComplete?.(path)
@@ -173,10 +158,6 @@ export function useStartupPreload(): StartupPreloadState {
       const criticalRun = preloadAll(critical, {
         signal: controller.signal,
         concurrency: CRITICAL_CONCURRENCY,
-        onStart: (path) => {
-          if (mounted)
-            setState(prev => ({ ...prev, currentAsset: path }))
-        },
         onComplete: (path, error) => {
           loaded += 1
           if (!mounted)

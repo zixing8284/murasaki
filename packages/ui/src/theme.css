@@ -75,6 +75,11 @@ html,
 
   /* Desktop */
   --background: rgb(58, 110, 165);
+
+  /* Scoped layers */
+  --react98-layer-root-z-index: 1000;
+  --react98-layer-popup-z-index: 10;
+  --react98-layer-tooltip-z-index: 20;
 }
 
 /* ==========================================================================
@@ -105,6 +110,14 @@ html,
     inset 1px 1px var(--button-shadow),
     inset -2px -2px var(--button-light),
     inset 2px 2px var(--button-dk-shadow);
+}
+
+[data-react98-layer-root] {
+  position: absolute;
+  inset: 0;
+  z-index: var(--react98-layer-root-z-index, 1000);
+  isolation: isolate;
+  pointer-events: none;
 }
 
 /* ==========================================================================

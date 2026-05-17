@@ -15,9 +15,9 @@ import {
   useRef,
   useState,
 } from 'react'
-import { createPortal } from 'react-dom'
 import { cnPure } from '../../lib/utils'
 import { useDismissable, useFocusScope, useLayer } from '../../primitives'
+import { LayerPortal } from '../layer/layer-portal'
 import {
   ContextMenuContext,
 } from './context-menu-context'
@@ -261,20 +261,21 @@ export function ContextMenuContent({
   const left = positioned ? position.x : x
   const top = positioned ? position.y : y
 
-  return createPortal(
-    <div
-      ref={ref}
-      className={cnPure('fixed z-9999', className)}
-      data-open=""
-      data-context-menu-available-height={position?.availableHeight ?? ''}
-      style={{ left, top, ...style }}
-      onClick={handleClick}
-      onContextMenu={event => event.preventDefault()}
-      tabIndex={-1}
-      {...props}
-    >
-      {children}
-    </div>,
-    document.body,
+  return (
+    <LayerPortal>
+      <div
+        ref={ref}
+        className={cnPure('fixed pointer-events-auto [z-index:var(--react98-layer-popup-z-index)]', className)}
+        data-open=""
+        data-context-menu-available-height={position?.availableHeight ?? ''}
+        style={{ left, top, ...style }}
+        onClick={handleClick}
+        onContextMenu={event => event.preventDefault()}
+        tabIndex={-1}
+        {...props}
+      >
+        {children}
+      </div>
+    </LayerPortal>
   )
 }

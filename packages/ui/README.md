@@ -90,6 +90,24 @@ Library-owned state changes use value-level callbacks so React setters can be pa
 
 Native event names remain available on native controls such as `SelectNative` and raw DOM inputs.
 
+## Scoped Floating Layers
+
+If your app shell has its own stacking context, visual overlay, or framed desktop surface, wrap that area in `LayerProvider` so menus, context menus, tooltips, and default window portals stay inside the shell instead of competing in the global `document.body` z-index namespace:
+
+```tsx
+import { LayerProvider } from '@murasaki/react98'
+
+function Shell() {
+  return (
+    <div className="relative isolate overflow-hidden">
+      <LayerProvider>
+        <Desktop />
+      </LayerProvider>
+    </div>
+  )
+}
+```
+
 ## Documentation
 
 Full docs and interactive examples: [murasaki.vercel.app](https://murasaki.vercel.app)

@@ -1,0 +1,46 @@
+# LayerProvider
+
+`LayerProvider` creates a scoped portal root for floating @murasaki/react98 UI such as submenus, context menus, tooltips, and windows that do not receive an explicit portal container.
+
+Use it at an app shell or framed-surface seam when library popups should stay inside the same stacking context as the surface that triggered them.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | UI rendered in the scoped layer context. |
+| `container` | `HTMLElement \| null` | - | Optional external portal target. When omitted, `LayerProvider` renders a local root after its children. |
+| `className` | `string` | - | Classes for the generated local layer root. |
+
+Other div props are passed to the generated local layer root when `container` is omitted.
+
+## Usage
+
+```tsx
+import { LayerProvider } from '@murasaki/react98'
+
+export function DesktopShell() {
+  return (
+    <div className="relative isolate overflow-hidden">
+      <LayerProvider>
+        <Desktop />
+        <Taskbar />
+      </LayerProvider>
+    </div>
+  )
+}
+```
+
+Floating library content still positions against the viewport or the component's own boundary props. The layer root controls paint ownership, not placement math.
+
+## ARIA
+
+`LayerProvider` does not add ARIA roles. Portaled children keep their own semantics.
+
+## Keyboard
+
+`LayerProvider` does not add keyboard behavior. Dismissal, focus, and navigation stay owned by the floating component.
+
+## SSR
+
+Without a provider, floating layers fall back to `document.body` after mount. With a provider, layers wait for the local portal root to mount before rendering.

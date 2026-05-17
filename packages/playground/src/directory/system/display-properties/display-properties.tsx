@@ -27,19 +27,43 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const { themeId: currentThemeId, setTheme } = useTheme()
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>(currentThemeId)
   const actions = useProcessActions()
-  const [crtEnabled, setCrtEnabled] = useCrtEffect()
-  const [gradientEnabled, setGradientEnabled] = useGradientTitlebar()
+  const [currentCrtEnabled, setCrtEnabled] = useCrtEffect()
+  // Track the value at dialog open (or last Apply) so Cancel can revert.
+  const [committedCrtEnabled, setCommittedCrtEnabled] = useState(currentCrtEnabled)
+  const [currentGradientEnabled, setGradientEnabled] = useGradientTitlebar()
+  const [committedGradientEnabled, setCommittedGradientEnabled] = useState(currentGradientEnabled)
+
+  // CRT/gradient are applied immediately for live preview; only theme is deferred.
+  const hasPendingChanges = selectedTheme !== currentThemeId
+    || currentCrtEnabled !== committedCrtEnabled
+    || currentGradientEnabled !== committedGradientEnabled
+
+  const applySettings = (): void => {
+    if (selectedTheme !== currentThemeId) {
+      setTheme(selectedTheme)
+    }
+    // CRT/gradient are already live — just advance the committed baseline.
+    setCommittedCrtEnabled(currentCrtEnabled)
+    setCommittedGradientEnabled(currentGradientEnabled)
+  }
 
   const handleApply = (): void => {
-    setTheme(selectedTheme)
+    applySettings()
   }
 
   const handleOk = (): void => {
-    setTheme(selectedTheme)
+    applySettings()
     actions.close(windowId)
   }
 
   const handleCancel = (): void => {
+    // Revert any live-previewed changes that were never applied.
+    if (currentCrtEnabled !== committedCrtEnabled) {
+      setCrtEnabled(committedCrtEnabled)
+    }
+    if (currentGradientEnabled !== committedGradientEnabled) {
+      setGradientEnabled(committedGradientEnabled)
+    }
     actions.close(windowId)
   }
 
@@ -74,7 +98,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
 
           <div className="flex flex-col gap-1">
             <span className="text-(--button-text)">Sample:</span>
-            <ThemePreview themeId={selectedTheme} gradientTitlebar={gradientEnabled} />
+            <ThemePreview themeId={selectedTheme} gradientTitlebar={currentGradientEnabled} />
           </div>
         </TabPanel>
 
@@ -84,13 +108,13 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
 
         <TabPanel value="appearance" className="flex flex-col gap-3 p-3">
           <Checkbox
-            checked={crtEnabled}
+            checked={currentCrtEnabled}
             onCheckedChange={setCrtEnabled}
           >
             Enable CRT monitor effect
           </Checkbox>
           <Checkbox
-            checked={gradientEnabled}
+            checked={currentGradientEnabled}
             onCheckedChange={setGradientEnabled}
           >
             Use gradient title bars
@@ -104,7 +128,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         <Button
           onClick={handleApply}
           className="min-w-18.75"
-          disabled={selectedTheme === currentThemeId}
+          disabled={!hasPendingChanges}
         >
           Apply
         </Button>

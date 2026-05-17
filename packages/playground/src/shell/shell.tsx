@@ -1,4 +1,5 @@
 import type { DragEvent } from 'react'
+import { LayerProvider } from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/desktop-files'
 import { getStartupAppIds, useProcessActions } from '../contexts/process'
@@ -133,11 +134,11 @@ export function Shell(): React.ReactElement {
         </div>
 
         {/* Screen surround — black with inset vignette, CRT overlay when enabled */}
-        <div className={`relative z-1 h-full w-full overflow-hidden bg-black p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)] ${crtEnabled ? 'after:pointer-events-none after:absolute after:inset-0 after:z-50 after:bg-[#a4979721] after:opacity-90 after:content-[\'\']' : ''}`}>
+        <div className={`relative z-1 h-full w-full overflow-hidden bg-black p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]${crtEnabled ? ' crt-overlay' : ''}`}>
           {/* Desktop */}
           <div
             ref={screenRef}
-            className={`relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
+            className={`relative z-0 flex h-full min-h-0 w-full flex-col overflow-hidden bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
             style={isBooted ? { backgroundImage: `url(${assetPath(DESKTOP_WALLPAPER_IMAGE)})` } : undefined}
           >
             {!isBooted
@@ -148,7 +149,7 @@ export function Shell(): React.ReactElement {
                   />
                 )
               : (
-                  <>
+                  <LayerProvider>
                     {/* Desktop Area */}
                     <div className="flex-1 overflow-hidden relative">
                       <div
@@ -191,7 +192,7 @@ export function Shell(): React.ReactElement {
                       showStartMenu={showStartMenu}
                       onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
                     />
-                  </>
+                  </LayerProvider>
                 )}
           </div>
         </div>

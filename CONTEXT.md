@@ -20,6 +20,10 @@ _Avoid_: Server-safe root entry, accidental mixed boundary
 A non-public layer of shared behavior utilities and primitive building blocks used to make complex components consistent without exposing a separate headless UI API.
 _Avoid_: Public headless API, component-by-component behavior patches
 
+**Scoped layer root**:
+A consumer-placeable portal target for transient library UI such as menus, context menus, tooltips, and future popups. It keeps @murasaki/react98 floating layers inside a local stacking context instead of competing in the global `document.body` z-index namespace.
+_Avoid_: Global z-index race, per-component body portal
+
 **Explicit global CSS import**:
 A styling contract where consuming applications import the library's global stylesheet from their application entry or root layout instead of receiving it as a component import side effect.
 _Avoid_: Automatic component-side CSS injection, hidden stylesheet import

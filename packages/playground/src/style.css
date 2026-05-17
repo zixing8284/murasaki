@@ -24,6 +24,31 @@
   @apply text-wrap wrap-break-word break-all whitespace-pre-line;
 }
 
+@keyframes crt-lines-scroll {
+  from { background-position: 0% 0%; }
+  to   { background-position: 0% 100%; }
+}
+
+/*
+ * CRT monitor overlay: lofi.cafe-style scan-line tile scrolling downward.
+ * mix-blend-mode: overlay lets the lines interact with content beneath
+ * rather than just painting on top.
+ * Applied as an ::after pseudo-element via .crt-overlay class.
+ */
+.crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.4;
+  /* lines.jpg encoded inline so no network request is needed */
+  background-image: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODxYQERAREBYiFRkVFRkVIh4kHhweJB42KiYmKjY+NDI0PkxERExfWl98fKcBBgYGBgcGBwgIBwoLCgsKDw4MDA4PFhAREBEQFiIVGRUVGRUiHiQeHB4kHjYqJiYqNj40MjQ+TERETF9aX3x8p//CABEIABYAIAMBIgACEQEDEQH/xAAZAAEAAgMAAAAAAAAAAAAAAAADAAcBBAb/2gAIAQEAAAAAoUZmxl1H5Yof/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAEEBf/aAAgBAhAAAAC0w1//xAAVAQEBAAAAAAAAAAAAAAAAAAABBv/aAAgBAxAAAACcL5//xAAzEAAAAwUCCQ0AAAAAAAAAAAAAAQIDBAUGVBEhEhMUF0KRlKLSFjIzQURRUlZydJLR4v/aAAgBAQABPwBs4wE2rUzfF9IrSK6/0g3CA22E+LO/vL6GRQGqaay4RkUArF/L8g47KBNV4cqLtwldkQOUkl+TbvapC43KujKK9kQEzFKnXKB7EgNp9iOOaETo785XiBT5E6VhrWM4MUpXfeGcGJUrDf4h/8QAHxEAAAQHAQAAAAAAAAAAAAAAAAECBQMEFRZUVpOh/9oACAECAQE/ALqktXhdTF2yWrQupikN2Mn0E0t2Mkf/xAAhEQABAgQHAAAAAAAAAAAAAAAFAAITFiShAREhVFWRkv/aAAgBAwEBPwCKTzxoCnlqiFuOKdNUwGdK19lMBnevsv/Z");
+  background-size: 7px;
+  mix-blend-mode: overlay;
+  animation: crt-lines-scroll 150s linear infinite;
+}
+
 @theme {
   --animate-now-playing-bar: now-playing-bar 0.8s ease-in-out infinite;
   --animate-startup-loading-bar: startup-loading-bar 1.4s steps(15) infinite;

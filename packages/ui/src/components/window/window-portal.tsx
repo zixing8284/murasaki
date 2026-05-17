@@ -1,10 +1,12 @@
 import { createPortal } from 'react-dom'
+import { useLayerPortalTarget } from '../layer/layer-context'
 
 export interface WindowPortalProps {
   children: React.ReactNode
   /**
    * Portal target container.
-   * - undefined/null: portal to document.body
+   * - undefined/null: portal to the current react98 layer target, falling back
+   *   to document.body when no scoped layer provider is present
    * - HTMLElement: portal to that element
    */
   container?: HTMLElement | null
@@ -13,7 +15,10 @@ export interface WindowPortalProps {
 export function WindowPortal({
   children,
   container,
-}: WindowPortalProps): React.ReactPortal {
-  const target = container ?? document.body
+}: WindowPortalProps): React.ReactPortal | null {
+  const layerTarget = useLayerPortalTarget()
+  const target = container ?? layerTarget
+  if (!target)
+    return null
   return createPortal(children, target)
 }

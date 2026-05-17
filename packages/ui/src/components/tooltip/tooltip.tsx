@@ -1,8 +1,8 @@
 import type * as React from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
 import { useDismissable, useLayer } from '../../primitives'
+import { LayerPortal } from '../layer/layer-portal'
 
 export interface TooltipProps {
   /** Tooltip content text */
@@ -77,23 +77,24 @@ export function Tooltip({
       onBlur={hide}
     >
       {children}
-      {visible && createPortal(
-        <span
-          ref={tooltipRef}
-          id={tooltipId}
-          role={position ? 'tooltip' : undefined}
-          aria-hidden={position ? undefined : true}
-          className={cn(
-            'fixed z-9999 whitespace-nowrap px-1 py-0.5',
-            'bg-(--info-window) text-(--info-text) border border-(--window-frame)',
-            'pointer-events-none',
-            className,
-          )}
-          style={tooltipStyle}
-        >
-          {text}
-        </span>,
-        document.body,
+      {visible && (
+        <LayerPortal>
+          <span
+            ref={tooltipRef}
+            id={tooltipId}
+            role={position ? 'tooltip' : undefined}
+            aria-hidden={position ? undefined : true}
+            className={cn(
+              'fixed [z-index:var(--react98-layer-tooltip-z-index)] whitespace-nowrap px-1 py-0.5',
+              'bg-(--info-window) text-(--info-text) border border-(--window-frame)',
+              'pointer-events-none',
+              className,
+            )}
+            style={tooltipStyle}
+          >
+            {text}
+          </span>
+        </LayerPortal>
       )}
     </span>
   )

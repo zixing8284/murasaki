@@ -1,9 +1,9 @@
 import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
 import { useDismissable, useLayer, useRovingFocus, useTypeahead } from '../../primitives'
+import { LayerPortal } from '../layer/layer-portal'
 import { MenuScrollArrow, useMenuOverflow } from './menu-scroll'
 
 // ─── Menu ─────────────────────────────────────────────────────────────────────
@@ -660,23 +660,24 @@ export function MenuSubContent({
     position: 'fixed',
     left: positioned ? position.x : -9999,
     top: positioned ? position.y : -9999,
-    zIndex: 9999,
+    zIndex: 'var(--react98-layer-popup-z-index)',
     ...style,
   }
 
-  return createPortal(
-    <Menu
-      ref={setMenuRef}
-      className={cn('min-w-[var(--menu-sub-min-width,160px)]', className)}
-      style={layerStyle}
-      maxHeight={resolvedMaxHeight}
-      onKeyDown={handleKeyDown}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-      {...props}
-    >
-      {children}
-    </Menu>,
-    document.body,
+  return (
+    <LayerPortal>
+      <Menu
+        ref={setMenuRef}
+        className={cn('pointer-events-auto min-w-[var(--menu-sub-min-width,160px)]', className)}
+        style={layerStyle}
+        maxHeight={resolvedMaxHeight}
+        onKeyDown={handleKeyDown}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        {...props}
+      >
+        {children}
+      </Menu>
+    </LayerPortal>
   )
 }

@@ -59,6 +59,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Use value-level callbacks for controlled state (`onValueChange`, `onCheckedChange`); reserve native names like `onChange` for native DOM event passthrough.
 - Use **CVA** for variant-heavy styling.
 - Use `cn()` by default and `cnPure()` only when the base font injection should be skipped.
+- Floating UI such as submenus, context menus, tooltips, and default window portals must use the scoped layer root seam (`LayerProvider` / internal layer portal helper), not direct `document.body` portals with global `9999` z-index values.
 - Prefer Tailwind utilities over custom CSS. Add CSS only when Tailwind cannot express the style cleanly.
 - Prefer CSS-variable-backed Tailwind values over hardcoded colors so components remain themeable.
 - For complex pixel-precise graphics, prefer inline SVG components that use theme variables.

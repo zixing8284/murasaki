@@ -1,4 +1,4 @@
-export { APP_ID, default as appDirectory, DEFAULT_ICON } from './directory'
+export { APP_ID, default as appDirectory, DEFAULT_ICON, getStartupAppIds } from './directory'
 export type { AppId } from './directory'
 export { useProcess, useProcessActions, useProcesses, useProcessList } from './hooks'
 export { ProcessProvider } from './provider'

@@ -61,6 +61,8 @@ export interface ProcessDirectoryEntry {
   singleton?: boolean
   /** Show as a desktop icon */
   showOnDesktop?: boolean
+  /** Open automatically once the desktop finishes booting */
+  autoOpenOnStartup?: boolean
   /** Ephemeral windows participate in z-index / focus but are hidden from taskbar */
   ephemeral?: boolean
   /** Default window dimensions in px — used as both initial inline size and minimum resize constraint */

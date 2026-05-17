@@ -1,4 +1,3 @@
-import type { AppId } from '../../contexts/process'
 import { appDirectory, DEFAULT_ICON } from '../../contexts/process'
 import {
   DESKTOP_MEDIA_ICON,
@@ -50,6 +49,3 @@ export function getCriticalAssetPaths(): string[] {
 export function getWarmAssetPaths(): string[] {
   return uniquePaths([...WARM_IMAGE_ASSETS])
 }
-
-/** Apps that should auto-open once the desktop is ready. */
-export const DEFAULT_STARTUP_APPS: ReadonlyArray<AppId> = ['mycomputer', 'docs']

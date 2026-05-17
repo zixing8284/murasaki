@@ -1,7 +1,7 @@
 import type { DragEvent } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/desktop-files'
-import { useProcessActions } from '../contexts/process'
+import { getStartupAppIds, useProcessActions } from '../contexts/process'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { assetPath } from '../lib/asset-path'
@@ -9,7 +9,6 @@ import { DESKTOP_WALLPAPER_IMAGE } from '../lib/playground-assets'
 import { warmServiceWorkerCache } from '../sw-register'
 import { Desktop } from './desktop/desktop'
 import { StartMenu } from './start-menu/start-menu'
-import { DEFAULT_STARTUP_APPS } from './startup/startup-assets'
 import { StartupScreen } from './startup/startup-screen'
 import { useStartupPreload } from './startup/use-startup-preload'
 import { Taskbar } from './taskbar/taskbar'
@@ -71,7 +70,7 @@ export function Shell(): React.ReactElement {
   useEffect(() => {
     if (!isBooted)
       return
-    DEFAULT_STARTUP_APPS.forEach(appId => open(appId))
+    getStartupAppIds().forEach(appId => open(appId))
     warmServiceWorkerCache(['critical', 'warm'])
   }, [isBooted, open])
 

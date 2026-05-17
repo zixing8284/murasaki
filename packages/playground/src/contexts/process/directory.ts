@@ -133,4 +133,10 @@ export const APP_ID = {
   WEBAMP: 'webamp',
 } as const satisfies Record<string, AppId>
 
+export function getStartupAppIds(): AppId[] {
+  return Object.entries(directory as Record<AppId, ProcessDirectoryEntry>)
+    .filter(([, entry]) => entry.autoOpenOnStartup)
+    .map(([appId]) => appId as AppId)
+}
+
 export default directory as Record<AppId, ProcessDirectoryEntry>

@@ -7,10 +7,6 @@ interface StartupScreenProps {
   waitingForDesktopFiles: boolean
 }
 
-const ARTWORK_SCANLINE_STYLE = {
-  backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 1) 1px, transparent 1px, transparent 4px)',
-}
-
 const LOADING_BAR_STYLE = {
   backgroundImage: `url('${LOADINGBAR_DATA_URL}')`,
 }
@@ -52,7 +48,6 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 opacity-60 mix-blend-soft-light"
-                style={ARTWORK_SCANLINE_STYLE}
               />
             </div>
             <div

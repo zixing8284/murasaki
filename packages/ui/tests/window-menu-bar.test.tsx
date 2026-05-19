@@ -33,6 +33,39 @@ function TestWindowMenuBar({ onValueChange }: { onValueChange?: (value: string |
   )
 }
 
+function AnimatedTestWindowMenuBar(): React.ReactElement {
+  return (
+    <>
+      <style>
+        {`
+          @keyframes window-menu-bar-test-exit {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+
+          [data-testid="animated-file-content"][data-state="closed"] {
+            animation: window-menu-bar-test-exit 1s linear;
+          }
+        `}
+      </style>
+      <WindowMenuBar>
+        <WindowMenuBarMenu value="file">
+          <WindowMenuBarTrigger>File</WindowMenuBarTrigger>
+          <WindowMenuBarContent data-testid="animated-file-content">
+            <MenuItem>New</MenuItem>
+          </WindowMenuBarContent>
+        </WindowMenuBarMenu>
+        <WindowMenuBarMenu value="edit">
+          <WindowMenuBarTrigger>Edit</WindowMenuBarTrigger>
+          <WindowMenuBarContent data-testid="animated-edit-content">
+            <MenuItem>Cut</MenuItem>
+          </WindowMenuBarContent>
+        </WindowMenuBarMenu>
+      </WindowMenuBar>
+    </>
+  )
+}
+
 describe('window menu bar', () => {
   it('renders a menubar with menu items', async () => {
     const screen = await render(
@@ -96,5 +129,41 @@ describe('window menu bar', () => {
     await expect.element(screen.getByRole('menuitem', { name: 'New' })).not.toBeInTheDocument()
     await expect.element(file).toHaveAttribute('aria-expanded', 'false')
     await expect.element(edit).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('keeps outgoing content mounted until its exit animation ends', async () => {
+    const screen = await render(<AnimatedTestWindowMenuBar />)
+    const file = screen.getByRole('menuitem', { name: 'File' })
+    const edit = screen.getByRole('menuitem', { name: 'Edit' })
+
+    await file.click()
+    await expect.element(screen.getByRole('menuitem', { name: 'New' })).toBeInTheDocument()
+
+    await userEvent.hover(edit.element())
+
+    await expect.element(screen.getByRole('menuitem', { name: 'Cut' })).toBeInTheDocument()
+    await expect.element(screen.getByRole('menuitem', { name: 'New' })).toBeInTheDocument()
+    await expect.element(screen.getByTestId('animated-file-content')).toHaveAttribute('data-state', 'closed')
+
+    screen.getByTestId('animated-file-content').element().dispatchEvent(
+      new AnimationEvent('animationend', {
+        animationName: 'window-menu-bar-test-exit',
+        bubbles: true,
+      }),
+    )
+
+    await expect.element(screen.getByRole('menuitem', { name: 'New' })).not.toBeInTheDocument()
+  })
+
+  it('closes open menu when window loses focus (iframe click proxy)', async () => {
+    const screen = await render(<TestWindowMenuBar />)
+    const file = screen.getByRole('menuitem', { name: 'File' })
+
+    await file.click()
+    await expect.element(screen.getByRole('menuitem', { name: 'New' })).toBeInTheDocument()
+
+    window.dispatchEvent(new Event('blur'))
+
+    await expect.element(screen.getByRole('menuitem', { name: 'New' })).not.toBeInTheDocument()
   })
 })

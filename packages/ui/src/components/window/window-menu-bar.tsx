@@ -33,6 +33,24 @@ function getWindowMenuBarTriggerValue(trigger: HTMLButtonElement): string | unde
   return trigger.getAttribute('data-window-menu-bar-value') ?? undefined
 }
 
+function getAnimationSnapshot(node: HTMLElement | null): { animationName: string, display: string } {
+  if (!node)
+    return { animationName: 'none', display: 'none' }
+
+  const style = getComputedStyle(node)
+  return {
+    animationName: style.animationName || 'none',
+    display: style.display,
+  }
+}
+
+function hasAnimationName(animationNameList: string, animationName: string): boolean {
+  return animationNameList
+    .split(',')
+    .map(name => name.trim())
+    .includes(animationName)
+}
+
 interface WindowMenuBarContextValue {
   value: WindowMenuBarValue
   setValue: (value: WindowMenuBarValue) => void
@@ -351,6 +369,7 @@ export function WindowMenuBarContent({
   id,
   onClick,
   onKeyDown,
+  onAnimationEnd,
   closeOnItemClick = true,
   sideOffset = 0,
   estimatedWidth = 160,
@@ -363,16 +382,39 @@ export function WindowMenuBarContent({
   const menubar = useWindowMenuBarContext('WindowMenuBarContent')
   const menu = useWindowMenuBarMenuContext('WindowMenuBarContent')
   const menuRef = React.useRef<HTMLMenuElement | null>(null)
+  const [localOpen, dispatchLocalOpen] = React.useReducer((_open: boolean, nextOpen: boolean) => nextOpen, menu.open)
+  const previousAnimationNameRef = React.useRef('none')
+  const shouldRender = menu.open || localOpen
+
+  React.useLayoutEffect(() => {
+    if (menu.open) {
+      dispatchLocalOpen(true)
+      previousAnimationNameRef.current = getAnimationSnapshot(menuRef.current).animationName
+      return
+    }
+
+    if (!localOpen)
+      return
+
+    const { animationName, display } = getAnimationSnapshot(menuRef.current)
+    const hasExitAnimation = animationName !== 'none'
+      && display !== 'none'
+      && animationName !== previousAnimationNameRef.current
+
+    if (!hasExitAnimation)
+      dispatchLocalOpen(false)
+  }, [menu.open, localOpen])
 
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
     menuRef.current = node
     menu.contentRef.current = node
   }, [menu.contentRef])
 
+  // Keep positioning alive while exit animations keep the content mounted.
   const position = useLayer({
     anchorRef: menu.triggerRef,
     layerRef: menuRef,
-    open: menu.open,
+    open: shouldRender,
     side: 'bottom',
     align: 'start',
     gap: sideOffset,
@@ -433,7 +475,21 @@ export function WindowMenuBarContent({
     }
   }
 
-  if (!menu.open)
+  const handleAnimationEnd = (event: React.AnimationEvent<HTMLMenuElement>): void => {
+    onAnimationEnd?.(event)
+    if (event.defaultPrevented)
+      return
+
+    if (!menu.open && event.currentTarget === event.target) {
+      const { animationName } = getAnimationSnapshot(event.currentTarget)
+      if (!hasAnimationName(animationName, event.animationName))
+        return
+
+      dispatchLocalOpen(false)
+    }
+  }
+
+  if (!shouldRender)
     return null
 
   const positioned = position !== null
@@ -456,11 +512,17 @@ export function WindowMenuBarContent({
         aria-labelledby={menu.triggerId}
         data-window-menu-bar-content=""
         data-window-menu-bar-value={menu.value}
-        className={cn('pointer-events-auto min-w-[var(--window-menu-bar-content-min-width,160px)]', className)}
+        data-state={menu.open ? 'open' : 'closed'}
+        className={cn(
+          'pointer-events-auto min-w-[var(--window-menu-bar-content-min-width,160px)]',
+          !menu.open && 'pointer-events-none',
+          className,
+        )}
         style={layerStyle}
         maxHeight={resolvedMaxHeight}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
+        onAnimationEnd={handleAnimationEnd}
         {...props}
       >
         {children}

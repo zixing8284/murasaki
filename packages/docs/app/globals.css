@@ -77,6 +77,7 @@ body {
 
 .m98-example__preview-inner {
   box-sizing: border-box;
+  position: relative;
   min-height: 100%;
   padding: var(--m98-docs-example-padding);
   font-family: var(--m98-docs-font-mono);
@@ -85,6 +86,10 @@ body {
   font-smooth: never;
   -webkit-font-smoothing: none;
   text-rendering: optimizeSpeed;
+}
+
+.m98-example__layer-root {
+  overflow: visible;
 }
 
 .m98-example__preview-inner > * {

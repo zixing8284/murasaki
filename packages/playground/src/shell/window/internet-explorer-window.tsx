@@ -1,5 +1,16 @@
 import type { ReactElement, ReactNode, SyntheticEvent } from 'react'
-import { Divider, Tooltip, WindowMenuBar, WindowMenuBarItem, WindowStatusBar, WindowStatusBarField } from '@murasaki/react98'
+import {
+  Divider,
+  MenuItem,
+  MenuSeparator,
+  Tooltip,
+  WindowMenuBar,
+  WindowMenuBarContent,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+  WindowStatusBar,
+  WindowStatusBarField,
+} from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process'
 import { assetPath } from '../../lib/asset-path'
@@ -10,7 +21,6 @@ import { RndWindow } from './rnd-window'
 
 const IE_TITLE_SUFFIX = 'Microsoft Internet Explorer'
 const FALLBACK_PAGE_TITLE = 'New Tab - Microsoft Internet Explorer'
-const IE_MENUS = ['File', 'Edit', 'View', 'Go', 'Favorites', 'Help'] as const
 
 const ICONS = IE_TOOLBAR_ICONS
 
@@ -268,9 +278,66 @@ export function InternetExplorerWindow({
     >
       <InactiveClickGuard windowId={windowId} className="shrink-0">
         <WindowMenuBar className="h-5">
-          {IE_MENUS.map(menu => (
-            <WindowMenuBarItem key={menu}>{renderMenuLabel(menu)}</WindowMenuBarItem>
-          ))}
+          <WindowMenuBarMenu value="file">
+            <WindowMenuBarTrigger>{renderMenuLabel('File')}</WindowMenuBarTrigger>
+            <WindowMenuBarContent className="w-44">
+              <MenuItem reserveIconSpace disabled>New Window</MenuItem>
+              <MenuItem reserveIconSpace disabled>Open...</MenuItem>
+              <MenuSeparator />
+              <MenuItem reserveIconSpace disabled>Save As...</MenuItem>
+              <MenuItem reserveIconSpace disabled>Page Setup...</MenuItem>
+              <MenuItem reserveIconSpace disabled>Print...</MenuItem>
+              <MenuSeparator />
+              <MenuItem reserveIconSpace disabled>Close</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+          <WindowMenuBarMenu value="edit">
+            <WindowMenuBarTrigger>{renderMenuLabel('Edit')}</WindowMenuBarTrigger>
+            <WindowMenuBarContent className="w-40">
+              <MenuItem reserveIconSpace disabled>Cut</MenuItem>
+              <MenuItem reserveIconSpace disabled>Copy</MenuItem>
+              <MenuItem reserveIconSpace disabled>Paste</MenuItem>
+              <MenuSeparator />
+              <MenuItem reserveIconSpace disabled>Select All</MenuItem>
+              <MenuItem reserveIconSpace disabled>Find...</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+          <WindowMenuBarMenu value="view">
+            <WindowMenuBarTrigger>{renderMenuLabel('View')}</WindowMenuBarTrigger>
+            <WindowMenuBarContent className="w-44">
+              <MenuItem reserveIconSpace disabled>Toolbars</MenuItem>
+              <MenuItem reserveIconSpace disabled>Status Bar</MenuItem>
+              <MenuSeparator />
+              <MenuItem reserveIconSpace onClick={handleRefresh}>Refresh</MenuItem>
+              <MenuItem reserveIconSpace disabled>Source</MenuItem>
+              <MenuItem reserveIconSpace disabled>Full Screen</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+          <WindowMenuBarMenu value="go">
+            <WindowMenuBarTrigger>{renderMenuLabel('Go')}</WindowMenuBarTrigger>
+            <WindowMenuBarContent className="w-40">
+              <MenuItem reserveIconSpace disabled>Back</MenuItem>
+              <MenuItem reserveIconSpace disabled>Forward</MenuItem>
+              <MenuSeparator />
+              <MenuItem reserveIconSpace onClick={handleHome}>Home Page</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+          <WindowMenuBarMenu value="favorites">
+            <WindowMenuBarTrigger>{renderMenuLabel('Favorites')}</WindowMenuBarTrigger>
+            <WindowMenuBarContent className="w-48">
+              <MenuItem reserveIconSpace disabled>Add to Favorites...</MenuItem>
+              <MenuItem reserveIconSpace disabled>Organize Favorites...</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+          <WindowMenuBarMenu value="help">
+            <WindowMenuBarTrigger>{renderMenuLabel('Help')}</WindowMenuBarTrigger>
+            <WindowMenuBarContent className="w-48">
+              <MenuItem reserveIconSpace disabled>Contents and Index</MenuItem>
+              <MenuItem reserveIconSpace disabled>Tip of the Day</MenuItem>
+              <MenuSeparator />
+              <MenuItem reserveIconSpace disabled>About Internet Explorer</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
         </WindowMenuBar>
       </InactiveClickGuard>
 

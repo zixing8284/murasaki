@@ -29,8 +29,20 @@ export type {
 export { WindowFrame } from './window-frame'
 export type { WindowFrameProps } from './window-frame'
 
-export { WindowMenuBar, WindowMenuBarItem } from './window-menu-bar'
-export type { WindowMenuBarItemProps, WindowMenuBarProps } from './window-menu-bar'
+export {
+  WindowMenuBar,
+  WindowMenuBarContent,
+  WindowMenuBarItem,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+} from './window-menu-bar'
+export type {
+  WindowMenuBarContentProps,
+  WindowMenuBarItemProps,
+  WindowMenuBarMenuProps,
+  WindowMenuBarProps,
+  WindowMenuBarTriggerProps,
+} from './window-menu-bar'
 
 export { WindowOverlay } from './window-overlay'
 export type { WindowOverlayProps } from './window-overlay'

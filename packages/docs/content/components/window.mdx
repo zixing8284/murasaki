@@ -1,4 +1,5 @@
 import { WindowBasicDemo } from './window/window-basic'
+import { WindowMenuDemo } from './window/window-menu'
 
 # Window
 
@@ -12,7 +13,7 @@ The Window suite is a set of composable primitives for Windows 98 application ch
 | `WindowFrame` | `positioning`, div props | Outer raised frame. |
 | `WindowTitleBar`, `WindowTitle`, `WindowButtons` | div props | Title bar slots. |
 | `WindowMinimizeButton`, `WindowMaximizeButton`, `WindowCloseButton`, `WindowHelpButton` | button props | Title bar controls. |
-| `WindowMenuBar`, `WindowMenuBarItem` | menu/menuitem props | Top-level window menu. |
+| `WindowMenuBar`, `WindowMenuBarMenu`, `WindowMenuBarTrigger`, `WindowMenuBarContent`, `WindowMenuBarItem` | `value`, `defaultValue`, `onValueChange`, menu/menuitem props | Top-level window menu bar with optional dropdown coordination. |
 | `WindowContent` | div props | Scroll/content body. |
 | `WindowStatusBar`, `WindowStatusBarField` | div props | Bottom status area. |
 
@@ -20,6 +21,10 @@ The Window suite is a set of composable primitives for Windows 98 application ch
 
 <ComponentExample name="window-basic" title="Application window">
   <WindowBasicDemo />
+</ComponentExample>
+
+<ComponentExample name="window-menu" title="Menu bar dropdowns">
+  <WindowMenuDemo />
 </ComponentExample>
 
 ## ARIA

@@ -1,6 +1,7 @@
 'use client'
 
 import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
+import { LayerProvider } from '@murasaki/react98'
 import { Code } from 'nextra/components'
 import { evaluate } from 'nextra/evaluate'
 import { useId, useState, useSyncExternalStore } from 'react'
@@ -206,7 +207,11 @@ export function ComponentExampleClient({
           className={frameClassName}
           data-theme={previewTheme === 'auto' ? exampleTheme : undefined}
         >
-          <div className="m98-example__preview-inner">{previewElements}</div>
+          <div className="m98-example__preview-inner">
+            <LayerProvider className="m98-example__layer-root">
+              {previewElements}
+            </LayerProvider>
+          </div>
         </div>
       </div>
 

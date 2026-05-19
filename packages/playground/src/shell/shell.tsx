@@ -8,6 +8,7 @@ import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { assetPath } from '../lib/asset-path'
 import { DESKTOP_WALLPAPER_IMAGE } from '../lib/playground-assets'
 import { warmServiceWorkerCache } from '../sw-register'
+import { CrtOverlay } from './crt-overlay'
 import { Desktop } from './desktop/desktop'
 import { StartMenu } from './start-menu/start-menu'
 import { StartupScreen } from './startup/startup-screen'
@@ -134,7 +135,8 @@ export function Shell(): React.ReactElement {
         </div>
 
         {/* Screen surround — black with inset vignette, CRT overlay when enabled */}
-        <div className={`relative z-1 h-full w-full overflow-hidden bg-black p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]${crtEnabled ? ' crt-overlay' : ''}`}>
+        <div className="relative z-1 h-full w-full overflow-hidden bg-black p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]">
+          {crtEnabled && <CrtOverlay />}
           {/* Desktop */}
           <div
             ref={screenRef}

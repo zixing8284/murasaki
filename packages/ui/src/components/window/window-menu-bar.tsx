@@ -401,8 +401,17 @@ export function WindowMenuBarContent({
       && display !== 'none'
       && animationName !== previousAnimationNameRef.current
 
-    if (!hasExitAnimation)
-      dispatchLocalOpen(false)
+    if (!hasExitAnimation) {
+      // No exit animation: defer the unmount by one animation frame so the
+      // incoming menu has already painted before the outgoing one leaves.
+      // This removes the brief visible gap that occurs when both commits land
+      // in the same synchronous layout flush (Radix Presence / useLayoutEffect
+      // immediate-dispatch path).
+      const raf = requestAnimationFrame(() => dispatchLocalOpen(false))
+      return () => cancelAnimationFrame(raf)
+    }
+
+    return undefined
   }, [menu.open, localOpen])
 
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {

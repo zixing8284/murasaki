@@ -479,7 +479,10 @@ export function MenuSubTrigger({
       return
     sub.cancelOpen()
     sub.cancelClose()
-    sub.setOpen(!sub.open)
+    // Windows 98 behavior: clicking a submenu trigger always opens (or keeps
+    // open) the submenu. It never toggles it closed — only hovering away,
+    // Escape, or ArrowLeft can close a submenu.
+    sub.setOpen(true)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>): void => {

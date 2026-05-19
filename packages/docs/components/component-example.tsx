@@ -13,8 +13,10 @@ interface ComponentExampleProps {
   name: string
   /** Optional heading rendered above the example. */
   title?: string
-  /** Extra class on the preview pane wrapper, e.g. for fixed heights. */
+  /** Extra Tailwind classes on the preview pane wrapper, e.g. `h-80 min-h-80` for fixed heights. */
   previewClassName?: string
+  /** When true, the preview inner fills the outer container height with no padding (for edge-test stages). */
+  fill?: boolean
   /** Whether the docs preview frame should apply the current docs theme. */
   previewTheme?: ComponentExamplePreviewTheme
   /** MDX children: the live demo JSX. */
@@ -29,6 +31,7 @@ export async function ComponentExample({
   name,
   title,
   previewClassName,
+  fill,
   previewTheme = 'auto',
   children,
 }: ComponentExampleProps): Promise<ReactElement> {
@@ -39,6 +42,7 @@ export async function ComponentExample({
     <ComponentExampleClient
       title={title}
       previewClassName={previewClassName}
+      fill={fill}
       previewTheme={previewTheme}
       source={source}
       compiledSource={compiledSource}

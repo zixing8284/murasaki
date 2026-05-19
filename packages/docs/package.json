@@ -19,11 +19,13 @@
     "react-dom": "catalog:libs"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "catalog:cli",
     "@types/mdx": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "pagefind": "catalog:cli",
+    "tailwindcss": "catalog:libs",
     "typescript": "catalog:cli"
   }
 }

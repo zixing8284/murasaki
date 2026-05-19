@@ -1,5 +1,12 @@
 import type { GridPosition } from './storage'
 
+export interface GridDropDelta {
+  dCol: number
+  dRow: number
+  cols: number
+  rows: number
+}
+
 function pxToNum(value: string): number {
   const n = Number.parseFloat(value)
   return Number.isFinite(n) ? n : 0
@@ -29,6 +36,21 @@ export function calcGridDropTarget(
   dx: number,
   dy: number,
 ): GridPosition | null {
+  const delta = calcGridDropDelta(gridEl, dx, dy)
+  if (!delta)
+    return null
+
+  return {
+    col: clamp(origin.col + delta.dCol, 1, delta.cols),
+    row: clamp(origin.row + delta.dRow, 1, delta.rows),
+  }
+}
+
+export function calcGridDropDelta(
+  gridEl: HTMLElement | null,
+  dx: number,
+  dy: number,
+): GridDropDelta | null {
   if (!gridEl)
     return null
 
@@ -47,7 +69,9 @@ export function calcGridDropTarget(
   const dRow = Math.round(dy / (cellH + rowGap))
 
   return {
-    col: clamp(origin.col + dCol, 1, cols.length),
-    row: clamp(origin.row + dRow, 1, rows.length),
+    dCol,
+    dRow,
+    cols: cols.length,
+    rows: rows.length,
   }
 }

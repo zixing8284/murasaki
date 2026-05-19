@@ -1,6 +1,7 @@
-import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
+import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, PointerEvent as ReactPointerEvent } from 'react'
 import type { GridLayout } from '../../contexts/desktop-layout'
 import type { AppId } from '../../contexts/process'
+import type { DesktopDragPreview } from './use-desktop-icon-drag'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -9,7 +10,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki/react98'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
 import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
@@ -19,15 +20,32 @@ import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
 
 const DESKTOP_MEDIA_ICON = assetPath(DESKTOP_MEDIA_ICON_PATH)
+const SELECTION_THRESHOLD = 2
 
 interface IconEntry {
   id: string
   label: string
-  icon: React.ReactNode
+  icon: ReactNode
   onOpen: () => void
 }
 
-const gridStyle: React.CSSProperties = {
+interface SelectionRect {
+  startX: number
+  startY: number
+  currentX: number
+  currentY: number
+}
+
+interface SelectionDragState {
+  pointerId: number
+  startX: number
+  startY: number
+  additive: boolean
+  baseSelectedIds: string[]
+  moved: boolean
+}
+
+const gridStyle: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: `repeat(auto-fill, ${CELL_WIDTH}px)`,
   gridTemplateRows: `repeat(auto-fill, ${CELL_HEIGHT}px)`,
@@ -39,13 +57,41 @@ const gridStyle: React.CSSProperties = {
   padding: DESKTOP_PADDING,
 }
 
-export function Desktop(): React.ReactElement {
-  const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
+const selectionBoxStyle: CSSProperties = {
+  backgroundImage: [
+    'linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+    'linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+    'linear-gradient(0deg, #ffffff 1px, transparent 1px)',
+    'linear-gradient(0deg, #ffffff 1px, transparent 1px)',
+  ].join(', '),
+  backgroundPosition: '0 0, 0 calc(100% - 1px), 0 0, calc(100% - 1px) 0',
+  backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
+  backgroundSize: '2px 1px, 2px 1px, 1px 2px, 1px 2px',
+}
+
+function getSelectionBox(rect: SelectionRect): { left: number, top: number, width: number, height: number } {
+  return {
+    left: Math.min(rect.startX, rect.currentX),
+    top: Math.min(rect.startY, rect.currentY),
+    width: Math.abs(rect.currentX - rect.startX),
+    height: Math.abs(rect.currentY - rect.startY),
+  }
+}
+
+function mergeSelectedIds(baseIds: readonly string[], selectedIds: readonly string[]): string[] {
+  return Array.from(new Set([...baseIds, ...selectedIds]))
+}
+
+export function Desktop(): ReactElement {
+  const [selectedIconIds, setSelectedIconIds] = useState<string[]>([])
+  const [dragPreview, setDragPreview] = useState<DesktopDragPreview | null>(null)
+  const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null)
   const { open } = useProcessActions()
   const { items, requestOpenInMediaPlayer, importFiles } = useDesktopFiles()
   const { positions, getDefaultPosition, gridRef } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
+  const selectionCleanupRef = useRef<(() => void) | null>(null)
 
   const setGridEl = useCallback((el: HTMLDivElement | null) => {
     desktopRef.current = el
@@ -86,17 +132,182 @@ export function Desktop(): React.ReactElement {
   }, [iconEntries, positions, getDefaultPosition])
 
   const isRenderedCellOccupied = useCallback(
-    (col: number, row: number, excludeId?: string): boolean =>
-      Object.entries(renderedPositions).some(
-        ([id, pos]) => id !== excludeId && pos.col === col && pos.row === row,
-      ),
+    (col: number, row: number, excludeIds?: string | readonly string[]): boolean => {
+      const excluded = new Set(typeof excludeIds === 'string' ? [excludeIds] : excludeIds ?? [])
+      return Object.entries(renderedPositions).some(
+        ([id, pos]) => !excluded.has(id) && pos.col === col && pos.row === row,
+      )
+    },
     [renderedPositions],
   )
 
-  const handleBackgroundPointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
-    if (event.target === event.currentTarget) {
-      setSelectedIconId(null)
+  const selectedIconIdSet = useMemo(() => new Set(selectedIconIds), [selectedIconIds])
+  const dragPreviewIdSet = useMemo(() => new Set(dragPreview?.ids ?? []), [dragPreview])
+
+  const getDesktopPoint = useCallback((clientX: number, clientY: number) => {
+    const desktop = desktopRef.current
+    if (!desktop)
+      return null
+
+    const rect = desktop.getBoundingClientRect()
+    return {
+      x: Math.max(0, Math.min(clientX - rect.left, rect.width)),
+      y: Math.max(0, Math.min(clientY - rect.top, rect.height)),
     }
+  }, [])
+
+  const getIconIdsInSelection = useCallback((rect: SelectionRect): string[] => {
+    const desktop = desktopRef.current
+    if (!desktop)
+      return []
+
+    const desktopBounds = desktop.getBoundingClientRect()
+    const box = getSelectionBox(rect)
+    const selectedIds: string[] = []
+
+    desktop.querySelectorAll<HTMLElement>('[data-file-id]').forEach((iconEl) => {
+      const id = iconEl.dataset.fileId
+      if (!id)
+        return
+
+      const iconBounds = iconEl.getBoundingClientRect()
+      const iconRect = {
+        left: iconBounds.left - desktopBounds.left,
+        top: iconBounds.top - desktopBounds.top,
+        right: iconBounds.right - desktopBounds.left,
+        bottom: iconBounds.bottom - desktopBounds.top,
+      }
+
+      if (
+        box.left < iconRect.right
+        && box.left + box.width > iconRect.left
+        && box.top < iconRect.bottom
+        && box.top + box.height > iconRect.top
+      ) {
+        selectedIds.push(id)
+      }
+    })
+
+    return selectedIds
+  }, [])
+
+  useEffect(() => () => selectionCleanupRef.current?.(), [])
+
+  const handleIconSelect = useCallback(
+    (id: string, additive: boolean, preserveSelectedGroup: boolean): void => {
+      setSelectedIconIds((currentIds) => {
+        if (additive) {
+          if (currentIds.includes(id))
+            return currentIds.filter(selectedId => selectedId !== id)
+          return [...currentIds, id]
+        }
+
+        if (preserveSelectedGroup && currentIds.includes(id))
+          return currentIds
+
+        return [id]
+      })
+    },
+    [],
+  )
+
+  const handleBackgroundPointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
+    if (event.button !== 0 || event.target !== event.currentTarget)
+      return
+
+    event.preventDefault()
+    selectionCleanupRef.current?.()
+
+    const start = getDesktopPoint(event.clientX, event.clientY)
+    if (!start)
+      return
+
+    const drag: SelectionDragState = {
+      pointerId: event.pointerId,
+      startX: start.x,
+      startY: start.y,
+      additive: event.ctrlKey || event.metaKey,
+      baseSelectedIds: event.ctrlKey || event.metaKey ? selectedIconIds : [],
+      moved: false,
+    }
+    setDragPreview(null)
+    if (!drag.additive)
+      setSelectedIconIds([])
+    setSelectionRect({ startX: start.x, startY: start.y, currentX: start.x, currentY: start.y })
+
+    const onPointerMove = (moveEvent: PointerEvent): void => {
+      if (moveEvent.pointerId !== drag.pointerId)
+        return
+
+      const current = getDesktopPoint(moveEvent.clientX, moveEvent.clientY)
+      if (!current)
+        return
+
+      const nextRect = {
+        startX: drag.startX,
+        startY: drag.startY,
+        currentX: current.x,
+        currentY: current.y,
+      }
+
+      if (!drag.moved) {
+        if (
+          Math.abs(current.x - drag.startX) < SELECTION_THRESHOLD
+          && Math.abs(current.y - drag.startY) < SELECTION_THRESHOLD
+        ) {
+          return
+        }
+        drag.moved = true
+      }
+
+      setSelectionRect(nextRect)
+      const idsInSelection = getIconIdsInSelection(nextRect)
+      setSelectedIconIds(
+        drag.additive
+          ? mergeSelectedIds(drag.baseSelectedIds, idsInSelection)
+          : idsInSelection,
+      )
+    }
+
+    function cleanup(): void {
+      if (selectionCleanupRef.current !== cleanup)
+        return
+      selectionCleanupRef.current = null
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointercancel', onPointerCancel)
+      window.removeEventListener('blur', onAbort)
+      document.removeEventListener('visibilitychange', onVisibility)
+      setSelectionRect(null)
+    }
+
+    function onPointerUp(upEvent: PointerEvent): void {
+      if (upEvent.pointerId !== drag.pointerId)
+        return
+      cleanup()
+    }
+
+    function onPointerCancel(cancelEvent: PointerEvent): void {
+      if (cancelEvent.pointerId !== drag.pointerId)
+        return
+      cleanup()
+    }
+
+    function onAbort(): void {
+      cleanup()
+    }
+
+    function onVisibility(): void {
+      if (document.visibilityState === 'hidden')
+        cleanup()
+    }
+
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', onPointerUp)
+    window.addEventListener('pointercancel', onPointerCancel)
+    window.addEventListener('blur', onAbort)
+    document.addEventListener('visibilitychange', onVisibility)
+    selectionCleanupRef.current = cleanup
   }
 
   const handleImportClick = (): void => {
@@ -112,8 +323,12 @@ export function Desktop(): React.ReactElement {
   }
 
   const handleRefresh = (): void => {
-    setSelectedIconId(null)
+    selectionCleanupRef.current?.()
+    setSelectedIconIds([])
+    setDragPreview(null)
   }
+
+  const selectionBox = selectionRect ? getSelectionBox(selectionRect) : null
 
   return (
     <ContextMenu container={desktopRef.current}>
@@ -135,14 +350,30 @@ export function Desktop(): React.ReactElement {
                 label={entry.label}
                 col={pos.col}
                 row={pos.row}
-                selected={selectedIconId === entry.id}
-                onSelect={setSelectedIconId}
+                selected={selectedIconIdSet.has(entry.id)}
+                selectedIds={selectedIconIds}
+                positions={renderedPositions}
+                dragOffset={dragPreviewIdSet.has(entry.id) ? dragPreview?.offset ?? null : null}
+                onSelect={handleIconSelect}
+                onDragPreviewChange={setDragPreview}
                 onOpen={entry.onOpen}
                 isCellOccupied={isRenderedCellOccupied}
                 menuContainer={desktopRef.current}
               />
             )
           })}
+          {selectionBox && (selectionBox.width > SELECTION_THRESHOLD || selectionBox.height > SELECTION_THRESHOLD) && (
+            <div
+              className="absolute pointer-events-none z-20"
+              style={{
+                ...selectionBoxStyle,
+                left: selectionBox.left,
+                top: selectionBox.top,
+                width: selectionBox.width,
+                height: selectionBox.height,
+              }}
+            />
+          )}
           <input
             ref={fileInputRef}
             type="file"

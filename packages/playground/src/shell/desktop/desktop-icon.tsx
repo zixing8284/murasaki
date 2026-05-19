@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
-import type { DesktopCellOccupancyChecker } from './use-desktop-icon-drag'
+import type { GridLayout } from '../../contexts/desktop-layout'
+import type { DesktopCellOccupancyChecker, DesktopDragPreview } from './use-desktop-icon-drag'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -18,7 +19,11 @@ interface DesktopIconProps {
   col: number
   row: number
   selected: boolean
-  onSelect: (id: string) => void
+  selectedIds: readonly string[]
+  positions: GridLayout
+  dragOffset: { dx: number, dy: number } | null
+  onSelect: (id: string, additive: boolean, preserveSelectedGroup: boolean) => void
+  onDragPreviewChange: (preview: DesktopDragPreview | null) => void
   onOpen: () => void
   isCellOccupied: DesktopCellOccupancyChecker
   menuContainer?: HTMLElement | null
@@ -31,24 +36,31 @@ export function DesktopIcon({
   col,
   row,
   selected,
+  selectedIds,
+  positions,
+  dragOffset,
   onSelect,
+  onDragPreviewChange,
   onOpen,
   isCellOccupied,
   menuContainer = null,
 }: DesktopIconProps): ReactElement {
-  const { setPosition, gridRef } = useDesktopLayout()
-  const { dragOffset, suppressClickRef, handlePointerDown } = useDesktopIconDrag({
+  const { setPositions, gridRef } = useDesktopLayout()
+  const { suppressClickRef, handlePointerDown } = useDesktopIconDrag({
     id,
     col,
     row,
+    positions,
+    selectedIds,
     gridRef,
-    setPosition,
+    setPositions,
     isCellOccupied,
     onSelect,
+    onDragPreviewChange,
   })
 
   const dragging = dragOffset !== null
-  const zIndex = selected ? 1 : undefined
+  const zIndex = dragging ? 2 : selected ? 1 : undefined
   // Two-line label budget at 72px width / 11px font. Selected state shows the
   // full label (multi-line expand). Unselected state truncates the displayed
   // text with an ellipsis character so overflow never relies on CSS hiding.
@@ -83,6 +95,7 @@ export function DesktopIcon({
             zIndex,
           }}
           onPointerDown={handlePointerDown}
+          data-file-id={id}
           onClick={(event) => {
             event.stopPropagation()
             if (suppressClickRef.current) {

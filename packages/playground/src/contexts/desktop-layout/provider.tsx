@@ -5,12 +5,20 @@ import { DesktopLayoutContext } from './context'
 import { loadLayout, saveLayout } from './storage'
 
 export function DesktopLayoutProvider({ children }: { children: ReactNode }): React.ReactElement {
-  const [positions, setPositions] = useState<GridLayout>(() => loadLayout())
+  const [storedPositions, setStoredPositions] = useState<GridLayout>(() => loadLayout())
   const gridRef = useRef<HTMLElement | null>(null)
 
   const setPosition = useCallback((id: string, pos: GridPosition) => {
-    setPositions((prev) => {
+    setStoredPositions((prev) => {
       const next: GridLayout = { ...prev, [id]: pos }
+      saveLayout(next)
+      return next
+    })
+  }, [])
+
+  const setPositions = useCallback((updates: GridLayout) => {
+    setStoredPositions((prev) => {
+      const next: GridLayout = { ...prev, ...updates }
       saveLayout(next)
       return next
     })
@@ -22,8 +30,8 @@ export function DesktopLayoutProvider({ children }: { children: ReactNode }): Re
   )
 
   const value = useMemo(
-    () => ({ positions, setPosition, getDefaultPosition, gridRef }),
-    [positions, setPosition, getDefaultPosition],
+    () => ({ positions: storedPositions, setPosition, setPositions, getDefaultPosition, gridRef }),
+    [storedPositions, setPosition, setPositions, getDefaultPosition],
   )
 
   return <DesktopLayoutContext value={value}>{children}</DesktopLayoutContext>

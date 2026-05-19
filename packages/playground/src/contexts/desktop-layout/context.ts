@@ -17,6 +17,8 @@ export interface DesktopLayoutContextValue {
   positions: GridLayout
   /** Persist the grid position of a single icon. */
   setPosition: (id: string, pos: GridPosition) => void
+  /** Persist the grid positions of several icons in one layout update. */
+  setPositions: (positions: GridLayout) => void
   /** Column-first default position for an icon that has no persisted entry yet. */
   getDefaultPosition: (index: number) => GridPosition
   /** Ref to the desktop grid container. Consumers use `.current` for drop math. */

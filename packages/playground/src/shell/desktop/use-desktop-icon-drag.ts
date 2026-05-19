@@ -1,11 +1,26 @@
 import type { PointerEvent as ReactPointerEvent, RefObject } from 'react'
-import type { DesktopLayoutContextValue } from '../../contexts/desktop-layout'
-import { useEffect, useRef, useState } from 'react'
-import { calcGridDropTarget } from '../../contexts/desktop-layout'
+import type { DesktopLayoutContextValue, GridLayout } from '../../contexts/desktop-layout'
+import { useEffect, useRef } from 'react'
+import { calcGridDropDelta } from '../../contexts/desktop-layout'
 
 const DRAG_THRESHOLD = 3
 
-export type DesktopCellOccupancyChecker = (col: number, row: number, excludeId?: string) => boolean
+export type DesktopCellOccupancyChecker = (
+  col: number,
+  row: number,
+  excludeIds?: string | readonly string[],
+) => boolean
+
+export interface DesktopDragPreview {
+  ids: readonly string[]
+  offset: { dx: number, dy: number }
+}
+
+interface DragItem {
+  id: string
+  col: number
+  row: number
+}
 
 interface DragState {
   pointerId: number
@@ -13,22 +28,23 @@ interface DragState {
   startClientY: number
   moved: boolean
   iconEl: HTMLDivElement
-  col: number
-  row: number
+  items: DragItem[]
 }
 
 export interface UseDesktopIconDragOptions {
   id: string
   col: number
   row: number
+  positions: GridLayout
+  selectedIds: readonly string[]
   gridRef: RefObject<HTMLElement | null>
-  setPosition: DesktopLayoutContextValue['setPosition']
+  setPositions: DesktopLayoutContextValue['setPositions']
   isCellOccupied: DesktopCellOccupancyChecker
-  onSelect: (id: string) => void
+  onSelect: (id: string, additive: boolean, preserveSelectedGroup: boolean) => void
+  onDragPreviewChange: (preview: DesktopDragPreview | null) => void
 }
 
 export interface UseDesktopIconDragReturn {
-  dragOffset: { dx: number, dy: number } | null
   /**
    * Set to `true` by the drag handler when a real drop occurred so the next
    * click can be ignored. The consumer is expected to flip it back to false
@@ -36,6 +52,39 @@ export interface UseDesktopIconDragReturn {
    */
   suppressClickRef: RefObject<boolean>
   handlePointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(value, max))
+}
+
+function buildDragItems(
+  id: string,
+  col: number,
+  row: number,
+  positions: GridLayout,
+  selectedIds: readonly string[],
+): DragItem[] {
+  const dragIds = selectedIds.includes(id) ? selectedIds : [id]
+  const seen = new Set<string>()
+  const items: DragItem[] = []
+
+  for (const dragId of dragIds) {
+    if (seen.has(dragId))
+      continue
+
+    const position = dragId === id ? { col, row } : positions[dragId]
+    if (!position)
+      continue
+
+    seen.add(dragId)
+    items.push({ id: dragId, col: position.col, row: position.row })
+  }
+
+  if (!seen.has(id))
+    items.unshift({ id, col, row })
+
+  return items
 }
 
 /**
@@ -50,12 +99,14 @@ export function useDesktopIconDrag({
   id,
   col,
   row,
+  positions,
+  selectedIds,
   gridRef,
-  setPosition,
+  setPositions,
   isCellOccupied,
   onSelect,
+  onDragPreviewChange,
 }: UseDesktopIconDragOptions): UseDesktopIconDragReturn {
-  const [dragOffset, setDragOffset] = useState<{ dx: number, dy: number } | null>(null)
   const dragRef = useRef<DragState | null>(null)
   const cleanupRef = useRef<(() => void) | null>(null)
   const suppressClickRef = useRef(false)
@@ -67,8 +118,11 @@ export function useDesktopIconDrag({
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (event.button !== 0)
       return
+    event.preventDefault()
     event.stopPropagation()
-    onSelect(id)
+    const isSelected = selectedIds.includes(id)
+    const items = buildDragItems(id, col, row, positions, selectedIds)
+    onSelect(id, event.ctrlKey || event.metaKey, isSelected && selectedIds.length > 1)
 
     // Defensive reset: clear any stale state from a previous drag that was
     // never completed (e.g. pointerup swallowed by an overlay or iframe).
@@ -81,8 +135,7 @@ export function useDesktopIconDrag({
       startClientY: event.clientY,
       moved: false,
       iconEl,
-      col,
-      row,
+      items,
     }
     dragRef.current = drag
 
@@ -98,7 +151,10 @@ export function useDesktopIconDrag({
         drag.moved = true
       }
 
-      setDragOffset({ dx, dy })
+      onDragPreviewChange({
+        ids: drag.items.map(item => item.id),
+        offset: { dx, dy },
+      })
     }
 
     function cleanup(): void {
@@ -113,7 +169,7 @@ export function useDesktopIconDrag({
       window.removeEventListener('pointercancel', onPointerCancel)
       window.removeEventListener('blur', onAbort)
       document.removeEventListener('visibilitychange', onVisibility)
-      setDragOffset(null)
+      onDragPreviewChange(null)
     }
 
     function commitDrop(clientX: number, clientY: number): void {
@@ -130,19 +186,34 @@ export function useDesktopIconDrag({
       if (!grid || !hitTarget || !grid.contains(hitTarget))
         return
 
-      const target = calcGridDropTarget(
-        grid,
-        { col: drag.col, row: drag.row },
-        clientX - drag.startClientX,
-        clientY - drag.startClientY,
-      )
-      if (
-        target
-        && (target.col !== drag.col || target.row !== drag.row)
-        && !isCellOccupied(target.col, target.row, id)
-      ) {
-        setPosition(id, target)
+      const delta = calcGridDropDelta(grid, clientX - drag.startClientX, clientY - drag.startClientY)
+      if (!delta)
+        return
+
+      const minCol = Math.min(...drag.items.map(item => item.col))
+      const maxCol = Math.max(...drag.items.map(item => item.col))
+      const minRow = Math.min(...drag.items.map(item => item.row))
+      const maxRow = Math.max(...drag.items.map(item => item.row))
+      const dCol = clamp(delta.dCol, 1 - minCol, delta.cols - maxCol)
+      const dRow = clamp(delta.dRow, 1 - minRow, delta.rows - maxRow)
+
+      if (dCol === 0 && dRow === 0)
+        return
+
+      const movingIds = drag.items.map(item => item.id)
+      const targetCells = new Set<string>()
+      const nextPositions: GridLayout = {}
+
+      for (const item of drag.items) {
+        const target = { col: item.col + dCol, row: item.row + dRow }
+        const targetKey = `${target.col}:${target.row}`
+        if (targetCells.has(targetKey) || isCellOccupied(target.col, target.row, movingIds))
+          return
+        targetCells.add(targetKey)
+        nextPositions[item.id] = target
       }
+
+      setPositions(nextPositions)
     }
 
     function onPointerUp(e: PointerEvent): void {
@@ -176,5 +247,5 @@ export function useDesktopIconDrag({
     cleanupRef.current = cleanup
   }
 
-  return { dragOffset, suppressClickRef, handlePointerDown }
+  return { suppressClickRef, handlePointerDown }
 }

@@ -5,8 +5,7 @@ import { readBooleanStorageItem, writeBooleanStorageItem } from '../lib/persiste
  * Boolean-valued, localStorage-backed store with cross-instance sync.
  *
  * Semantics:
- * - Default `true` when the key is absent or any value other than `'false'`
- *   is stored (preserves prior bespoke-hook behaviour).
+ * - Defaults to `true` when the key is absent (or `defaultValue` if provided).
  * - Writes notify all subscribers in the current tab so they re-read.
  * - Each key gets its own listener set so unrelated keys do not wake each
  *   other up.
@@ -23,12 +22,9 @@ function listenersFor(key: string): Set<() => void> {
   return set
 }
 
-function getServerSnapshot(): boolean {
-  return true
-}
-
 export function useLocalStorageBoolean(
   storageKey: string,
+  defaultValue = true,
 ): [boolean, (enabled: boolean) => void] {
   const subscribe = useCallback((callback: () => void) => {
     const set = listenersFor(storageKey)
@@ -39,9 +35,11 @@ export function useLocalStorageBoolean(
   }, [storageKey])
 
   const getSnapshot = useCallback(
-    (): boolean => readBooleanStorageItem('local', storageKey),
-    [storageKey],
+    (): boolean => readBooleanStorageItem('local', storageKey, defaultValue),
+    [storageKey, defaultValue],
   )
+
+  const getServerSnapshot = useCallback((): boolean => defaultValue, [defaultValue])
 
   const enabled = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 

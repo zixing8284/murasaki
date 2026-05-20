@@ -130,6 +130,8 @@ export interface ProcessContextActions {
   toggleMaximize: (id: string) => void
   /** Restore a minimized process */
   restore: (id: string) => void
+  /** Minimize all non-minimized windows and deactivate (Show Desktop) */
+  minimizeAll: () => void
   /** Deactivate all windows (click on desktop) */
   deactivateAll: () => void
   /** Taskbar click handler — toggles minimize / restore / activate */

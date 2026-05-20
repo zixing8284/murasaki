@@ -1,4 +1,5 @@
 import type { DragEvent } from 'react'
+import type { DesktopHandle } from './desktop/desktop'
 import { LayerProvider } from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/desktop-files'
@@ -50,13 +51,14 @@ export function Shell(): React.ReactElement {
   const screenRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const startButtonRef = useRef<HTMLButtonElement>(null)
+  const desktopRef = useRef<DesktopHandle>(null)
   const dragDepthRef = useRef(0)
   const [crtEnabled] = useCrtEffect()
   const [gradientEnabled] = useGradientTitlebar()
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
 
   // const { open, deactivateAll, setContainer, linkElement } = useProcessActions()
-  const { open, deactivateAll, setContainer } = useProcessActions()
+  const { open, deactivateAll, minimizeAll, setContainer } = useProcessActions()
 
   const preload = useStartupPreload()
   const isBooted = preload.ready && !desktopFilesLoading
@@ -80,6 +82,12 @@ export function Shell(): React.ReactElement {
     deactivateAll()
     setShowStartMenu(false)
   }
+
+  const handleShowDesktop = useCallback((): void => {
+    minimizeAll()
+    desktopRef.current?.clearSelection()
+    setShowStartMenu(false)
+  }, [minimizeAll])
 
   const handleDragEnter = useCallback((event: DragEvent<HTMLDivElement>) => {
     if (!hasFilePayload(event.dataTransfer)) {
@@ -164,7 +172,7 @@ export function Shell(): React.ReactElement {
                         onDrop={handleDrop}
                       >
                         {/* Desktop Icons */}
-                        <Desktop />
+                        <Desktop ref={desktopRef} />
 
                         {isDragActive && (
                           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
@@ -193,6 +201,7 @@ export function Shell(): React.ReactElement {
                       startButtonRef={startButtonRef}
                       showStartMenu={showStartMenu}
                       onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
+                      onShowDesktop={handleShowDesktop}
                     />
                   </LayerProvider>
                 )}

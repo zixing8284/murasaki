@@ -1,4 +1,4 @@
-import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, PointerEvent as ReactPointerEvent } from 'react'
+import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, PointerEvent as ReactPointerEvent, Ref } from 'react'
 import type { GridLayout } from '../../contexts/desktop-layout'
 import type { AppId } from '../../contexts/process'
 import type { DesktopDragPreview } from './use-desktop-icon-drag'
@@ -10,7 +10,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki/react98'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
 import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
@@ -18,6 +18,10 @@ import { assetPath } from '../../lib/asset-path'
 import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
 import { AppIcon } from '../app-icon'
 import { DesktopIcon } from './desktop-icon'
+
+export interface DesktopHandle {
+  clearSelection: () => void
+}
 
 const DESKTOP_MEDIA_ICON = assetPath(DESKTOP_MEDIA_ICON_PATH)
 const SELECTION_THRESHOLD = 2
@@ -82,7 +86,7 @@ function mergeSelectedIds(baseIds: readonly string[], selectedIds: readonly stri
   return Array.from(new Set([...baseIds, ...selectedIds]))
 }
 
-export function Desktop(): ReactElement {
+export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const [selectedIconIds, setSelectedIconIds] = useState<string[]>([])
   const [dragPreview, setDragPreview] = useState<DesktopDragPreview | null>(null)
   const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null)
@@ -92,6 +96,14 @@ export function Desktop(): ReactElement {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
   const selectionCleanupRef = useRef<(() => void) | null>(null)
+
+  useImperativeHandle(ref, () => ({
+    clearSelection(): void {
+      selectionCleanupRef.current?.()
+      setSelectedIconIds([])
+      setDragPreview(null)
+    },
+  }))
 
   const setGridEl = useCallback((el: HTMLDivElement | null) => {
     desktopRef.current = el

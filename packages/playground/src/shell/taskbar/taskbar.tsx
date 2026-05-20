@@ -23,19 +23,21 @@ const QUICK_LAUNCH_LABELS = [
   { alt: 'Computer', title: 'My Computer' },
 ]
 
-const QUICK_LAUNCH_ICONS: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
-  src: assetPath(path),
-  ...QUICK_LAUNCH_LABELS[index],
-}))
-
 interface TaskbarProps {
   startButtonRef: RefObject<HTMLButtonElement | null>
   showStartMenu: boolean
   onStartMenuToggle: () => void
+  onShowDesktop: () => void
 }
 
-export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle }: TaskbarProps): React.ReactElement {
+export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onShowDesktop }: TaskbarProps): React.ReactElement {
   const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = usePersistentQuickLaunchVisibleCount()
+
+  const quickLaunchIcons: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
+    src: assetPath(path),
+    ...QUICK_LAUNCH_LABELS[index],
+    ...(index === 0 ? { onClick: onShowDesktop } : {}),
+  }))
 
   return (
     <TaskbarRoot className="mt-auto">
@@ -55,7 +57,7 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle }: Ta
 
       {/* Quick Launch */}
       <TaskbarQuickLaunch
-        icons={QUICK_LAUNCH_ICONS}
+        icons={quickLaunchIcons}
         visibleCount={quickLaunchVisibleCount}
         onVisibleCountChange={setQuickLaunchVisibleCount}
       />

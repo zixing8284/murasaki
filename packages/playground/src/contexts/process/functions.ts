@@ -89,6 +89,16 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     })
   }
 
+  const minimizeAll: ProcessContextActions['minimizeAll'] = () => {
+    setState((prev) => {
+      const updated: Processes = {}
+      for (const [id, proc] of Object.entries(prev.processes)) {
+        updated[id] = proc.minimized ? proc : { ...proc, minimized: true }
+      }
+      return { ...prev, processes: updated, foregroundId: null }
+    })
+  }
+
   const deactivateAll: ProcessContextActions['deactivateAll'] = () => {
     setState(prev => ({ ...prev, foregroundId: null }))
   }
@@ -284,6 +294,7 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     close,
     activate,
     minimize,
+    minimizeAll,
     toggleMaximize,
     restore,
     deactivateAll,

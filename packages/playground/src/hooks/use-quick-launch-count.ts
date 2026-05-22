@@ -16,7 +16,7 @@ function parseStoredQuickLaunchState(value: unknown): StoredQuickLaunchState | n
   return { visibleCount: Math.max(0, Math.round(visibleCount)) }
 }
 
-export function usePersistentQuickLaunchVisibleCount(
+export function useQuickLaunchCount(
   defaultVisibleCount = DEFAULT_VISIBLE_COUNT,
 ): [number, (visibleCount: number) => void] {
   const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = useState(() => {

@@ -8,7 +8,7 @@ import {
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
 } from '@murasaki/react98'
-import { usePersistentQuickLaunchVisibleCount } from '../../hooks/use-persistent-quick-launch-visible-count'
+import { useQuickLaunchCount } from '../../hooks/use-quick-launch-count'
 import { assetPath } from '../../lib/asset-path'
 import { TASKBAR_QUICK_LAUNCH_ICONS } from '../../lib/playground-assets'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
@@ -31,7 +31,7 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onShowDesktop }: TaskbarProps): React.ReactElement {
-  const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = usePersistentQuickLaunchVisibleCount()
+  const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = useQuickLaunchCount()
 
   const quickLaunchIcons: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
     src: assetPath(path),

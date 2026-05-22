@@ -1,10 +1,16 @@
 import type { MenuProps } from '../menu/menu'
+import type { WindowMenuBarContextValue, WindowMenuBarDirection, WindowMenuBarMenuContextValue, WindowMenuBarValue } from './window-menu-bar-context'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../lib/utils'
-import { useDismissable, useLayer } from '../../primitives'
-import { LayerPortal } from '../layer/layer-portal'
+import { LayerPortal, useDismissable, useLayer } from '../../primitives'
 import { Menu } from '../menu/menu'
+import {
+  useWindowMenuBarContext,
+  useWindowMenuBarMenuContext,
+  WindowMenuBarContext,
+  WindowMenuBarMenuContext,
+} from './window-menu-bar-context'
 
 // ─── WindowMenuBar ────────────────────────────────────────────────────────────
 
@@ -18,9 +24,6 @@ const menuBarVariants = cva([
   'text-(--menu-text)',
   'select-none',
 ])
-
-type WindowMenuBarValue = string | null
-type WindowMenuBarDirection = 'next' | 'previous'
 
 const WINDOW_MENU_BAR_TRIGGER_SELECTOR = '[data-window-menu-bar-trigger]'
 
@@ -49,21 +52,6 @@ function hasAnimationName(animationNameList: string, animationName: string): boo
     .split(',')
     .map(name => name.trim())
     .includes(animationName)
-}
-
-interface WindowMenuBarContextValue {
-  value: WindowMenuBarValue
-  setValue: (value: WindowMenuBarValue) => void
-  focusMenu: (currentValue: string, direction: WindowMenuBarDirection, openNext: boolean) => void
-}
-
-const WindowMenuBarContext = React.createContext<WindowMenuBarContextValue | null>(null)
-
-function useWindowMenuBarContext(component: string): WindowMenuBarContextValue {
-  const context = React.use(WindowMenuBarContext)
-  if (!context)
-    throw new Error(`${component} must be used within a <WindowMenuBar>`)
-  return context
 }
 
 export interface WindowMenuBarProps extends Omit<React.ComponentProps<'div'>, 'defaultValue'> {
@@ -184,24 +172,6 @@ export function WindowMenuBar({
 }
 
 // ─── WindowMenuBarMenu ───────────────────────────────────────────────────────
-
-interface WindowMenuBarMenuContextValue {
-  value: string
-  open: boolean
-  triggerId: string
-  contentId: string
-  triggerRef: React.RefObject<HTMLButtonElement | null>
-  contentRef: React.RefObject<HTMLElement | null>
-}
-
-const WindowMenuBarMenuContext = React.createContext<WindowMenuBarMenuContextValue | null>(null)
-
-function useWindowMenuBarMenuContext(component: string): WindowMenuBarMenuContextValue {
-  const context = React.use(WindowMenuBarMenuContext)
-  if (!context)
-    throw new Error(`${component} must be used within a <WindowMenuBarMenu>`)
-  return context
-}
 
 export interface WindowMenuBarMenuProps {
   /** Stable value for controlled menubars. Generated when omitted. */

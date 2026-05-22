@@ -1,6 +1,6 @@
 # Internal primitive toolkit
 
-@murasaki/react98 maintains a non-public layer of shared behavior utilities under `src/primitives/` to keep complex component behavior consistent across the library. These hooks are internal implementation details — they are not exported through `src/index.ts` and are not part of the published package API.
+@murasaki/react98 maintains a non-public layer of primitives to keep complex component behavior consistent across the library. Generic behavior used by multiple components lives under `src/primitives/`. Component-specific context, state, and helper modules live flat inside the component directory (e.g. `components/window/window-context.ts`). These primitives are internal implementation details — they are not exported through `src/index.ts` and are not part of the published package API.
 
 ## Scope
 
@@ -26,7 +26,7 @@ These concerns remain in the consuming component, not in the toolkit:
 
 ## Usage rule
 
-Components should reuse toolkit hooks rather than reimplementing dismissal, positioning, focus, or navigation logic locally. When a component's behavior diverges from the toolkit default, the divergence should be documented with a comment in the component file explaining why.
+Components should reuse toolkit hooks rather than reimplementing dismissal, positioning, focus, or navigation logic locally. Component-owned primitive modules should stay inside the owning component directory unless at least two components need them; then promote the module to `src/primitives/` instead of importing across component directories. When a component's behavior diverges from the toolkit default, the divergence should be documented with a comment in the component file explaining why.
 
 ## Testing
 

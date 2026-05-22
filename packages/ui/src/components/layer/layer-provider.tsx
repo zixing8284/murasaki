@@ -1,8 +1,8 @@
-import type { LayerContextValue } from './layer-context'
+import type { LayerContextValue } from '../../primitives'
 import * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { cnPure } from '../../lib/utils'
-import { LayerContext } from './layer-context'
+import { LayerContext } from '../../primitives'
 
 export interface LayerProviderProps extends Omit<React.ComponentProps<'div'>, 'children'> {
   /**

@@ -56,6 +56,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 ## UI Library Conventions
 
 - Components live under `packages/ui/src/components/`, typically one directory per component.
+- Shared internal primitives live in `packages/ui/src/primitives/`. These cover behavior needed by more than one component (e.g. scrollbar, layer-root, focus scoping). Component-specific context, state, and helpers live flat in the component directory (e.g. `window/window-context.ts`).
 - Public exports go through `packages/ui/src/index.ts`.
 - Use **flat named exports** for public primitives.
 - Use value-level callbacks for controlled state (`onValueChange`, `onCheckedChange`); reserve native names like `onChange` for native DOM event passthrough.
@@ -64,6 +65,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Floating UI such as submenus, context menus, tooltips, and default window portals must use the scoped layer root seam (`LayerProvider` / internal layer portal helper), not direct `document.body` portals with global `9999` z-index values.
 - Prefer Tailwind utilities over custom CSS. Add CSS only when Tailwind cannot express the style cleanly.
 - Prefer CSS-variable-backed Tailwind values over hardcoded colors so components remain themeable.
+- Do not import private helpers across component directories. If a primitive is needed by more than one component, promote it to `packages/ui/src/primitives/` and keep it internal.
 - For complex pixel-precise graphics, prefer inline SVG components that use theme variables.
 
 ## Theme And Styling

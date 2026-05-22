@@ -6,8 +6,7 @@ import * as React from 'react'
 
 import { useCallback, useEffect, useId, useMemo, useRef } from 'react'
 import { cn } from '../../lib/utils'
-import { useCollection, useDismissable, useRovingFocus, useTypeahead } from '../../primitives'
-import { useScrollbar } from '../scroll-area/use-scrollbar'
+import { useCollection, useDismissable, useRovingFocus, useScrollbar, useTypeahead } from '../../primitives'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './select-icons'
 import { useSelectState } from './use-select-state'
 

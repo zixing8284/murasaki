@@ -6,7 +6,7 @@ const iconSrc = 'data:image/gif;base64,R0lGODlhEAAQAPAAAP///wAAACH5BAAAAAAALAAAA
 
 export function TaskbarBasicDemo(): React.ReactElement {
   return (
-    <Taskbar className="w-[360px]">
+    <Taskbar className="w-90">
       <Button className="h-6 px-2 font-bold">Start</Button>
       <TaskbarDivider />
       <TaskbarQuickLaunch

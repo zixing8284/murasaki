@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 
-import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP, THUMB_BOX_SHADOW, TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scroll-area-constants'
+import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP, THUMB_BOX_SHADOW, TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scrollbar-constants'
 
 // File flow (top to bottom):
 // 1) Define reusable style constants and tiny DOM builders.

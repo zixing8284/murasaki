@@ -1,6 +1,22 @@
 // Internal primitive toolkit. NOT part of the public package API.
 // Do not re-export from `src/index.ts`.
 
+export { LayerContext, LayerPortal, useLayerPortalTarget } from './layer-root'
+export type { LayerContextValue, LayerPortalProps } from './layer-root'
+
+export {
+  BAR_SIZE,
+  BTN_HEIGHT,
+  REPEAT_MS,
+  SCROLL_STEP,
+  THUMB_BOX_SHADOW,
+  TRACK_BG_COLOR,
+  TRACK_BG_IMAGE,
+  TRACK_BG_SIZE,
+  useScrollbar,
+} from './scrollbar'
+export type { UseScrollbarOptions } from './scrollbar'
+
 export { useCollection } from './use-collection'
 export type { CollectionItem, UseCollectionResult } from './use-collection'
 

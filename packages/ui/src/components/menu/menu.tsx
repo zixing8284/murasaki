@@ -1,10 +1,11 @@
-import { cva } from 'class-variance-authority'
+import type { MenuSubContextValue } from './menu-sub-context'
 
+import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../lib/utils'
-import { useDismissable, useLayer, useRovingFocus, useTypeahead } from '../../primitives'
-import { LayerPortal } from '../layer/layer-portal'
+import { LayerPortal, useDismissable, useLayer, useRovingFocus, useTypeahead } from '../../primitives'
 import { MenuScrollArrow, useMenuOverflow } from './menu-scroll'
+import { MenuSubContext, useMenuSubContext } from './menu-sub-context'
 
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
@@ -303,20 +304,6 @@ export function MenuSeparator({ className, ref, ...props }: MenuSeparatorProps):
 
 // ─── MenuSub ──────────────────────────────────────────────────────────────────
 
-interface MenuSubContextValue {
-  open: boolean
-  setOpen: (open: boolean) => void
-  triggerRef: React.RefObject<HTMLLIElement | null>
-  contentRef: React.RefObject<HTMLElement | null>
-  /** Scheduled hover-close timer; cancelled when pointer re-enters trigger or content. */
-  scheduleClose: () => void
-  cancelClose: () => void
-  scheduleOpen: () => void
-  cancelOpen: () => void
-}
-
-const MenuSubContext = React.createContext<MenuSubContextValue | null>(null)
-
 export interface MenuSubProps {
   children: React.ReactNode
   /** Controlled open state. When omitted, the submenu manages its own state. */
@@ -410,13 +397,6 @@ export function MenuSub({
   }), [open, setOpen, scheduleClose, cancelClose, scheduleOpen, cancelOpen])
 
   return <MenuSubContext value={value}>{children}</MenuSubContext>
-}
-
-function useMenuSubContext(component: string): MenuSubContextValue {
-  const ctx = React.use(MenuSubContext)
-  if (!ctx)
-    throw new Error(`${component} must be used within a <MenuSub>`)
-  return ctx
 }
 
 // ─── MenuSubTrigger ───────────────────────────────────────────────────────────

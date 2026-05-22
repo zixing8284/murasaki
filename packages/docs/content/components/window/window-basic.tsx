@@ -4,7 +4,7 @@ import { Button, WindowButtons, WindowCloseButton, WindowContent, WindowFrame, W
 
 export function WindowBasicDemo(): React.ReactElement {
   return (
-    <div className="relative h-56 w-[352px]">
+    <div className="relative h-56 w-88">
       <WindowProvider positioning="absolute" maximizable={false}>
         <WindowFrame className="inset-0 min-h-0">
           <WindowTitleBar>

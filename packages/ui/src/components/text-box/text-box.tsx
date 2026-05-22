@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '../../lib/utils'
-import { useScrollbar } from '../scroll-area/use-scrollbar'
+import { useScrollbar } from '../../primitives'
 
 // Valid input types for TextBox
 type TextBoxInputType

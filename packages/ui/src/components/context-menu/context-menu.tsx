@@ -16,13 +16,11 @@ import {
   useState,
 } from 'react'
 import { cnPure } from '../../lib/utils'
-import { useDismissable, useFocusScope, useLayer } from '../../primitives'
-import { LayerPortal } from '../layer/layer-portal'
+import { LayerPortal, useDismissable, useFocusScope, useLayer } from '../../primitives'
 import {
   ContextMenuContext,
 } from './context-menu-context'
 
-// Re-export primitives so consumers only import from this module.
 export { useContextMenu } from './context-menu-context'
 export type { ContextMenuContextValue } from './context-menu-context'
 

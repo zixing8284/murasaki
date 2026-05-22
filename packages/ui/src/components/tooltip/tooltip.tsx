@@ -1,8 +1,7 @@
 import type * as React from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
-import { useDismissable, useLayer } from '../../primitives'
-import { LayerPortal } from '../layer/layer-portal'
+import { LayerPortal, useDismissable, useLayer } from '../../primitives'
 
 export interface TooltipProps {
   /** Tooltip content text */

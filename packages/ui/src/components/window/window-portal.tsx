@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { useLayerPortalTarget } from '../layer/layer-context'
+import { useLayerPortalTarget } from '../../primitives'
 
 export interface WindowPortalProps {
   children: React.ReactNode

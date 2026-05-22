@@ -1,78 +1,39 @@
-# @murasaki/react98
+# Murasaki
 
-Windows 98-styled React components, a desktop playground, and a standalone documentation site.
+A Windows 98-themed React UI library — [`@murasaki/react98`](https://www.npmjs.com/package/@murasaki/react98)
 
-- Playground: https://zixing8284.github.io/murasaki/
-- Documentation: https://zixing8284.github.io/murasaki/programs/docs/
+- [Playground](https://zixing8284.github.io/murasaki/) · [Docs](https://zixing8284.github.io/murasaki/programs/docs/)
 
-Example usage:
+## Why
 
-```tsx
-import '@murasaki/react98/globals.css'
-import {
-  Button,
-  WindowContent,
-  WindowFrame,
-  WindowProvider,
-  WindowTitle,
-  WindowTitleBar,
-} from '@murasaki/react98'
-
-export function Example() {
-  return (
-    <WindowProvider>
-      <WindowFrame className="w-80">
-        <WindowTitleBar>
-          <WindowTitle>React98</WindowTitle>
-        </WindowTitleBar>
-        <WindowContent>
-          <Button>OK</Button>
-        </WindowContent>
-      </WindowFrame>
-    </WindowProvider>
-  )
-}
-```
+The millennium holds my childhood memories. Those chunky pixels, the classic desktop — I just wanted to recreate them with React.
+Life is hard. Building this project genuinely makes me happy.
 
 ## Packages
 
-- `packages/ui` — publishable `@murasaki/react98` component library. Build output goes to `dist/`.
-- `packages/playground` — Windows 98 desktop demo app that consumes the built UI package.
-- `packages/docs` — Nextra documentation site embedded into the playground under `/programs/docs/`.
-- `packages/next-fixture` — Next.js consumer fixture for package integration checks.
+- `packages/ui` — `@murasaki/react98` component library
+- `packages/playground` — demo
+- `packages/docs` — component docs
+- `packages/next-fixture` — Next.js integration test
 
-## Documentation
-
-The public docs are served from the GitHub Pages playground site:
-
-```text
-https://zixing8284.github.io/murasaki/programs/docs/
-```
-
-For local docs development:
+## Getting Started
 
 ```bash
-pnpm install
-pnpm ui:build
-pnpm docs:dev
+pnpm install          # 1. Install dependencies
+pnpm ui:build         # 2. Build the UI library (playground and docs depend on it)
+pnpm docs:build:embed # 3. Build docs and embed into playground
+pnpm play             # 4. Start the playground
 ```
 
-Then open `http://localhost:3000/programs/docs/`.
+Docs only: `pnpm docs:dev` → `http://localhost:3000/programs/docs/`
 
-## Playground
+## Acknowledgements
 
-The playground is the main interactive demo. It starts as a Windows 98 desktop and opens the component documentation in an iframe app.
-
-Run it locally:
-
-```bash
-pnpm install
-pnpm ui:build
-pnpm docs:build:embed
-pnpm play
-```
-
-Then open the Vite dev server URL, usually `http://localhost:5173/`.
+- [98.css](https://jdan.github.io/98.css/) — CSS styling
+- [winclassic](https://github.com/tpenguinltg/winclassic) — theme variable definitions
+- [React95](https://github.com/react95-io/React95) — component design reference
+- [daedalOS](https://github.com/DustinBrett/daedalOS) — code organization and design
+- [win99.dev](https://win99.dev/) — UI style reference
 
 ## License
 

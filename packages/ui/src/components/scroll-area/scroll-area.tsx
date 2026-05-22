@@ -3,11 +3,11 @@
 import * as React from 'react'
 
 import { cn, cnPure } from '../../lib/utils'
+import { useScrollbar } from '../../primitives'
 import { ScrollAreaContext } from './scroll-area-context'
 import { ScrollAreaCorner } from './scroll-area-corner'
 import { ScrollAreaScrollbar } from './scroll-area-scrollbar'
 import { BAR_SIZE, BTN_HEIGHT, useScrollState } from './use-scroll-state'
-import { useScrollbar } from './use-scrollbar'
 
 export type ScrollAreaProps = React.ComponentProps<'div'>
 
@@ -111,12 +111,12 @@ export function ScrollAreaLegacy({
   )
 }
 
+export { useScrollbar } from '../../primitives'
+export type { UseScrollbarOptions } from '../../primitives'
+
 export { useScrollAreaContext } from './scroll-area-context'
 export type { ScrollAreaContextValue } from './scroll-area-context'
-
 export { ScrollAreaCorner } from './scroll-area-corner'
 export { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from './scroll-area-icons'
 export { ScrollAreaScrollbar } from './scroll-area-scrollbar'
 export { ScrollAreaThumb } from './scroll-area-thumb'
-export { useScrollbar } from './use-scrollbar'
-export type { UseScrollbarOptions } from './use-scrollbar'

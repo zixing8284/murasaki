@@ -17,7 +17,7 @@ A package entry strategy where the default public import is treated as a client 
 _Avoid_: Server-safe root entry, accidental mixed boundary
 
 **Internal primitive toolkit**:
-A non-public layer of shared behavior utilities and primitive building blocks used to make complex components consistent without exposing a separate headless UI API.
+A non-public layer of shared behavior utilities and primitive building blocks used to make complex components consistent without exposing a separate headless UI API. Generic multi-component primitives live under `packages/ui/src/primitives/`. Component-specific context, state, and helper modules live flat inside their component directory (e.g. `components/window/window-context.ts`).
 _Avoid_: Public headless API, component-by-component behavior patches
 
 **Scoped layer root**:

@@ -187,6 +187,7 @@ export function Slider({
 }: SliderProps): React.ReactElement {
   const inputRef = useRef<HTMLInputElement>(null)
   const datalistId = useId()
+  const [isPointerDown, setIsPointerDown] = useState(false)
 
   // Internal state for uncontrolled mode
   const [internalValue, setInternalValue] = useState<number>(() =>
@@ -201,6 +202,13 @@ export function Slider({
   const minNum = Number(min)
   const maxNum = Number(max)
   const percentage = ((currentValue - minNum) / (maxNum - minNum)) * 100
+
+  const handlePointerDown = useCallback(() => {
+    setIsPointerDown(true)
+  }, [])
+  const handlePointerUp = useCallback(() => {
+    setIsPointerDown(false)
+  }, [])
 
   // Handle input change
   const handleChange = useCallback(
@@ -273,6 +281,9 @@ export function Slider({
           disabled={disabled}
           {...props}
           onChange={handleChange}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         />
 
         {/* Native datalist for accessibility */}
@@ -291,12 +302,14 @@ export function Slider({
         {boxIndicator
           ? (
               <RectThumbIcon
+                active={isPointerDown}
                 className={cn(thumbVariants({ vertical }), disabled && 'grayscale')}
                 style={getThumbStyle()}
               />
             )
           : (
               <TriangleThumbIcon
+                active={isPointerDown}
                 className={cn(thumbVariants({ vertical }), disabled && 'grayscale')}
                 style={getThumbStyle()}
               />

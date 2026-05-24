@@ -1,14 +1,10 @@
 import type { StartupPreloadState } from './use-startup-preload'
 import { ProgressIndicator } from '@murasaki/react98'
-import { LOADINGBAR_DATA_URL, STARTUP_ARTWORK_DATA_URL } from './startup-artwork-data'
+import { STARTUP_ARTWORK_DATA_URL } from './startup-artwork-data'
 
 interface StartupScreenProps {
   preload: StartupPreloadState
   waitingForDesktopFiles: boolean
-}
-
-const LOADING_BAR_STYLE = {
-  backgroundImage: `url('${LOADINGBAR_DATA_URL}')`,
 }
 
 function fileLabel(path: string | null): string {
@@ -50,11 +46,6 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
                 className="pointer-events-none absolute inset-0 opacity-60 mix-blend-soft-light"
               />
             </div>
-            <div
-              aria-hidden="true"
-              className="h-1.25 w-full shrink-0 animate-startup-loading-bar bg-repeat-x bg-size-[413px_5px] [image-rendering:crisp-edges] motion-reduce:animate-none"
-              style={LOADING_BAR_STYLE}
-            />
           </div>
           <div className="mb-2 flex items-center gap-2 px-1">
             <div className="min-w-0 flex-1">

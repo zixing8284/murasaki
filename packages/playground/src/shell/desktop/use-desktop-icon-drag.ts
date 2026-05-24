@@ -33,8 +33,8 @@ interface DragState {
 
 export interface UseDesktopIconDragOptions {
   id: string
-  col: number
-  row: number
+  col: number | undefined
+  row: number | undefined
   positions: GridLayout
   selectedIds: readonly string[]
   gridRef: RefObject<HTMLElement | null>
@@ -56,6 +56,15 @@ export interface UseDesktopIconDragReturn {
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(value, max))
+}
+
+function readGridPos(el: HTMLElement): { col: number, row: number } | null {
+  const cs = window.getComputedStyle(el)
+  const col = Number.parseInt(cs.gridColumnStart, 10)
+  const row = Number.parseInt(cs.gridRowStart, 10)
+  if (!Number.isFinite(col) || !Number.isFinite(row))
+    return null
+  return { col, row }
 }
 
 function buildDragItems(
@@ -120,8 +129,41 @@ export function useDesktopIconDrag({
       return
     event.preventDefault()
     event.stopPropagation()
+
+    // Resolve grid position for this icon. Auto-placed icons (no stored position)
+    // have no explicit col/row, so read the computed position from the DOM.
+    let resolvedCol = col
+    let resolvedRow = row
+    if (resolvedCol === undefined || resolvedRow === undefined) {
+      const pos = readGridPos(event.currentTarget)
+      if (!pos)
+        return
+      resolvedCol = pos.col
+      resolvedRow = pos.row
+    }
+
+    // For multi-drag: auto-placed selected icons also need resolved positions.
+    let resolvedPositions = positions
+    const grid = gridRef.current
+    if (grid && selectedIds.length > 1) {
+      const unresolved = selectedIds.filter(sid => sid !== id && !positions[sid])
+      if (unresolved.length > 0) {
+        const extra: GridLayout = {}
+        grid.querySelectorAll<HTMLElement>('[data-file-id]').forEach((el) => {
+          const iconId = el.dataset.fileId
+          if (!iconId || !unresolved.includes(iconId))
+            return
+          const pos = readGridPos(el)
+          if (pos)
+            extra[iconId] = pos
+        })
+        if (Object.keys(extra).length > 0)
+          resolvedPositions = { ...positions, ...extra }
+      }
+    }
+
     const isSelected = selectedIds.includes(id)
-    const items = buildDragItems(id, col, row, positions, selectedIds)
+    const items = buildDragItems(id, resolvedCol, resolvedRow, resolvedPositions, selectedIds)
     onSelect(id, event.ctrlKey || event.metaKey, isSelected && selectedIds.length > 1)
 
     // Defensive reset: clear any stale state from a previous drag that was

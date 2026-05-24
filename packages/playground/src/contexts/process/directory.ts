@@ -22,7 +22,7 @@ const directory = {
       import('../../directory/apps/my-computer').then(m => ({ default: m.MyComputer })),
     ),
     defaultTitle: 'My Computer',
-    icon: { sm: '/icons/windows98-icons/png/computer-0.png', lg: '/icons/windows98-icons/png/computer-2.png' },
+    icon: { sm: '/icons/windows98-icons/png/computer-0.png', lg: '/icons/windows98-icons/png/computer_explorer-2.png' },
     singleton: true,
     defaultSize: { width: 520 },
     defaultPosition: { top: '10%', left: '10%' },
@@ -111,6 +111,19 @@ const directory = {
     defaultSize: { width: 640, height: 480 },
     defaultPosition: { top: '15%', left: '25%' },
   },
+  outlookexpress: {
+    name: 'Outlook Express',
+    Component: lazy(() =>
+      import('../../directory/apps/outlook-express').then(m => ({ default: m.OutlookExpress })),
+    ),
+    defaultTitle: 'Untitled - Outlook Express',
+    icon: { sm: '/icons/windows98-icons/png/outlook_express-2.png', lg: '/icons/windows98-icons/png/outlook_express-2.png' },
+    singleton: true,
+    showOnDesktop: true,
+    defaultSize: { width: 560, height: 480 },
+    defaultPosition: { top: '15%', left: '25%' },
+    window: { contentClassName: 'p-0' },
+  },
   webamp: {
     name: 'Webamp',
     Component: lazy(() =>
@@ -144,6 +157,7 @@ export const APP_ID = {
   JSPaintApp: 'jspaint',
   THEME_DESIGNER: 'themedesigner',
   MEDIA_PLAYER: 'mediaplayer',
+  OUTLOOK_EXPRESS: 'outlookexpress',
   WEBAMP: 'webamp',
 } as const satisfies Record<string, AppId>
 

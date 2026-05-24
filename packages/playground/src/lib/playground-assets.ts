@@ -44,7 +44,7 @@ export const START_MENU_ICONS = {
   calculator: '/icons/windows98-icons/png/calculator-1.png',
   paint: '/icons/windows98-icons/png/paint_old-1.png',
   internetExplorer: '/icons/windows98-icons/png/msie2-3.png',
-  myComputer: '/icons/windows98-icons/png/computer-0.png',
+  myComputer: '/icons/windows98-icons/png/computer_explorer-1.png',
   mediaPlayer: '/icons/windows98-icons/png/media_player-1.png',
   webamp: '/icons/desktop/Webamp16.png',
   themeDesigner: '/icons/windows98-icons/png/themes-1.png',
@@ -66,7 +66,7 @@ export const TASKBAR_QUICK_LAUNCH_ICONS = [
   '/icons/windows98-icons/png/desktop-3.png',
   '/icons/windows98-icons/png/outlook_express-2.png',
   '/icons/windows98-icons/png/msie2-3.png',
-  '/icons/windows98-icons/png/computer-0.png',
+  '/icons/windows98-icons/png/computer_explorer-1.png',
 ] as const
 
 export const NETWORK_ONLINE_ICONS = [

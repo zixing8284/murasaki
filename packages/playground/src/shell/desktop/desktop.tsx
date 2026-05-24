@@ -1,5 +1,5 @@
 import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, PointerEvent as ReactPointerEvent, Ref } from 'react'
-import type { GridLayout } from '../../contexts/desktop-layout'
+import type { GridLayout, GridPosition } from '../../contexts/desktop-layout'
 import type { AppId } from '../../contexts/process'
 import type { DesktopDragPreview } from './use-desktop-icon-drag'
 import {
@@ -90,12 +90,14 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const [selectedIconIds, setSelectedIconIds] = useState<string[]>([])
   const [dragPreview, setDragPreview] = useState<DesktopDragPreview | null>(null)
   const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null)
+  const [gridRows, setGridRows] = useState(10)
   const { open } = useProcessActions()
   const { items, requestOpenInMediaPlayer, importFiles } = useDesktopFiles()
-  const { positions, getDefaultPosition, gridRef } = useDesktopLayout()
+  const { positions, gridRef } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
   const selectionCleanupRef = useRef<(() => void) | null>(null)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
 
   useImperativeHandle(ref, () => ({
     clearSelection(): void {
@@ -108,7 +110,23 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const setGridEl = useCallback((el: HTMLDivElement | null) => {
     desktopRef.current = el
     gridRef.current = el
+
+    resizeObserverRef.current?.disconnect()
+    resizeObserverRef.current = null
+
+    if (el) {
+      const computeRows = (): void => {
+        const availableHeight = el.clientHeight - DESKTOP_PADDING * 2
+        setGridRows(Math.max(1, Math.floor((availableHeight + ROW_GAP) / (CELL_HEIGHT + ROW_GAP))))
+      }
+      computeRows()
+      const observer = new ResizeObserver(computeRows)
+      observer.observe(el)
+      resizeObserverRef.current = observer
+    }
   }, [gridRef])
+
+  useEffect(() => () => resizeObserverRef.current?.disconnect(), [])
 
   const iconEntries = useMemo<IconEntry[]>(() => {
     const apps: IconEntry[] = Object.entries(appDirectory)
@@ -133,21 +151,28 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     return [...apps, ...files]
   }, [items, open, requestOpenInMediaPlayer])
 
+  // Only explicitly-placed (dragged) icons get grid positions; default icons
+  // are CSS auto-placed via grid-auto-flow so they wrap responsively.
+  // Out-of-bounds stored positions fall back to CSS auto-placement so they
+  // never stack on top of each other (clamping would put two icons on one cell).
   const renderedPositions = useMemo<GridLayout>(() => {
     const next: GridLayout = {}
-
-    iconEntries.forEach((entry, index) => {
-      next[entry.id] = positions[entry.id] ?? getDefaultPosition(index)
+    iconEntries.forEach((entry) => {
+      const stored = positions[entry.id]
+      if (!stored)
+        return
+      if (gridRows > 0 && stored.row > gridRows)
+        return
+      next[entry.id] = stored
     })
-
     return next
-  }, [iconEntries, positions, getDefaultPosition])
+  }, [iconEntries, positions, gridRows])
 
   const isRenderedCellOccupied = useCallback(
     (col: number, row: number, excludeIds?: string | readonly string[]): boolean => {
       const excluded = new Set(typeof excludeIds === 'string' ? [excludeIds] : excludeIds ?? [])
       return Object.entries(renderedPositions).some(
-        ([id, pos]) => !excluded.has(id) && pos.col === col && pos.row === row,
+        ([id, pos]: [string, GridPosition]) => !excluded.has(id) && pos.col === col && pos.row === row,
       )
     },
     [renderedPositions],
@@ -352,16 +377,16 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
           style={gridStyle}
           onPointerDown={handleBackgroundPointerDown}
         >
-          {iconEntries.map((entry, index) => {
-            const pos = renderedPositions[entry.id] ?? getDefaultPosition(index)
+          {iconEntries.map((entry) => {
+            const pos = renderedPositions[entry.id]
             return (
               <DesktopIcon
                 key={entry.id}
                 id={entry.id}
                 icon={entry.icon}
                 label={entry.label}
-                col={pos.col}
-                row={pos.row}
+                col={pos?.col}
+                row={pos?.row}
                 selected={selectedIconIdSet.has(entry.id)}
                 selectedIds={selectedIconIds}
                 positions={renderedPositions}

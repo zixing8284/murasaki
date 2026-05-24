@@ -24,7 +24,7 @@ const FALLBACK_PAGE_TITLE = 'New Tab - Microsoft Internet Explorer'
 
 const ICONS = IE_TOOLBAR_ICONS
 
-interface InternetExplorerWindowProps {
+interface Ie2ChromeProps {
   windowId: string
   src: string
   className?: string
@@ -188,7 +188,7 @@ function installFrameMetadataSync(iframe: HTMLIFrameElement, sync: () => void): 
   }
 }
 
-export function InternetExplorerWindow({
+export function Ie2Chrome({
   windowId,
   src,
   className,
@@ -196,7 +196,7 @@ export function InternetExplorerWindow({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
-}: InternetExplorerWindowProps): ReactElement | null {
+}: Ie2ChromeProps): ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
   const iframeElementRef = useRef<HTMLIFrameElement | null>(null)

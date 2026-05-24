@@ -16,8 +16,8 @@ interface DesktopIconProps {
   id: string
   icon: ReactNode
   label: string
-  col: number
-  row: number
+  col: number | undefined
+  row: number | undefined
   selected: boolean
   selectedIds: readonly string[]
   positions: GridLayout
@@ -90,8 +90,8 @@ export function DesktopIcon({
         <div
           className="relative cursor-pointer select-none touch-none"
           style={{
-            gridColumnStart: col,
-            gridRowStart: row,
+            ...(col !== undefined && { gridColumnStart: col }),
+            ...(row !== undefined && { gridRowStart: row }),
             zIndex,
           }}
           onPointerDown={handlePointerDown}

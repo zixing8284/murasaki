@@ -3,7 +3,7 @@ import type { AppId, ProcessComponentProps, ProcessDirectoryEntry } from '../../
 import { Suspense } from 'react'
 import { appDirectory, useProcesses } from '../../contexts/process'
 import { IframeWindow } from './iframe-window'
-import { InternetExplorerWindow } from './internet-explorer-window'
+import { Ie2Chrome } from './ie2-chrome'
 import { RndWindow } from './rnd-window'
 
 function renderProcessWindow(
@@ -16,7 +16,7 @@ function renderProcessWindow(
   if (windowConfig?.type === 'iframe') {
     if (windowConfig.chrome === 'ie2') {
       return (
-        <InternetExplorerWindow
+        <Ie2Chrome
           windowId={windowId}
           src={windowConfig.src}
           className={windowConfig.className}

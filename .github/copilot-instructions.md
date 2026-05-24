@@ -37,11 +37,11 @@ When changing anything under `packages/ui/`, use this order:
 2. **Test** — `pnpm ui:test`
 3. **Build** — `pnpm ui:build`
 
-Use `pnpm ui:test:watch` only for interactive development. `pnpm ui:test` should stay one-shot so automation can exit cleanly.
+Use `pnpm ui:test:watch` only for interactive development; keep `pnpm ui:test` one-shot for automation.
 
 The playground consumes `packages/ui/dist`, not UI source files, so rebuild before verifying library changes in the playground or any other consumer.
 
-When changing docs, build the UI first if the docs need fresh library output, then run `pnpm docs:build`, `pnpm docs:embed`, `pnpm play:build`, and `pnpm lint`. The docs production build currently uses `next build --webpack` because Nextra/Next 16 Turbopack compatibility is still uneven. Use `pnpm docs:preview` for static-export checks; it serves the built `out` directory under `/programs/docs/` and replaces `next start`, which does not support `output: 'export'`.
+When changing docs, build the UI first if the docs need fresh library output, then run `pnpm docs:build`, `pnpm docs:embed`, `pnpm play:build`, and `pnpm lint`. Use `pnpm docs:preview` for static-export checks; it serves the built `out` directory under `/programs/docs/` and replaces `next start`, which does not support `output: 'export'`.
 
 ## Design Priorities
 
@@ -73,6 +73,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Treat shared theme config as library-owned and theme variable values as consumer-customizable.
 - Pixel-font text in sunken/input-like fields must have left breathing room. Avoid placing text flush against a 1px inset border; prefer at least `pl-2` on native fields or a small inner text offset for list rows.
 - For clipped pixel-font text, follow ADR 0008: the text display element should own both left padding and `overflow-hidden`/ellipsis, or otherwise keep the clip rect away from the first glyph. Avoid nested zero-padding clipped spans as a font-smoothing workaround.
+- The library's global font-size is 11px. Do not override it with arbitrary text sizes (`text-[10px]`, `text-xs`, `text-sm`, etc.) unless the design explicitly requires a different size. Rely on the default to keep typography consistent across the UI.
 - `@murasaki/react98/theme.css` is the named source stylesheet export exception: it intentionally resolves to `packages/ui/src/theme.css` for Tailwind CSS v4 consumers. Do not treat it as permission to expose other source files.
 
 ## Playground Architecture
@@ -107,7 +108,7 @@ When changing docs, build the UI first if the docs need fresh library output, th
 - Do not assume repo hooks will fix issues automatically; run `pnpm lint` yourself.
 - Publishing `packages/ui` is manual: bump the package version, run `pnpm ui:build`, then publish from `packages/ui`.
 
-## Agent skills
+## Agent Skills
 
 ### Issue tracker
 

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
+import type { ProcessWindowPosition } from '../../contexts/process/types'
 import { useDraggable, useResizable } from '@murasaki/react98'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useProcesses } from '../../contexts/process'
 import directory from '../../contexts/process/directory'
 import { BaseWindow } from './base-window'
@@ -40,6 +41,24 @@ export function RndWindow({
   const defaultSize = entry?.defaultSize
   const defaultPosition = entry?.defaultPosition
 
+  // Cascade non-singleton windows so they don't stack at the same position
+  const cascadePosition = useMemo<ProcessWindowPosition | undefined>(() => {
+    if (!appId || !defaultPosition || entry?.singleton !== false)
+      return defaultPosition
+
+    const pids = Object.keys(processes)
+    const sameAppPids = pids.filter(pid => processes[pid]?.appId === appId)
+    const index = sameAppPids.indexOf(windowId)
+    if (index <= 0)
+      return defaultPosition
+
+    const offset = index * 30
+    return {
+      top: `calc(${defaultPosition.top ?? '0px'} + ${offset}px)`,
+      left: `calc(${defaultPosition.left ?? '0px'} + ${offset}px)`,
+    }
+  }, [appId, defaultPosition, entry?.singleton, processes, windowId])
+
   const { setTargetRef: setDragTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     draggable: true,
@@ -70,7 +89,7 @@ export function RndWindow({
       disableMinimize={disableMinimize}
       disableResize={disableResize}
       defaultSize={defaultSize}
-      defaultPosition={defaultPosition}
+      defaultPosition={cascadePosition}
       isInteracting={dragging || resizing}
       frameRef={setTargetRef}
       dragRef={setDragRef}

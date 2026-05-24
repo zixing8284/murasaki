@@ -1,7 +1,6 @@
 import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
-
-const sourceCache = new WeakMap<HTMLMediaElement, MediaElementAudioSourceNode>()
+import { connectMediaElement, getGlobalAudioCtx } from '../../../../lib/global-audio-context'
 
 interface UseAudioVisualizerOptions {
   getMediaElement: () => HTMLMediaElement | null
@@ -22,7 +21,6 @@ interface UseAudioVisualizerResult {
 export type { AnalysisData }
 
 export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseAudioVisualizerOptions): UseAudioVisualizerResult {
-  const audioCtxRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const dataRef = useRef<AnalysisData | null>(null)
   const connectedElementRef = useRef<HTMLMediaElement | null>(null)
@@ -35,49 +33,58 @@ export function useAudioVisualizer({ getMediaElement, isPlaying, isAudio }: UseA
     if (!el)
       return
 
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new AudioContext()
-    }
-    const ctx = audioCtxRef.current
+    if (connectedElementRef.current === el)
+      return
+
+    const { ctx, masterGain } = getGlobalAudioCtx()
 
     if (ctx.state === 'suspended') {
       void ctx.resume()
     }
 
-    if (connectedElementRef.current !== el) {
-      analyserRef.current?.disconnect()
+    // Get (or create) the source node for this element.
+    // It may already be connected to masterGain from connectMediaElement().
+    const source = connectMediaElement(el)
 
-      let source = sourceCache.get(el)
-      if (!source) {
-        source = ctx.createMediaElementSource(el)
-        sourceCache.set(el, source)
-      }
-      else {
-        source.disconnect()
-      }
+    // Tear down any previous analyser
+    const prevAnalyser = analyserRef.current
+    if (prevAnalyser) {
+      prevAnalyser.disconnect()
+      analyserRef.current = null
+    }
 
-      const analyser = ctx.createAnalyser()
-      analyser.fftSize = 256
-      analyser.smoothingTimeConstant = 0.8
+    // Re-route: source → analyser → masterGain
+    // Disconnect source's current direct connection to masterGain first.
+    source.disconnect(masterGain)
 
-      source.connect(analyser)
-      analyser.connect(ctx.destination)
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 256
+    analyser.smoothingTimeConstant = 0.8
 
-      analyserRef.current = analyser
-      connectedElementRef.current = el
+    source.connect(analyser)
+    analyser.connect(masterGain)
 
-      dataRef.current = {
-        frequency: new Uint8Array(analyser.frequencyBinCount),
-        timeDomain: new Uint8Array(analyser.fftSize),
-      }
+    analyserRef.current = analyser
+    connectedElementRef.current = el
+
+    dataRef.current = {
+      frequency: new Uint8Array(analyser.frequencyBinCount),
+      timeDomain: new Uint8Array(analyser.fftSize),
     }
   }, [isAudio, isPlaying, getMediaElement])
 
+  // On unmount: remove the analyser and restore the direct source → masterGain path
   useEffect(() => {
     return () => {
-      if (audioCtxRef.current) {
-        void audioCtxRef.current.close()
-        audioCtxRef.current = null
+      const el = connectedElementRef.current
+      const analyser = analyserRef.current
+      if (el && analyser) {
+        const { masterGain, sourceCache } = getGlobalAudioCtx()
+        const source = sourceCache.get(el)
+        analyser.disconnect()
+        if (source) {
+          source.connect(masterGain)
+        }
       }
       connectedElementRef.current = null
       analyserRef.current = null

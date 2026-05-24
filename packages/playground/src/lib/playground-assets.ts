@@ -77,6 +77,9 @@ export const NETWORK_ONLINE_ICONS = [
 
 export const NETWORK_OFFLINE_ICON = '/icons/windows98-icons/png/conn_pcs_no_network.png'
 
+export const VOLUME_ICON = '/icons/windows98-icons/png/loudspeaker_rays-1.png'
+export const VOLUME_MUTED_ICON = '/icons/windows98-icons/png/loudspeaker_muted-1.png'
+
 // ---------------------------------------------------------------------------
 // Internet Explorer toolbar
 // ---------------------------------------------------------------------------

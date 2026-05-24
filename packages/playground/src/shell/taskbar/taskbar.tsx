@@ -16,6 +16,7 @@ import { TASKBAR_QUICK_LAUNCH_ICONS } from '../../lib/playground-assets'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
 import { NetworkIcon } from './notification-area/network-icon'
 import { SwUpdateBalloon } from './notification-area/sw-update-balloon'
+import { VolumeIcon } from './notification-area/volume-icon'
 import { RunningTasks } from './running-tasks/running-tasks'
 
 const QUICK_LAUNCH_LABELS = [
@@ -81,6 +82,7 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onSh
       {/* Notification Area (System Tray) */}
       <TaskbarNotificationArea className="relative">
         <SwUpdateBalloon />
+        <VolumeIcon />
         <NetworkIcon />
         <DisplayPropertiesIcon />
         <TaskbarSystemClock />

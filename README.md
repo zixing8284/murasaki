@@ -30,10 +30,11 @@ Docs only: `pnpm docs:dev` → `http://localhost:3000/programs/docs/`
 ## Acknowledgements
 
 - [98.css](https://jdan.github.io/98.css/) — CSS styling
-- [winclassic](https://github.com/tpenguinltg/winclassic) — theme variable definitions
 - [React95](https://github.com/react95-io/React95) — component design reference
 - [daedalOS](https://github.com/DustinBrett/daedalOS) — code organization and design
 - [win99.dev](https://win99.dev/) — UI style reference
+- [winclassic](https://github.com/tpenguinltg/winclassic) — theme variable definitions
+- [classic-stylesheets](https://github.com/nielssp/classic-stylesheets) — theme resources
 
 ## License
 

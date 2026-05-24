@@ -14,8 +14,31 @@ import {
 import { useCallback, useState } from 'react'
 import { useProcessActions } from '../../contexts/process'
 import { InactiveClickGuard } from '../../shell/window/inactive-click-guard'
+import { DialogWindow } from '../shared/dialog-window'
 
 const DEFAULT_TO = 'zixing8284@gmail.com'
+
+function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
+  return (
+    <DialogWindow title="About Outlook Express" onClose={onClose}>
+      <div className="flex flex-col items-center gap-3 p-4 w-64">
+        <img
+          src="/icons/windows98-icons/png/outlook_express-2.png"
+          alt=""
+          className="size-12 pixelated"
+          draggable={false}
+        />
+        <div className="text-center">
+          <p className="font-bold">Outlook Express</p>
+          <p className="mt-1">Version 1.0</p>
+          <p className="mt-0.5 text-(--gray-text)">murasaki edition</p>
+        </div>
+        <Divider className="w-full" />
+        <Button className="px-6" onClick={onClose}>OK</Button>
+      </div>
+    </DialogWindow>
+  )
+}
 
 function renderMenuLabel(menu: string): ReactElement {
   const [accelerator = '', ...rest] = menu
@@ -25,36 +48,6 @@ function renderMenuLabel(menu: string): ReactElement {
       <span className="underline">{accelerator}</span>
       {rest.join('')}
     </>
-  )
-}
-
-function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
-  return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="w-72 bg-(--button-face) shadow-(--shadow-raised)">
-        <div className="flex items-center justify-between bg-(--active-title) px-2 py-0.5">
-          <span className="text-(--title-text) font-bold">About Outlook Express</span>
-          <Button className="leading-none p-0" onClick={onClose}>
-            &times;
-          </Button>
-        </div>
-        <div className="flex flex-col items-center gap-3 p-4">
-          <img
-            src="/icons/windows98-icons/png/outlook_express-2.png"
-            alt=""
-            className="size-12 pixelated"
-            draggable={false}
-          />
-          <div className="text-center text-(--window-text)">
-            <p className="font-bold">Outlook Express</p>
-            <p className="mt-1">Version 1.0</p>
-            <p className="mt-0.5 text-(--gray-text)">murasaki edition</p>
-          </div>
-          <Divider className="w-full" />
-          <Button className="px-6" onClick={onClose}>OK</Button>
-        </div>
-      </div>
-    </div>
   )
 }
 

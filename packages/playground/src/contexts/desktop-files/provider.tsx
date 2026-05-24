@@ -98,6 +98,13 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
     setLaunchRequest(null)
   }, [])
 
+  const refresh = useCallback(async () => {
+    const nextItems = await listDesktopMediaFiles()
+    startTransition(() => {
+      setItems(nextItems)
+    })
+  }, [])
+
   const value = useMemo(() => ({
     items,
     loading,
@@ -106,7 +113,8 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
     requestOpenInMediaPlayer,
     launchRequest,
     clearLaunchRequest,
-  }), [items, loading, importFiles, getFile, requestOpenInMediaPlayer, launchRequest, clearLaunchRequest])
+    refresh,
+  }), [items, loading, importFiles, getFile, requestOpenInMediaPlayer, launchRequest, clearLaunchRequest, refresh])
 
   return (
     <DesktopFilesContext value={value}>

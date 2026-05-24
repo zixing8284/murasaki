@@ -108,10 +108,6 @@ function Shell() {
 }
 ```
 
-## Documentation
-
-Full docs and interactive examples: [murasaki.vercel.app](https://murasaki.vercel.app)
-
 ## License
 
 MIT

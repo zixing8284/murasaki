@@ -34,6 +34,7 @@ pnpm play             # 4. 启动 playground
 - [React95](https://github.com/react95-io/React95) — 组件设计参考
 - [daedalOS](https://github.com/DustinBrett/daedalOS) — 代码组织和设计
 - [win99.dev](https://win99.dev/) — UI 样式参考
+- [classic-stylesheets](https://github.com/nielssp/classic-stylesheets) — 主题资源
 
 ## License
 

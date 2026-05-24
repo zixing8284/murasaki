@@ -2,8 +2,8 @@ import type { ComponentType } from 'react'
 import type { AppId, ProcessComponentProps, ProcessDirectoryEntry } from '../../contexts/process'
 import { Suspense } from 'react'
 import { appDirectory, useProcesses } from '../../contexts/process'
-import { IframeWindow } from './iframe-window'
 import { Ie2Chrome } from './ie2-chrome'
+import { IframeWindow } from './iframe-window'
 import { RndWindow } from './rnd-window'
 
 function renderProcessWindow(

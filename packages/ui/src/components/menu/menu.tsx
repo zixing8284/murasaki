@@ -15,7 +15,8 @@ const menuVariants = cva([
   'flex',
   'flex-col',
   'items-stretch',
-  'p-0.5',
+  'p-1',
+  'min-w-[130px]',
   'list-none',
   'm-0',
 ])
@@ -196,7 +197,7 @@ const menuItemVariants = cva(
   {
     variants: {
       disabled: {
-        true: ['text-(--gray-text)', 'cursor-default'],
+        true: ['text-(--gray-text)', 'cursor-default', '[text-shadow:1px_1px_0_var(--button-hilight)]'],
         false: ['cursor-pointer', 'text-(--menu-text)', 'hover:bg-(--menu-hilight)', 'hover:text-(--hilight-text)'],
       },
       selected: {

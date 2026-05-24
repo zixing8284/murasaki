@@ -58,11 +58,25 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(value, max))
 }
 
-function readGridPos(el: HTMLElement): { col: number, row: number } | null {
-  const cs = window.getComputedStyle(el)
-  const col = Number.parseInt(cs.gridColumnStart, 10)
-  const row = Number.parseInt(cs.gridRowStart, 10)
-  if (!Number.isFinite(col) || !Number.isFinite(row))
+function readGridPosFromDOM(el: HTMLElement, gridEl: HTMLElement): { col: number, row: number } | null {
+  const cs = window.getComputedStyle(gridEl)
+  const cellW = Number.parseFloat(cs.getPropertyValue('grid-template-columns').split(' ')[0] ?? '')
+  const cellH = Number.parseFloat(cs.getPropertyValue('grid-template-rows').split(' ')[0] ?? '')
+  if (!(cellW > 0) || !(cellH > 0))
+    return null
+  const colGap = Number.parseFloat(cs.columnGap) || 0
+  const rowGap = Number.parseFloat(cs.rowGap) || 0
+  const paddingLeft = Number.parseFloat(cs.paddingLeft) || 0
+  const paddingTop = Number.parseFloat(cs.paddingTop) || 0
+
+  const gridRect = gridEl.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
+  const relX = elRect.left + elRect.width / 2 - gridRect.left - paddingLeft
+  const relY = elRect.top + elRect.height / 2 - gridRect.top - paddingTop
+
+  const col = Math.round(relX / (cellW + colGap)) + 1
+  const row = Math.round(relY / (cellH + rowGap)) + 1
+  if (col < 1 || row < 1)
     return null
   return { col, row }
 }
@@ -131,11 +145,14 @@ export function useDesktopIconDrag({
     event.stopPropagation()
 
     // Resolve grid position for this icon. Auto-placed icons (no stored position)
-    // have no explicit col/row, so read the computed position from the DOM.
+    // have no explicit col/row, so compute the position from the DOM layout.
+    const grid = gridRef.current
     let resolvedCol = col
     let resolvedRow = row
     if (resolvedCol === undefined || resolvedRow === undefined) {
-      const pos = readGridPos(event.currentTarget)
+      if (!grid)
+        return
+      const pos = readGridPosFromDOM(event.currentTarget, grid)
       if (!pos)
         return
       resolvedCol = pos.col
@@ -144,7 +161,6 @@ export function useDesktopIconDrag({
 
     // For multi-drag: auto-placed selected icons also need resolved positions.
     let resolvedPositions = positions
-    const grid = gridRef.current
     if (grid && selectedIds.length > 1) {
       const unresolved = selectedIds.filter(sid => sid !== id && !positions[sid])
       if (unresolved.length > 0) {
@@ -153,7 +169,7 @@ export function useDesktopIconDrag({
           const iconId = el.dataset.fileId
           if (!iconId || !unresolved.includes(iconId))
             return
-          const pos = readGridPos(el)
+          const pos = readGridPosFromDOM(el, grid)
           if (pos)
             extra[iconId] = pos
         })

@@ -91,13 +91,13 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const [dragPreview, setDragPreview] = useState<DesktopDragPreview | null>(null)
   const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null)
   const [gridRows, setGridRows] = useState(10)
+  const [refreshing, setRefreshing] = useState(false)
   const { open } = useProcessActions()
-  const { items, requestOpenInMediaPlayer, importFiles } = useDesktopFiles()
+  const { items, requestOpenInMediaPlayer, importFiles, refresh } = useDesktopFiles()
   const { positions, gridRef } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
   const selectionCleanupRef = useRef<(() => void) | null>(null)
-  const resizeObserverRef = useRef<ResizeObserver | null>(null)
 
   useImperativeHandle(ref, () => ({
     clearSelection(): void {
@@ -108,25 +108,24 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   }))
 
   const setGridEl = useCallback((el: HTMLDivElement | null) => {
+    if (!el)
+      return
     desktopRef.current = el
     gridRef.current = el
 
-    resizeObserverRef.current?.disconnect()
-    resizeObserverRef.current = null
+    const computeRows = (): void => {
+      const availableHeight = el.clientHeight - DESKTOP_PADDING * 2
+      setGridRows(Math.max(1, Math.floor((availableHeight + ROW_GAP) / (CELL_HEIGHT + ROW_GAP))))
+    }
+    computeRows()
+    const observer = new ResizeObserver(computeRows)
+    observer.observe(el)
 
-    if (el) {
-      const computeRows = (): void => {
-        const availableHeight = el.clientHeight - DESKTOP_PADDING * 2
-        setGridRows(Math.max(1, Math.floor((availableHeight + ROW_GAP) / (CELL_HEIGHT + ROW_GAP))))
-      }
-      computeRows()
-      const observer = new ResizeObserver(computeRows)
-      observer.observe(el)
-      resizeObserverRef.current = observer
+    return () => {
+      observer.disconnect()
+      gridRef.current = null
     }
   }, [gridRef])
-
-  useEffect(() => () => resizeObserverRef.current?.disconnect(), [])
 
   const iconEntries = useMemo<IconEntry[]>(() => {
     const apps: IconEntry[] = Object.entries(appDirectory)
@@ -359,10 +358,17 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     event.target.value = ''
   }
 
-  const handleRefresh = (): void => {
+  const handleRefresh = async (): Promise<void> => {
     selectionCleanupRef.current?.()
     setSelectedIconIds([])
     setDragPreview(null)
+    setRefreshing(true)
+    try {
+      await refresh()
+    }
+    finally {
+      setRefreshing(false)
+    }
   }
 
   const selectionBox = selectionRect ? getSelectionBox(selectionRect) : null
@@ -377,7 +383,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
           style={gridStyle}
           onPointerDown={handleBackgroundPointerDown}
         >
-          {iconEntries.map((entry) => {
+          {!refreshing && iconEntries.map((entry) => {
             const pos = renderedPositions[entry.id]
             return (
               <DesktopIcon

@@ -14,6 +14,7 @@ export interface DesktopFilesContextValue {
   requestOpenInMediaPlayer: (fileId: string) => void
   launchRequest: DesktopFileLaunchRequest | null
   clearLaunchRequest: () => void
+  refresh: () => Promise<void>
 }
 
 export const DesktopFilesContext = createContext<DesktopFilesContextValue | null>(null)

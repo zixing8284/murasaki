@@ -228,7 +228,7 @@ export function TabPanel({ children, className, value, ...props }: TabPanelProps
 // Tabs (Root)
 // ============================================================================
 
-const tabsRootVariants = cva(['inline-flex', 'flex-col'])
+const tabsRootVariants = cva(['inline-flex', 'flex-col', 'isolate'])
 
 export interface TabsProps extends React.ComponentProps<'div'> {
   /** The default selected tab value (uncontrolled mode) */

@@ -80,6 +80,7 @@ html,
   --react98-layer-root-z-index: 1000;
   --react98-layer-popup-z-index: 10;
   --react98-layer-tooltip-z-index: 20;
+  --react98-layer-scrollbar-z-index: 5;
 }
 
 /* ==========================================================================

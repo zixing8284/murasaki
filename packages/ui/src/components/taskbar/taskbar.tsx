@@ -9,6 +9,7 @@ const taskbarVariants = cva([
   'bg-(--button-face)',
   'p-0.75',
   'shadow-(--shadow-raised)',
+  'isolate',
   'z-2',
   'overflow-hidden',
   'select-none',

@@ -171,7 +171,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     right: '0',
     width: `${BAR_SIZE}px`,
     bottom: 'auto',
-    zIndex: '100',
+    zIndex: 'var(--react98-layer-scrollbar-z-index)',
     display: 'none',
     boxSizing: 'border-box',
   })
@@ -220,7 +220,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     left: '0',
     height: `${BTN_HEIGHT}px`,
     right: `${BAR_SIZE}px`,
-    zIndex: '100',
+    zIndex: 'var(--react98-layer-scrollbar-z-index)',
     display: 'none',
     boxSizing: 'border-box',
   })
@@ -273,7 +273,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     width: `${BAR_SIZE}px`,
     height: `${BTN_HEIGHT}px`,
     backgroundColor: 'var(--button-face)',
-    zIndex: '101',
+    zIndex: 'calc(var(--react98-layer-scrollbar-z-index) + 1)',
     display: 'none',
   })
   corner.setAttribute('data-murasaki-corner', '')

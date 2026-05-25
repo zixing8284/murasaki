@@ -101,6 +101,7 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
 
   const deactivateAll: ProcessContextActions['deactivateAll'] = () => {
     setState(prev => ({ ...prev, foregroundId: null }))
+    document.activeElement instanceof HTMLElement && document.activeElement.blur()
   }
 
   const handleTaskbarClick: ProcessContextActions['handleTaskbarClick'] = (id) => {

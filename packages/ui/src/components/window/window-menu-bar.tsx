@@ -493,7 +493,7 @@ export function WindowMenuBarContent({
         data-window-menu-bar-value={menu.value}
         data-state={menu.open ? 'open' : 'closed'}
         className={cn(
-          'pointer-events-auto min-w-[var(--window-menu-bar-content-min-width,160px)]',
+          'pointer-events-auto min-w-[var(--window-menu-bar-content-min-width,160px)] [&_[role=menuitem]]:py-[2px]',
           !menu.open && 'pointer-events-none',
           className,
         )}

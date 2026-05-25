@@ -167,10 +167,10 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 <MenuSeparator />
                 <MenuItem icon={<StartIcon src={ICON.internetExplorer} />} disabled>Internet Explorer</MenuItem>
                 <MenuItem
-                  icon={<StartIcon src={ICON.myComputer} />}
-                  onClick={() => launch(APP_ID.MY_COMPUTER)}
+                  icon={<StartIcon src={ICON.welcome} />}
+                  onClick={() => launch(APP_ID.WELCOME)}
                 >
-                  My Computer
+                  Welcome!
                 </MenuItem>
                 <MenuItem
                   icon={<StartIcon src={ICON.mediaPlayer} />}

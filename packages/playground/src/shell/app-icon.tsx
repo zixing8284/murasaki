@@ -7,6 +7,11 @@ const sizeClass = {
   lg: 'w-8 h-8',
 } as const
 
+const shortcutOverlay = {
+  sm: '/icons/windows98-icons/png/overlay_shortcut-0.png',
+  lg: '/icons/windows98-icons/png/overlay_shortcut-1.png',
+} as const
+
 interface AppIconProps {
   appId: AppId | (string & {})
   size: 'sm' | 'lg'
@@ -19,11 +24,21 @@ export function AppIcon({ appId, size, className }: AppIconProps): React.ReactEl
   const src = icon[size]
 
   return (
-    <img
-      src={assetPath(src)}
-      alt=""
-      className={`${sizeClass[size]} pixelated shrink-0${className ? ` ${className}` : ''}`}
-      draggable={false}
-    />
+    <div className={`relative ${sizeClass[size]} shrink-0${className ? ` ${className}` : ''}`}>
+      <img
+        src={assetPath(src)}
+        alt=""
+        className={`${sizeClass[size]} pixelated`}
+        draggable={false}
+      />
+      {entry?.shortcut && (
+        <img
+          src={assetPath(shortcutOverlay[size])}
+          alt=""
+          className="absolute bottom-0 left-0 pointer-events-none pixelated"
+          draggable={false}
+        />
+      )}
+    </div>
   )
 }

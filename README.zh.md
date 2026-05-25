@@ -4,9 +4,13 @@ Windows 98 风格的 React 组件库 — [`@murasaki/react98`](https://www.npmjs
 
 - [Playground](https://zixing8284.github.io/murasaki/) · [文档](https://zixing8284.github.io/murasaki/programs/docs/)
 
+## 这是什么
+
+Murasaki 是一个忠实还原 Windows 98 美学的 React 组件库。它以 `@murasaki/react98` 发布到 npm，并驱动这个 Playground —— 一个完全运行在浏览器中的交互式 Windows 98 桌面。
+
 ## 为什么做这个
 
-千禧年包裹着我童年的回忆。 那些厚重的像素、经典的桌面，我想用 React 把它们复刻出来。
+千禧年包裹着我童年的回忆。那些厚重的像素、经典的桌面、熟悉的开机音效，我想用 React 把它们复刻出来。
 life is hard. 做这个项目本身让我很开心。
 
 ## 项目结构
@@ -26,6 +30,10 @@ pnpm play             # 4. 启动 playground
 ```
 
 文档单独开发：`pnpm docs:dev` → `http://localhost:3000/programs/docs/`
+
+## 代码参考
+
+源代码托管在 [GitHub](https://github.com/zixing8284/murasaki)。项目采用 pnpm workspace，包含四个包：UI 组件库、Playground 演示、Nextra 文档站，以及一个 Next.js 集成测试。
 
 ## 致谢
 

@@ -23,7 +23,7 @@ const QUICK_LAUNCH_LABELS = [
   { alt: 'Show Desktop', title: 'Show Desktop' },
   { alt: 'Email Me', title: 'Outlook Express' },
   { alt: 'Internet', title: 'Internet Explorer' },
-  { alt: 'Computer', title: 'My Computer' },
+  { alt: 'Welcome', title: 'Welcome!' },
 ]
 
 interface TaskbarProps {
@@ -41,11 +41,16 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onSh
     open(APP_ID.OUTLOOK_EXPRESS)
   }, [open])
 
+  const handleOpenWelcome = useCallback(() => {
+    open(APP_ID.WELCOME)
+  }, [open])
+
   const quickLaunchIcons: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
     src: assetPath(path),
     ...QUICK_LAUNCH_LABELS[index],
     ...(index === 0 ? { onClick: onShowDesktop } : {}),
     ...(index === 1 ? { onClick: handleOpenOutlookExpress } : {}),
+    ...(index === 3 ? { onClick: handleOpenWelcome } : {}),
   }))
 
   return (

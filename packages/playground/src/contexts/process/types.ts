@@ -61,6 +61,8 @@ export interface ProcessDirectoryEntry {
   singleton?: boolean
   /** Show as a desktop icon */
   showOnDesktop?: boolean
+  /** Show shortcut overlay arrow on the icon */
+  shortcut?: boolean
   /** Open automatically once the desktop finishes booting */
   autoOpenOnStartup?: boolean
   /** Ephemeral windows participate in z-index / focus but are hidden from taskbar */

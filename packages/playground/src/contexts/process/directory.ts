@@ -16,17 +16,18 @@ export const DEFAULT_ICON: AppIcon = {
  * hidden from the taskbar's running-tasks list (e.g. system dialogs).
  */
 const directory = {
-  mycomputer: {
-    name: 'My Computer',
+  welcome: {
+    name: 'Welcome!',
     Component: lazy(() =>
-      import('../../directory/apps/my-computer').then(m => ({ default: m.MyComputer })),
+      import('../../directory/apps/welcome').then(m => ({ default: m.Welcome })),
     ),
-    defaultTitle: 'My Computer',
-    icon: { sm: '/icons/windows98-icons/png/computer-0.png', lg: '/icons/windows98-icons/png/computer_explorer-2.png' },
+    defaultTitle: 'Welcome!',
+    icon: { sm: '/icons/windows98-icons/png/user_computer-0.png', lg: '/icons/windows98-icons/png/user_computer-1.png' },
     singleton: true,
-    defaultSize: { width: 520 },
+    showOnDesktop: true,
+    defaultSize: { width: 520, height: 420 },
     defaultPosition: { top: '10%', left: '10%' },
-    window: { contentClassName: 'p-2' },
+    window: { contentClassName: 'p-0' },
   },
   docs: {
     name: 'Murasaki UI Library Docs',
@@ -34,6 +35,7 @@ const directory = {
     icon: { sm: '/icons/windows98-icons/png/msie2-3.png', lg: '/icons/windows98-icons/png/msie2-0.png' },
     singleton: true,
     showOnDesktop: true,
+    shortcut: true,
     defaultSize: { width: 750 },
     defaultPosition: { top: '10%', left: '3.75rem' },
     window: { type: 'iframe', src: '/programs/docs/index.html', chrome: 'ie2', className: 'h-[90%]' },
@@ -149,7 +151,7 @@ export type AppId = keyof typeof directory
  * ```
  */
 export const APP_ID = {
-  MY_COMPUTER: 'mycomputer',
+  WELCOME: 'welcome',
   DOCS: 'docs',
   NOTEPAD: 'notepad',
   DISPLAY_PROPERTIES: 'displayproperties',

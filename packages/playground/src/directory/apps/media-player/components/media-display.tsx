@@ -7,6 +7,7 @@ const EMPTY_CAPTIONS_TRACK_SRC = 'data:text/vtt;charset=utf-8,WEBVTT%0A%0A'
 
 interface MediaDisplayProps {
   hasVideo: boolean
+  forceAspectRatio: boolean
   mediaRefCallback: (element: HTMLVideoElement | null) => void
   onVideoClick: () => void
   onVideoDoubleClick: () => void
@@ -14,6 +15,7 @@ interface MediaDisplayProps {
 
 export function MediaDisplay({
   hasVideo,
+  forceAspectRatio,
   mediaRefCallback,
   onVideoClick,
   onVideoDoubleClick,
@@ -26,7 +28,7 @@ export function MediaDisplay({
     >
       <video
         ref={mediaRefCallback}
-        className={`max-w-full max-h-full p-1 object-contain aspect-video${hasVideo ? '' : ' hidden'}`}
+        className={`max-w-full max-h-full p-1 object-contain${forceAspectRatio ? ' aspect-video' : ''}${hasVideo ? '' : ' hidden'}`}
         crossOrigin="anonymous"
         playsInline
       >

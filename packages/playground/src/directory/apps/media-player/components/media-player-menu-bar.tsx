@@ -1,5 +1,14 @@
 import type { JSX } from 'react'
-import { WindowMenuBar, WindowMenuBarItem } from '@murasaki/react98'
+import {
+  MenuItem,
+  MenuSeparator,
+  WindowMenuBar,
+  WindowMenuBarContent,
+  WindowMenuBarItem,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+} from '@murasaki/react98'
+import { useProcessActions } from '../../../../contexts/process'
 import { InactiveClickGuard } from '../../../../shell/window/inactive-click-guard'
 
 const MEDIA_PLAYER_MENUS = ['File', 'Edit', 'Device', 'Scale', 'Help'] as const
@@ -10,23 +19,36 @@ interface MediaPlayerMenuBarProps {
 }
 
 export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarProps): JSX.Element {
+  const { close } = useProcessActions()
+
   return (
     <InactiveClickGuard windowId={windowId}>
       <WindowMenuBar>
-        {MEDIA_PLAYER_MENUS.map((menu) => {
-          const isFileMenu = menu === 'File'
+        <WindowMenuBarMenu value="file">
+          <WindowMenuBarTrigger>
+            <span className="underline">F</span>
+            ile
+          </WindowMenuBarTrigger>
+          <WindowMenuBarContent>
+            <MenuItem onClick={onOpenFile}>
+              <span className="underline">O</span>
+              pen...
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem onClick={() => close(windowId)}>
+              E
+              <span className="underline">x</span>
+              it
+            </MenuItem>
+          </WindowMenuBarContent>
+        </WindowMenuBarMenu>
 
-          return (
-            <WindowMenuBarItem
-              key={menu}
-              onClick={isFileMenu ? onOpenFile : undefined}
-              disabled={!isFileMenu}
-            >
-              <span className="underline">{menu[0]}</span>
-              {menu.slice(1)}
-            </WindowMenuBarItem>
-          )
-        })}
+        {MEDIA_PLAYER_MENUS.filter(menu => menu !== 'File').map(menu => (
+          <WindowMenuBarItem key={menu} disabled>
+            <span className="underline">{menu[0]}</span>
+            {menu.slice(1)}
+          </WindowMenuBarItem>
+        ))}
       </WindowMenuBar>
     </InactiveClickGuard>
   )

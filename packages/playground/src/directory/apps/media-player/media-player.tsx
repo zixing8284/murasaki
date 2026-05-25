@@ -24,11 +24,11 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
   const isActiveWindow = processInfo?.isActive ?? false
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const [showPlaylist, setShowPlaylist] = useState(true)
+  const [forceAspectRatio, setForceAspectRatio] = useState(false)
   const windowRootRef = useRef<HTMLDivElement>(null)
   const activeItemRef = useRef<HTMLDivElement>(null)
   const fullscreenContainerRef = useRef<HTMLDivElement>(null)
   const { isFullscreen: isMediaFullscreen, toggle: toggleMediaFullscreen } = useFullscreen(fullscreenContainerRef)
-  const shouldShowPlaylist = showPlaylist && !isMediaFullscreen
   const currentTrackId = player.currentTrack?.id
   const hasPlayableTrack = player.currentTrack !== null
   const currentTitle = player.currentTrack
@@ -49,6 +49,10 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
 
   const togglePlaylist = useCallback(() => {
     setShowPlaylist(previousValue => !previousValue)
+  }, [])
+
+  const toggleForceAspectRatio = useCallback(() => {
+    setForceAspectRatio(previousValue => !previousValue)
   }, [])
 
   const { handleVideoClick, handleVideoDoubleClick } = useVideoFullscreenToggle(toggleMediaFullscreen)
@@ -122,6 +126,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
       >
         <MediaDisplay
           hasVideo={player.hasVideo}
+          forceAspectRatio={forceAspectRatio}
           mediaRefCallback={player.mediaRefCallback}
           onVideoClick={handleVideoClick}
           onVideoDoubleClick={handleVideoDoubleClick}
@@ -131,21 +136,23 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
           player={player}
           isMediaFullscreen={isMediaFullscreen}
           showPlaylist={showPlaylist}
+          forceAspectRatio={forceAspectRatio}
           onSeekBackward={seekBackward}
           onSeekForward={seekForward}
           onTogglePlaylist={togglePlaylist}
+          onToggleAspectRatio={toggleForceAspectRatio}
+        />
+
+        <PlaylistPanel
+          visible={showPlaylist && !isMediaFullscreen}
+          playlist={player.playlist}
+          currentTrackId={currentTrackId}
+          isPlaying={player.isPlaying}
+          loading={player.loading}
+          activeItemRef={activeItemRef}
+          onPlayTrack={player.playTrack}
         />
       </div>
-
-      <PlaylistPanel
-        visible={shouldShowPlaylist}
-        playlist={player.playlist}
-        currentTrackId={currentTrackId}
-        isPlaying={player.isPlaying}
-        loading={player.loading}
-        activeItemRef={activeItemRef}
-        onPlayTrack={player.playTrack}
-      />
 
       {isMediaFullscreen
         ? null

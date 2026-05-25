@@ -2,6 +2,7 @@ import type { JSX } from 'react'
 import type { UseMediaPlayerResult } from '../use-media-player'
 import { Divider, Slider, Tooltip } from '@murasaki/react98'
 import {
+  AspectRatioIcon,
   EjectIcon,
   FastForwardIcon,
   NextIcon,
@@ -48,9 +49,11 @@ interface MediaPlayerControlsProps {
   player: MediaPlayerControlsPlayer
   isMediaFullscreen: boolean
   showPlaylist: boolean
+  forceAspectRatio: boolean
   onSeekBackward: () => void
   onSeekForward: () => void
   onTogglePlaylist: () => void
+  onToggleAspectRatio: () => void
 }
 
 function ToolbarSeparator(): JSX.Element {
@@ -61,9 +64,11 @@ export function MediaPlayerControls({
   player,
   isMediaFullscreen,
   showPlaylist,
+  forceAspectRatio,
   onSeekBackward,
   onSeekForward,
   onTogglePlaylist,
+  onToggleAspectRatio,
 }: MediaPlayerControlsProps): JSX.Element {
   const surfaceClassName = isMediaFullscreen ? 'bg-(--button-face)' : ''
   const hasCurrentTrack = player.currentTrack !== null
@@ -184,9 +189,15 @@ export function MediaPlayerControls({
 
         <ToolbarSeparator />
 
-        <Tooltip text={showPlaylist ? 'Hide Playlist' : 'Show Playlist'} side="top">
-          <TransportButton onClick={onTogglePlaylist} active={showPlaylist} aria-label={showPlaylist ? 'Hide Playlist' : 'Show Playlist'}>
+        <Tooltip text="Playlist" side="top">
+          <TransportButton onClick={onTogglePlaylist} active={showPlaylist && !isMediaFullscreen} disabled={isMediaFullscreen} aria-label="Playlist">
             <PlaylistIcon />
+          </TransportButton>
+        </Tooltip>
+
+        <Tooltip text={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'} side="top">
+          <TransportButton onClick={onToggleAspectRatio} active={forceAspectRatio} aria-label={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}>
+            <AspectRatioIcon />
           </TransportButton>
         </Tooltip>
       </div>

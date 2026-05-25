@@ -189,3 +189,7 @@ export function PlaylistIcon(): JSX.Element {
     </svg>
   )
 }
+
+export function AspectRatioIcon(): JSX.Element {
+  return <span className="leading-none text-(--button-text)">16:9</span>
+}

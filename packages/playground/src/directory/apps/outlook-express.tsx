@@ -13,6 +13,7 @@ import {
 } from '@murasaki/react98'
 import { useCallback, useState } from 'react'
 import { useProcessActions } from '../../contexts/process'
+import { assetPath } from '../../lib/asset-path'
 import { InactiveClickGuard } from '../../shell/window/inactive-click-guard'
 import { DialogWindow } from '../shared/dialog-window'
 
@@ -23,7 +24,7 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
     <DialogWindow title="About Outlook Express" onClose={onClose}>
       <div className="flex flex-col items-center gap-3 p-4 w-64">
         <img
-          src="/icons/windows98-icons/png/outlook_express-2.png"
+          src={assetPath('/icons/windows98-icons/png/outlook_express-2.png')}
           alt=""
           className="size-12 pixelated"
           draggable={false}

@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom'
 import { useLayerPortalTarget } from '../../primitives'
+import { LayerProvider } from '../layer/layer-provider'
 
 export interface WindowPortalProps {
   children: React.ReactNode
@@ -20,5 +21,5 @@ export function WindowPortal({
   const target = container ?? layerTarget
   if (!target)
     return null
-  return createPortal(children, target)
+  return createPortal(<LayerProvider>{children}</LayerProvider>, target)
 }

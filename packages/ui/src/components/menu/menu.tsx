@@ -7,6 +7,15 @@ import { LayerPortal, useDismissable, useLayer, useRovingFocus, useTypeahead } f
 import { MenuScrollArrow, useMenuOverflow } from './menu-scroll'
 import { MenuSubContext, useMenuSubContext } from './menu-sub-context'
 
+// ─── Menu coordination ───────────────────────────────────────────────────────
+
+interface MenuCoordinationContextValue {
+  activateSub: (id: string, close: () => void) => void
+  deactivateSub: (id: string) => void
+}
+
+const MenuCoordinationContext = React.createContext<MenuCoordinationContextValue | null>(null)
+
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
 const menuVariants = cva([
@@ -66,6 +75,20 @@ export function Menu({
   const menuRef = React.useRef<HTMLMenuElement | null>(null)
   const overflowListRef = React.useRef<HTMLDivElement | null>(null)
   const wasMaxHeightRef = React.useRef(false)
+  const activeSubRef = React.useRef<{ id: string, close: () => void } | null>(null)
+
+  const coordination = React.useMemo<MenuCoordinationContextValue>(() => ({
+    activateSub(id, close) {
+      const prev = activeSubRef.current
+      if (prev && prev.id !== id)
+        prev.close()
+      activeSubRef.current = { id, close }
+    },
+    deactivateSub(id) {
+      if (activeSubRef.current?.id === id)
+        activeSubRef.current = null
+    },
+  }), [])
 
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
     menuRef.current = node
@@ -148,37 +171,39 @@ export function Menu({
   }, [hasMaxHeight])
 
   return (
-    <menu
-      ref={setMenuRef}
-      role="menu"
-      className={cn(menuVariants(), hasMaxHeight && 'overflow-hidden', className)}
-      style={menuStyle}
-      onKeyDown={handleKeyDown}
-      {...props}
-    >
-      {hasMaxHeight && canScrollUp && (
-        <MenuScrollArrow direction="up" onStep={() => scrollByStep(-1)} />
-      )}
-      <div
-        ref={overflowListRef}
-        role="presentation"
-        data-menu-scroll-list={hasMaxHeight ? '' : undefined}
-        className={cn(
-          'flex flex-col items-stretch list-none m-0 p-0 min-h-0',
-          hasMaxHeight && [
-            'flex-1 overflow-y-auto overflow-x-hidden',
-            '[scroll-snap-type:y_mandatory]',
-            '[&>[role=menuitem]]:[scroll-snap-align:start]',
-            '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-          ],
-        )}
+    <MenuCoordinationContext value={coordination}>
+      <menu
+        ref={setMenuRef}
+        role="menu"
+        className={cn(menuVariants(), hasMaxHeight && 'overflow-hidden', className)}
+        style={menuStyle}
+        onKeyDown={handleKeyDown}
+        {...props}
       >
-        {children}
-      </div>
-      {hasMaxHeight && canScrollDown && (
-        <MenuScrollArrow direction="down" onStep={() => scrollByStep(1)} />
-      )}
-    </menu>
+        {hasMaxHeight && canScrollUp && (
+          <MenuScrollArrow direction="up" onStep={() => scrollByStep(-1)} />
+        )}
+        <div
+          ref={overflowListRef}
+          role="presentation"
+          data-menu-scroll-list={hasMaxHeight ? '' : undefined}
+          className={cn(
+            'flex flex-col items-stretch list-none m-0 p-0 min-h-0',
+            hasMaxHeight && [
+              'flex-1 overflow-y-auto overflow-x-hidden',
+              '[scroll-snap-type:y_mandatory]',
+              '[&>[role=menuitem]]:[scroll-snap-align:start]',
+              '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+            ],
+          )}
+        >
+          {children}
+        </div>
+        {hasMaxHeight && canScrollDown && (
+          <MenuScrollArrow direction="down" onStep={() => scrollByStep(1)} />
+        )}
+      </menu>
+    </MenuCoordinationContext>
   )
 }
 
@@ -333,6 +358,9 @@ export function MenuSub({
   const isControlled = openProp !== undefined
   const open = isControlled ? openProp : uncontrolledOpen
 
+  const menu = React.use(MenuCoordinationContext)
+  const subId = React.useId()
+
   const triggerRef = React.useRef<HTMLLIElement | null>(null)
   const contentRef = React.useRef<HTMLElement | null>(null)
   const openTimerRef = React.useRef<number | null>(null)
@@ -386,6 +414,18 @@ export function MenuSub({
         window.clearTimeout(closeTimerRef.current)
     }
   }, [])
+
+  // Coordinate with parent Menu: when this submenu opens, close siblings.
+  React.useEffect(() => {
+    if (!menu)
+      return
+    if (open) {
+      menu.activateSub(subId, () => setOpen(false))
+    }
+    else {
+      menu.deactivateSub(subId)
+    }
+  }, [open, menu, subId, setOpen])
 
   const value = React.useMemo<MenuSubContextValue>(() => ({
     open,
@@ -571,7 +611,7 @@ export function MenuSubContent({
     sub.contentRef.current = node
   }, [sub.contentRef])
 
-  const position = useLayer({
+  const [position, ready] = useLayer({
     anchorRef: sub.triggerRef,
     layerRef: menuRef,
     open: sub.open,
@@ -637,14 +677,13 @@ export function MenuSubContent({
 
   // Until `useLayer` computes a position (runs in rAF), render offscreen so
   // the layer is still focusable but not visible at the wrong spot.
-  const positioned = position !== null
-  const resolvedMaxHeight = position
+  const resolvedMaxHeight = ready && position
     ? Math.min(maxHeightProp ?? position.availableHeight, position.availableHeight)
     : maxHeightProp
   const layerStyle: React.CSSProperties = {
     position: 'fixed',
-    left: positioned ? position.x : -9999,
-    top: positioned ? position.y : -9999,
+    left: ready && position ? position.x : -9999,
+    top: ready && position ? position.y : -9999,
     zIndex: 'var(--react98-layer-popup-z-index)',
     ...style,
   }

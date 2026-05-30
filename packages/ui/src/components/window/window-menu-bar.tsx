@@ -390,7 +390,7 @@ export function WindowMenuBarContent({
   }, [menu.contentRef])
 
   // Keep positioning alive while exit animations keep the content mounted.
-  const position = useLayer({
+  const [position, ready] = useLayer({
     anchorRef: menu.triggerRef,
     layerRef: menuRef,
     open: shouldRender,
@@ -471,14 +471,13 @@ export function WindowMenuBarContent({
   if (!shouldRender)
     return null
 
-  const positioned = position !== null
-  const resolvedMaxHeight = position
+  const resolvedMaxHeight = ready && position
     ? Math.min(maxHeightProp ?? position.availableHeight, position.availableHeight)
     : maxHeightProp
   const layerStyle: React.CSSProperties = {
     position: 'fixed',
-    left: positioned ? position.x : -9999,
-    top: positioned ? position.y : -9999,
+    left: ready && position ? position.x : -9999,
+    top: ready && position ? position.y : -9999,
     zIndex: 'var(--react98-layer-popup-z-index)',
     ...style,
   }

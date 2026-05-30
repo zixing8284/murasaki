@@ -46,7 +46,7 @@ export function Tooltip({
     setVisible(false)
   }, [clearTimer])
 
-  const position = useLayer({
+  const [position, ready] = useLayer({
     anchorRef: wrapperRef,
     layerRef: tooltipRef,
     open: visible,
@@ -61,7 +61,7 @@ export function Tooltip({
   // Clean up timer on unmount
   useEffect(() => clearTimer, [clearTimer])
 
-  const tooltipStyle: React.CSSProperties = position
+  const tooltipStyle: React.CSSProperties = ready && position
     ? { top: position.y, left: position.x }
     : { top: 0, left: 0, visibility: 'hidden' }
 
@@ -69,7 +69,7 @@ export function Tooltip({
     <span
       ref={wrapperRef}
       className="inline-flex"
-      aria-describedby={visible && position ? tooltipId : undefined}
+      aria-describedby={visible && ready ? tooltipId : undefined}
       onPointerEnter={show}
       onPointerLeave={hide}
       onFocus={show}
@@ -81,8 +81,8 @@ export function Tooltip({
           <span
             ref={tooltipRef}
             id={tooltipId}
-            role={position ? 'tooltip' : undefined}
-            aria-hidden={position ? undefined : true}
+            role={ready ? 'tooltip' : undefined}
+            aria-hidden={ready ? undefined : true}
             className={cn(
               'fixed [z-index:var(--react98-layer-tooltip-z-index)] whitespace-nowrap px-1 py-0.5',
               'bg-(--info-window) text-(--info-text) border border-(--window-frame)',

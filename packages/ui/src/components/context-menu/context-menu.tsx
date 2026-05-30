@@ -201,7 +201,7 @@ export function ContextMenuContent({
     return new DOMRect(x, y, 0, 0)
   }, [x, y])
 
-  const position = useLayer({
+  const [position, ready] = useLayer({
     anchorRect,
     layerRef: ref,
     open,
@@ -253,11 +253,12 @@ export function ContextMenuContent({
     }
   }
 
-  // Until `useLayer` resolves a position (runs in rAF), render at the raw
-  // pointer coords so the layer is focusable and visually anchored.
-  const positioned = position !== null
-  const left = positioned ? position.x : x
-  const top = positioned ? position.y : y
+  // Until `useLayer` resolves a position (runs in rAF), render hidden at the
+  // pointer coords so the element is in the DOM for measurement but invisible.
+  // This prevents the menu from flashing at the raw pointer position before
+  // the first computed position (with correct side-flip) is ready.
+  const left = ready && position ? position.x : x
+  const top = ready && position ? position.y : y
 
   return (
     <LayerPortal>
@@ -266,7 +267,7 @@ export function ContextMenuContent({
         className={cnPure('fixed pointer-events-auto [z-index:var(--react98-layer-popup-z-index)]', className)}
         data-open=""
         data-context-menu-available-height={position?.availableHeight ?? ''}
-        style={{ left, top, ...style }}
+        style={{ left, top, opacity: ready ? undefined : 0, ...style }}
         onClick={handleClick}
         onContextMenu={event => event.preventDefault()}
         tabIndex={-1}

@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 
 export type LayerSide = 'top' | 'bottom' | 'left' | 'right'
 export type LayerAlign = 'start' | 'center' | 'end'
@@ -263,8 +263,10 @@ export function useLayer({
   estimatedHeight = DEFAULT_ESTIMATED_HEIGHT,
   estimatedWidth = DEFAULT_ESTIMATED_WIDTH,
   boundaryRef,
-}: UseLayerOptions): LayerPosition | null {
+}: UseLayerOptions): [LayerPosition | null, ready: boolean] {
   const [position, setPosition] = useState<LayerPosition | null>(null)
+  const [ready, setReady] = useState(false)
+  const computedRef = useRef(false)
 
   useLayoutEffect(() => {
     if (open)
@@ -272,6 +274,8 @@ export function useLayer({
 
     const frameId = window.requestAnimationFrame(() => {
       setPosition(null)
+      setReady(false)
+      computedRef.current = false
     })
 
     return () => window.cancelAnimationFrame(frameId)
@@ -324,6 +328,10 @@ export function useLayer({
         side: resolvedSide,
         size,
       }))
+      if (!computedRef.current) {
+        computedRef.current = true
+        setReady(true)
+      }
     }
 
     // Schedule the first compute outside the effect's synchronous body so
@@ -346,5 +354,5 @@ export function useLayer({
     }
   }, [anchorRef, anchorRectFn, layerRef, open, side, align, gap, collisionPadding, estimatedHeight, estimatedWidth, boundaryRef])
 
-  return open ? position : null
+  return [open ? position : null, open && ready]
 }

@@ -6,7 +6,7 @@ import * as React from 'react'
 
 import { useCallback, useEffect, useId, useMemo, useRef } from 'react'
 import { cn } from '../../lib/utils'
-import { useCollection, useDismissable, useRovingFocus, useScrollbar, useTypeahead } from '../../primitives'
+import { LayerPortal, useCollection, useDismissable, useLayer, useRovingFocus, useScrollbar, useTypeahead } from '../../primitives'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './select-icons'
 import { useSelectState } from './use-select-state'
 
@@ -54,18 +54,6 @@ const triggerLabelVariants = cva([
   'py-0.5',
   'pl-1',
   'pr-4.5',
-])
-
-// Select menu wrapper (positioning context for scrollbar)
-const menuWrapperVariants = cva([
-  'absolute',
-  'left-0',
-  'right-px',
-  'z-50',
-  'overflow-hidden',
-  'border',
-  'border-(--button-shadow)',
-  'bg-(--window)',
 ])
 
 // Select menu
@@ -343,6 +331,15 @@ export function Select<T = string>({
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
 
+  const [position, ready] = useLayer({
+    anchorRef: triggerRef,
+    layerRef: menuWrapperRef,
+    open,
+    side: 'bottom',
+    align: 'start',
+    gap: 0,
+  })
+
   // Outside pointerdown (anywhere outside the trigger or the menu wrapper —
   // the wrapper contains both the listbox and the custom scrollbar DOM) and
   // Escape close the select via the shared dismissable primitive.
@@ -363,11 +360,16 @@ export function Select<T = string>({
     return selectedOption.label ?? String(selectedOption.value)
   }, [selectedOption, formatDisplay])
 
-  // Menu style with max height
-  const menuStyle = useMemo(
-    () => (menuMaxHeight ? { maxHeight: menuMaxHeight } : undefined),
-    [menuMaxHeight],
-  )
+  // Menu style: cap maxHeight from edge detection, respecting explicit menuMaxHeight as upper bound
+  const menuStyle = useMemo(() => {
+    const detected = position?.availableHeight
+    if (!detected)
+      return menuMaxHeight ? { maxHeight: menuMaxHeight } : undefined
+    const capped = menuMaxHeight
+      ? Math.min(detected, typeof menuMaxHeight === 'number' ? menuMaxHeight : Infinity)
+      : detected
+    return { maxHeight: capped }
+  }, [position?.availableHeight, menuMaxHeight])
 
   const selectElement = (
     <div
@@ -411,41 +413,54 @@ export function Select<T = string>({
         )}
       </button>
 
-      {/* Select menu */}
+      {/* Select menu — portalled with viewport-aware positioning */}
       {open && (
-        <div className={cn(menuWrapperVariants())} ref={menuWrapperRef}>
-          <ul
-            className={cn(menuVariants())}
-            id={menuId}
-            ref={listboxRef}
-            role="listbox"
-            style={menuStyle}
-            tabIndex={-1}
-            onKeyDown={handleListboxKeyDown}
+        <LayerPortal>
+          <div
+            className={cn(
+              'pointer-events-auto fixed z-[var(--react98-layer-popup-z-index)] overflow-hidden border border-(--button-shadow) bg-(--window)',
+            )}
+            ref={menuWrapperRef}
+            style={{
+              left: ready && position ? position.x : -9999,
+              top: ready && position ? position.y : -9999,
+              opacity: ready ? undefined : 0,
+              width: triggerRef.current?.offsetWidth,
+            }}
           >
-            {options.map((option, index) => {
-              const isActive = index === activeIndex
-              const isSelected = option.value === selectedOption?.value
-              const optionLabel = option.label ?? String(option.value)
+            <ul
+              className={cn(menuVariants())}
+              id={menuId}
+              ref={listboxRef}
+              role="listbox"
+              style={menuStyle}
+              tabIndex={-1}
+              onKeyDown={handleListboxKeyDown}
+            >
+              {options.map((option, index) => {
+                const isActive = index === activeIndex
+                const isSelected = option.value === selectedOption?.value
+                const optionLabel = option.label ?? String(option.value)
 
-              return (
-                <SelectOptionItem
-                  active={isActive}
-                  index={index}
-                  key={`${String(option.value)}-${String(index)}`}
-                  label={optionLabel}
-                  option={option}
-                  optionRef={optionRef}
-                  register={collection.register}
-                  selected={isSelected}
-                  onClick={handleOptionClick}
-                  onKeyDown={handleOptionKeyDown}
-                  onMouseEnter={handleOptionMouseEnter}
-                />
-              )
-            })}
-          </ul>
-        </div>
+                return (
+                  <SelectOptionItem
+                    active={isActive}
+                    index={index}
+                    key={`${String(option.value)}-${String(index)}`}
+                    label={optionLabel}
+                    option={option}
+                    optionRef={optionRef}
+                    register={collection.register}
+                    selected={isSelected}
+                    onClick={handleOptionClick}
+                    onKeyDown={handleOptionKeyDown}
+                    onMouseEnter={handleOptionMouseEnter}
+                  />
+                )
+              })}
+            </ul>
+          </div>
+        </LayerPortal>
       )}
     </div>
   )

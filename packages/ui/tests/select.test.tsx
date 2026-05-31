@@ -70,7 +70,7 @@ describe('select', () => {
     )
     await screen.getByRole('combobox').click()
 
-    const options = screen.container.querySelectorAll('[role="option"]')
+    const options = document.querySelectorAll('[role="option"]')
     expect(options).toHaveLength(3)
   })
 
@@ -84,7 +84,7 @@ describe('select', () => {
     const menuLayer = listbox.parentElement as HTMLDivElement
 
     await vi.waitFor(() => {
-      const vBar = screen.container.querySelector('[data-murasaki-vbar]') as HTMLElement | null
+      const vBar = document.querySelector('[data-murasaki-vbar]') as HTMLElement | null
       expect(vBar).not.toBeNull()
       expect(getComputedStyle(vBar!).display).toBe('block')
       expect(vBar!.parentElement).toBe(menuLayer)
@@ -244,7 +244,7 @@ describe('select', () => {
 
     // Wait for menu to appear and first option to be focused
     await vi.waitFor(() => {
-      const listbox = screen.container.querySelector('[role="listbox"]')
+      const listbox = document.querySelector('[role="listbox"]')
       expect(listbox).not.toBeNull()
     })
 
@@ -253,7 +253,7 @@ describe('select', () => {
 
     // Wait for Banana to receive focus
     await vi.waitFor(() => {
-      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      const focused = document.querySelector('[role="option"]:focus') as HTMLElement
       expect(focused?.textContent).toBe('Banana')
     })
 
@@ -275,19 +275,19 @@ describe('select', () => {
     await userEvent.keyboard('{Enter}')
 
     await vi.waitFor(() => {
-      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      const focused = document.querySelector('[role="option"]:focus') as HTMLElement
       expect(focused?.textContent).toBe('Apple')
     })
 
     await userEvent.keyboard('{End}')
     await vi.waitFor(() => {
-      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      const focused = document.querySelector('[role="option"]:focus') as HTMLElement
       expect(focused?.textContent).toBe('Cherry')
     })
 
     await userEvent.keyboard('{Home}')
     await vi.waitFor(() => {
-      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      const focused = document.querySelector('[role="option"]:focus') as HTMLElement
       expect(focused?.textContent).toBe('Apple')
     })
   })
@@ -302,7 +302,7 @@ describe('select', () => {
 
     await userEvent.keyboard('c')
     await vi.waitFor(() => {
-      const focused = screen.container.querySelector('[role="option"]:focus') as HTMLElement
+      const focused = document.querySelector('[role="option"]:focus') as HTMLElement
       expect(focused?.textContent).toBe('Cherry')
     })
 

@@ -25,10 +25,3 @@ jobs:
       - run: pnpm lint
 
       - run: pnpm ui:build
-
-      - name: Upload UI dist artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ui-dist
-          path: packages/ui/dist
-          if-no-files-found: error

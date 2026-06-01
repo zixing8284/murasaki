@@ -19,6 +19,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  # Opt in early to Node 24 for all JavaScript actions in this workflow.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
   # Project page subpath served by GitHub Pages
   # (https://zixing8284.github.io/murasaki/).
   DEPLOY_BASE_PATH: /murasaki
@@ -43,18 +45,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Download UI dist from CI
-        if: ${{ github.event_name == 'workflow_run' }}
-        uses: actions/download-artifact@v5
-        with:
-          name: ui-dist
-          path: packages/ui/dist
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build UI (manual dispatch fallback)
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: pnpm ui:build
+      - run: pnpm ui:build
 
       - name: Build docs (with Pages base path)
         run: pnpm docs:build

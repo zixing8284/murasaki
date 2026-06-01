@@ -6,6 +6,7 @@ import { useProcess, useProcessActions } from '../../../contexts/process'
 import { useFullscreen } from '../../../hooks/use-fullscreen'
 import { LocalMediaFileInput } from './components/local-media-file-input'
 import { MediaDisplay } from './components/media-display'
+import { MediaImportErrorDialog } from './components/media-import-error-dialog'
 import { MediaPlayerControls } from './components/media-player-controls'
 import { MediaPlayerMenuBar } from './components/media-player-menu-bar'
 import { MediaPlayerStatusBar } from './components/media-player-status-bar'
@@ -159,10 +160,21 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
         : (
             <MediaPlayerStatusBar
               currentTrackTitle={player.currentTrack?.title}
+              errorMessage={player.errorMessage}
               formattedCurrentTime={player.formattedCurrentTime}
               formattedDuration={player.formattedDuration}
             />
           )}
+
+      {player.localImportError
+        ? (
+            <MediaImportErrorDialog
+              fileName={player.localImportError.fileName}
+              message={player.localImportError.message}
+              onClose={player.clearLocalImportError}
+            />
+          )
+        : null}
     </div>
   )
 }

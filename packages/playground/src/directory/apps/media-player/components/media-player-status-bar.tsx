@@ -3,19 +3,21 @@ import { WindowStatusBar, WindowStatusBarField } from '@murasaki/react98'
 
 interface MediaPlayerStatusBarProps {
   currentTrackTitle: string | undefined
+  errorMessage: string | null
   formattedCurrentTime: string
   formattedDuration: string
 }
 
 export function MediaPlayerStatusBar({
   currentTrackTitle,
+  errorMessage,
   formattedCurrentTime,
   formattedDuration,
 }: MediaPlayerStatusBarProps): JSX.Element {
   return (
     <WindowStatusBar>
       <WindowStatusBarField className="truncate">
-        {currentTrackTitle ?? 'Ready'}
+        {errorMessage ?? currentTrackTitle ?? 'Ready'}
       </WindowStatusBarField>
       <WindowStatusBarField grow={false} className="w-20">
         {formattedCurrentTime}

@@ -12,6 +12,7 @@ export interface MediaState {
   duration: number
   isPlaying: boolean
   loading: boolean
+  errorMessage: string | null
   currentTrack: Track | null
   volume: number
   muted: boolean
@@ -21,10 +22,12 @@ export interface MediaState {
 type StateChangeListener = (state: MediaState) => void
 
 export class MediaManager {
+  private static readonly LOCAL_MEDIA_LOAD_TIMEOUT_MS = 8000
   private isSeeking = false
   private pendingSeekTime: number | null = null
   private mediaElement: HTMLMediaElement | null = null
   private currentSrc = ''
+  private loadTimeoutId: number | null = null
   private listeners: Set<StateChangeListener> = new Set()
   private eventCleanup: (() => void) | null = null
   private state: MediaState = {
@@ -32,6 +35,7 @@ export class MediaManager {
     duration: 0,
     isPlaying: false,
     loading: false,
+    errorMessage: null,
     currentTrack: null,
     volume: 100,
     muted: false,
@@ -77,6 +81,50 @@ export class MediaManager {
     this.notifyStateChange()
   }
 
+  private clearLoadTimeout(): void {
+    if (this.loadTimeoutId != null) {
+      window.clearTimeout(this.loadTimeoutId)
+      this.loadTimeoutId = null
+    }
+  }
+
+  private startLocalLoadTimeout(track: Track): void {
+    this.clearLoadTimeout()
+    if (!track.url.startsWith('blob:'))
+      return
+    this.loadTimeoutId = window.setTimeout(() => {
+      const el = this.mediaElement
+      if (!el)
+        return
+      if (!this.state.loading)
+        return
+      const metadataReady = el.readyState >= HTMLMediaElement.HAVE_METADATA
+      if (metadataReady)
+        return
+
+      this.updateState({
+        loading: false,
+        isPlaying: false,
+        errorMessage: 'This media could not be decoded in this browser. The MP4 codec might be unsupported in Firefox.',
+      })
+    }, MediaManager.LOCAL_MEDIA_LOAD_TIMEOUT_MS)
+  }
+
+  private buildDecodeErrorMessage(track: Track, mediaErrorCode?: number): string {
+    const isLocalBlob = track.url.startsWith('blob:')
+    const prefix = track.type === 'video' ? 'Video' : 'Audio'
+
+    if (mediaErrorCode === 3 || mediaErrorCode === 4) {
+      return isLocalBlob
+        ? `${prefix} could not be decoded. This MP4 codec might be unsupported in Firefox.`
+        : `${prefix} could not be decoded by the browser.`
+    }
+
+    return isLocalBlob
+      ? `${prefix} could not be loaded in this browser. The media encoding may be unsupported.`
+      : `${prefix} could not be loaded.`
+  }
+
   private setupEventListeners(el: HTMLMediaElement): void {
     const handlers: Array<[string, EventListener]> = []
 
@@ -86,7 +134,7 @@ export class MediaManager {
     }
 
     on('loadstart', () => {
-      this.updateState({ loading: true })
+      this.updateState({ loading: true, errorMessage: null })
     })
 
     on('loadedmetadata', () => {
@@ -95,7 +143,8 @@ export class MediaManager {
     })
 
     on('canplay', () => {
-      this.updateState({ loading: false })
+      this.clearLoadTimeout()
+      this.updateState({ loading: false, errorMessage: null })
     })
 
     on('play', () => {
@@ -135,7 +184,15 @@ export class MediaManager {
     on('error', () => {
       if ((el as HTMLMediaElement).error?.code === 4 && !this.currentSrc)
         return
-      this.updateState({ loading: false, isPlaying: false })
+
+      const track = this.state.currentTrack
+      const errorCode = (el as HTMLMediaElement).error?.code
+      const errorMessage = track
+        ? this.buildDecodeErrorMessage(track, errorCode)
+        : 'Media could not be loaded.'
+
+      this.clearLoadTimeout()
+      this.updateState({ loading: false, isPlaying: false, errorMessage })
     })
 
     on('volumechange', () => {
@@ -170,9 +227,12 @@ export class MediaManager {
     this.updateState({
       currentTrack: track,
       loading: true,
+      errorMessage: null,
       currentTime: 0,
       duration: isNew ? 0 : this.state.duration,
     })
+
+    this.startLocalLoadTimeout(track)
 
     if (isNew)
       el.load()
@@ -236,6 +296,7 @@ export class MediaManager {
   }
 
   destroy(): void {
+    this.clearLoadTimeout()
     const el = this.mediaElement
     if (el) {
       el.pause()

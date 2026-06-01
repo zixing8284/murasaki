@@ -33,8 +33,13 @@ const VIDEO_EXTENSIONS = /\.(?:mp4|webm|ogv|mov|avi|mkv)$/i
 const ACCEPTED_MEDIA_TYPES = 'audio/*,video/*'
 
 function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
-  if (file)
-    return file.type.startsWith('video/') ? 'video' : 'audio'
+  if (file) {
+    if (file.type.startsWith('video/'))
+      return 'video'
+    if (file.type.startsWith('audio/'))
+      return 'audio'
+    return VIDEO_EXTENSIONS.test(file.name) ? 'video' : 'audio'
+  }
   if (url && VIDEO_EXTENSIONS.test(url))
     return 'video'
   return 'audio'
@@ -52,9 +57,16 @@ interface PlayerState {
   playOrderIndices: number[]
 }
 
+interface LocalImportError {
+  fileName: string
+  message: string
+}
+
 export interface UseMediaPlayerResult {
   isPlaying: boolean
   loading: boolean
+  errorMessage: string | null
+  localImportError: LocalImportError | null
   currentTime: number
   duration: number
   currentTrack: Track | null
@@ -84,13 +96,89 @@ export interface UseMediaPlayerResult {
   toggleMute: () => void
   loadLocalFile: (file: File, options?: { replacePlaylist?: boolean }) => void
   addLocalFile: (file: File) => void
+  clearLocalImportError: () => void
   openFilePicker: () => void
   getMediaElement: () => HTMLMediaElement | null
   acceptedMediaTypes: string
 }
 
+const LOCAL_MEDIA_PROBE_TIMEOUT_MS = 4000
+
+function canPlayMime(type: string, trackType: 'audio' | 'video'): boolean {
+  const mime = type.trim()
+  if (!mime)
+    return true
+  const mediaEl = document.createElement(trackType)
+  return mediaEl.canPlayType(mime) !== ''
+}
+
+async function probeLocalMediaFile(file: File, trackType: 'audio' | 'video'): Promise<string | null> {
+  if (!canPlayMime(file.type, trackType)) {
+    return `This browser does not report support for ${file.type}.`
+  }
+
+  return await new Promise<string | null>((resolve) => {
+    const probeUrl = URL.createObjectURL(file)
+    const mediaEl = document.createElement(trackType)
+    let settled = false
+    let timeoutId: number | undefined
+
+    function cleanup(): void {
+      mediaEl.removeEventListener('loadedmetadata', onLoadedMetadata)
+      mediaEl.removeEventListener('error', onError)
+      mediaEl.removeEventListener('stalled', onStalled)
+      mediaEl.removeEventListener('abort', onAbort)
+      if (timeoutId != null)
+        window.clearTimeout(timeoutId)
+      mediaEl.pause()
+      mediaEl.removeAttribute('src')
+      mediaEl.load()
+      URL.revokeObjectURL(probeUrl)
+    }
+
+    function finish(error: string | null): void {
+      if (settled)
+        return
+      settled = true
+      cleanup()
+      resolve(error)
+    }
+
+    function onLoadedMetadata(): void {
+      finish(null)
+    }
+
+    function onError(): void {
+      finish(trackType === 'video'
+        ? 'This video could not be decoded in this browser. The MP4 codec may be unsupported in Firefox.'
+        : 'This audio file could not be decoded in this browser.')
+    }
+
+    function onStalled(): void {
+      finish('The browser could not read metadata for this media file.')
+    }
+
+    function onAbort(): void {
+      finish('Media loading was interrupted before playback started.')
+    }
+
+    timeoutId = window.setTimeout(() => {
+      finish('Timed out while checking media compatibility. The file may be encoded with an unsupported codec.')
+    }, LOCAL_MEDIA_PROBE_TIMEOUT_MS)
+
+    mediaEl.preload = 'metadata'
+    mediaEl.addEventListener('loadedmetadata', onLoadedMetadata)
+    mediaEl.addEventListener('error', onError)
+    mediaEl.addEventListener('stalled', onStalled)
+    mediaEl.addEventListener('abort', onAbort)
+    mediaEl.src = probeUrl
+    mediaEl.load()
+  })
+}
+
 export function useMediaPlayer(): UseMediaPlayerResult {
   const [mediaState, setMediaState] = useState<MediaState | null>(null)
+  const [localImportError, setLocalImportError] = useState<LocalImportError | null>(null)
   const [model, setModel] = useState<PlayerState>(() => ({
     playlist: DEFAULT_PLAYLIST,
     currentIndex: -1,
@@ -102,6 +190,7 @@ export function useMediaPlayer(): UseMediaPlayerResult {
   const mediaRef = useRef<HTMLVideoElement | null>(null)
   const objectUrlsRef = useRef<Set<string>>(new Set())
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const localImportSeqRef = useRef(0)
 
   useEffect(() => {
     const manager = acquireManager()
@@ -304,7 +393,7 @@ export function useMediaPlayer(): UseMediaPlayerResult {
   )
 
   /** Load a local file and optionally replace previous local selections. */
-  const loadLocalFile = useCallback((file: File, options?: { replacePlaylist?: boolean }) => {
+  const loadLocalFileInternal = useCallback((file: File, options?: { replacePlaylist?: boolean }) => {
     const objectUrl = URL.createObjectURL(file)
 
     if (options?.replacePlaylist) {
@@ -336,10 +425,34 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     managerRef.current?.loadAndPlay(track)
   }, [])
 
+  const loadLocalFile = useCallback((file: File, options?: { replacePlaylist?: boolean }) => {
+    const requestId = ++localImportSeqRef.current
+    setLocalImportError(null)
+
+    void (async () => {
+      const type = detectTrackType(file)
+      const probeError = await probeLocalMediaFile(file, type)
+
+      if (requestId !== localImportSeqRef.current)
+        return
+
+      if (probeError) {
+        setLocalImportError({ fileName: file.name, message: probeError })
+        return
+      }
+
+      loadLocalFileInternal(file, options)
+    })()
+  }, [loadLocalFileInternal])
+
   /** Add a local file to the playlist and auto-play it */
   const addLocalFile = useCallback((file: File) => {
     loadLocalFile(file)
   }, [loadLocalFile])
+
+  const clearLocalImportError = useCallback(() => {
+    setLocalImportError(null)
+  }, [])
 
   /** Open file picker to load local media */
   const openFilePicker = useCallback(() => {
@@ -407,6 +520,8 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     // Media state
     isPlaying: mediaState?.isPlaying ?? false,
     loading: mediaState?.loading ?? false,
+    errorMessage: mediaState?.errorMessage ?? null,
+    localImportError,
     currentTime: mediaState?.currentTime ?? 0,
     duration: mediaState?.duration ?? 0,
     currentTrack,
@@ -442,6 +557,7 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     toggleMute,
     loadLocalFile,
     addLocalFile,
+    clearLocalImportError,
     openFilePicker,
 
     // Media element access (for audio visualizer)

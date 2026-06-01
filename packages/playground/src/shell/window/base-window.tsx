@@ -75,7 +75,7 @@ export function BaseWindow({
       <WindowPortal container={portalContainer}>
         <WindowFrame
           ref={frameRef}
-          className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0' : ''} ${className ?? ''}`}
+          className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''} ${className ?? ''}`}
           style={{
             zIndex,
             width: defaultSize?.width,

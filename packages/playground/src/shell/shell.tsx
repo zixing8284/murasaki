@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/desktop-files'
 import { getStartupAppIds, useProcessActions } from '../contexts/process'
 import { useCrtEffect } from '../hooks/use-crt-effect'
+import { useCrtTuning } from '../hooks/use-crt-tuning'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { assetPath } from '../lib/asset-path'
 import { DESKTOP_WALLPAPER_IMAGE } from '../lib/playground-assets'
@@ -54,6 +55,7 @@ export function Shell(): React.ReactElement {
   const desktopRef = useRef<DesktopHandle>(null)
   const dragDepthRef = useRef(0)
   const [crtEnabled] = useCrtEffect()
+  const [crtTuning] = useCrtTuning()
   const [gradientEnabled] = useGradientTitlebar()
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
 
@@ -144,7 +146,7 @@ export function Shell(): React.ReactElement {
 
         {/* Screen surround — black with inset vignette, CRT overlay when enabled */}
         <div className="relative z-1 h-full w-full overflow-hidden bg-black p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]">
-          {crtEnabled && <CrtOverlay />}
+          {crtEnabled && <CrtOverlay settings={crtTuning} />}
           {/* Desktop */}
           <div
             ref={screenRef}

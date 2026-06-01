@@ -54,10 +54,106 @@
     70%  { opacity: 0.72; }
     100% { opacity: 0.7; }
   }
+
+  @keyframes crtJitter {
+    0%, 100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    6% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * 1.35), calc(var(--crt-jitter-amplitude, 0.35px) * -0.8), 0);
+    }
+
+    12% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * -1.6), calc(var(--crt-jitter-amplitude, 0.35px) * 1.1), 0);
+    }
+
+    19% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * 0.75), calc(var(--crt-jitter-amplitude, 0.35px) * -1.35), 0);
+    }
+
+    8% {
+      transform: translate3d(var(--crt-jitter-amplitude, 0.35px), calc(var(--crt-jitter-amplitude, 0.35px) * -0.6), 0);
+    }
+
+    24% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * -0.86), calc(var(--crt-jitter-amplitude, 0.35px) * 0.43), 0);
+    }
+
+    37% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * 1.42), calc(var(--crt-jitter-amplitude, 0.35px) * 0.92), 0);
+    }
+
+    52% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * 0.57), calc(var(--crt-jitter-amplitude, 0.35px) * 0.71), 0);
+    }
+
+    64% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * -1.22), calc(var(--crt-jitter-amplitude, 0.35px) * -0.95), 0);
+    }
+
+    76% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * -0.71), calc(var(--crt-jitter-amplitude, 0.35px) * -0.43), 0);
+    }
+
+    91% {
+      transform: translate3d(calc(var(--crt-jitter-amplitude, 0.35px) * 1.05), calc(var(--crt-jitter-amplitude, 0.35px) * -0.58), 0);
+    }
+  }
+
+  @keyframes crtRollUp {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 0.35;
+    }
+
+    48% {
+      opacity: 0.2;
+    }
+
+    100% {
+      transform: translateY(-120vh);
+      opacity: 0;
+    }
+  }
+}
+
+.crt-jitter {
+  contain: paint;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation: crtJitter 3.6s steps(1, end) infinite;
+}
+
+.crt-scanlines {
+  contain: paint;
+  opacity: 0.35;
+}
+
+.crt-roll {
+  contain: paint;
+  height: 1%;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation: crtRollUp var(--crt-roll-duration, 12s) linear infinite;
+  background-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0) 0%,
+    rgb(0 0 0 / var(--crt-roll-opacity, 0.14)) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .crt-overlay {
+  .crt-jitter,
+  .crt-roll {
     animation: none;
   }
 }

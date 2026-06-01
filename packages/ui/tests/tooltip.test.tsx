@@ -240,7 +240,7 @@ describe('tooltip', () => {
       expect(tooltip).not.toBeNull()
 
       const wrapperRect = trigger.parentElement!.getBoundingClientRect()
-      const tooltipWidth = tooltip!.getBoundingClientRect().width
+      const tooltipWidth = tooltip!.clientWidth
       const expectedLeft = wrapperRect.left + wrapperRect.width / 2 - tooltipWidth / 2
 
       expect(Number.parseFloat(tooltip!.style.left)).toBeCloseTo(expectedLeft, 0)

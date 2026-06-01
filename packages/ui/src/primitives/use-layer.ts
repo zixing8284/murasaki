@@ -95,10 +95,14 @@ function getLayerSize(
     return { height: estimatedHeight, width: estimatedWidth }
   }
 
-  const rect = layer.getBoundingClientRect()
+  // Use clientHeight/clientWidth (content + padding, no border) instead of
+  // getBoundingClientRect() (content + padding + border). The returned size
+  // is used as a CSS maxHeight/maxWidth constraint, which operates on the
+  // content box — including border would overstate the available space and
+  // create a feedback loop when the layer has a border.
   return {
-    height: rect.height || estimatedHeight,
-    width: rect.width || estimatedWidth,
+    height: layer.clientHeight || estimatedHeight,
+    width: layer.clientWidth || estimatedWidth,
   }
 }
 

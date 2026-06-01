@@ -1,7 +1,9 @@
 name: Deploy Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -23,24 +25,36 @@ env:
 
 jobs:
   build:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 10.27.0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm lint
+      - name: Download UI dist from CI
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: actions/download-artifact@v5
+        with:
+          name: ui-dist
+          path: packages/ui/dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: pnpm ui:build
+      - name: Build UI (manual dispatch fallback)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: pnpm ui:build
 
       - name: Build docs (with Pages base path)
         run: pnpm docs:build
@@ -51,9 +65,9 @@ jobs:
       - name: Build playground (with Pages base path)
         run: pnpm play:build
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: packages/playground/dist
 
@@ -65,4 +79,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

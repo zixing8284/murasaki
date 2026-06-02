@@ -1,5 +1,5 @@
 import type { ThemeId } from '@murasaki/react98'
-import type { ProcessComponentProps } from '../../../contexts/process'
+import type { ProcessComponentProps } from '../../../contexts/process/types'
 import {
   Button,
   Checkbox,
@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@murasaki/react98'
 import { useState } from 'react'
-import { useProcessActions } from '../../../contexts/process'
+import { useProcessActions } from '../../../contexts/process/hooks'
 import { useCrtEffect } from '../../../hooks/use-crt-effect'
 import { areCrtTuningSettingsEqual, useCrtTuning } from '../../../hooks/use-crt-tuning'
 import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'

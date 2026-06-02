@@ -1,10 +1,10 @@
-import type { AppId } from '../contexts/process'
-import { appDirectory, DEFAULT_ICON } from '../contexts/process'
+import type { AppId } from '../contexts/process/directory'
+import appDirectory, { DEFAULT_ICON } from '../contexts/process/directory'
 import { assetPath } from '../lib/asset-path'
 
 const sizeClass = {
-  sm: 'w-4 h-4',
-  lg: 'w-8 h-8',
+  sm: 'size-4',
+  lg: 'size-8',
 } as const
 
 const shortcutOverlay = {

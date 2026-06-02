@@ -1,5 +1,5 @@
 import type { JSX, PointerEvent as ReactPointerEvent } from 'react'
-import { useCallback, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { formatTime } from '../format-time'
 import { SeekThumbIcon } from '../media-player-icons'
 
@@ -16,7 +16,7 @@ export function SeekBar({ progress, duration, onSeek }: SeekBarProps): JSX.Eleme
   const [isDragging, setIsDragging] = useState(false)
   const [dragProgress, setDragProgress] = useState(0)
 
-  const getPercentageFromEvent = useCallback((event: ReactPointerEvent | PointerEvent) => {
+  const getPercentageFromEvent = (event: ReactPointerEvent | PointerEvent): number => {
     const rect = trackRef.current?.getBoundingClientRect()
 
     if (!rect)
@@ -25,9 +25,9 @@ export function SeekBar({ progress, duration, onSeek }: SeekBarProps): JSX.Eleme
     const offsetX = event.clientX - rect.left
 
     return Math.max(0, Math.min(100, (offsetX / rect.width) * 100))
-  }, [])
+  }
 
-  const handlePointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (duration <= 0)
       return
 
@@ -35,22 +35,22 @@ export function SeekBar({ progress, duration, onSeek }: SeekBarProps): JSX.Eleme
     event.currentTarget.setPointerCapture(event.pointerId)
     setIsDragging(true)
     setDragProgress(getPercentageFromEvent(event))
-  }, [duration, getPercentageFromEvent])
+  }
 
-  const handlePointerMove = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (!isDragging)
       return
 
     setDragProgress(getPercentageFromEvent(event))
-  }, [getPercentageFromEvent, isDragging])
+  }
 
-  const handlePointerUp = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (!isDragging)
       return
 
     setIsDragging(false)
     onSeek(getPercentageFromEvent(event))
-  }, [getPercentageFromEvent, isDragging, onSeek])
+  }
 
   const displayProgress = isDragging ? dragProgress : progress
 

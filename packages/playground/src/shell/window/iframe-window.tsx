@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
-import { useProcess, useProcessActions } from '../../contexts/process'
+import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
 import { RndWindow } from './rnd-window'
@@ -79,7 +79,7 @@ export function IframeWindow({
        *   page when touching inside the iframe area.
        */}
       <div
-        className={`w-full h-full relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
+        className={`size-full relative overscroll-contain touch-none ${iframeLoaded ? '' : 'opacity-0'}`}
         onPointerDown={(e) => {
           e.stopPropagation()
           actions.activate(windowId)
@@ -100,7 +100,7 @@ export function IframeWindow({
           src={assetPath(src)}
           sandbox={sandbox}
           referrerPolicy={referrerPolicy}
-          className={`w-full h-full border-none block ${isInteracting ? 'pointer-events-none' : ''}`}
+          className={`size-full border-none block ${isInteracting ? 'pointer-events-none' : ''}`}
           title={win.process.title}
         />
         {/*

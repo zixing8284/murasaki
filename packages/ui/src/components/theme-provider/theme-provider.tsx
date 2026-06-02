@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 
 import type { ThemeId } from './theme-context'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ThemeContext, themeIds } from './theme-context'
 
 export { themeIds, themeLabels, useTheme } from './theme-context'
@@ -45,7 +45,7 @@ export function ThemeProvider(props: ThemeProviderProps): React.ReactElement {
     return DEFAULT_THEME
   })
 
-  const setTheme = useCallback((id: ThemeId) => {
+  const setTheme = (id: ThemeId): void => {
     setThemeId(id)
     if (storageKey === null)
       return
@@ -53,7 +53,7 @@ export function ThemeProvider(props: ThemeProviderProps): React.ReactElement {
       localStorage.setItem(storageKey, id)
     }
     catch { /* ignore */ }
-  }, [storageKey])
+  }
 
   // Toggle data-theme on the chosen root. Skip writes when the attribute already
   // matches the desired state to avoid the cleanup→set churn that previously caused

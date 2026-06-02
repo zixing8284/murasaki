@@ -39,9 +39,9 @@ export function useIframeWindow({
   const [isLoading, setIsLoading] = useState(true)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
-  const focusIframe = useCallback(() => {
+  const focusIframe = (): void => {
     iframeRef.current?.focus()
-  }, [])
+  }
 
   const setIframeRef = useCallback((el: HTMLIFrameElement | null) => {
     iframeRef.current = el
@@ -95,7 +95,7 @@ export function useIframeWindow({
    *     if (e.data?.type === 'murasaki:cancel') { /* cancel drag/draw operation *\/ }
    *   })
    */
-  const cancelIframeInteraction = useCallback(() => {
+  const cancelIframeInteraction = (): void => {
     const iframe = iframeRef.current
     if (!iframe)
       return
@@ -115,7 +115,7 @@ export function useIframeWindow({
     catch {
       // May fail for cross-origin
     }
-  }, [])
+  }
 
   return {
     iframeRef: setIframeRef,

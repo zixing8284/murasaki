@@ -90,7 +90,7 @@ export function OptionButton({
     = groupValue !== undefined ? groupValue === value : undefined
   const currentChecked = isChecked ?? checked
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.checked && value !== undefined) {
       onGroupValueChange?.(String(value))
     }
@@ -109,7 +109,7 @@ export function OptionButton({
         type="radio"
         value={value}
         {...props}
-        onChange={handleChange}
+        onChange={handleOptionChange}
       />
       <OptionButtonLabel
         checked={currentChecked ?? false}
@@ -164,13 +164,13 @@ export function OptionGroup(
   const isControlled = value !== undefined
   const currentValue = value ?? internalValue
 
-  const handleValueChange = React.useCallback((nextValue: string) => {
+  const handleValueChange = (nextValue: string): void => {
     if (!isControlled) {
       setInternalValue(nextValue)
     }
 
     onValueChange?.(nextValue)
-  }, [isControlled, onValueChange])
+  }
 
   return (
     <OptionButtonGroupContext value={{ name, onValueChange: handleValueChange, value: currentValue }}>

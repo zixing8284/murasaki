@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '../../lib/utils'
-import { useRovingFocus } from '../../primitives'
+import { useRovingFocus } from '../../primitives/use-roving-focus'
 
 const treeViewItemStyles = cva(
   [
@@ -222,27 +222,27 @@ interface TreeViewProps {
   className?: string
 }
 
+// Skip treeitems inside collapsed branches. A <summary>'s own <details>
+// does not count, because the summary itself is visible even when its
+// children are collapsed.
+function filterItem(el: HTMLElement): boolean {
+  let cursor: HTMLElement | null
+    = el.tagName === 'SUMMARY'
+      ? el.parentElement?.parentElement ?? null
+      : el.parentElement
+  while (cursor) {
+    if (cursor.tagName === 'DETAILS' && !(cursor as HTMLDetailsElement).open)
+      return false
+    cursor = cursor.parentElement
+  }
+  return true
+}
+
 function TreeView({
   children,
   className,
 }: TreeViewProps): React.ReactElement {
   const ref = React.useRef<HTMLUListElement>(null)
-
-  // Skip treeitems inside collapsed branches. A <summary>'s own <details>
-  // does not count, because the summary itself is visible even when its
-  // children are collapsed.
-  const filterItem = React.useCallback((el: HTMLElement): boolean => {
-    let cursor: HTMLElement | null
-      = el.tagName === 'SUMMARY'
-        ? el.parentElement?.parentElement ?? null
-        : el.parentElement
-    while (cursor) {
-      if (cursor.tagName === 'DETAILS' && !(cursor as HTMLDetailsElement).open)
-        return false
-      cursor = cursor.parentElement
-    }
-    return true
-  }, [])
 
   useRovingFocus({
     enabled: true,

@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '../../lib/utils'
-import { useScrollbar } from '../../primitives'
+import { useScrollbar } from '../../primitives/scrollbar/use-scrollbar'
 
 // Valid input types for TextBox
 type TextBoxInputType
@@ -124,13 +124,13 @@ export function TextBox({
   // Label content: prefer children, fallback to label prop
   const labelContent = children ?? label
 
-  const handleInputChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     onValueChange?.(event.target.value)
-  }, [onValueChange])
+  }
 
-  const handleTextareaChange = React.useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
     onValueChange?.(event.target.value)
-  }, [onValueChange])
+  }
 
   const fieldElement = multiline
     ? (

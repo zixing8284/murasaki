@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { useCallback, useId, useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
 
 import { RectThumbIcon, TriangleThumbIcon } from './slider-icons'
@@ -203,24 +203,21 @@ export function Slider({
   const maxNum = Number(max)
   const percentage = ((currentValue - minNum) / (maxNum - minNum)) * 100
 
-  const handlePointerDown = useCallback(() => {
+  const handlePointerDown = (): void => {
     setIsPointerDown(true)
-  }, [])
-  const handlePointerUp = useCallback(() => {
+  }
+  const handlePointerUp = (): void => {
     setIsPointerDown(false)
-  }, [])
+  }
 
   // Handle input change
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = Number(e.target.value)
-      if (!isControlled) {
-        setInternalValue(newValue)
-      }
-      onValueChange?.(newValue)
-    },
-    [isControlled, onValueChange],
-  )
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const newValue = Number(e.target.value)
+    if (!isControlled) {
+      setInternalValue(newValue)
+    }
+    onValueChange?.(newValue)
+  }
 
   // Calculate thumb position (centered on track)
   const getThumbStyle = (): React.CSSProperties => {
@@ -280,7 +277,7 @@ export function Slider({
           dir={vertical ? 'rtl' : undefined}
           disabled={disabled}
           {...props}
-          onChange={handleChange}
+          onChange={handleValueChange}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}

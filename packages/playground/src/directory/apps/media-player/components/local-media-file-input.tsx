@@ -11,7 +11,7 @@ export function LocalMediaFileInput({
   acceptedMediaTypes,
   onAddLocalFile,
 }: LocalMediaFileInputProps): JSX.Element {
-  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
 
     if (file)
@@ -26,7 +26,8 @@ export function LocalMediaFileInput({
       type="file"
       accept={acceptedMediaTypes}
       className="hidden"
-      onChange={handleChange}
+      aria-hidden="true"
+      onChange={handleFileChange}
     />
   )
 }

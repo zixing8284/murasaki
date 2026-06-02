@@ -3,7 +3,9 @@ import type { WindowMenuBarContextValue, WindowMenuBarDirection, WindowMenuBarMe
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../lib/utils'
-import { LayerPortal, useDismissable, useLayer } from '../../primitives'
+import { LayerPortal } from '../../primitives/layer-root/layer-portal'
+import { useDismissable } from '../../primitives/use-dismissable'
+import { useLayer } from '../../primitives/use-layer'
 import { Menu } from '../menu/menu'
 import {
   useWindowMenuBarContext,
@@ -92,13 +94,13 @@ export function WindowMenuBar({
       ref.current = node
   }, [ref])
 
-  const setValue = React.useCallback((nextValue: WindowMenuBarValue) => {
+  const setValue = (nextValue: WindowMenuBarValue): void => {
     if (!isControlled)
       setUncontrolledValue(nextValue)
     onValueChange?.(nextValue)
-  }, [isControlled, onValueChange])
+  }
 
-  const focusMenu = React.useCallback((currentValue: string, direction: WindowMenuBarDirection, openNext: boolean) => {
+  const focusMenu = (currentValue: string, direction: WindowMenuBarDirection, openNext: boolean): void => {
     const menuBar = menuBarRef.current
     if (!menuBar)
       return
@@ -122,7 +124,7 @@ export function WindowMenuBar({
     nextTrigger.focus()
     if (openNext && nextValue)
       setValue(nextValue)
-  }, [setValue])
+  }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     onKeyDown?.(event)
@@ -150,11 +152,11 @@ export function WindowMenuBar({
     }
   }
 
-  const contextValue = React.useMemo<WindowMenuBarContextValue>(() => ({
+  const contextValue: WindowMenuBarContextValue = {
     value,
     setValue,
     focusMenu,
-  }), [value, setValue, focusMenu])
+  }
 
   return (
     <WindowMenuBarContext value={contextValue}>
@@ -200,7 +202,7 @@ export function WindowMenuBarMenu({
     contentRef.current = node
   }, [])
 
-  const contextValue = React.useMemo<WindowMenuBarMenuContextValue>(() => ({
+  const contextValue: WindowMenuBarMenuContextValue = {
     value,
     open: menubar.value === value,
     triggerId,
@@ -209,7 +211,7 @@ export function WindowMenuBarMenu({
     contentRef,
     setTriggerRef,
     setContentRef,
-  }), [value, menubar.value, triggerId, contentId, setTriggerRef, setContentRef])
+  }
 
   return <WindowMenuBarMenuContext value={contextValue}>{children}</WindowMenuBarMenuContext>
 }
@@ -292,7 +294,7 @@ export function WindowMenuBarTrigger({
       ref.current = node
   }, [ref, setContextTriggerRef])
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleTriggerClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     onClick?.(event)
     if (event.defaultPrevented || disabled)
       return
@@ -323,7 +325,7 @@ export function WindowMenuBarTrigger({
       data-window-menu-bar-value={menu.value}
       disabled={disabled}
       className={cn(menuBarItemVariants({ selected: menu.open }), className)}
-      onClick={handleClick}
+      onClick={handleTriggerClick}
       onPointerEnter={handlePointerEnter}
       {...props}
     />
@@ -415,7 +417,7 @@ export function WindowMenuBarContent({
     boundaryRef,
   })
 
-  const layerRefs = React.useMemo(() => [menu.triggerRef, menu.contentRef], [menu.triggerRef, menu.contentRef])
+  const layerRefs = [menu.triggerRef, menu.contentRef]
   useDismissable({
     enabled: menu.open,
     onDismiss: () => menubar.setValue(null),
@@ -430,7 +432,7 @@ export function WindowMenuBarContent({
     firstItem?.focus()
   }, [menu.open])
 
-  const handleClick = (event: React.MouseEvent<HTMLMenuElement>): void => {
+  const handleContentClick = (event: React.MouseEvent<HTMLMenuElement>): void => {
     onClick?.(event)
     if (!closeOnItemClick || event.defaultPrevented)
       return
@@ -511,7 +513,7 @@ export function WindowMenuBarContent({
         )}
         style={layerStyle}
         maxHeight={resolvedMaxHeight}
-        onClick={handleClick}
+        onClick={handleContentClick}
         onKeyDown={handleKeyDown}
         onAnimationEnd={handleAnimationEnd}
         {...props}

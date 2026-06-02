@@ -8,7 +8,7 @@ import {
   WindowMenuBarMenu,
   WindowMenuBarTrigger,
 } from '@murasaki/react98'
-import { useProcessActions } from '../../../../contexts/process'
+import { useProcessActions } from '../../../../contexts/process/hooks'
 import { InactiveClickGuard } from '../../../../shell/window/inactive-click-guard'
 
 const MEDIA_PLAYER_MENUS = ['File', 'Edit', 'Device', 'Scale', 'Help'] as const
@@ -20,6 +20,8 @@ interface MediaPlayerMenuBarProps {
 
 export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarProps): JSX.Element {
   const { close } = useProcessActions()
+
+  const otherMenus: readonly string[] = MEDIA_PLAYER_MENUS.filter(menu => menu !== 'File')
 
   return (
     <InactiveClickGuard windowId={windowId}>
@@ -43,7 +45,7 @@ export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarP
           </WindowMenuBarContent>
         </WindowMenuBarMenu>
 
-        {MEDIA_PLAYER_MENUS.filter(menu => menu !== 'File').map(menu => (
+        {otherMenus.map(menu => (
           <WindowMenuBarItem key={menu} disabled>
             <span className="underline">{menu[0]}</span>
             {menu.slice(1)}

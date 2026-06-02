@@ -11,7 +11,6 @@ import {
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki/react98'
-import { useMemo } from 'react'
 import { assetPath } from '../../../lib/asset-path'
 import { THEME_PREVIEW_RECYCLE_BIN } from '../../../lib/playground-assets'
 import { PreviewTaskbar } from '../../shared/preview-taskbar'
@@ -22,13 +21,13 @@ interface DesignerPreviewProps {
 
 export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactElement {
   // Build inline CSS custom properties from color map
-  const style = useMemo(() => {
+  const style: CSSProperties = (() => {
     const vars: Record<string, string> = {}
     for (const [key, value] of Object.entries(colors)) {
       vars[`--${key}`] = value
     }
     return vars as CSSProperties
-  }, [colors])
+  })()
 
   return (
     <div
@@ -40,7 +39,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
         <img
           src={assetPath(THEME_PREVIEW_RECYCLE_BIN)}
           alt="Trash"
-          className="w-8 h-8 pixelated"
+          className="size-8 pixelated"
           draggable={false}
         />
         <span className="text-center text-(--desktop-text)">

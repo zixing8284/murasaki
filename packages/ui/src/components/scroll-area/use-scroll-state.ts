@@ -209,7 +209,7 @@ export function useScrollState(
   }, [metrics.hasVertical, metrics.hasHorizontal, syncLayout])
 
   // ── Scroll actions ──
-  const scrollStep = useCallback((axis: 'v' | 'h', direction: -1 | 1) => {
+  const scrollStep = (axis: 'v' | 'h', direction: -1 | 1): void => {
     const el = viewportRef.current
     if (!el)
       return
@@ -222,9 +222,9 @@ export function useScrollState(
     }
 
     syncLayout()
-  }, [viewportRef, syncLayout])
+  }
 
-  const scrollPage = useCallback((axis: 'v' | 'h', direction: -1 | 1) => {
+  const scrollPage = (axis: 'v' | 'h', direction: -1 | 1): void => {
     const el = viewportRef.current
     if (!el)
       return
@@ -237,10 +237,10 @@ export function useScrollState(
     }
 
     syncLayout()
-  }, [viewportRef, syncLayout])
+  }
 
   // ── Thumb drag ──
-  const startDrag = useCallback((axis: 'v' | 'h', startMousePos: number) => {
+  const startDrag = (axis: 'v' | 'h', startMousePos: number): void => {
     const el = viewportRef.current
     if (!el)
       return
@@ -276,14 +276,14 @@ export function useScrollState(
 
     document.addEventListener('mousemove', onMove)
     document.addEventListener('mouseup', onUp)
-  }, [viewportRef, syncLayout])
+  }
 
   // ── Auto-repeat for arrow buttons ──
-  const startRepeat = useCallback((action: () => void): (() => void) => {
+  const startRepeat = (action: () => void): (() => void) => {
     action()
     const id = setInterval(action, REPEAT_MS)
     return () => clearInterval(id)
-  }, [])
+  }
 
   return {
     metrics,

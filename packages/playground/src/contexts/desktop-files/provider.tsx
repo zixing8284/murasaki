@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { DesktopFileLaunchRequest } from './context'
 import type { DesktopMediaFileEntry } from './storage'
-import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { DesktopFilesContext } from './context'
 import {
   getDesktopMediaFile,
@@ -10,6 +10,8 @@ import {
   requestPersistentStorage,
   saveDesktopMediaFile,
 } from './storage'
+
+const getFile = (id: string): Promise<File | undefined> => getDesktopMediaFile(id)
 
 export function DesktopFilesProvider({ children }: { children: ReactNode }): React.ReactElement {
   const [items, setItems] = useState<DesktopMediaFileEntry[]>([])
@@ -46,7 +48,7 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
     }
   }, [])
 
-  const importFiles = useCallback(async (incomingFiles: Iterable<File>) => {
+  const importFiles = async (incomingFiles: Iterable<File>): Promise<DesktopMediaFileEntry[]> => {
     const allFiles = Array.from(incomingFiles)
     if (allFiles.length === 0) {
       return []
@@ -83,29 +85,27 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
     })
 
     return createdItems
-  }, [])
+  }
 
-  const getFile = useCallback((id: string) => getDesktopMediaFile(id), [])
-
-  const requestOpenInMediaPlayer = useCallback((fileId: string) => {
+  const requestOpenInMediaPlayer = (fileId: string): void => {
     setLaunchRequest(prev => ({
       nonce: (prev?.nonce ?? 0) + 1,
       fileId,
     }))
-  }, [])
+  }
 
-  const clearLaunchRequest = useCallback(() => {
+  const clearLaunchRequest = (): void => {
     setLaunchRequest(null)
-  }, [])
+  }
 
-  const refresh = useCallback(async () => {
+  const refresh = async (): Promise<void> => {
     const nextItems = await listDesktopMediaFiles()
     startTransition(() => {
       setItems(nextItems)
     })
-  }, [])
+  }
 
-  const value = useMemo(() => ({
+  const value = {
     items,
     loading,
     importFiles,
@@ -114,7 +114,7 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
     launchRequest,
     clearLaunchRequest,
     refresh,
-  }), [items, loading, importFiles, getFile, requestOpenInMediaPlayer, launchRequest, clearLaunchRequest, refresh])
+  }
 
   return (
     <DesktopFilesContext value={value}>

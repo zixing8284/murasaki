@@ -22,12 +22,21 @@ export function MediaDisplay({
 }: MediaDisplayProps): JSX.Element {
   return (
     <div
+      role="button"
+      tabIndex={0}
       className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden"
       onClick={onVideoClick}
       onDoubleClick={onVideoDoubleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onVideoClick()
+        }
+      }}
     >
       <video
         ref={mediaRefCallback}
+        aria-label="Media player video"
         className={`max-w-full max-h-full p-1 object-contain${forceAspectRatio ? ' aspect-video' : ''}${hasVideo ? '' : ' hidden'}`}
         crossOrigin="anonymous"
         playsInline

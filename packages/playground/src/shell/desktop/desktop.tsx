@@ -1,6 +1,6 @@
 import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, PointerEvent as ReactPointerEvent, Ref } from 'react'
-import type { GridLayout, GridPosition } from '../../contexts/desktop-layout'
-import type { AppId } from '../../contexts/process'
+import type { GridLayout, GridPosition } from '../../contexts/desktop-layout/storage'
+import type { AppId } from '../../contexts/process/directory'
 import type { DesktopDragPreview } from './use-desktop-icon-drag'
 import {
   ContextMenu,
@@ -10,10 +10,12 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki/react98'
-import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { useDesktopFiles } from '../../contexts/desktop-files'
-import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP, useDesktopLayout } from '../../contexts/desktop-layout'
-import { APP_ID, appDirectory, useProcessActions } from '../../contexts/process'
+import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
+import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
+import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
+import appDirectory, { APP_ID } from '../../contexts/process/directory'
+import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
 import { AppIcon } from '../app-icon'
@@ -129,34 +131,35 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     }
   }, [gridRef])
 
-  const iconEntries = useMemo<IconEntry[]>(() => {
-    const apps: IconEntry[] = Object.entries(appDirectory)
-      .filter(([, entry]) => entry.showOnDesktop)
-      .map(([appId, entry]) => ({
+  const apps: IconEntry[] = Object.entries(appDirectory).reduce<IconEntry[]>((acc, [appId, entry]) => {
+    if (entry.showOnDesktop) {
+      acc.push({
         id: `app:${appId}`,
         label: entry.name,
         icon: <AppIcon appId={appId} size="lg" />,
         onOpen: () => open(appId as AppId),
-      }))
+      })
+    }
+    return acc
+  }, [])
 
-    const files: IconEntry[] = items.map(item => ({
-      id: item.id,
-      label: item.name,
-      icon: <img src={DESKTOP_MEDIA_ICON} alt="" className="w-8 h-8 pixelated shrink-0" draggable={false} />,
-      onOpen: () => {
-        requestOpenInMediaPlayer(item.id)
-        open(APP_ID.MEDIA_PLAYER)
-      },
-    }))
+  const files: IconEntry[] = items.map(item => ({
+    id: item.id,
+    label: item.name,
+    icon: <img src={DESKTOP_MEDIA_ICON} alt="" className="size-8 pixelated shrink-0" draggable={false} />,
+    onOpen: () => {
+      requestOpenInMediaPlayer(item.id)
+      open(APP_ID.MEDIA_PLAYER)
+    },
+  }))
 
-    return [...apps, ...files]
-  }, [items, open, requestOpenInMediaPlayer])
+  const iconEntries: IconEntry[] = [...apps, ...files]
 
   // Only explicitly-placed (dragged) icons get grid positions; default icons
   // are CSS auto-placed via grid-auto-flow so they wrap responsively.
   // Out-of-bounds stored positions fall back to CSS auto-placement so they
   // never stack on top of each other (clamping would put two icons on one cell).
-  const renderedPositions = useMemo<GridLayout>(() => {
+  const renderedPositions: GridLayout = (() => {
     const next: GridLayout = {}
     iconEntries.forEach((entry) => {
       const stored = positions[entry.id]
@@ -167,22 +170,23 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       next[entry.id] = stored
     })
     return next
-  }, [iconEntries, positions, gridRows])
+  })()
 
-  const isRenderedCellOccupied = useCallback(
-    (col: number, row: number, excludeIds?: string | readonly string[]): boolean => {
-      const excluded = new Set(typeof excludeIds === 'string' ? [excludeIds] : excludeIds ?? [])
-      return Object.entries(renderedPositions).some(
-        ([id, pos]: [string, GridPosition]) => !excluded.has(id) && pos.col === col && pos.row === row,
-      )
-    },
-    [renderedPositions],
-  )
+  const isRenderedCellOccupied = (
+    col: number,
+    row: number,
+    excludeIds?: string | readonly string[],
+  ): boolean => {
+    const excluded = new Set(typeof excludeIds === 'string' ? [excludeIds] : excludeIds ?? [])
+    return Object.entries(renderedPositions).some(
+      ([id, pos]: [string, GridPosition]) => !excluded.has(id) && pos.col === col && pos.row === row,
+    )
+  }
 
-  const selectedIconIdSet = useMemo(() => new Set(selectedIconIds), [selectedIconIds])
-  const dragPreviewIdSet = useMemo(() => new Set(dragPreview?.ids ?? []), [dragPreview])
+  const selectedIconIdSet = new Set(selectedIconIds)
+  const dragPreviewIdSet = new Set(dragPreview?.ids ?? [])
 
-  const getDesktopPoint = useCallback((clientX: number, clientY: number) => {
+  const getDesktopPoint = (clientX: number, clientY: number): { x: number, y: number } | null => {
     const desktop = desktopRef.current
     if (!desktop)
       return null
@@ -192,9 +196,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       x: Math.max(0, Math.min(clientX - rect.left, rect.width)),
       y: Math.max(0, Math.min(clientY - rect.top, rect.height)),
     }
-  }, [])
+  }
 
-  const getIconIdsInSelection = useCallback((rect: SelectionRect): string[] => {
+  const getIconIdsInSelection = (rect: SelectionRect): string[] => {
     const desktop = desktopRef.current
     if (!desktop)
       return []
@@ -227,27 +231,24 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     })
 
     return selectedIds
-  }, [])
+  }
 
   useEffect(() => () => selectionCleanupRef.current?.(), [])
 
-  const handleIconSelect = useCallback(
-    (id: string, additive: boolean, preserveSelectedGroup: boolean): void => {
-      setSelectedIconIds((currentIds) => {
-        if (additive) {
-          if (currentIds.includes(id))
-            return currentIds.filter(selectedId => selectedId !== id)
-          return [...currentIds, id]
-        }
+  const handleIconSelect = (id: string, additive: boolean, preserveSelectedGroup: boolean): void => {
+    setSelectedIconIds((currentIds) => {
+      if (additive) {
+        if (currentIds.includes(id))
+          return currentIds.filter(selectedId => selectedId !== id)
+        return [...currentIds, id]
+      }
 
-        if (preserveSelectedGroup && currentIds.includes(id))
-          return currentIds
+      if (preserveSelectedGroup && currentIds.includes(id))
+        return currentIds
 
-        return [id]
-      })
-    },
-    [],
-  )
+      return [id]
+    })
+  }
 
   const handleBackgroundPointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (event.button !== 0 || event.target !== event.currentTarget)
@@ -426,6 +427,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
             multiple
             accept="audio/*,video/*"
             className="hidden"
+            aria-hidden="true"
             onChange={handleFileInputChange}
           />
         </div>

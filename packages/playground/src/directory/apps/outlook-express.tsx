@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import type { ProcessComponentProps } from '../../contexts/process'
+import type { ProcessComponentProps } from '../../contexts/process/types'
 import {
   Button,
   Divider,
@@ -11,8 +11,8 @@ import {
   WindowStatusBar,
   WindowStatusBarField,
 } from '@murasaki/react98'
-import { useCallback, useState } from 'react'
-import { useProcessActions } from '../../contexts/process'
+import { useState } from 'react'
+import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { InactiveClickGuard } from '../../shell/window/inactive-click-guard'
 import { DialogWindow } from '../shared/dialog-window'
@@ -58,7 +58,7 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
   const [body, setBody] = useState('')
   const [showAbout, setShowAbout] = useState(false)
 
-  const handleSend = useCallback(() => {
+  const handleSend = (): void => {
     const params = new URLSearchParams()
     if (subject)
       params.set('subject', subject)
@@ -69,16 +69,16 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
     const mailtoUrl = `mailto:${DEFAULT_TO}${queryString ? `?${queryString}` : ''}`
 
     window.open(mailtoUrl, '_blank')
-  }, [subject, body])
+  }
 
-  const handleNew = useCallback(() => {
+  const handleNew = (): void => {
     setSubject('')
     setBody('')
-  }, [])
+  }
 
-  const handleClose = useCallback(() => {
+  const handleWindowClose = (): void => {
     close(windowId)
-  }, [close, windowId])
+  }
 
   return (
     <div className="relative flex h-full flex-col">
@@ -88,7 +88,7 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
             <WindowMenuBarTrigger><MenuLabel menu="File" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-36">
               <MenuItem reserveIconSpace onClick={handleNew}>New</MenuItem>
-              <MenuItem reserveIconSpace onClick={handleClose}>Close</MenuItem>
+              <MenuItem reserveIconSpace onClick={handleWindowClose}>Close</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="help">
@@ -109,6 +109,7 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
             type="email"
             value={DEFAULT_TO}
             readOnly
+            aria-label="To"
             className="flex-1 h-5 border-none bg-(--button-face) px-1.5 text-(--gray-text) shadow-(--shadow-border-field) outline-none"
           />
         </div>
@@ -119,6 +120,7 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
             value={subject}
             onChange={e => setSubject(e.target.value)}
             placeholder="(no subject)"
+            aria-label="Subject"
             className="flex-1 h-5 border-none bg-(--window) px-1.5 text-(--window-text) shadow-(--shadow-border-field) outline-none"
           />
         </div>
@@ -131,7 +133,8 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
           value={body}
           onChange={e => setBody(e.target.value)}
           placeholder="Write your message here..."
-          className="h-full w-full resize-none border-none bg-(--window) p-1.5 text-(--window-text) shadow-(--shadow-border-field) outline-none"
+          aria-label="Message body"
+          className="size-full resize-none border-none bg-(--window) p-1.5 text-(--window-text) shadow-(--shadow-border-field) outline-none"
         />
       </div>
 

@@ -1,7 +1,7 @@
-import type { ProcessComponentProps } from '../../../contexts/process'
+import type { ProcessComponentProps } from '../../../contexts/process/types'
 import { Button, GroupBox, Tab, TabList, TabPanel, Tabs } from '@murasaki/react98'
 import { useState } from 'react'
-import { useProcessActions } from '../../../contexts/process'
+import { useProcessActions } from '../../../contexts/process/hooks'
 import { assetPath } from '../../../lib/asset-path'
 import { didResetComplete, resetPlaygroundData } from '../../../lib/persistence'
 
@@ -15,13 +15,13 @@ function CacheIcon(): React.ReactElement {
       <img
         src={assetPath(CLEAR_CACHE_ICON)}
         alt=""
-        className="absolute left-0 top-0 h-8 w-8 pixelated"
+        className="absolute left-0 top-0 size-8 pixelated"
         draggable={false}
       />
       <img
         src={assetPath(WARNING_ICON)}
         alt=""
-        className="absolute bottom-0 right-0 h-4 w-4 pixelated"
+        className="absolute bottom-0 right-0 size-4 pixelated"
         draggable={false}
       />
     </span>
@@ -33,7 +33,7 @@ function BackupIcon(): React.ReactElement {
     <img
       src={assetPath(BACKUP_ICON)}
       alt=""
-      className="h-8 w-8 shrink-0 pixelated"
+      className="size-8 shrink-0 pixelated"
       draggable={false}
     />
   )

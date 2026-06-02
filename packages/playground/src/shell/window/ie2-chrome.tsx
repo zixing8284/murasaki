@@ -12,7 +12,7 @@ import {
   WindowStatusBarField,
 } from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useProcess, useProcessActions } from '../../contexts/process'
+import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { IE_TOOLBAR_ICONS } from '../../lib/playground-assets'
 import { useIframeWindow } from '../iframe/use-iframe-window'
@@ -213,20 +213,20 @@ export function Ie2Chrome({
     iframeRef(el)
   }, [iframeRef])
 
-  const syncFrameMetadata = useCallback((iframe: HTMLIFrameElement) => {
+  const syncFrameMetadata = (iframe: HTMLIFrameElement): void => {
     setAddress(getIframeAddress(iframe, src))
     actions.title(windowId, getIframeTitle(iframe))
-  }, [actions, src, windowId])
+  }
 
-  const handleIframeLoad = useCallback((event: SyntheticEvent<HTMLIFrameElement>) => {
+  const handleIframeLoad = (event: SyntheticEvent<HTMLIFrameElement>): void => {
     const iframe = event.currentTarget
 
     cleanupMetadataSyncRef.current?.()
     syncFrameMetadata(iframe)
     cleanupMetadataSyncRef.current = installFrameMetadataSync(iframe, () => syncFrameMetadata(iframe))
-  }, [syncFrameMetadata])
+  }
 
-  const handleHome = useCallback(() => {
+  const handleHome = (): void => {
     const iframe = iframeElementRef.current
     if (!iframe)
       return
@@ -238,9 +238,9 @@ export function Ie2Chrome({
     catch {
       iframe.src = homeSrc
     }
-  }, [src])
+  }
 
-  const handleRefresh = useCallback(() => {
+  const handleRefresh = (): void => {
     const iframe = iframeElementRef.current
     if (!iframe)
       return
@@ -251,7 +251,7 @@ export function Ie2Chrome({
     catch {
       iframe.setAttribute('src', iframe.src)
     }
-  }, [])
+  }
 
   useEffect(() => {
     return () => {

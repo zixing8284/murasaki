@@ -199,78 +199,66 @@ export function NumberBox({
   const currentValue = isControlled ? controlledValue : internalValue
 
   // Clamp value to min/max range
-  const clampValue = React.useCallback(
-    (val: number): number => {
-      return Math.max(min, Math.min(max, val))
-    },
-    [max, min],
-  )
+  const clampValue = (val: number): number => {
+    return Math.max(min, Math.min(max, val))
+  }
 
   // Update value with validation
-  const updateValue = React.useCallback(
-    (newValue: number) => {
-      const clamped = clampValue(newValue)
+  const updateValue = (newValue: number): void => {
+    const clamped = clampValue(newValue)
 
-      if (!isControlled) {
-        setInternalValue(clamped)
-      }
+    if (!isControlled) {
+      setInternalValue(clamped)
+    }
 
-      onValueChange?.(clamped)
-    },
-    [clampValue, isControlled, onValueChange],
-  )
+    onValueChange?.(clamped)
+  }
 
   // Handle input change
-  const handleInputChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = event.target.value
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const inputValue = event.target.value
 
-      // Allow empty string for better UX during typing
-      if (inputValue === '' || inputValue === '-') {
-        return
-      }
+    // Allow empty string for better UX during typing
+    if (inputValue === '' || inputValue === '-') {
+      return
+    }
 
-      const parsed = Number.parseFloat(inputValue)
-      if (!Number.isNaN(parsed)) {
-        updateValue(parsed)
-      }
-    },
-    [updateValue],
-  )
+    const parsed = Number.parseFloat(inputValue)
+    if (!Number.isNaN(parsed)) {
+      updateValue(parsed)
+    }
+  }
 
   // Handle input blur - ensure valid value
-  const handleInputBlur = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      const inputValue = event.target.value
+  const handleInputBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
+    const inputValue = event.target.value
 
-      // If empty or invalid, reset to clamped current value or 0
-      if (inputValue === '' || inputValue === '-') {
-        const fallback = clampValue(0)
-        updateValue(fallback)
-      }
-      else {
-        // Ensure the value is within range
-        updateValue(currentValue)
-      }
+    // If empty or invalid, reset to clamped current value or 0
+    if (inputValue === '' || inputValue === '-') {
+      const fallback = clampValue(0)
+      updateValue(fallback)
+    }
+    else {
+      // Ensure the value is within range
+      updateValue(currentValue)
+    }
 
-      props.onBlur?.(event)
-    },
-    [clampValue, currentValue, props, updateValue],
-  )
+    props.onBlur?.(event)
+  }
 
   // Handle increment
-  const handleIncrement = React.useCallback(() => {
+  const handleIncrement = (): void => {
     if (disabled || readOnly)
       return
     updateValue(currentValue + step)
-  }, [currentValue, disabled, readOnly, step, updateValue])
+  }
 
   // Handle decrement
-  const handleDecrement = React.useCallback(() => {
+  const handleDecrement = (): void => {
     if (disabled || readOnly)
       return
     updateValue(currentValue - step)
-  }, [currentValue, disabled, readOnly, step, updateValue])
+  }
 
   // Label content: prefer children, fallback to label prop
   const labelContent = children ?? label

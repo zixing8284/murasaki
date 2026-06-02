@@ -43,10 +43,10 @@ export function useLocalStorageBoolean(
 
   const enabled = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
-  const setEnabled = useCallback((value: boolean) => {
+  const setEnabled = (value: boolean): void => {
     writeBooleanStorageItem('local', storageKey, value)
     for (const listener of listenersFor(storageKey)) listener()
-  }, [storageKey])
+  }
 
   return [enabled, setEnabled]
 }

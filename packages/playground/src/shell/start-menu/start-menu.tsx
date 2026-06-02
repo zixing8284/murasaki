@@ -35,7 +35,7 @@ function StartIcon({ src }: StartIconProps): React.ReactElement {
     <img
       src={assetPath(src)}
       alt=""
-      className="w-4 h-4 pixelated"
+      className="size-4 pixelated"
       draggable={false}
     />
   )
@@ -94,6 +94,8 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
       {/* Overlay to close menu on outside click */}
       <div
         className="absolute inset-0 z-246"
+        role="presentation"
+        aria-hidden="true"
         onClick={onClose}
       />
 

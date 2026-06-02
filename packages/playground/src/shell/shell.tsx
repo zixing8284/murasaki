@@ -2,8 +2,10 @@ import type { DragEvent } from 'react'
 import type { DesktopHandle } from './desktop/desktop'
 import { LayerProvider } from '@murasaki/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { isSupportedDesktopMediaFile, useDesktopFiles } from '../contexts/desktop-files'
-import { getStartupAppIds, useProcessActions } from '../contexts/process'
+import { useDesktopFiles } from '../contexts/desktop-files/hooks'
+import { isSupportedDesktopMediaFile } from '../contexts/desktop-files/storage'
+import { getStartupAppIds } from '../contexts/process/directory'
+import { useProcessActions } from '../contexts/process/hooks'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useCrtTuning } from '../hooks/use-crt-tuning'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
@@ -46,6 +48,15 @@ function hasSupportedFiles(fileList: FileList | null): boolean {
   return Array.from(fileList).some(isSupportedDesktopMediaFile)
 }
 
+function handleDragOver(event: DragEvent<HTMLDivElement>): void {
+  if (!hasFilePayload(event.dataTransfer)) {
+    return
+  }
+
+  event.preventDefault()
+  event.dataTransfer.dropEffect = 'copy'
+}
+
 export function Shell(): React.ReactElement {
   const [showStartMenu, setShowStartMenu] = useState(false)
   const [isDragActive, setIsDragActive] = useState(false)
@@ -85,13 +96,13 @@ export function Shell(): React.ReactElement {
     setShowStartMenu(false)
   }
 
-  const handleShowDesktop = useCallback((): void => {
+  const handleShowDesktop = (): void => {
     minimizeAll()
     desktopRef.current?.clearSelection()
     setShowStartMenu(false)
-  }, [minimizeAll])
+  }
 
-  const handleDragEnter = useCallback((event: DragEvent<HTMLDivElement>) => {
+  const handleDragEnter = (event: DragEvent<HTMLDivElement>): void => {
     if (!hasFilePayload(event.dataTransfer)) {
       return
     }
@@ -99,18 +110,9 @@ export function Shell(): React.ReactElement {
     event.preventDefault()
     dragDepthRef.current += 1
     setIsDragActive(true)
-  }, [])
+  }
 
-  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
-    if (!hasFilePayload(event.dataTransfer)) {
-      return
-    }
-
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'copy'
-  }, [])
-
-  const handleDragLeave = useCallback((event: DragEvent<HTMLDivElement>) => {
+  const handleDragLeave = (event: DragEvent<HTMLDivElement>): void => {
     if (!hasFilePayload(event.dataTransfer)) {
       return
     }
@@ -120,9 +122,9 @@ export function Shell(): React.ReactElement {
     if (dragDepthRef.current === 0) {
       setIsDragActive(false)
     }
-  }, [])
+  }
 
-  const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
+  const handleDrop = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault()
     dragDepthRef.current = 0
     setIsDragActive(false)
@@ -131,12 +133,12 @@ export function Shell(): React.ReactElement {
       return
     }
     void importFiles(event.dataTransfer.files)
-  }, [importFiles])
+  }
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text)">
       {/* Monitor bezel — dark frame */}
-      <div className="[--bezel:clamp(28px,2.5vw,36px)] relative isolate h-full w-full min-h-0 min-w-0 rounded-lg border-(length:--bezel) border-[#252627] bg-black before:pointer-events-none before:absolute before:z-0 before:-inset-[calc(var(--bezel)+2px)] before:rounded-lg before:border-2 before:border-t-[#3e3f42] before:border-r-[#19191a] before:border-b-[#0c0d0d] before:border-l-[#313235] before:content-[''] after:pointer-events-none after:absolute after:z-3 after:-inset-1 after:rounded-lg after:border-4 after:border-t-[#19191a] after:border-r-[#3e3f42] after:border-b-[#313235] after:border-l-[#0c0d0d] after:content-['']">
+      <div className="[--bezel:clamp(28px,2.5vw,36px)] relative isolate size-full min-h-0 min-w-0 rounded-lg border-(length:--bezel) border-[#252627] bg-gray-950 before:pointer-events-none before:absolute before:z-0 before:-inset-[calc(var(--bezel)+2px)] before:rounded-lg before:border-2 before:border-t-[#3e3f42] before:border-r-[#19191a] before:border-b-[#0c0d0d] before:border-l-[#313235] before:content-[''] after:pointer-events-none after:absolute after:z-3 after:-inset-1 after:rounded-lg after:border-4 after:border-t-[#19191a] after:border-r-[#3e3f42] after:border-b-[#313235] after:border-l-[#0c0d0d] after:content-['']">
         {/* Bottom bezel strip — logo badge */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-[calc(var(--bezel)*-1+6px)] z-4 flex h-[calc(var(--bezel)-12px)] items-center justify-center">
           <div className="relative grid h-8 w-9 place-items-center leading-none">
@@ -145,12 +147,12 @@ export function Shell(): React.ReactElement {
         </div>
 
         {/* Screen surround — black with inset vignette, CRT overlay when enabled */}
-        <div className="relative z-1 h-full w-full overflow-hidden bg-black p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]">
+        <div className="relative z-1 size-full overflow-hidden bg-gray-950 p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]">
           {crtEnabled && <CrtOverlay settings={crtTuning} />}
           {/* Desktop */}
           <div
             ref={screenRef}
-            className={`relative z-0 flex h-full min-h-0 w-full flex-col overflow-hidden bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
+            className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
             style={isBooted ? { backgroundImage: `url(${assetPath(DESKTOP_WALLPAPER_IMAGE)})` } : undefined}
           >
             {!isBooted

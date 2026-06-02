@@ -3,7 +3,7 @@
 import * as React from 'react'
 
 import { cn, cnPure } from '../../lib/utils'
-import { useScrollbar } from '../../primitives'
+import { useScrollbar } from '../../primitives/scrollbar/use-scrollbar'
 import { ScrollAreaContext } from './scroll-area-context'
 import { ScrollAreaCorner } from './scroll-area-corner'
 import { ScrollAreaScrollbar } from './scroll-area-scrollbar'
@@ -33,7 +33,7 @@ export function ScrollArea({
   const viewportRef = React.useRef<HTMLDivElement>(null)
   const scrollState = useScrollState(viewportRef)
 
-  const contextValue = React.useMemo(() => ({
+  const contextValue = {
     viewportRef,
     metrics: scrollState.metrics,
     vTrackRef: scrollState.vTrackRef,
@@ -44,16 +44,7 @@ export function ScrollArea({
     startRepeat: scrollState.startRepeat,
     BAR_SIZE,
     BTN_HEIGHT,
-  }), [
-    viewportRef,
-    scrollState.metrics,
-    scrollState.vTrackRef,
-    scrollState.hTrackRef,
-    scrollState.scrollStep,
-    scrollState.scrollPage,
-    scrollState.startDrag,
-    scrollState.startRepeat,
-  ])
+  }
 
   const { hasVertical, hasHorizontal } = scrollState.metrics
 
@@ -111,8 +102,8 @@ export function ScrollAreaLegacy({
   )
 }
 
-export { useScrollbar } from '../../primitives'
-export type { UseScrollbarOptions } from '../../primitives'
+export { useScrollbar } from '../../primitives/scrollbar/use-scrollbar'
+export type { UseScrollbarOptions } from '../../primitives/scrollbar/use-scrollbar'
 
 export { useScrollAreaContext } from './scroll-area-context'
 export type { ScrollAreaContextValue } from './scroll-area-context'

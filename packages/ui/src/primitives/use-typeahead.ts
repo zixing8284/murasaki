@@ -48,7 +48,7 @@ export function useTypeahead({
     }
   }, [])
 
-  const onChar = useCallback((char: string) => {
+  const onChar = (char: string): void => {
     if (!enabled)
       return
     if (char.length !== 1)
@@ -58,7 +58,7 @@ export function useTypeahead({
     bufferRef.current += char.toLowerCase()
     onMatchRef.current(bufferRef.current)
     timerRef.current = setTimeout(reset, timeout)
-  }, [enabled, timeout, reset])
+  }
 
   // Clear timer on unmount or when disabled.
   useEffect(() => {

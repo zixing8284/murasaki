@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export interface SelectOption<T = string> {
   label?: string
@@ -69,7 +69,7 @@ export function useSelectState<T = string>({
   })
 
   // Open select
-  const openSelect = useCallback(() => {
+  const openSelect = (): void => {
     if (disabled)
       return
     setOpen(true)
@@ -77,34 +77,31 @@ export function useSelectState<T = string>({
     const idx = options.findIndex(opt => opt.value === currentValue)
     setActiveIndex(idx >= 0 ? idx : 0)
     onOpen?.()
-  }, [disabled, options, currentValue, onOpen])
+  }
 
   // Close select
-  const closeSelect = useCallback(() => {
+  const closeSelect = (): void => {
     setOpen(false)
     onClose?.()
     triggerRef.current?.focus()
-  }, [onClose])
+  }
 
   // Select an option
-  const selectOption = useCallback(
-    (index: number) => {
-      const option = options[index]
+  const selectOption = (index: number): void => {
+    const option = options[index]
 
-      if (!option)
-        return
+    if (!option)
+      return
 
-      if (value === undefined) {
-        setInternalValue(option.value)
-      }
-      onValueChange?.(option.value, option)
-      closeSelect()
-    },
-    [options, value, onValueChange, closeSelect],
-  )
+    if (value === undefined) {
+      setInternalValue(option.value)
+    }
+    onValueChange?.(option.value, option)
+    closeSelect()
+  }
 
   // Toggle select
-  const handleTriggerClick = useCallback(() => {
+  const handleTriggerClick = (): void => {
     if (disabled)
       return
     if (open) {
@@ -113,61 +110,52 @@ export function useSelectState<T = string>({
     else {
       openSelect()
     }
-  }, [disabled, open, closeSelect, openSelect])
+  }
 
   // Handle trigger keyboard events
-  const handleTriggerKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (disabled)
-        return
+  const handleTriggerKeyDown = (e: React.KeyboardEvent): void => {
+    if (disabled)
+      return
 
-      switch (e.key) {
-        case ' ':
-        case 'ArrowDown':
-        case 'ArrowUp':
-        case 'Enter':
-          e.preventDefault()
-          if (!open) {
-            openSelect()
-          }
-          break
-        // Escape is handled centrally by `useDismissable` in the consumer.
-      }
-    },
-    [disabled, open, openSelect],
-  )
+    switch (e.key) {
+      case ' ':
+      case 'ArrowDown':
+      case 'ArrowUp':
+      case 'Enter':
+        e.preventDefault()
+        if (!open) {
+          openSelect()
+        }
+        break
+      // Escape is handled centrally by `useDismissable` in the consumer.
+    }
+  }
 
   // Handle option click
-  const handleOptionClick = useCallback(
-    (index: number) => {
-      selectOption(index)
-    },
-    [selectOption],
-  )
+  const handleOptionClick = (index: number): void => {
+    selectOption(index)
+  }
 
   // Handle option keyboard events. Arrow/Home/End navigation is owned by the
   // shared `useRovingFocus` primitive in the rendering component.
-  const handleOptionKeyDown = useCallback(
-    (e: React.KeyboardEvent, index: number) => {
-      switch (e.key) {
-        case ' ':
-        case 'Enter':
-          e.preventDefault()
-          selectOption(index)
-          break
-        // Escape is handled centrally by `useDismissable` in the consumer.
-        case 'Tab':
-          closeSelect()
-          break
-      }
-    },
-    [selectOption, closeSelect],
-  )
+  const handleOptionKeyDown = (e: React.KeyboardEvent, index: number): void => {
+    switch (e.key) {
+      case ' ':
+      case 'Enter':
+        e.preventDefault()
+        selectOption(index)
+        break
+      // Escape is handled centrally by `useDismissable` in the consumer.
+      case 'Tab':
+        closeSelect()
+        break
+    }
+  }
 
   // Handle option hover
-  const handleOptionMouseEnter = useCallback((index: number) => {
+  const handleOptionMouseEnter = (index: number): void => {
     setActiveIndex(index)
-  }, [])
+  }
 
   // Focus active option when select opens or active index changes
   useEffect(() => {

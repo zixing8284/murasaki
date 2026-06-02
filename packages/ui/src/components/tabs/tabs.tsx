@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority'
 import { useId, useRef, useState } from 'react'
 
 import { cn, cnPure } from '../../lib/utils'
-import { useRovingFocus } from '../../primitives'
+import { useRovingFocus } from '../../primitives/use-roving-focus'
 
 import { TabsContext, useTabsContext } from './tabs-context'
 
@@ -140,7 +140,7 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
   const tabId = `${baseId}-tab-${value}`
   const panelId = `${baseId}-panel-${value}`
 
-  const handleClick = (): void => {
+  const handleTabClick = (): void => {
     if (!disabled) {
       setSelectedValue(value)
     }
@@ -166,7 +166,7 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
       data-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       className={cn(tabVariants({ selected: isSelected }), className)}
-      onClick={handleClick}
+      onClick={handleTabClick}
       onKeyDown={handleKeyDown}
       {...props}
     >

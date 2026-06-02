@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type FullscreenTarget = React.RefObject<Element | null>
 
@@ -20,18 +20,18 @@ export function useFullscreen(ref: FullscreenTarget): {
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
-    const handleChange = (): void => {
+    const handleFullscreenChange = (): void => {
       setIsFullscreen(document.fullscreenElement === ref.current)
     }
 
-    document.addEventListener('fullscreenchange', handleChange)
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
 
     return () => {
-      document.removeEventListener('fullscreenchange', handleChange)
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
     }
   }, [ref])
 
-  const enter = useCallback(async () => {
+  const enter = async (): Promise<void> => {
     const el = ref.current
     if (!el || document.fullscreenElement === el)
       return
@@ -41,9 +41,9 @@ export function useFullscreen(ref: FullscreenTarget): {
     catch (error) {
       console.error('Failed to enter fullscreen.', error)
     }
-  }, [ref])
+  }
 
-  const exit = useCallback(async () => {
+  const exit = async (): Promise<void> => {
     if (document.fullscreenElement !== ref.current)
       return
     try {
@@ -52,16 +52,16 @@ export function useFullscreen(ref: FullscreenTarget): {
     catch (error) {
       console.error('Failed to exit fullscreen.', error)
     }
-  }, [ref])
+  }
 
-  const toggle = useCallback(async () => {
+  const toggle = async (): Promise<void> => {
     if (document.fullscreenElement === ref.current) {
       await exit()
     }
     else {
       await enter()
     }
-  }, [ref, enter, exit])
+  }
 
   return { isFullscreen, enter, exit, toggle }
 }

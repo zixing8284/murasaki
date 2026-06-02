@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import { useCallback, useMemo, useRef } from 'react'
+import { useRef } from 'react'
 
 export interface CollectionItem<T = unknown> {
   ref: RefObject<HTMLElement | null>
@@ -28,15 +28,15 @@ export interface UseCollectionResult<T = unknown> {
 export function useCollection<T = unknown>(): UseCollectionResult<T> {
   const itemsRef = useRef<Set<CollectionItem<T>>>(new Set())
 
-  const register = useCallback((ref: RefObject<HTMLElement | null>, data: T) => {
+  const register = (ref: RefObject<HTMLElement | null>, data: T): (() => void) => {
     const item: CollectionItem<T> = { ref, data }
     itemsRef.current.add(item)
     return () => {
       itemsRef.current.delete(item)
     }
-  }, [])
+  }
 
-  const getItems = useCallback((): CollectionItem<T>[] => {
+  const getItems = (): CollectionItem<T>[] => {
     const list = Array.from(itemsRef.current)
     list.sort((a, b) => {
       const aNode = a.ref.current
@@ -53,12 +53,12 @@ export function useCollection<T = unknown>(): UseCollectionResult<T> {
       return 0
     })
     return list
-  }, [])
+  }
 
-  const indexOf = useCallback((ref: RefObject<HTMLElement | null>): number => {
+  const indexOf = (ref: RefObject<HTMLElement | null>): number => {
     const items = getItems()
     return items.findIndex(item => item.ref === ref)
-  }, [getItems])
+  }
 
-  return useMemo(() => ({ register, getItems, indexOf }), [register, getItems, indexOf])
+  return { register, getItems, indexOf }
 }

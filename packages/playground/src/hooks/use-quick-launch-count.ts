@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, writeJsonStorageItem } from '../lib/persistence'
 
 const DEFAULT_VISIBLE_COUNT = 2
@@ -27,13 +27,13 @@ export function useQuickLaunchCount(
     )?.visibleCount ?? defaultVisibleCount
   })
 
-  const persistVisibleCount = useCallback((nextVisibleCount: number) => {
+  const persistVisibleCount = (nextVisibleCount: number): void => {
     const rounded = Math.max(0, Math.round(nextVisibleCount))
     setQuickLaunchVisibleCount(rounded)
     writeJsonStorageItem('local', PLAYGROUND_STORAGE_KEYS.taskbarQuickLaunchVisibleCount, {
       visibleCount: rounded,
     } satisfies StoredQuickLaunchState)
-  }, [])
+  }
 
   return [quickLaunchVisibleCount, persistVisibleCount]
 }

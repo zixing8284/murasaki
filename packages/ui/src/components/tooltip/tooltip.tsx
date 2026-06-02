@@ -1,7 +1,9 @@
 import type * as React from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
-import { LayerPortal, useDismissable, useLayer } from '../../primitives'
+import { LayerPortal } from '../../primitives/layer-root/layer-portal'
+import { useDismissable } from '../../primitives/use-dismissable'
+import { useLayer } from '../../primitives/use-layer'
 
 export interface TooltipProps {
   /** Tooltip content text */
@@ -36,15 +38,15 @@ export function Tooltip({
     }
   }, [])
 
-  const show = useCallback(() => {
+  const show = (): void => {
     clearTimer()
     timerRef.current = setTimeout(setVisible, delay, true)
-  }, [delay, clearTimer])
+  }
 
-  const hide = useCallback(() => {
+  const hide = (): void => {
     clearTimer()
     setVisible(false)
-  }, [clearTimer])
+  }
 
   const [position, ready] = useLayer({
     anchorRef: wrapperRef,

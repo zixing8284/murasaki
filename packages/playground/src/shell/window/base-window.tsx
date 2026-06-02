@@ -1,5 +1,5 @@
 import type { ReactNode, Ref } from 'react'
-import type { ProcessWindowPosition } from '../../contexts/process'
+import type { ProcessWindowPosition } from '../../contexts/process/types'
 import {
   WindowButtons,
   WindowCloseButton,
@@ -13,7 +13,7 @@ import {
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki/react98'
-import { useProcess, useProcessActions, useProcesses } from '../../contexts/process'
+import { useProcess, useProcessActions, useProcesses } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'
 
@@ -67,7 +67,7 @@ export function BaseWindow({
   const { process: proc, isActive, zIndex } = win
 
   const defaultIcon = proc.icon
-    ? <img src={assetPath(proc.icon.sm)} alt="" className="w-4 h-4 pixelated shrink-0" draggable={false} />
+    ? <img src={assetPath(proc.icon.sm)} alt="" className="size-4 pixelated shrink-0" draggable={false} />
     : <AppIcon appId={proc.appId} size="sm" />
 
   return (

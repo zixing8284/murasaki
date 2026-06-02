@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface UseVideoFullscreenToggleResult {
   handleVideoClick: () => void
@@ -9,16 +9,16 @@ export function useVideoFullscreenToggle(toggleFullscreen: () => void | Promise<
   const videoClickCountRef = useRef(0)
   const videoClickResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const resetVideoClickCount = useCallback(() => {
+  const resetVideoClickCount = (): void => {
     videoClickCountRef.current = 0
 
     if (videoClickResetTimerRef.current !== null) {
       clearTimeout(videoClickResetTimerRef.current)
       videoClickResetTimerRef.current = null
     }
-  }, [])
+  }
 
-  const handleVideoClick = useCallback(() => {
+  const handleVideoClick = (): void => {
     videoClickCountRef.current += 1
 
     if (videoClickResetTimerRef.current !== null) {
@@ -29,9 +29,9 @@ export function useVideoFullscreenToggle(toggleFullscreen: () => void | Promise<
       videoClickCountRef.current = 0
       videoClickResetTimerRef.current = null
     }, 500)
-  }, [])
+  }
 
-  const handleVideoDoubleClick = useCallback(() => {
+  const handleVideoDoubleClick = (): void => {
     const clickCount = videoClickCountRef.current
     resetVideoClickCount()
 
@@ -39,7 +39,7 @@ export function useVideoFullscreenToggle(toggleFullscreen: () => void | Promise<
       return
 
     void toggleFullscreen()
-  }, [resetVideoClickCount, toggleFullscreen])
+  }
 
   useEffect(() => {
     return () => {

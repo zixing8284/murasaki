@@ -30,19 +30,19 @@ export function VolumeIcon(): React.ReactElement {
     })
   }, [audio])
 
-  const handleVolumeChange = useCallback((v: number) => {
+  const handleVolumeChange = (v: number): void => {
     audio.setVolume(v)
-  }, [audio])
+  }
 
-  const handleMutedChange = useCallback((m: boolean) => {
+  const handleMutedChange = (m: boolean): void => {
     audio.setMuted(m)
-  }, [audio])
+  }
 
-  const popupRef = useClickAway<HTMLDivElement>(useCallback(() => {
+  const popupRef = useClickAway<HTMLDivElement>(() => {
     setIsOpen(false)
-  }, []))
+  })
 
-  const updatePosition = useCallback(() => {
+  const updatePosition = useCallback((): void => {
     const anchor = anchorRef.current
     if (!anchor)
       return
@@ -53,13 +53,17 @@ export function VolumeIcon(): React.ReactElement {
     })
   }, [])
 
-  const handleIconClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
+  const toggleOpen = (): void => {
     if (!isOpen) {
       updatePosition()
     }
     setIsOpen(prev => !prev)
-  }, [isOpen, updatePosition])
+  }
+
+  const handleIconClick = (e: React.MouseEvent): void => {
+    e.stopPropagation()
+    toggleOpen()
+  }
 
   // Recompute position on resize
   useEffect(() => {
@@ -78,9 +82,17 @@ export function VolumeIcon(): React.ReactElement {
     <>
       <span
         ref={anchorRef}
+        role="button"
+        tabIndex={0}
         className="mx-px cursor-pointer"
         title={iconTitle}
         onClick={handleIconClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleOpen()
+          }
+        }}
       >
         <img src={iconSrc} alt={iconAlt} />
       </span>

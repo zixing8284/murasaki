@@ -2,9 +2,9 @@ import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
 import type { ProcessWindowPosition } from '../../contexts/process/types'
 import { useDraggable, useResizable } from '@murasaki/react98'
-import { useCallback, useMemo } from 'react'
-import { useProcesses } from '../../contexts/process'
+import { useCallback } from 'react'
 import directory from '../../contexts/process/directory'
+import { useProcesses } from '../../contexts/process/hooks'
 import { BaseWindow } from './base-window'
 
 interface RndWindowProps {
@@ -42,7 +42,7 @@ export function RndWindow({
   const defaultPosition = entry?.defaultPosition
 
   // Cascade non-singleton windows so they don't stack at the same position
-  const cascadePosition = useMemo<ProcessWindowPosition | undefined>(() => {
+  const cascadePosition: ProcessWindowPosition | undefined = (() => {
     if (!appId || !defaultPosition || entry?.singleton !== false)
       return defaultPosition
 
@@ -57,7 +57,7 @@ export function RndWindow({
       top: `calc(${defaultPosition.top ?? '0px'} + ${offset}px)`,
       left: `calc(${defaultPosition.left ?? '0px'} + ${offset}px)`,
     }
-  }, [appId, defaultPosition, entry?.singleton, processes, windowId])
+  })()
 
   const { setTargetRef: setDragTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,

@@ -76,7 +76,7 @@ export function useMenuOverflow(
     return () => window.cancelAnimationFrame(frameId)
   }, [enabled])
 
-  const scrollByStep = React.useCallback((direction: -1 | 1) => {
+  const scrollByStep = (direction: -1 | 1): void => {
     const list = listRef.current
     if (!list)
       return
@@ -112,7 +112,7 @@ export function useMenuOverflow(
       top: targetTop ?? currentTop + direction * fallbackStep,
       behavior: 'auto',
     })
-  }, [listRef])
+  }
 
   return { ...state, scrollByStep }
 }
@@ -133,19 +133,19 @@ export function MenuScrollArrow({
 }: MenuScrollArrowProps): React.ReactElement {
   const intervalRef = React.useRef<number | null>(null)
 
-  const stop = React.useCallback(() => {
+  const stop = React.useCallback((): void => {
     if (intervalRef.current !== null) {
       window.clearInterval(intervalRef.current)
       intervalRef.current = null
     }
   }, [])
 
-  const start = React.useCallback(() => {
+  const start = (): void => {
     if (intervalRef.current !== null)
       return
     onStep()
     intervalRef.current = window.setInterval(onStep, REPEAT_INTERVAL_MS)
-  }, [onStep])
+  }
 
   React.useEffect(() => stop, [stop])
 

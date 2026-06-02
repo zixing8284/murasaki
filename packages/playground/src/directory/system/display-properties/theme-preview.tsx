@@ -31,7 +31,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
         <img
           src={assetPath(THEME_PREVIEW_RECYCLE_BIN)}
           alt="Trash"
-          className="w-8 h-8 pixelated"
+          className="size-8 pixelated"
         />
         <span className="text-center text-(--desktop-text)">
           Trash

@@ -1,5 +1,5 @@
 import { Button } from '@murasaki/react98'
-import { useProcessActions, useProcesses, useProcessList } from '../../../contexts/process'
+import { useProcessActions, useProcesses, useProcessList } from '../../../contexts/process/hooks'
 import { AppIcon } from '../../app-icon'
 
 export function RunningTasks(): React.ReactElement {

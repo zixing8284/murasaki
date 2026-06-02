@@ -3,7 +3,11 @@ import type { MenuSubContextValue } from './menu-sub-context'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../lib/utils'
-import { LayerPortal, useDismissable, useLayer, useRovingFocus, useTypeahead } from '../../primitives'
+import { LayerPortal } from '../../primitives/layer-root/layer-portal'
+import { useDismissable } from '../../primitives/use-dismissable'
+import { useLayer } from '../../primitives/use-layer'
+import { useRovingFocus } from '../../primitives/use-roving-focus'
+import { useTypeahead } from '../../primitives/use-typeahead'
 import { MenuScrollArrow, useMenuOverflow } from './menu-scroll'
 import { MenuSubContext, useMenuSubContext } from './menu-sub-context'
 
@@ -77,7 +81,7 @@ export function Menu({
   const wasMaxHeightRef = React.useRef(false)
   const activeSubRef = React.useRef<{ id: string, close: () => void } | null>(null)
 
-  const coordination = React.useMemo<MenuCoordinationContextValue>(() => ({
+  const coordination: MenuCoordinationContextValue = {
     activateSub(id, close) {
       const prev = activeSubRef.current
       if (prev && prev.id !== id)
@@ -88,7 +92,7 @@ export function Menu({
       if (activeSubRef.current?.id === id)
         activeSubRef.current = null
     },
-  }), [])
+  }
 
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
     menuRef.current = node
@@ -107,7 +111,7 @@ export function Menu({
     orientation: 'vertical',
   })
 
-  const handleTypeaheadMatch = React.useCallback((search: string) => {
+  const handleTypeaheadMatch = (search: string): void => {
     const menu = menuRef.current
     if (!menu)
       return
@@ -125,7 +129,7 @@ export function Menu({
       : items
     const match = orderedItems.find(item => getMenuItemText(item).startsWith(search))
     match?.focus()
-  }, [])
+  }
 
   const typeahead = useTypeahead({
     enabled: true,
@@ -264,7 +268,7 @@ export function MenuItem({
 }: MenuItemProps): React.ReactElement {
   const showIconSlot = icon != null || reserveIconSpace
 
-  const handleClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+  const handleItemClick = (event: React.MouseEvent<HTMLLIElement>): void => {
     if (disabled) {
       event.preventDefault()
       return
@@ -294,12 +298,12 @@ export function MenuItem({
       data-disabled={disabled || undefined}
       data-selected={selected || undefined}
       className={cn(menuItemVariants({ disabled, selected }), className)}
-      onClick={handleClick}
+      onClick={handleItemClick}
       onKeyDown={handleKeyDown}
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
-      {showIconSlot && <span className="w-4 h-4 shrink-0 flex items-center justify-center">{icon}</span>}
+      {showIconSlot && <span className="size-4 shrink-0 flex items-center justify-center">{icon}</span>}
       <span className="flex-1">{children}</span>
     </li>
   )
@@ -372,29 +376,29 @@ export function MenuSub({
     onOpenChange?.(next)
   }, [isControlled, onOpenChange])
 
-  const setTriggerRef = React.useCallback((node: HTMLLIElement | null) => {
+  const setTriggerRef = (node: HTMLLIElement | null): void => {
     triggerRef.current = node
-  }, [])
+  }
 
-  const setContentRef = React.useCallback((node: HTMLElement | null) => {
+  const setContentRef = (node: HTMLElement | null): void => {
     contentRef.current = node
-  }, [])
+  }
 
-  const cancelOpen = React.useCallback(() => {
+  const cancelOpen = (): void => {
     if (openTimerRef.current !== null) {
       window.clearTimeout(openTimerRef.current)
       openTimerRef.current = null
     }
-  }, [])
+  }
 
-  const cancelClose = React.useCallback(() => {
+  const cancelClose = (): void => {
     if (closeTimerRef.current !== null) {
       window.clearTimeout(closeTimerRef.current)
       closeTimerRef.current = null
     }
-  }, [])
+  }
 
-  const scheduleOpen = React.useCallback(() => {
+  const scheduleOpen = (): void => {
     cancelClose()
     if (open || openTimerRef.current !== null)
       return
@@ -402,9 +406,9 @@ export function MenuSub({
       openTimerRef.current = null
       setOpen(true)
     }, hoverOpenDelay)
-  }, [open, hoverOpenDelay, setOpen, cancelClose])
+  }
 
-  const scheduleClose = React.useCallback(() => {
+  const scheduleClose = (): void => {
     cancelOpen()
     if (!open || closeTimerRef.current !== null)
       return
@@ -412,7 +416,7 @@ export function MenuSub({
       closeTimerRef.current = null
       setOpen(false)
     }, hoverCloseDelay)
-  }, [open, hoverCloseDelay, setOpen, cancelOpen])
+  }
 
   React.useEffect(() => {
     return () => {
@@ -435,7 +439,7 @@ export function MenuSub({
     }
   }, [open, menu, subId, setOpen])
 
-  const value = React.useMemo<MenuSubContextValue>(() => ({
+  const value: MenuSubContextValue = {
     open,
     setOpen,
     triggerRef,
@@ -446,7 +450,7 @@ export function MenuSub({
     cancelClose,
     scheduleOpen,
     cancelOpen,
-  }), [open, setOpen, setTriggerRef, setContentRef, scheduleClose, cancelClose, scheduleOpen, cancelOpen])
+  }
 
   return <MenuSubContext value={value}>{children}</MenuSubContext>
 }
@@ -496,17 +500,17 @@ export function MenuSubTrigger({
   const sub = useMenuSubContext('MenuSubTrigger')
   const { setTriggerRef: setContextTriggerRef } = sub
 
-  const setTriggerRef = React.useCallback((node: HTMLLIElement | null) => {
+  const setTriggerRef = (node: HTMLLIElement | null): void => {
     setContextTriggerRef(node)
     if (typeof ref === 'function')
       ref(node)
     else if (ref)
       ref.current = node
-  }, [ref, setContextTriggerRef])
+  }
 
   const showIconSlot = icon != null || reserveIconSpace
 
-  const handleClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+  const handleSubTriggerClick = (event: React.MouseEvent<HTMLLIElement>): void => {
     onClick?.(event)
     if (event.defaultPrevented || disabled)
       return
@@ -573,14 +577,14 @@ export function MenuSubTrigger({
         menuItemVariants({ disabled, selected: sub.open }),
         className,
       )}
-      onClick={handleClick}
+      onClick={handleSubTriggerClick}
       onKeyDown={handleKeyDown}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
-      {showIconSlot && <span className="w-4 h-4 shrink-0 flex items-center justify-center">{icon}</span>}
+      {showIconSlot && <span className="size-4 shrink-0 flex items-center justify-center">{icon}</span>}
       <span className="flex-1">{children}</span>
       <MenuSubChevron className={cn('shrink-0', chevronClass)} />
     </li>
@@ -618,10 +622,10 @@ export function MenuSubContent({
   const { setContentRef: setContextContentRef } = sub
 
   const menuRef = React.useRef<HTMLMenuElement | null>(null)
-  const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
+  const setMenuRef = (node: HTMLMenuElement | null): void => {
     menuRef.current = node
     setContextContentRef(node)
-  }, [setContextContentRef])
+  }
 
   const [position, ready] = useLayer({
     anchorRef: sub.triggerRef,
@@ -636,10 +640,7 @@ export function MenuSubContent({
   })
 
   // Dismiss on Escape or outside pointerdown. Trigger + content are "inside".
-  const layerRefs = React.useMemo(
-    () => [menuRef, sub.triggerRef],
-    [sub.triggerRef],
-  )
+  const layerRefs = [menuRef, sub.triggerRef]
   useDismissable({
     enabled: sub.open,
     onDismiss: () => sub.setOpen(false),

@@ -8,8 +8,8 @@ import {
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
 } from '@murasaki/react98'
-import { useCallback } from 'react'
-import { APP_ID, useProcessActions } from '../../contexts/process'
+import { APP_ID } from '../../contexts/process/directory'
+import { useProcessActions } from '../../contexts/process/hooks'
 import { useQuickLaunchCount } from '../../hooks/use-quick-launch-count'
 import { assetPath } from '../../lib/asset-path'
 import { TASKBAR_QUICK_LAUNCH_ICONS } from '../../lib/playground-assets'
@@ -37,13 +37,13 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onSh
   const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = useQuickLaunchCount()
   const { open } = useProcessActions()
 
-  const handleOpenOutlookExpress = useCallback(() => {
+  const handleOpenOutlookExpress = (): void => {
     open(APP_ID.OUTLOOK_EXPRESS)
-  }, [open])
+  }
 
-  const handleOpenWelcome = useCallback(() => {
+  const handleOpenWelcome = (): void => {
     open(APP_ID.WELCOME)
-  }, [open])
+  }
 
   const quickLaunchIcons: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
     src: assetPath(path),

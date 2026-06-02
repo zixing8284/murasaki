@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useSyncExternalStore } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, writeJsonStorageItem } from '../lib/persistence'
 
 export interface CrtTuningSettings {
@@ -103,15 +103,13 @@ export function useCrtTuning(): [CrtTuningSettings, (nextSettings: CrtTuningSett
     return JSON.stringify(readSettings())
   }, [])
 
-  const defaultSerialized = useMemo(() => JSON.stringify(defaultCrtTuningSettings), [])
+  const defaultSerialized = JSON.stringify(defaultCrtTuningSettings)
   const getServerSnapshot = useCallback((): string => defaultSerialized, [defaultSerialized])
 
   const serialized = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  const settings = useMemo((): CrtTuningSettings => {
-    return parseStoredCrtTuningSettings(JSON.parse(serialized) as unknown) ?? defaultCrtTuningSettings
-  }, [serialized])
+  const settings: CrtTuningSettings = parseStoredCrtTuningSettings(JSON.parse(serialized) as unknown) ?? defaultCrtTuningSettings
 
-  const setSettings = useCallback((nextSettings: CrtTuningSettings) => {
+  const setSettings = (nextSettings: CrtTuningSettings): void => {
     const normalized = {
       scanlineOpacity: clamp(nextSettings.scanlineOpacity, 0, 0.6),
       jitterAmount: clamp(nextSettings.jitterAmount, 0, 2),
@@ -120,7 +118,7 @@ export function useCrtTuning(): [CrtTuningSettings, (nextSettings: CrtTuningSett
     } satisfies StoredCrtTuningSettings
     writeJsonStorageItem('local', storageKey, normalized)
     emit(storageKey)
-  }, [storageKey])
+  }
 
   return [settings, setSettings]
 }

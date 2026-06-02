@@ -4,7 +4,7 @@ import type {
   ProcessContextState,
   ProcessContextValue,
 } from './types'
-import { use, useMemo } from 'react'
+import { use } from 'react'
 import { ProcessActionsContext, ProcessStateContext } from './context'
 
 function useProcessState(): ProcessContextState {
@@ -26,7 +26,7 @@ function useProcessState(): ProcessContextState {
 export function useProcesses(): ProcessContextValue {
   const state = useProcessState()
   const actions = useProcessActions()
-  return useMemo(() => ({ ...state, ...actions }), [state, actions])
+  return { ...state, ...actions }
 }
 
 /**
@@ -65,10 +65,7 @@ export function useProcessActions(): ProcessContextActions {
  */
 export function useProcessList(): (Process & { id: string })[] {
   const { processes } = useProcessState()
-  return useMemo(
-    () => Object.entries(processes)
-      .filter(([, proc]) => !proc.ephemeral)
-      .map(([id, proc]) => ({ ...proc, id })),
-    [processes],
-  )
+  return Object.entries(processes)
+    .filter(([, proc]) => !proc.ephemeral)
+    .map(([id, proc]) => ({ ...proc, id }))
 }

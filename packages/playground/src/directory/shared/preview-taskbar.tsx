@@ -22,7 +22,7 @@ export function PreviewTaskbar({ startLabel = 'Start' }: PreviewTaskbarProps): R
           <img
             src={assetPath(PREVIEW_TASKBAR_LOGO)}
             alt=""
-            className="h-3 w-3 shrink-0"
+            className="size-3 shrink-0"
             aria-hidden="true"
           />
           <span className="font-bold">{startLabel}</span>

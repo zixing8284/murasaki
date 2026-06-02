@@ -1,6 +1,6 @@
 import type { ThemeId } from '@murasaki/react98'
 import { themeIds } from '@murasaki/react98'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, removeStorageItem, writeJsonStorageItem } from '../../../lib/persistence'
 import {
   ALL_COLOR_KEYS,
@@ -107,7 +107,7 @@ export function useThemeColors(): ThemeColorsState {
   const clearDraftRef = useRef(false)
 
   // Compute derived colors from current ButtonFace + settings
-  const allColors = useMemo(() => {
+  const allColors = (() => {
     const result = { ...colors }
 
     if (linkElements) {
@@ -121,7 +121,7 @@ export function useThemeColors(): ThemeColorsState {
     }
 
     return result
-  }, [colors, linkElements, titlebarGradients])
+  })()
 
   useEffect(() => {
     if (skipNextPersistRef.current) {
@@ -146,44 +146,44 @@ export function useThemeColors(): ThemeColorsState {
     return () => window.clearTimeout(timeoutId)
   }, [colors, currentSchemeId, linkElements, titlebarGradients])
 
-  const setColor = useCallback((key: string, hex: string) => {
+  const setColor = (key: string, hex: string): void => {
     setColors(prev => ({ ...prev, [key]: hex }))
     setCurrentSchemeId('custom')
-  }, [])
+  }
 
-  const handleSetLinkElements = useCallback((enabled: boolean) => {
+  const handleSetLinkElements = (enabled: boolean): void => {
     setLinkElements(enabled)
     setCurrentSchemeId('custom')
-  }, [])
+  }
 
-  const handleSetTitlebarGradients = useCallback((enabled: boolean) => {
+  const handleSetTitlebarGradients = (enabled: boolean): void => {
     setTitlebarGradients(enabled)
     setCurrentSchemeId('custom')
-  }, [])
+  }
 
-  const loadFromThemeFile = useCallback((content: string) => {
+  const loadFromThemeFile = (content: string): void => {
     const parsed = parseThemeFile(content)
     setColors(prev => ({ ...prev, ...parsed }))
     setCurrentSchemeId('custom')
-  }, [])
+  }
 
-  const loadBuiltInScheme = useCallback((id: ThemeId) => {
+  const loadBuiltInScheme = (id: ThemeId): void => {
     setColors(readThemeColorsFromCss(id))
     setLinkElements(false)
     setTitlebarGradients(true)
     setCurrentSchemeId(id)
-  }, [])
+  }
 
-  const resetToDefaults = useCallback(() => {
+  const resetToDefaults = (): void => {
     clearDraftRef.current = true
     removeStorageItem('local', PLAYGROUND_STORAGE_KEYS.themeDesignerDraft)
     setColors(readThemeColorsFromCss('windows-98'))
     setLinkElements(false)
     setTitlebarGradients(true)
     setCurrentSchemeId('windows-98')
-  }, [])
+  }
 
-  const isDerived = useCallback((key: string): boolean => {
+  const isDerived = (key: string): boolean => {
     if (linkElements && (BUTTON_FACE_DERIVED_KEYS as readonly string[]).includes(key)) {
       return true
     }
@@ -191,7 +191,7 @@ export function useThemeColors(): ThemeColorsState {
       return true
     }
     return false
-  }, [linkElements, titlebarGradients])
+  }
 
   return {
     allColors,

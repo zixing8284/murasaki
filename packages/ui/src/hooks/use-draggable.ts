@@ -84,12 +84,12 @@ export function useDraggable<
     setDragElement(el)
   }, [])
 
-  const resetPosition = useCallback(() => {
+  const resetPosition = (): void => {
     transformRef.current = { offsetX: 0, offsetY: 0 }
     if (targetRef.current) {
       targetRef.current.style.transform = ''
     }
-  }, [])
+  }
 
   const onMousedown = useCallback(
     (e: MouseEvent) => {

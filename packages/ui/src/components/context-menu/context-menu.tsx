@@ -9,14 +9,15 @@ import type {
 } from 'react'
 import {
   use,
-  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
 import { cnPure } from '../../lib/utils'
-import { LayerPortal, useDismissable, useFocusScope, useLayer } from '../../primitives'
+import { LayerPortal } from '../../primitives/layer-root/layer-portal'
+import { useDismissable } from '../../primitives/use-dismissable'
+import { useFocusScope } from '../../primitives/use-focus-scope'
+import { useLayer } from '../../primitives/use-layer'
 import {
   ContextMenuContext,
 } from './context-menu-context'
@@ -56,36 +57,33 @@ export function ContextMenu({
     availableWidth: null,
   })
 
-  const openAt = useCallback((x: number, y: number) => {
+  const openAt = (x: number, y: number): void => {
     setState({ open: true, x, y })
-  }, [])
+  }
 
-  const close = useCallback(() => {
+  const close = (): void => {
     setState(prev => (prev.open ? { ...prev, open: false } : prev))
-  }, [])
+  }
 
-  const setAvailableSize = useCallback((availableHeight: number | null, availableWidth: number | null) => {
+  const setAvailableSize = (availableHeight: number | null, availableWidth: number | null): void => {
     setSize(prev =>
       prev.availableHeight === availableHeight && prev.availableWidth === availableWidth
         ? prev
         : { availableHeight, availableWidth },
     )
-  }, [])
+  }
 
-  const value = useMemo(
-    () => ({
-      open: state.open,
-      x: state.x,
-      y: state.y,
-      container,
-      availableHeight: size.availableHeight,
-      availableWidth: size.availableWidth,
-      openAt,
-      close,
-      setAvailableSize,
-    }),
-    [state.open, state.x, state.y, container, size.availableHeight, size.availableWidth, openAt, close, setAvailableSize],
-  )
+  const value = {
+    open: state.open,
+    x: state.x,
+    y: state.y,
+    container,
+    availableHeight: size.availableHeight,
+    availableWidth: size.availableWidth,
+    openAt,
+    close,
+    setAvailableSize,
+  }
 
   return <ContextMenuContext value={value}>{children}</ContextMenuContext>
 }
@@ -188,18 +186,18 @@ export function ContextMenuContent({
   const { open, x, y, container, close, setAvailableSize } = ctx
 
   const ref = useRef<HTMLDivElement>(null)
-  const containerRef = useMemo(() => ({
-    get current(): HTMLElement | null {
-      return container ?? null
-    },
-  }), [container])
+  const boundaryContainerRef = useRef<HTMLElement | null>(null)
+  if (boundaryContainerRef.current !== (container ?? null)) {
+    boundaryContainerRef.current = container ?? null
+  }
+  const containerRef = boundaryContainerRef
 
   // Virtual 1×1 anchor at the recorded pointer position. Pure (no React
   // state); re-evaluated on every recompute so `useLayer` always sees
   // fresh coordinates.
-  const anchorRect = useCallback((): DOMRect => {
+  const anchorRect = (): DOMRect => {
     return new DOMRect(x, y, 0, 0)
-  }, [x, y])
+  }
 
   const [position, ready] = useLayer({
     anchorRect,
@@ -225,7 +223,7 @@ export function ContextMenuContent({
 
   // Outside pointerdown (covers right-click since pointerdown fires before
   // contextmenu) and Escape close the popup via the shared primitive.
-  const layerRefs = useMemo(() => [ref], [])
+  const layerRefs = [ref]
   useDismissable({
     enabled: open,
     onDismiss: close,
@@ -241,7 +239,7 @@ export function ContextMenuContent({
   if (!open)
     return null
 
-  const handleClick = (event: MouseEvent<HTMLDivElement>): void => {
+  const handleMenuClick = (event: MouseEvent<HTMLDivElement>): void => {
     onClick?.(event)
     if (!closeOnItemClick || event.defaultPrevented)
       return
@@ -268,7 +266,13 @@ export function ContextMenuContent({
         data-open=""
         data-context-menu-available-height={position?.availableHeight ?? ''}
         style={{ left, top, opacity: ready ? undefined : 0, ...style }}
-        onClick={handleClick}
+        onClick={handleMenuClick}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.stopPropagation()
+            close()
+          }
+        }}
         onContextMenu={event => event.preventDefault()}
         tabIndex={-1}
         {...props}

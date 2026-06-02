@@ -121,7 +121,7 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
       ref={canvasRef}
       width={VIRTUAL_W}
       height={VIRTUAL_H}
-      className="block w-full h-full"
+      className="block size-full"
       style={{ imageRendering: 'pixelated' }}
     />
   )

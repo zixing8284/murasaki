@@ -29,7 +29,7 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
     : fileLabel(preload.currentAsset)
 
   return (
-    <div className="flex h-full w-full cursor-wait items-center justify-center bg-(--background) px-4 py-6 text-(--button-text)">
+    <div className="flex size-full cursor-wait items-center justify-center bg-(--background) px-4 py-6 text-(--button-text)">
       <div className="w-full max-w-107.5 bg-(--button-face) shadow-(--shadow-raised)">
         <div className="p-1">
           <div className="mb-3 shadow-(--shadow-sunken)">

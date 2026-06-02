@@ -47,6 +47,7 @@ export function FileControls({ state }: FileControlsProps): React.ReactElement {
         accept=".theme,.ini,.txt"
         onChange={handleLoad}
         className="hidden"
+        aria-hidden="true"
       />
     </div>
   )

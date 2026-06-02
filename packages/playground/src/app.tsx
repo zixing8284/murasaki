@@ -1,8 +1,8 @@
 import { ThemeProvider } from '@murasaki/react98'
-import { DesktopFilesProvider } from './contexts/desktop-files'
-import { DesktopLayoutProvider } from './contexts/desktop-layout'
-import { ProcessProvider } from './contexts/process'
-import { PLAYGROUND_STORAGE_KEYS } from './lib/persistence'
+import { DesktopFilesProvider } from './contexts/desktop-files/provider'
+import { DesktopLayoutProvider } from './contexts/desktop-layout/provider'
+import { ProcessProvider } from './contexts/process/provider'
+import { PLAYGROUND_STORAGE_KEYS } from './lib/persistence/schema'
 import { Shell } from './shell/shell'
 
 export function App(): React.ReactElement {

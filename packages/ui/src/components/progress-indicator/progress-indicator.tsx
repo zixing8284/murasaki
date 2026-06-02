@@ -118,10 +118,10 @@ export function ProgressIndicator({
       {...props}
     >
       {/* Progress bar fill */}
-      <div className="h-full w-full overflow-hidden">
+      <div className="size-full overflow-hidden">
         {variant === 'tile'
           ? (
-              <div ref={tilesWrapperRef} className="flex h-full w-full">
+              <div ref={tilesWrapperRef} className="flex size-full">
                 {Array.from({ length: tileCount }).map((_, index) => (
                   <span
                     key={`tile-${String(tileCount)}-${String(index)}`}
@@ -135,7 +135,7 @@ export function ProgressIndicator({
               <>
                 {/* Bottom layer: light background with dark text */}
                 <div
-                  className="bg-(--window) text-(--window-text) relative flex h-full w-full
+                  className="bg-(--window) text-(--window-text) relative flex size-full
                 items-center justify-center"
                 >
                   {!hideValue && (

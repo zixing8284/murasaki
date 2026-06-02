@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react'
-import type { GridLayout } from '../../contexts/desktop-layout'
+import type { GridLayout } from '../../contexts/desktop-layout/storage'
 import type { DesktopCellOccupancyChecker, DesktopDragPreview } from './use-desktop-icon-drag'
 import {
   ContextMenu,
@@ -9,7 +9,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki/react98'
-import { useDesktopLayout } from '../../contexts/desktop-layout'
+import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
 import { useDesktopIconDrag } from './use-desktop-icon-drag'
 
 interface DesktopIconProps {
@@ -88,6 +88,8 @@ export function DesktopIcon({
     <ContextMenu container={menuContainer}>
       <ContextMenuTrigger>
         <div
+          role="button"
+          tabIndex={0}
           className="relative cursor-pointer select-none touch-none"
           style={{
             ...(col !== undefined && { gridColumnStart: col }),
@@ -106,6 +108,13 @@ export function DesktopIcon({
           onDoubleClick={(event) => {
             event.stopPropagation()
             onOpen()
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              event.stopPropagation()
+              onOpen()
+            }
           }}
         >
           <div

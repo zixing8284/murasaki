@@ -79,7 +79,7 @@ export function Checkbox({
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked ?? false)
   const currentChecked = isControlled ? checked : internalChecked
 
-  const handleChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckedChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const nextChecked = event.target.checked
 
     if (!isControlled) {
@@ -87,7 +87,7 @@ export function Checkbox({
     }
 
     onCheckedChange?.(nextChecked)
-  }, [isControlled, onCheckedChange])
+  }
 
   return (
     <>
@@ -101,7 +101,7 @@ export function Checkbox({
         name={inputId}
         type="checkbox"
         {...props}
-        onChange={handleChange}
+        onChange={handleCheckedChange}
       />
       <CheckboxLabel htmlFor={inputId}>{children}</CheckboxLabel>
     </>

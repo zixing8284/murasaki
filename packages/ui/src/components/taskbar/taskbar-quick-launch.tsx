@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { cn } from '../../lib/utils'
 
@@ -46,19 +46,31 @@ function QuickLaunchDivider({
   onMouseDown,
 }: {
   isDragging: boolean
-  onMouseDown: (e: React.MouseEvent) => void
+  onMouseDown: () => void
 }): React.ReactElement {
   return (
     <div className="flex items-center mx-0.5 gap-px">
       <div className="h-5.5 w-px border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
       <div
+        role="separator"
+        aria-orientation="vertical"
+        tabIndex={0}
         className={cn(
           'shadow-(--shadow-raised) h-5 cursor-ew-resize',
           isDragging
             ? 'w-1.5 bg-(--button-shadow) flex items-center justify-center'
             : 'w-1',
         )}
-        onMouseDown={onMouseDown}
+        onMouseDown={(e) => {
+          e.preventDefault()
+          onMouseDown()
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onMouseDown()
+          }
+        }}
         title="Drag to resize Quick Launch"
       >
         {isDragging && (
@@ -93,33 +105,28 @@ export function TaskbarQuickLaunch({
   const resolvedVisibleCount = clampVisibleCount(visibleCount ?? uncontrolledVisibleCount, icons.length)
   const quickLaunchWidth = dragWidth ?? resolvedVisibleCount * iconStepWidth
 
-  const setVisibleIconCount = useCallback((nextCount: number) => {
+  const setVisibleIconCount = useCallback((nextCount: number): void => {
     const clamped = clampVisibleCount(nextCount, icons.length)
     if (visibleCount === undefined) {
       setUncontrolledVisibleCount(clamped)
     }
     onVisibleCountChange?.(clamped)
-  }, [icons.length, onVisibleCountChange, visibleCount])
+  }, [icons.length, visibleCount, onVisibleCountChange])
 
-  const visibleIconsCount = useMemo(() => {
-    return Math.max(0, Math.floor(quickLaunchWidth / iconStepWidth))
-  }, [quickLaunchWidth, iconStepWidth])
+  const visibleIconsCount = Math.max(0, Math.floor(quickLaunchWidth / iconStepWidth))
 
-  const visibleIcons = useMemo(() => {
-    return icons.slice(0, visibleIconsCount)
-  }, [icons, visibleIconsCount])
+  const visibleIcons = icons.slice(0, visibleIconsCount)
 
   const hasHiddenIcons = visibleIconsCount < icons.length
 
-  const handleExpandQuickLaunch = useCallback(() => {
+  const handleExpandQuickLaunch = (): void => {
     setDragWidth(null)
     setVisibleIconCount(icons.length)
-  }, [icons.length, setVisibleIconCount])
+  }
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
+  const handleStartDrag = (): void => {
     setIsDragging(true)
-  }, [])
+  }
 
   useEffect(() => {
     if (!isDragging)
@@ -202,7 +209,7 @@ export function TaskbarQuickLaunch({
       )}
 
       {/* Draggable Divider */}
-      <QuickLaunchDivider isDragging={isDragging} onMouseDown={handleMouseDown} />
+      <QuickLaunchDivider isDragging={isDragging} onMouseDown={handleStartDrag} />
     </div>
   )
 }

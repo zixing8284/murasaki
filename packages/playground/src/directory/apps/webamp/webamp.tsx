@@ -1,7 +1,7 @@
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
-import type { ProcessComponentProps } from '../../../contexts/process'
-import { useCallback, useMemo, useRef } from 'react'
-import { useProcess, useProcessActions } from '../../../contexts/process'
+import type { ProcessComponentProps } from '../../../contexts/process/types'
+import { useRef } from 'react'
+import { useProcess, useProcessActions } from '../../../contexts/process/hooks'
 import { useWebampBounds, useWebampViewportBounds } from './webamp-bounds'
 import { useWebampLoader } from './webamp-loader'
 import { useWebampMilkdrop } from './webamp-milkdrop'
@@ -33,14 +33,11 @@ export function WebampApp({ windowId }: ProcessComponentProps): React.ReactEleme
 
   // Bridge Webamp adapter events to ProcessContext. Identities can change
   // across renders; the loader hook captures them via latest refs.
-  const callbacks = useMemo(
-    () => ({
-      onClose: () => close(windowId),
-      onMinimize: () => minimize(windowId),
-      onTitleChange: (next: string) => title(windowId, next),
-    }),
-    [close, minimize, title, windowId],
-  )
+  const callbacks = {
+    onClose: () => close(windowId),
+    onMinimize: () => minimize(windowId),
+    onTitleChange: (next: string) => title(windowId, next),
+  }
 
   const instance = useWebampLoader(containerRef, callbacks)
   useWebampViewportBounds(instance, containerRef)
@@ -53,14 +50,14 @@ export function WebampApp({ windowId }: ProcessComponentProps): React.ReactEleme
   // solved at the Webamp layer (constructor `zIndex` option) rather than
   // here, because the menu is rendered into a body-level portal that
   // sits outside our host's stacking context.
-  const activateSelf = useCallback(() => {
+  const activateSelf = (): void => {
     activate(windowId)
-  }, [activate, windowId])
+  }
 
-  const handlePointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
     event.stopPropagation()
     activateSelf()
-  }, [activateSelf])
+  }
 
   if (!processInfo)
     return null

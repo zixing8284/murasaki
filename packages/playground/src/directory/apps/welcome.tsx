@@ -96,7 +96,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
               @murasaki/react98
             </a>
             {' '}
-            on npm (not yet) and powers this playground — a fully interactive Windows 98 desktop
+            on npm (not yet) and powers this playground &mdash; a fully interactive Windows 98 desktop
             running in your browser.
           </p>
         </section>
@@ -105,7 +105,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
           <h2 className="font-bold mb-1">Why?</h2>
           <p>
             The millennium era carries the warmth of childhood memories.
-            Those chunky pixels, the classic desktop, the familiar chime —
+            Those chunky pixels, the classic desktop, the familiar chime &mdash;
             bringing them back with React is something that simply makes me happy.
           </p>
           <p className="mt-1 italic text-(--gray-text)">
@@ -121,42 +121,42 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
                 98.css
               </a>
               {' '}
-              — CSS styles
+              &mdash; CSS styles
             </li>
             <li>
               <a href="https://github.com/tpenguinltg/winclassic" target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
                 winclassic
               </a>
               {' '}
-              — theme variable definitions
+              &mdash; theme variable definitions
             </li>
             <li>
               <a href="https://github.com/react95-io/React95" target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
                 React95
               </a>
               {' '}
-              — component design reference
+              &mdash; component design reference
             </li>
             <li>
               <a href="https://github.com/DustinBrett/daedalOS" target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
                 daedalOS
               </a>
               {' '}
-              — code organization and design
+              &mdash; code organization and design
             </li>
             <li>
               <a href="https://win99.dev/" target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
                 win99.dev
               </a>
               {' '}
-              — UI style reference
+              &mdash; UI style reference
             </li>
             <li>
               <a href="https://github.com/nielssp/classic-stylesheets" target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
                 classic-stylesheets
               </a>
               {' '}
-              — theme resources
+              &mdash; theme resources
             </li>
           </ul>
         </section>

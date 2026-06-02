@@ -1,8 +1,8 @@
-import type { LayerContextValue } from '../../primitives'
+import type { LayerContextValue } from '../../primitives/layer-root/layer-context'
 import * as React from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { cnPure } from '../../lib/utils'
-import { LayerContext } from '../../primitives'
+import { LayerContext } from '../../primitives/layer-root/layer-context'
 
 export interface LayerProviderProps extends Omit<React.ComponentProps<'div'>, 'children'> {
   /**
@@ -34,7 +34,7 @@ export function LayerProvider({
     }
   }, [ref])
 
-  const value = useMemo<LayerContextValue>(() => ({ target }), [target])
+  const value: LayerContextValue = { target }
 
   return (
     <LayerContext value={value}>

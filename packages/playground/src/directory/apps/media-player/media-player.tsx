@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react'
-import type { ProcessComponentProps } from '../../../contexts/process'
+import type { ProcessComponentProps } from '../../../contexts/process/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useDesktopFiles } from '../../../contexts/desktop-files'
-import { useProcess, useProcessActions } from '../../../contexts/process'
+import { useDesktopFiles } from '../../../contexts/desktop-files/hooks'
+import { useProcess, useProcessActions } from '../../../contexts/process/hooks'
 import { useFullscreen } from '../../../hooks/use-fullscreen'
 import { LocalMediaFileInput } from './components/local-media-file-input'
 import { MediaDisplay } from './components/media-display'
@@ -36,25 +36,25 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
     ? `${player.currentTrack.title} - ${player.isPlaying ? 'Playing' : 'Paused'}`
     : 'Media Player'
 
-  const focusWindowRoot = useCallback(() => {
+  const focusWindowRoot = useCallback((): void => {
     windowRootRef.current?.focus({ preventScroll: true })
   }, [])
 
-  const seekBackward = useCallback(() => {
+  const seekBackward = (): void => {
     seek(Math.max(0, player.currentTime - SEEK_STEP_SECONDS))
-  }, [player.currentTime, seek])
+  }
 
-  const seekForward = useCallback(() => {
+  const seekForward = (): void => {
     seek(Math.min(player.duration, player.currentTime + SEEK_STEP_SECONDS))
-  }, [player.currentTime, player.duration, seek])
+  }
 
-  const togglePlaylist = useCallback(() => {
+  const togglePlaylist = (): void => {
     setShowPlaylist(previousValue => !previousValue)
-  }, [])
+  }
 
-  const toggleForceAspectRatio = useCallback(() => {
+  const toggleForceAspectRatio = (): void => {
     setForceAspectRatio(previousValue => !previousValue)
-  }, [])
+  }
 
   const { handleVideoClick, handleVideoDoubleClick } = useVideoFullscreenToggle(toggleMediaFullscreen)
 

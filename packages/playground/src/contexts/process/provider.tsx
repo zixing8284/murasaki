@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { ProcessState } from './functions'
 import type { ProcessContextState } from './types'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { ProcessActionsContext, ProcessStateContext } from './context'
 import { createProcessActions, INITIAL_PROCESS_STATE } from './functions'
 
@@ -22,14 +22,14 @@ export function ProcessProvider({ children }: { children: ReactNode }): React.Re
 
   // Actions only close over the stable setState dispatcher, so the value
   // identity is fixed for the provider's lifetime.
-  const actions = useMemo(() => createProcessActions(setState), [])
+  const actions = createProcessActions(setState)
 
-  const stateValue = useMemo<ProcessContextState>(() => ({
+  const stateValue: ProcessContextState = {
     processes: state.processes,
     foregroundId: state.foregroundId,
     stackOrder: state.stackOrder,
     container: state.container,
-  }), [state])
+  }
 
   return (
     <ProcessActionsContext value={actions}>

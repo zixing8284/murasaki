@@ -4,9 +4,15 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 
-import { useCallback, useEffect, useId, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useId, useRef } from 'react'
 import { cn } from '../../lib/utils'
-import { LayerPortal, useCollection, useDismissable, useLayer, useRovingFocus, useScrollbar, useTypeahead } from '../../primitives'
+import { LayerPortal } from '../../primitives/layer-root/layer-portal'
+import { useScrollbar } from '../../primitives/scrollbar/use-scrollbar'
+import { useCollection } from '../../primitives/use-collection'
+import { useDismissable } from '../../primitives/use-dismissable'
+import { useLayer } from '../../primitives/use-layer'
+import { useRovingFocus } from '../../primitives/use-roving-focus'
+import { useTypeahead } from '../../primitives/use-typeahead'
 import { ButtonDownActiveIcon, ButtonDownIcon } from './select-icons'
 import { useSelectState } from './use-select-state'
 
@@ -279,11 +285,11 @@ export function Select<T = string>({
 
   const collection = useCollection<SelectCollectionData>()
 
-  const handleOptionFocus = useCallback((item: HTMLElement) => {
+  const handleOptionFocus = (item: HTMLElement): void => {
     const index = Number(item.getAttribute('data-index'))
     if (Number.isInteger(index))
       setActiveIndex(index)
-  }, [setActiveIndex])
+  }
 
   useRovingFocus({
     enabled: open,
@@ -294,7 +300,7 @@ export function Select<T = string>({
     onFocus: handleOptionFocus,
   })
 
-  const handleTypeaheadMatch = useCallback((search: string) => {
+  const handleTypeaheadMatch = (search: string): void => {
     const items = collection.getItems()
     if (items.length === 0)
       return
@@ -313,21 +319,21 @@ export function Select<T = string>({
 
     setActiveIndex(match.data.index)
     match.ref.current?.focus()
-  }, [activeIndex, collection, setActiveIndex])
+  }
 
   const { onChar: handleTypeaheadChar } = useTypeahead({
     enabled: open,
     onMatch: handleTypeaheadMatch,
   })
 
-  const handleListboxKeyDown = useCallback((event: React.KeyboardEvent<HTMLUListElement>) => {
+  const handleListboxKeyDown = (event: React.KeyboardEvent<HTMLUListElement>): void => {
     if (event.defaultPrevented)
       return
     if (event.key.length !== 1 || event.altKey || event.ctrlKey || event.metaKey)
       return
 
     handleTypeaheadChar(event.key)
-  }, [handleTypeaheadChar])
+  }
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
   const [triggerWidth, setTriggerWidth] = React.useState<number | undefined>(undefined)
@@ -351,7 +357,7 @@ export function Select<T = string>({
   // Outside pointerdown (anywhere outside the trigger or the menu wrapper —
   // the wrapper contains both the listbox and the custom scrollbar DOM) and
   // Escape close the select via the shared dismissable primitive.
-  const layerRefs = useMemo(() => [triggerRef, menuWrapperRef], [triggerRef])
+  const layerRefs = [triggerRef, menuWrapperRef]
   useDismissable({
     enabled: open,
     onDismiss: closeSelect,
@@ -360,24 +366,23 @@ export function Select<T = string>({
   })
 
   // Display label
-  const displayLabel = useMemo(() => {
-    if (!selectedOption)
-      return ''
-    if (formatDisplay)
-      return formatDisplay(selectedOption)
-    return selectedOption.label ?? String(selectedOption.value)
-  }, [selectedOption, formatDisplay])
+  let displayLabel = ''
+  if (selectedOption) {
+    displayLabel = formatDisplay
+      ? formatDisplay(selectedOption)
+      : (selectedOption.label ?? String(selectedOption.value))
+  }
 
   // Menu style: cap maxHeight from edge detection, respecting explicit menuMaxHeight as upper bound
-  const menuStyle = useMemo(() => {
-    const detected = position?.availableHeight
+  const detected = position?.availableHeight
+  const menuStyle = (() => {
     if (!detected)
       return menuMaxHeight ? { maxHeight: menuMaxHeight } : undefined
     const capped = menuMaxHeight
       ? Math.min(detected, typeof menuMaxHeight === 'number' ? menuMaxHeight : Infinity)
       : detected
     return { maxHeight: capped }
-  }, [position?.availableHeight, menuMaxHeight])
+  })()
 
   const selectElement = (
     <div

@@ -1,6 +1,10 @@
 import { Button } from '@murasaki/react98'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+
+function handleRefresh(): void {
+  window.location.reload()
+}
 
 /**
  * Win98-style balloon notification that appears above the notification area
@@ -30,18 +34,14 @@ export function SwUpdateBalloon(): React.ReactElement {
     return () => window.removeEventListener('sw-update', handler)
   }, [])
 
-  const handleRefresh = useCallback(() => {
-    window.location.reload()
-  }, [])
-
-  const handleDismiss = useCallback(() => {
+  const handleDismiss = (): void => {
     setPosition(null)
-  }, [])
+  }
 
   return (
     <>
       {/* Invisible anchor to measure position */}
-      <span ref={anchorRef} className="absolute right-0 top-0 w-0 h-0 pointer-events-none" />
+      <span ref={anchorRef} className="absolute right-0 top-0 size-0 pointer-events-none" />
 
       {position && createPortal(
         <div
@@ -87,8 +87,8 @@ export function SwUpdateBalloon(): React.ReactElement {
 
           {/* Balloon tail (triangle pointing down toward notification area) */}
           <div className="absolute -bottom-1.5 right-3">
-            <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-(--window-frame)" />
-            <div className="absolute -top-1.75 left-px w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-(--info-window)" />
+            <div className="size-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-(--window-frame)" />
+            <div className="absolute -top-1.75 left-px size-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-(--info-window)" />
           </div>
         </div>,
         document.body,

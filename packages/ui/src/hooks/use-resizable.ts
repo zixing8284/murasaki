@@ -98,13 +98,13 @@ export function useResizable<
     setHandleElement(el)
   }, [])
 
-  const resetSize = useCallback(() => {
+  const resetSize = (): void => {
     sizeRef.current = { width: 0, height: 0 }
     if (targetRef.current) {
       targetRef.current.style.width = ''
       targetRef.current.style.height = ''
     }
-  }, [])
+  }
 
   const onMousedown = useCallback(
     (e: MouseEvent) => {

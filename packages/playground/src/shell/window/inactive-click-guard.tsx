@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useRef } from 'react'
-import { useProcess } from '../../contexts/process'
+import { useProcess } from '../../contexts/process/hooks'
 
 interface InactiveClickGuardProps {
   windowId: string

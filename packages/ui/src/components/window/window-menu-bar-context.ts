@@ -26,6 +26,8 @@ export interface WindowMenuBarMenuContextValue {
   contentId: string
   triggerRef: React.RefObject<HTMLButtonElement | null>
   contentRef: React.RefObject<HTMLElement | null>
+  setTriggerRef: (node: HTMLButtonElement | null) => void
+  setContentRef: (node: HTMLElement | null) => void
 }
 
 export const WindowMenuBarMenuContext = createContext<WindowMenuBarMenuContextValue | null>(null)

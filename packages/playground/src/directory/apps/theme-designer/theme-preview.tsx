@@ -109,7 +109,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
 
           <WindowContent className="flex flex-col items-center gap-1.5 bg-(--button-face)">
             <span className="text-(--button-text)">Message Text</span>
-            <Button>OK</Button>
+            <Button>Close message</Button>
           </WindowContent>
         </WindowFrame>
       </WindowProvider>

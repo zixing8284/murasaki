@@ -16,20 +16,23 @@ const OPTIONS = [
   { value: 'juliet', label: 'Juliet' },
 ]
 
+function SelectSlot({ id }: { id: string, label: string }): React.ReactElement {
+  return (
+    <Select
+      name={`select-${id}`}
+      options={OPTIONS}
+      defaultValue="alpha"
+      width={140}
+      menuMaxHeight={160}
+    />
+  )
+}
+
 export function SelectEdgeTestDemo(): React.ReactElement {
   return (
     <EdgeTestStage
       height={420}
-      renderSlot={({ id }) => (
-        <Select
-          key={id}
-          name={`select-${id}`}
-          options={OPTIONS}
-          defaultValue="alpha"
-          width={140}
-          menuMaxHeight={160}
-        />
-      )}
+      SlotComponent={SelectSlot}
     />
   )
 }

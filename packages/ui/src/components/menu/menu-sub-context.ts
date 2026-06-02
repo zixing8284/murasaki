@@ -6,6 +6,8 @@ export interface MenuSubContextValue {
   setOpen: (open: boolean) => void
   triggerRef: React.RefObject<HTMLLIElement | null>
   contentRef: React.RefObject<HTMLElement | null>
+  setTriggerRef: (node: HTMLLIElement | null) => void
+  setContentRef: (node: HTMLElement | null) => void
   /** Scheduled hover-close timer; cancelled when pointer re-enters trigger or content. */
   scheduleClose: () => void
   cancelClose: () => void

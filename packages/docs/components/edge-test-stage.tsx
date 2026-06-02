@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode, Ref } from 'react'
+import type { ComponentType, Ref } from 'react'
 
 interface EdgeTestSlot {
   id: string
@@ -8,10 +8,15 @@ interface EdgeTestSlot {
   className: string
 }
 
+interface EdgeTestSlotProps {
+  id: string
+  label: string
+}
+
 interface EdgeTestStageProps {
   height?: number
   containerRef?: Ref<HTMLDivElement>
-  renderSlot: (slot: Pick<EdgeTestSlot, 'id' | 'label'>) => ReactNode
+  SlotComponent: ComponentType<EdgeTestSlotProps>
 }
 
 const SLOTS: EdgeTestSlot[] = [
@@ -29,7 +34,7 @@ const SLOTS: EdgeTestSlot[] = [
 export function EdgeTestStage({
   height = 360,
   containerRef,
-  renderSlot,
+  SlotComponent,
 }: EdgeTestStageProps): React.ReactElement {
   return (
     <div
@@ -39,7 +44,7 @@ export function EdgeTestStage({
     >
       {SLOTS.map(slot => (
         <div key={slot.id} className={`absolute ${slot.className}`}>
-          {renderSlot({ id: slot.id, label: slot.label })}
+          <SlotComponent id={slot.id} label={slot.label} />
         </div>
       ))}
     </div>

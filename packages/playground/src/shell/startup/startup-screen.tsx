@@ -49,7 +49,7 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
           </div>
           <div className="mb-2 flex items-center gap-2 px-1">
             <div className="min-w-0 flex-1">
-              <div className="font-bold">Starting up...</div>
+              <div className="font-bold">Starting up…</div>
               <div className="truncate text-(--gray-text) p-0.5" aria-live="polite">{status}</div>
             </div>
             <div className="shrink-0 text-right font-bold">
@@ -68,7 +68,7 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
 
           <div className="mt-2 flex items-center justify-between gap-3 text-(--button-text) px-1">
             <span className="truncate">{progressLabel}</span>
-            <span className="shrink-0">Please wait...</span>
+            <span className="shrink-0">Please wait…</span>
           </div>
         </div>
       </div>

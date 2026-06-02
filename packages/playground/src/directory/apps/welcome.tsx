@@ -33,13 +33,13 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
           <p className="mt-0.5 text-(--gray-text)">@murasaki/react98</p>
         </div>
         <Divider className="w-full" />
-        <Button className="px-6" onClick={onClose}>OK</Button>
+        <Button className="px-6" onClick={onClose}>Close</Button>
       </div>
     </DialogWindow>
   )
 }
 
-function renderMenuLabel(menu: string): ReactElement {
+function MenuLabel({ menu }: { menu: string }): ReactElement {
   const [accelerator = '', ...rest] = menu
 
   return (
@@ -58,7 +58,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
       <InactiveClickGuard windowId={windowId} className="shrink-0">
         <WindowMenuBar className="h-5">
           <WindowMenuBarMenu value="help">
-            <WindowMenuBarTrigger>{renderMenuLabel('Help')}</WindowMenuBarTrigger>
+            <WindowMenuBarTrigger><MenuLabel menu="Help" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-48">
               <MenuItem reserveIconSpace onClick={() => setShowAbout(true)}>About Murasaki</MenuItem>
             </WindowMenuBarContent>

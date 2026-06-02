@@ -161,6 +161,7 @@ export function WindowMenuBar({
       <div
         ref={setMenuBarRef}
         role="menubar"
+        tabIndex={-1}
         className={cn(menuBarVariants(), className)}
         onKeyDown={handleKeyDown}
         {...props}
@@ -191,6 +192,14 @@ export function WindowMenuBarMenu({
   const contentRef = React.useRef<HTMLElement | null>(null)
   const value = valueProp ?? generatedValueId
 
+  const setTriggerRef = React.useCallback((node: HTMLButtonElement | null) => {
+    triggerRef.current = node
+  }, [])
+
+  const setContentRef = React.useCallback((node: HTMLElement | null) => {
+    contentRef.current = node
+  }, [])
+
   const contextValue = React.useMemo<WindowMenuBarMenuContextValue>(() => ({
     value,
     open: menubar.value === value,
@@ -198,7 +207,9 @@ export function WindowMenuBarMenu({
     contentId,
     triggerRef,
     contentRef,
-  }), [value, menubar.value, triggerId, contentId])
+    setTriggerRef,
+    setContentRef,
+  }), [value, menubar.value, triggerId, contentId, setTriggerRef, setContentRef])
 
   return <WindowMenuBarMenuContext value={contextValue}>{children}</WindowMenuBarMenuContext>
 }
@@ -271,14 +282,15 @@ export function WindowMenuBarTrigger({
 }: WindowMenuBarTriggerProps): React.ReactElement {
   const menubar = useWindowMenuBarContext('WindowMenuBarTrigger')
   const menu = useWindowMenuBarMenuContext('WindowMenuBarTrigger')
+  const { setTriggerRef: setContextTriggerRef } = menu
 
   const setTriggerRef = React.useCallback((node: HTMLButtonElement | null) => {
-    menu.triggerRef.current = node
+    setContextTriggerRef(node)
     if (typeof ref === 'function')
       ref(node)
     else if (ref)
       ref.current = node
-  }, [ref, menu.triggerRef])
+  }, [ref, setContextTriggerRef])
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     onClick?.(event)
@@ -351,6 +363,7 @@ export function WindowMenuBarContent({
 }: WindowMenuBarContentProps): React.ReactElement | null {
   const menubar = useWindowMenuBarContext('WindowMenuBarContent')
   const menu = useWindowMenuBarMenuContext('WindowMenuBarContent')
+  const { setContentRef: setContextContentRef } = menu
   const menuRef = React.useRef<HTMLMenuElement | null>(null)
   const [localOpen, dispatchLocalOpen] = React.useReducer((_open: boolean, nextOpen: boolean) => nextOpen, menu.open)
   const previousAnimationNameRef = React.useRef('none')
@@ -386,8 +399,8 @@ export function WindowMenuBarContent({
 
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
     menuRef.current = node
-    menu.contentRef.current = node
-  }, [menu.contentRef])
+    setContextContentRef(node)
+  }, [setContextContentRef])
 
   // Keep positioning alive while exit animations keep the content mounted.
   const [position, ready] = useLayer({

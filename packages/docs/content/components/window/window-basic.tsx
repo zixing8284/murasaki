@@ -22,7 +22,7 @@ export function WindowBasicDemo(): React.ReactElement {
           </WindowMenuBar>
           <WindowContent className="p-2">
             <p className="m-0 mb-2">Window primitives compose into app chrome.</p>
-            <Button>OK</Button>
+            <Button>Close</Button>
           </WindowContent>
           <WindowStatusBar>
             <WindowStatusBarField>Ready</WindowStatusBarField>

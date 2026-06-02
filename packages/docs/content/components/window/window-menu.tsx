@@ -42,10 +42,10 @@ export function WindowMenuDemo(): React.ReactElement {
               <WindowMenuBarTrigger>File</WindowMenuBarTrigger>
               <WindowMenuBarContent className="w-40">
                 <MenuItem reserveIconSpace onClick={() => setStatus('New document')}>New</MenuItem>
-                <MenuItem reserveIconSpace onClick={() => setStatus('Open file')}>Open...</MenuItem>
+                <MenuItem reserveIconSpace onClick={() => setStatus('Open file')}>Open…</MenuItem>
                 <MenuItem reserveIconSpace disabled>Save</MenuItem>
                 <MenuSeparator />
-                <MenuItem reserveIconSpace onClick={() => setStatus('Print')}>Print...</MenuItem>
+                <MenuItem reserveIconSpace onClick={() => setStatus('Print')}>Print…</MenuItem>
                 <MenuSeparator />
                 <MenuItem reserveIconSpace disabled>Exit</MenuItem>
               </WindowMenuBarContent>
@@ -71,7 +71,7 @@ export function WindowMenuDemo(): React.ReactElement {
           </WindowMenuBar>
           <WindowContent className="flex flex-col gap-2 p-2">
             <p className="m-0">A tiny document window with classic top menus.</p>
-            <Button onClick={() => setStatus('Button clicked')}>OK</Button>
+            <Button onClick={() => setStatus('Button clicked')}>Close</Button>
           </WindowContent>
           <WindowStatusBar>
             <WindowStatusBarField>{status}</WindowStatusBarField>

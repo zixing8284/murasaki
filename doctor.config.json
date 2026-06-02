@@ -1,0 +1,13 @@
+{
+  "ignore": {
+    "files": [
+      "packages/playground/public/**",
+      "packages/docs/content/_meta.js",
+      "packages/docs/content/**/_meta.js",
+      "packages/docs/public/**"
+    ]
+  },
+  "rules": {
+    "deslop/unused-file": "off"
+  }
+}

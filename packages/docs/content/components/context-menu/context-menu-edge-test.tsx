@@ -47,23 +47,8 @@ function RightClickTarget({
   return (
     <ContextMenuTrigger>
       <div
-        style={{
-          ...style,
-          alignItems: 'center',
-          background: 'var(--button-face)',
-          boxSizing: 'border-box',
-          boxShadow: 'var(--shadow-raised)',
-          color: 'var(--button-text)',
-          display: 'flex',
-          fontSize: 12,
-          height: '100%',
-          justifyContent: 'center',
-          minHeight: 72,
-          minWidth: 0,
-          padding: '0 12px',
-          textAlign: 'center',
-          width: '100%',
-        }}
+        className="flex items-center justify-center box-border min-w-0 w-full h-full min-h-[72px] px-3 text-center text-[12px] bg-(--button-face) text-(--button-text) shadow-(--shadow-raised)"
+        style={style}
       >
         {label}
       </div>
@@ -84,33 +69,17 @@ export function ContextMenuEdgeTestDemo(): React.ReactElement {
   return (
     <ContextMenu>
       <div
+        className="box-border grid gap-3 w-full h-full min-h-[280px] p-3 bg-(--window) shadow-(--shadow-border-field)"
         style={{
-          background: 'var(--window)',
-          boxSizing: 'border-box',
-          boxShadow: 'var(--shadow-border-field)',
-          display: 'grid',
-          gap: 12,
           gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
           gridTemplateRows: 'repeat(3, minmax(0, 1fr))',
-          height: '100%',
-          minHeight: 280,
-          padding: 12,
-          width: '100%',
         }}
       >
         {TARGETS.map(target => (
           <RightClickTarget key={target.id} label={target.label} style={target.style} />
         ))}
         <div
-          style={{
-            color: 'var(--gray-text)',
-            fontSize: 11,
-            gridColumn: 2,
-            gridRow: 3,
-            placeSelf: 'end center',
-            textAlign: 'center',
-            width: '100%',
-          }}
+          className="col-start-2 col-end-3 row-start-3 row-end-4 place-self-end-center text-center w-full text-[12px] text-(--gray-text)"
         >
           Right-click any target to see adaptive placement.
         </div>

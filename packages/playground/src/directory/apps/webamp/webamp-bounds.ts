@@ -50,7 +50,8 @@ export function useWebampViewportBounds(
 
     const host = containerRef.current
     const observer = host ? new ResizeObserver(scheduleSync) : null
-    observer?.observe(host)
+    if (host && observer)
+      observer.observe(host)
 
     window.addEventListener('resize', scheduleSync)
     return () => {
@@ -87,9 +88,10 @@ export function useWebampBounds(
       try {
         clampOpenWindowsToHost(instance, host)
       }
-      finally {
-        reentrancyGuard = false
+      catch {
+        // clamp error is non-critical
       }
+      reentrancyGuard = false
     }
 
     const unsubscribe = instance._actionEmitter.on('UPDATE_WINDOW_POSITIONS', clamp)

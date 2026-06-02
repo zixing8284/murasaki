@@ -372,6 +372,14 @@ export function MenuSub({
     onOpenChange?.(next)
   }, [isControlled, onOpenChange])
 
+  const setTriggerRef = React.useCallback((node: HTMLLIElement | null) => {
+    triggerRef.current = node
+  }, [])
+
+  const setContentRef = React.useCallback((node: HTMLElement | null) => {
+    contentRef.current = node
+  }, [])
+
   const cancelOpen = React.useCallback(() => {
     if (openTimerRef.current !== null) {
       window.clearTimeout(openTimerRef.current)
@@ -432,11 +440,13 @@ export function MenuSub({
     setOpen,
     triggerRef,
     contentRef,
+    setTriggerRef,
+    setContentRef,
     scheduleClose,
     cancelClose,
     scheduleOpen,
     cancelOpen,
-  }), [open, setOpen, scheduleClose, cancelClose, scheduleOpen, cancelOpen])
+  }), [open, setOpen, setTriggerRef, setContentRef, scheduleClose, cancelClose, scheduleOpen, cancelOpen])
 
   return <MenuSubContext value={value}>{children}</MenuSubContext>
 }
@@ -484,14 +494,15 @@ export function MenuSubTrigger({
   ...props
 }: MenuSubTriggerProps): React.ReactElement {
   const sub = useMenuSubContext('MenuSubTrigger')
+  const { setTriggerRef: setContextTriggerRef } = sub
 
   const setTriggerRef = React.useCallback((node: HTMLLIElement | null) => {
-    sub.triggerRef.current = node
+    setContextTriggerRef(node)
     if (typeof ref === 'function')
       ref(node)
     else if (ref)
       ref.current = node
-  }, [ref, sub.triggerRef])
+  }, [ref, setContextTriggerRef])
 
   const showIconSlot = icon != null || reserveIconSpace
 
@@ -604,12 +615,13 @@ export function MenuSubContent({
   ...props
 }: MenuSubContentProps): React.ReactElement | null {
   const sub = useMenuSubContext('MenuSubContent')
+  const { setContentRef: setContextContentRef } = sub
 
   const menuRef = React.useRef<HTMLMenuElement | null>(null)
   const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
     menuRef.current = node
-    sub.contentRef.current = node
-  }, [sub.contentRef])
+    setContextContentRef(node)
+  }, [setContextContentRef])
 
   const [position, ready] = useLayer({
     anchorRef: sub.triggerRef,

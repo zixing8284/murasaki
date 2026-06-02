@@ -268,14 +268,17 @@ export function readThemeColorsFromCss(themeId: ThemeId): Record<string, string>
 
   try {
     const computed = getComputedStyle(themeProbe)
-    return Object.fromEntries(
+    const result = Object.fromEntries(
       ALL_COLOR_KEYS.map((key) => {
         const rawValue = computed.getPropertyValue(`--${key}`)
         return [key, normalizeCssColor(rawValue, colorProbe)]
       }),
     )
-  }
-  finally {
     root.removeChild(themeProbe)
+    return result
+  }
+  catch {
+    root.removeChild(themeProbe)
+    return {}
   }
 }

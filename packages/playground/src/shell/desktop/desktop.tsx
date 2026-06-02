@@ -97,6 +97,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const { positions, gridRef } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
+  const [desktopEl, setDesktopEl] = useState<HTMLDivElement | null>(null)
   const selectionCleanupRef = useRef<(() => void) | null>(null)
 
   useImperativeHandle(ref, () => ({
@@ -111,6 +112,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     if (!el)
       return
     desktopRef.current = el
+    setDesktopEl(el)
     gridRef.current = el
 
     const computeRows = (): void => {
@@ -366,15 +368,16 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     try {
       await refresh()
     }
-    finally {
-      setRefreshing(false)
+    catch {
+      // refresh error is non-critical
     }
+    setRefreshing(false)
   }
 
   const selectionBox = selectionRect ? getSelectionBox(selectionRect) : null
 
   return (
-    <ContextMenu container={desktopRef.current}>
+    <ContextMenu container={desktopEl}>
       <ContextMenuTrigger onlyDirectTarget>
         <div
           ref={setGridEl}
@@ -401,7 +404,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
                 onDragPreviewChange={setDragPreview}
                 onOpen={entry.onOpen}
                 isCellOccupied={isRenderedCellOccupied}
-                menuContainer={desktopRef.current}
+                menuContainer={desktopEl}
               />
             )
           })}
@@ -431,7 +434,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
         <Menu>
           <MenuItem reserveIconSpace onClick={handleRefresh}>Refresh</MenuItem>
           <MenuSeparator />
-          <MenuItem reserveIconSpace onClick={handleImportClick}>Import files...</MenuItem>
+          <MenuItem reserveIconSpace onClick={handleImportClick}>Import files…</MenuItem>
         </Menu>
       </ContextMenuContent>
     </ContextMenu>

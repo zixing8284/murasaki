@@ -82,33 +82,15 @@ export function MenuEdgeTestDemo(): React.ReactElement {
   return (
     <div
       ref={boundaryRef}
-      style={{
-        background: 'var(--window)',
-        boxShadow: 'var(--shadow-border-field)',
-        maxWidth: 720,
-        minHeight: 460,
-        overflow: 'hidden',
-        padding: 12,
-        position: 'relative',
-        width: '100%',
-      }}
+      className="relative w-full max-w-[720px] min-h-[460px] overflow-hidden p-3 bg-(--window) shadow-(--shadow-border-field)"
     >
       {EDGE_MENUS.map(menu => (
-        <div key={menu.id} style={{ ...menu.style, position: 'absolute' }}>
+        <div key={menu.id} className="absolute" style={menu.style}>
           <EdgeMenu boundaryRef={boundaryRef} label={menu.label} />
         </div>
       ))}
       <div
-        style={{
-          color: 'var(--gray-text)',
-          fontSize: 11,
-          left: '50%',
-          position: 'absolute',
-          textAlign: 'center',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 176,
-        }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[176px] text-center text-[12px] text-(--gray-text)"
       >
         Hover Accessories
       </div>

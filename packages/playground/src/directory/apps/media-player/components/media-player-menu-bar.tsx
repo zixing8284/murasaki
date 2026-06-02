@@ -32,7 +32,7 @@ export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarP
           <WindowMenuBarContent>
             <MenuItem onClick={onOpenFile}>
               <span className="underline">O</span>
-              pen...
+              pen…
             </MenuItem>
             <MenuSeparator />
             <MenuItem onClick={() => close(windowId)}>

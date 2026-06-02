@@ -35,13 +35,13 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
           <p className="mt-0.5 text-(--gray-text)">murasaki edition</p>
         </div>
         <Divider className="w-full" />
-        <Button className="px-6" onClick={onClose}>OK</Button>
+        <Button className="px-6" onClick={onClose}>Close</Button>
       </div>
     </DialogWindow>
   )
 }
 
-function renderMenuLabel(menu: string): ReactElement {
+function MenuLabel({ menu }: { menu: string }): ReactElement {
   const [accelerator = '', ...rest] = menu
 
   return (
@@ -85,14 +85,14 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
       <InactiveClickGuard windowId={windowId} className="shrink-0">
         <WindowMenuBar className="h-5">
           <WindowMenuBarMenu value="file">
-            <WindowMenuBarTrigger>{renderMenuLabel('File')}</WindowMenuBarTrigger>
+            <WindowMenuBarTrigger><MenuLabel menu="File" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-36">
               <MenuItem reserveIconSpace onClick={handleNew}>New</MenuItem>
               <MenuItem reserveIconSpace onClick={handleClose}>Close</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="help">
-            <WindowMenuBarTrigger>{renderMenuLabel('Help')}</WindowMenuBarTrigger>
+            <WindowMenuBarTrigger><MenuLabel menu="Help" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-48">
               <MenuItem reserveIconSpace onClick={() => setShowAbout(true)}>About Outlook Express</MenuItem>
             </WindowMenuBarContent>

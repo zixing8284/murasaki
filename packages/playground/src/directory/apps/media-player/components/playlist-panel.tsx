@@ -52,7 +52,7 @@ export function PlaylistPanel({
                 {isLoading
                   ? (
                       <span className="ml-auto pl-2 shrink-0 animate-pulse opacity-60">
-                        loading...
+                        loading…
                       </span>
                     )
                   : track.duration != null && track.duration > 0

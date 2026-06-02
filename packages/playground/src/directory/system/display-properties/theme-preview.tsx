@@ -99,7 +99,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
 
           <WindowContent className="flex flex-col items-center gap-2 bg-(--button-face)">
             <span className="text-(--button-text)">Message Text</span>
-            <Button>OK</Button>
+            <Button>Close message</Button>
           </WindowContent>
         </WindowFrame>
       </WindowProvider>

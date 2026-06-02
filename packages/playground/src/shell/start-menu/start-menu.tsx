@@ -212,7 +212,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                   Control Panel
                 </MenuItem>
                 <MenuItem icon={<StartIcon src={ICON.printers} />} disabled>Printers</MenuItem>
-                <MenuItem icon={<StartIcon src={ICON.taskbar} />} disabled>Taskbar...</MenuItem>
+                <MenuItem icon={<StartIcon src={ICON.taskbar} />} disabled>Taskbar…</MenuItem>
               </MenuSubContent>
             </MenuSub>
             <MenuSub>
@@ -220,23 +220,23 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 Find
               </MenuSubTrigger>
               <MenuSubContent boundaryRef={screenRef}>
-                <MenuItem icon={<StartIcon src={ICON.findFiles} />} disabled>Files or Folders...</MenuItem>
-                <MenuItem icon={<StartIcon src={ICON.findComputer} />} disabled>Computer...</MenuItem>
-                <MenuItem icon={<StartIcon src={ICON.findWeb} />} disabled>On the Internet...</MenuItem>
+                <MenuItem icon={<StartIcon src={ICON.findFiles} />} disabled>Files or Folders…</MenuItem>
+                <MenuItem icon={<StartIcon src={ICON.findComputer} />} disabled>Computer…</MenuItem>
+                <MenuItem icon={<StartIcon src={ICON.findWeb} />} disabled>On the Internet…</MenuItem>
               </MenuSubContent>
             </MenuSub>
             <MenuItem icon={<StartIcon src={ICON.help} />} disabled>
               Help
             </MenuItem>
             <MenuItem icon={<StartIcon src={ICON.run} />} disabled>
-              Run...
+              Run…
             </MenuItem>
             <MenuSeparator />
             <MenuItem icon={<StartIcon src={ICON.logOff} />} disabled>
-              Log Off Guest...
+              Log Off Guest…
             </MenuItem>
             <MenuItem icon={<StartIcon src={ICON.shutDown} />} disabled>
-              Shut Down...
+              Shut Down…
             </MenuItem>
           </Menu>
         </div>

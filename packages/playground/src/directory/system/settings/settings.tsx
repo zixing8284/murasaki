@@ -125,7 +125,7 @@ export function Settings({ windowId }: ProcessComponentProps): React.ReactElemen
       </Tabs>
 
       <div className="flex justify-end gap-(--grouped-button-spacing)">
-        <Button onClick={() => actions.close(windowId)} className="min-w-18.75">OK</Button>
+        <Button onClick={() => actions.close(windowId)} className="min-w-18.75">Close settings</Button>
         <Button onClick={() => actions.close(windowId)} className="min-w-18.75">Cancel</Button>
       </div>
     </div>

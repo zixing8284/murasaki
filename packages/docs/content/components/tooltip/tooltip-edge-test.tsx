@@ -36,16 +36,10 @@ const TOOLTIPS = [
 export function TooltipEdgeTestDemo(): React.ReactElement {
   return (
     <div
+      className="box-border grid gap-3 w-full h-full min-h-0 p-3"
       style={{
-        boxSizing: 'border-box',
-        display: 'grid',
-        gap: 12,
-        height: '100%',
         gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
         gridTemplateRows: 'repeat(3, minmax(0, 1fr))',
-        minHeight: 0,
-        padding: 12,
-        width: '100%',
       }}
     >
       {TOOLTIPS.map(tooltip => (

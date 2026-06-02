@@ -330,6 +330,14 @@ export function Select<T = string>({
   }, [handleTypeaheadChar])
 
   const menuWrapperRef = useRef<HTMLDivElement>(null)
+  const [triggerWidth, setTriggerWidth] = React.useState<number | undefined>(undefined)
+
+  const measureTriggerRef = useCallback((node: HTMLButtonElement | null) => {
+    triggerRef.current = node
+    if (node) {
+      setTriggerWidth(node.offsetWidth)
+    }
+  }, [triggerRef])
 
   const [position, ready] = useLayer({
     anchorRef: triggerRef,
@@ -397,7 +405,7 @@ export function Select<T = string>({
         id={triggerId}
         onClick={handleTriggerClick}
         onKeyDown={handleTriggerKeyDown}
-        ref={triggerRef}
+        ref={measureTriggerRef}
         role="combobox"
         type="button"
       >
@@ -425,7 +433,7 @@ export function Select<T = string>({
               left: ready && position ? position.x : -9999,
               top: ready && position ? position.y : -9999,
               opacity: ready ? undefined : 0,
-              width: triggerRef.current?.offsetWidth,
+              width: triggerWidth,
             }}
           >
             <ul

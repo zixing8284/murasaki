@@ -92,7 +92,7 @@ export function IframeWindow({
       >
         {!iframeLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-(--button-face)">
-            <span className="text-xs text-(--window-text)">Loading...</span>
+            <span className="text-xs text-(--window-text)">Loading…</span>
           </div>
         )}
         <iframe

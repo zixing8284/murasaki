@@ -237,7 +237,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
       </Tabs>
 
       <div className="flex justify-end gap-(--grouped-button-spacing)">
-        <Button onClick={handleOk} className="min-w-18.75">OK</Button>
+        <Button onClick={handleOk} className="min-w-18.75">Apply and close</Button>
         <Button onClick={handleCancel} className="min-w-18.75">Cancel</Button>
         <Button
           onClick={handleApply}

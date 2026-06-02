@@ -26,7 +26,7 @@ export function MediaImportErrorDialog({
         <p>{message}</p>
 
         <div className="flex justify-end">
-          <Button className="px-6" onClick={onClose}>OK</Button>
+          <Button className="px-6" onClick={onClose}>Close</Button>
         </div>
       </div>
     </DialogWindow>

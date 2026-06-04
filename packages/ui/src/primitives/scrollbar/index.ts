@@ -1,3 +1,6 @@
+export { computeThumb } from './compute-thumb'
+export type { ThumbMetrics } from './compute-thumb'
+
 export {
   BAR_SIZE,
   BTN_HEIGHT,

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 
-import { BAR_SIZE, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
+import { computeThumb, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
 
 // ─── Re-export constants for consumers ───────────────────────────────────────
 
@@ -48,21 +48,17 @@ function computeMetrics(
   let vThumbTop = 0
   let vThumbHeight = 0
   if (hasV && vTrackH > 0) {
-    const ratio = el.clientHeight / el.scrollHeight
-    vThumbHeight = Math.max(BAR_SIZE, vTrackH * ratio)
-    const travel = vTrackH - vThumbHeight
-    const maxScroll = el.scrollHeight - el.clientHeight
-    vThumbTop = maxScroll > 0 ? (el.scrollTop / maxScroll) * travel : 0
+    const v = computeThumb(vTrackH, el.clientHeight, el.scrollHeight, el.scrollTop)
+    vThumbHeight = v.THUMB_SIZE
+    vThumbTop = v.THUMB_POS
   }
 
   let hThumbLeft = 0
   let hThumbWidth = 0
   if (hasH && hTrackW > 0) {
-    const ratio = el.clientWidth / el.scrollWidth
-    hThumbWidth = Math.max(BAR_SIZE, hTrackW * ratio)
-    const travel = hTrackW - hThumbWidth
-    const maxScroll = el.scrollWidth - el.clientWidth
-    hThumbLeft = maxScroll > 0 ? (el.scrollLeft / maxScroll) * travel : 0
+    const h = computeThumb(hTrackW, el.clientWidth, el.scrollWidth, el.scrollLeft)
+    hThumbWidth = h.THUMB_SIZE
+    hThumbLeft = h.THUMB_POS
   }
 
   return { hasVertical: hasV, hasHorizontal: hasH, vThumbTop, vThumbHeight, hThumbLeft, hThumbWidth }

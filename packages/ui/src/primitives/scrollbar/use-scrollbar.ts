@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 
+import { computeThumb } from './compute-thumb'
 import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP, THUMB_BOX_SHADOW, TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scrollbar-constants'
 
 // File flow (top to bottom):
@@ -174,6 +175,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     zIndex: 'var(--react98-layer-scrollbar-z-index)',
     display: 'none',
     boxSizing: 'border-box',
+    willChange: 'transform',
   })
   vBar.setAttribute('data-murasaki-vbar', '')
 
@@ -223,6 +225,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     zIndex: 'var(--react98-layer-scrollbar-z-index)',
     display: 'none',
     boxSizing: 'border-box',
+    willChange: 'transform',
   })
   hBar.setAttribute('data-murasaki-hbar', '')
 
@@ -370,11 +373,7 @@ function syncLayout(s: ScrollbarState): void {
     s.vBar.style.bottom = 'auto'
 
     const trackH = s.vTrack.clientHeight
-    const ratio = t.clientHeight / t.scrollHeight
-    const thumbH = Math.max(BAR_SIZE, trackH * ratio)
-    const travel = trackH - thumbH
-    const maxScroll = t.scrollHeight - t.clientHeight
-    const pos = maxScroll > 0 ? (t.scrollTop / maxScroll) * travel : 0
+    const { THUMB_SIZE: thumbH, THUMB_POS: pos } = computeThumb(trackH, t.clientHeight, t.scrollHeight, t.scrollTop)
 
     s.vThumb.style.height = `${thumbH}px`
     s.vThumb.style.top = `${pos}px`
@@ -387,11 +386,7 @@ function syncLayout(s: ScrollbarState): void {
     s.hBar.style.right = 'auto'
 
     const trackW = s.hTrack.clientWidth
-    const ratio = t.clientWidth / t.scrollWidth
-    const thumbW = Math.max(BAR_SIZE, trackW * ratio)
-    const travel = trackW - thumbW
-    const maxScroll = t.scrollWidth - t.clientWidth
-    const pos = maxScroll > 0 ? (t.scrollLeft / maxScroll) * travel : 0
+    const { THUMB_SIZE: thumbW, THUMB_POS: pos } = computeThumb(trackW, t.clientWidth, t.scrollWidth, t.scrollLeft)
 
     s.hThumb.style.width = `${thumbW}px`
     s.hThumb.style.left = `${pos}px`

@@ -7,6 +7,7 @@ export type { LayerContextValue, LayerPortalProps } from './layer-root'
 export {
   BAR_SIZE,
   BTN_HEIGHT,
+  computeThumb,
   REPEAT_MS,
   SCROLL_STEP,
   THUMB_BOX_SHADOW,
@@ -15,7 +16,7 @@ export {
   TRACK_BG_SIZE,
   useScrollbar,
 } from './scrollbar'
-export type { UseScrollbarOptions } from './scrollbar'
+export type { ThumbMetrics, UseScrollbarOptions } from './scrollbar'
 
 export { useCollection } from './use-collection'
 export type { CollectionItem, UseCollectionResult } from './use-collection'

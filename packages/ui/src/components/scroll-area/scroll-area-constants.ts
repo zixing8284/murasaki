@@ -1,6 +1,7 @@
 export {
   BAR_SIZE,
   BTN_HEIGHT,
+  computeThumb,
   REPEAT_MS,
   SCROLL_STEP,
   THUMB_BOX_SHADOW,
@@ -8,3 +9,4 @@ export {
   TRACK_BG_IMAGE,
   TRACK_BG_SIZE,
 } from '../../primitives'
+export type { ThumbMetrics } from '../../primitives'

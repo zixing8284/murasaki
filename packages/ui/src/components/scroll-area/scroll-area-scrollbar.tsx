@@ -157,7 +157,7 @@ function VerticalBar({
   return (
     <div
       data-murasaki-vbar=""
-      className={cnPure('absolute top-0 right-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border', className)}
+      className={cnPure('absolute top-0 right-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border will-change-transform', className)}
       style={{ width: barSize, height, ...style }}
       {...props}
     >
@@ -216,7 +216,7 @@ function HorizontalBar({
   return (
     <div
       data-murasaki-hbar=""
-      className={cnPure('absolute bottom-0 left-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border', className)}
+      className={cnPure('absolute bottom-0 left-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border will-change-transform', className)}
       style={{ height: btnHeight, width, ...style }}
       {...props}
     >

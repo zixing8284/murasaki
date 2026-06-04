@@ -1,6 +1,6 @@
 'use client'
 
-import { Select } from '@murasaki/react98'
+import { Select } from '@murasaky/react98'
 
 const colorOptions = [
   { value: 'red', label: 'Red' },

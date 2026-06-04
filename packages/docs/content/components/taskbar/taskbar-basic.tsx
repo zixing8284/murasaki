@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Taskbar, TaskbarDivider, TaskbarNotificationArea, TaskbarQuickLaunch, TaskbarSystemClock } from '@murasaki/react98'
+import { Button, Taskbar, TaskbarDivider, TaskbarNotificationArea, TaskbarQuickLaunch, TaskbarSystemClock } from '@murasaky/react98'
 
 const iconSrc = 'data:image/gif;base64,R0lGODlhEAAQAPAAAP///wAAACH5BAAAAAAALAAAAAAQABAAAAIhjI+py+0Po5y02ouz3rz7D4biSJbmiaaqKq6H2mJLAQA7'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { FieldPanel } from '@murasaki/react98'
+import { FieldPanel } from '@murasaky/react98'
 
 export function FieldPanelSunkenDemo(): React.ReactElement {
   return (

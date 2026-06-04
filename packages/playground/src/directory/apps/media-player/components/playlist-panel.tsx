@@ -1,6 +1,6 @@
 import type { JSX, RefObject } from 'react'
 import type { Track } from '../use-media-player'
-import { FieldPanel } from '@murasaki/react98'
+import { FieldPanel } from '@murasaky/react98'
 import { formatTime } from '../format-time'
 import { NowPlayingIndicator } from './now-playing-indicator'
 

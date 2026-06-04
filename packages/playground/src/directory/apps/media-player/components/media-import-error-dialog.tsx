@@ -1,5 +1,5 @@
 import type { JSX } from 'react'
-import { Button, Divider } from '@murasaki/react98'
+import { Button, Divider } from '@murasaky/react98'
 import { DialogWindow } from '../../../shared/dialog-window'
 
 interface MediaImportErrorDialogProps {

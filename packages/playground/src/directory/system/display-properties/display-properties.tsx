@@ -1,4 +1,4 @@
-import type { ThemeId } from '@murasaki/react98'
+import type { ThemeId } from '@murasaky/react98'
 import type { ProcessComponentProps } from '../../../contexts/process/types'
 import {
   Button,
@@ -12,7 +12,7 @@ import {
   themeIds,
   themeLabels,
   useTheme,
-} from '@murasaki/react98'
+} from '@murasaky/react98'
 import { useState } from 'react'
 import { useProcessActions } from '../../../contexts/process/hooks'
 import { useCrtEffect } from '../../../hooks/use-crt-effect'

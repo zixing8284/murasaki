@@ -1,6 +1,6 @@
 import type { JSX } from 'react'
 import type { UseMediaPlayerResult } from '../use-media-player'
-import { Divider, Slider, Tooltip } from '@murasaki/react98'
+import { Divider, Slider, Tooltip } from '@murasaky/react98'
 import {
   AspectRatioIcon,
   EjectIcon,

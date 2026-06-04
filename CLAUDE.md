@@ -78,7 +78,7 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - Pixel-font text in sunken/input-like fields must have left breathing room. Avoid placing text flush against a 1px inset border; prefer at least `pl-2` on native fields or a small inner text offset for list rows.
 - For clipped pixel-font text, follow ADR 0008: the text display element should own both left padding and `overflow-hidden`/ellipsis, or otherwise keep the clip rect away from the first glyph. Avoid nested zero-padding clipped spans as a font-smoothing workaround.
 - The library's global font-size is 11px. Do not override it with arbitrary text sizes (`text-[10px]`, `text-xs`, `text-sm`, etc.) unless the design explicitly requires a different size. Rely on the default to keep typography consistent across the UI.
-- `@murasaki/react98/theme.css` is the named source stylesheet export exception: it intentionally resolves to `packages/ui/src/theme.css` for Tailwind CSS v4 consumers. Do not treat it as permission to expose other source files.
+- `@murasaky/react98/theme.css` is the named source stylesheet export exception: it intentionally resolves to `packages/ui/src/theme.css` for Tailwind CSS v4 consumers. Do not treat it as permission to expose other source files.
 
 ## Playground Architecture
 

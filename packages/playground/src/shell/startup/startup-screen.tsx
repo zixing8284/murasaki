@@ -1,5 +1,5 @@
 import type { StartupPreloadState } from './use-startup-preload'
-import { ProgressIndicator } from '@murasaki/react98'
+import { ProgressIndicator } from '@murasaky/react98'
 import { STARTUP_ARTWORK_DATA_URL } from './startup-artwork-data'
 
 interface StartupScreenProps {

@@ -1,6 +1,6 @@
 'use client'
 
-import { ContextMenu, ContextMenuContent, ContextMenuTrigger, Menu, MenuItem, MenuSeparator } from '@murasaki/react98'
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger, Menu, MenuItem, MenuSeparator } from '@murasaky/react98'
 
 export function ContextMenuBasicDemo(): React.ReactElement {
   return (

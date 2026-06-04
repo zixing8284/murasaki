@@ -1,4 +1,4 @@
-import type { ThemeId } from '@murasaki/react98'
+import type { ThemeId } from '@murasaky/react98'
 
 // ---------------------------------------------------------------------------
 // RGB ↔ HSL Conversion

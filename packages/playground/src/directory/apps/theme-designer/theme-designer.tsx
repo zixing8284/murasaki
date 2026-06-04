@@ -1,6 +1,6 @@
-import type { ThemeId } from '@murasaki/react98'
+import type { ThemeId } from '@murasaky/react98'
 import type { ThemeSchemeSelection } from './use-theme-colors'
-import { FieldPanel, Select, themeIds, themeLabels } from '@murasaki/react98'
+import { FieldPanel, Select, themeIds, themeLabels } from '@murasaky/react98'
 import { ColorControls } from './color-controls'
 import { FileControls } from './file-controls'
 import { DesignerPreview } from './theme-preview'

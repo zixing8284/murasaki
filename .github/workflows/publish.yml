@@ -29,6 +29,6 @@ jobs:
       - run: pnpm ui:build
 
       - name: Publish to npm
-        run: pnpm --filter @murasaki/react98 publish --no-git-checks
+        run: pnpm --filter @murasaky/react98 publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

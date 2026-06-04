@@ -1,6 +1,6 @@
 'use client'
 
-import { ScrollArea } from '@murasaki/react98'
+import { ScrollArea } from '@murasaky/react98'
 
 const rows = Array.from({ length: 18 }, (_, index) => `Item ${String(index + 1).padStart(2, '0')}`)
 

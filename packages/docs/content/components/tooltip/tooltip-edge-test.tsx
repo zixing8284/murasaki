@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Tooltip } from '@murasaki/react98'
+import { Button, Tooltip } from '@murasaky/react98'
 
 const TOOLTIPS = [
   {

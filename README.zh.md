@@ -1,12 +1,12 @@
 # Murasaki
 
-Windows 98 风格的 React 组件库 — [`@murasaki/react98`](https://www.npmjs.com/package/@murasaki/react98)
+Windows 98 风格的 React 组件库 — [`@murasaky/react98`](https://www.npmjs.com/package/@murasaky/react98)
 
 - [Playground](https://zixing8284.github.io/murasaki/) · [文档](https://zixing8284.github.io/murasaki/programs/docs/)
 
 ## 这是什么
 
-Murasaki 是一个忠实还原 Windows 98 美学的 React 组件库。它以 `@murasaki/react98` 发布到 npm，并驱动这个 Playground —— 一个完全运行在浏览器中的交互式 Windows 98 桌面。
+Murasaki 是一个忠实还原 Windows 98 美学的 React 组件库。它以 `@murasaky/react98` 发布到 npm，并驱动这个 Playground —— 一个完全运行在浏览器中的交互式 Windows 98 桌面。
 
 ## 为什么做这个
 
@@ -15,7 +15,7 @@ life is hard. 做这个项目本身让我很开心。
 
 ## 项目结构
 
-- `packages/ui` — `@murasaki/react98` 组件库
+- `packages/ui` — `@murasaky/react98` 组件库
 - `packages/playground` — 演示
 - `packages/docs` — 组件文档
 - `packages/next-fixture` — Next.js 集成测试

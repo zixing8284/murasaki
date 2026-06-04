@@ -1,6 +1,6 @@
 'use client'
 
-import type { ThemeId } from '@murasaki/react98'
+import type { ThemeId } from '@murasaky/react98'
 import {
   Button,
   Taskbar,
@@ -15,7 +15,7 @@ import {
   WindowProvider,
   WindowTitle,
   WindowTitleBar,
-} from '@murasaki/react98'
+} from '@murasaky/react98'
 
 interface ThemePreviewProps {
   themeId: ThemeId

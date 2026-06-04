@@ -19,7 +19,7 @@ import {
   WindowStatusBarField,
   WindowTitle,
   WindowTitleBar,
-} from '@murasaki/react98'
+} from '@murasaky/react98'
 import { useState } from 'react'
 
 export function WindowMenuDemo(): React.ReactElement {

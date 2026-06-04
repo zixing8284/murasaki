@@ -1,5 +1,5 @@
 import type { ThemeColorsState } from './use-theme-colors'
-import { Checkbox } from '@murasaki/react98'
+import { Checkbox } from '@murasaky/react98'
 
 interface ColorControlsProps {
   state: ThemeColorsState

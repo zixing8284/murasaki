@@ -1,5 +1,5 @@
 import type { JSX } from 'react'
-import { WindowStatusBar, WindowStatusBarField } from '@murasaki/react98'
+import { WindowStatusBar, WindowStatusBarField } from '@murasaky/react98'
 
 interface MediaPlayerStatusBarProps {
   currentTrackTitle: string | undefined

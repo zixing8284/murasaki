@@ -1,6 +1,6 @@
 'use client'
 
-import { NumberBox } from '@murasaki/react98'
+import { NumberBox } from '@murasaky/react98'
 import { useState } from 'react'
 
 export function NumberBoxBasicDemo(): React.ReactElement {

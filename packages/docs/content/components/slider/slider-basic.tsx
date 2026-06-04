@@ -1,6 +1,6 @@
 'use client'
 
-import { Slider } from '@murasaki/react98'
+import { Slider } from '@murasaky/react98'
 import { useState } from 'react'
 
 export function SliderBasicDemo(): React.ReactElement {

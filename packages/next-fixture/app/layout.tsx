@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
-import '@murasaki/react98/globals.css'
+import '@murasaky/react98/globals.css'
 import './page.css'
 
 export const metadata: Metadata = {
-  title: '@murasaki/react98 Next Fixture',
+  title: '@murasaky/react98 Next Fixture',
 }
 
 export default function RootLayout({

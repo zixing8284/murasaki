@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@murasaki/react98'
+import { ThemeProvider } from '@murasaky/react98'
 import { DesktopFilesProvider } from './contexts/desktop-files/provider'
 import { DesktopLayoutProvider } from './contexts/desktop-layout/provider'
 import { ProcessProvider } from './contexts/process/provider'

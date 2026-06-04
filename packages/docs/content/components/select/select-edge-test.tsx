@@ -1,6 +1,6 @@
 'use client'
 
-import { Select } from '@murasaki/react98'
+import { Select } from '@murasaky/react98'
 import { EdgeTestStage } from '../../../components/edge-test-stage'
 
 const OPTIONS = [

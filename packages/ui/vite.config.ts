@@ -20,7 +20,16 @@ export default defineConfig({
       fileName: () => 'index.js',
     },
     rolldownOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/compiler-runtime'],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'react/compiler-runtime',
+        'clsx',
+        'class-variance-authority',
+        'tailwind-merge',
+        'tw-animate-css',
+      ],
       output: {
         banner: chunk => (chunk.name === 'index' ? `'use client';` : ''),
         preserveModules: true,

@@ -15,6 +15,9 @@ The Window suite is a set of composable primitives for Windows 98 application ch
 | `WindowMinimizeButton`, `WindowMaximizeButton`, `WindowCloseButton`, `WindowHelpButton` | button props | Title bar controls. |
 | `WindowMenuBar`, `WindowMenuBarMenu`, `WindowMenuBarTrigger`, `WindowMenuBarContent`, `WindowMenuBarItem` | `value`, `defaultValue`, `onValueChange`, menu/menuitem props | Top-level window menu bar with optional dropdown coordination. |
 | `WindowContent` | div props | Scroll/content body. |
+| `WindowOverlay` | `positioning`, div props | Semi-transparent backdrop (`aria-hidden`). Inherits positioning from context. |
+| `WindowPortal` | `container` | Portal that respects the scoped `LayerProvider` target. Falls back to `document.body`. |
+| `WindowResizeGrip` | div props | Bottom-right resize handle rendered with Marlett font glyphs. Hidden when maximized. |
 | `WindowStatusBar`, `WindowStatusBarField` | div props | Bottom status area. |
 
 ## Examples

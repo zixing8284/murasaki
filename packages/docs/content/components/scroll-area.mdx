@@ -2,14 +2,16 @@ import { ScrollAreaBasicDemo } from './scroll-area/scroll-area-basic'
 
 # ScrollArea
 
-`ScrollArea` hides native scrollbars and renders Windows 98 scrollbar chrome around overflowing content.
+`ScrollArea` hides native scrollbars and renders Windows 98 scrollbar chrome around overflowing content. Both vertical and horizontal scrollbars appear automatically when content overflows.
+
+`ScrollAreaLegacy` is an older imperative-DOM variant that creates scrollbar elements directly. Prefer `ScrollArea` for new code.
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Sets dimensions and frame styling. |
-| `children` | `ReactNode` | - | Scrollable content. |
+| Export | Key props | Description |
+|--------|-----------|-------------|
+| `ScrollArea` | `className`, div props | Declarative compound component with observer-based scrollbar sync. |
+| `ScrollAreaLegacy` | `className`, div props | Imperative DOM variant using `useScrollbar` internally. Provided for backward compatibility. |
 
 ## Examples
 

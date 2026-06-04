@@ -20,9 +20,8 @@ Life is hard. Building this project genuinely makes me happy.
 
 ```bash
 pnpm install          # 1. Install dependencies
-pnpm ui:build         # 2. Build the UI library (playground and docs depend on it)
-pnpm docs:build:embed # 3. Build docs and embed into playground
-pnpm play             # 4. Start the playground
+pnpm ui:build:docs    # 2. Build UI library, docs, and embed into playground
+pnpm play             # 3. Start the playground
 ```
 
 Docs only: `pnpm docs:dev` → `http://localhost:3000/programs/docs/`

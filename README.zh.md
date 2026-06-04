@@ -24,9 +24,8 @@ life is hard. 做这个项目本身让我很开心。
 
 ```bash
 pnpm install          # 1. 安装依赖
-pnpm ui:build         # 2. 构建组件库（playground 和 docs 都依赖它）
-pnpm docs:build:embed # 3. 构建文档并嵌入到 playground
-pnpm play             # 4. 启动 playground
+pnpm ui:build:docs    # 2. 构建组件库、文档，并嵌入 playground
+pnpm play             # 3. 启动 playground
 ```
 
 文档单独开发：`pnpm docs:dev` → `http://localhost:3000/programs/docs/`

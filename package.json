@@ -13,6 +13,7 @@
     "docs:build:embed": "pnpm docs:build && pnpm docs:embed",
     "docs:preview": "pnpm --filter @murasaki/react98-docs preview",
     "ui:build": "pnpm --filter @murasaki/react98 build",
+    "ui:build:docs": "pnpm ui:build && pnpm docs:build:embed",
     "ui:dev": "pnpm --filter @murasaki/react98 dev",
     "ui:test": "pnpm --filter @murasaki/react98 test",
     "ui:test:watch": "pnpm --filter @murasaki/react98 test:watch",

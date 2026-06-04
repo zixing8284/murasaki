@@ -26,6 +26,7 @@ pnpm docs:build:embed
 pnpm docs:preview
 
 pnpm ui:build
+pnpm ui:build:docs
 pnpm ui:dev
 pnpm ui:test
 pnpm ui:test:watch
@@ -38,12 +39,13 @@ When changing anything under `packages/ui/`, use this order:
 1. **Lint** — `pnpm lint`
 2. **Test** — `pnpm ui:test`
 3. **Build** — `pnpm ui:build`
+4. **Docs** — `pnpm docs:build:embed` (docs examples import from `packages/ui/dist`, so rebuild docs to pick up UI changes)
 
 Use `pnpm ui:test:watch` only for interactive development; keep `pnpm ui:test` one-shot for automation.
 
 The playground consumes `packages/ui/dist`, not UI source files, so rebuild before verifying library changes in the playground or any other consumer.
 
-When changing docs, build the UI first if the docs need fresh library output, then run `pnpm docs:build`, `pnpm docs:embed`, `pnpm play:build`, and `pnpm lint`. Use `pnpm docs:preview` for static-export checks; it serves the built `out` directory under `/programs/docs/` and replaces `next start`, which does not support `output: 'export'`.
+When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed`, `pnpm play:build`, and `pnpm lint`. Use `pnpm docs:preview` for static-export checks; it serves the built `out` directory under `/programs/docs/` and replaces `next start`, which does not support `output: 'export'`.
 
 ## Design Priorities
 

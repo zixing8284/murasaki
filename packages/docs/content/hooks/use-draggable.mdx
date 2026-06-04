@@ -1,0 +1,50 @@
+# useDraggable
+
+`useDraggable` enables drag-to-move behavior on any element. It moves the target via CSS `translate()` when the user drags a designated handle element.
+
+## Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `container` | `HTMLElement \| null` | `null` | Boundary element. When `null`, constrains to the viewport. |
+| `draggable` | `boolean` | `true` | Enable or disable dragging. |
+| `onDragChange` | `(dragging: boolean) => void` | - | Callback when drag starts or stops. |
+| `clampPositionOnResize` | `boolean` | `false` | Re-clamp position on container/viewport resize so the titlebar stays reachable. |
+
+## Returns
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `dragging` | `boolean` | Whether the element is currently being dragged. |
+| `setTargetRef` | `(el: TTarget \| null) => void` | Ref callback for the element that will be moved. |
+| `setDragRef` | `(el: TDrag \| null) => void` | Ref callback for the drag handle element. |
+| `resetPosition` | `() => void` | Reset position to the initial state. |
+| `transformRef` | `RefObject<Transform>` | Internal `{ offsetX, offsetY }` state. |
+
+## Usage
+
+```tsx
+import { useDraggable } from '@murasaki/react98'
+
+function DraggablePanel() {
+  const { setTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement>({
+    draggable: true,
+  })
+
+  return (
+    <div ref={setTargetRef} className="absolute">
+      <div ref={setDragRef} className="cursor-move">
+        Drag me
+      </div>
+      <p>Panel content</p>
+    </div>
+  )
+}
+```
+
+## Behavior
+
+- A 3 px movement threshold prevents accidental drags from clicks.
+- Interactive descendants (`button`, `a`, `input`, `select`, `textarea`, `[role="button"]`) are excluded from initiating a drag.
+- When the element is larger than the container or viewport, the top-left boundary takes priority so the titlebar stays reachable.
+- The stored transform is re-applied when the target re-mounts (e.g. after minimize/restore).

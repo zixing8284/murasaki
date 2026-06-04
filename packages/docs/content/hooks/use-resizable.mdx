@@ -1,0 +1,53 @@
+# useResizable
+
+`useResizable` enables drag-to-resize behavior on any element. The user drags a handle element (typically a bottom-right grip) to resize the target.
+
+## Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `container` | `HTMLElement \| null` | `null` | Boundary element. When `null`, constrains to the viewport. |
+| `resizable` | `boolean` | `true` | Enable or disable resizing. |
+| `minWidth` | `number` | `200` | Minimum width in px. |
+| `minHeight` | `number` | `120` | Minimum height in px. |
+| `maxWidth` | `number` | unlimited | Maximum width in px. |
+| `maxHeight` | `number` | unlimited | Maximum height in px. |
+| `onResizeChange` | `(resizing: boolean) => void` | - | Callback when resize starts or stops. |
+
+## Returns
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `resizing` | `boolean` | Whether the element is currently being resized. |
+| `setTargetRef` | `(el: TTarget \| null) => void` | Ref callback for the element that will be resized. |
+| `setResizeRef` | `(el: THandle \| null) => void` | Ref callback for the resize handle element. |
+| `resetSize` | `() => void` | Reset size to the initial state (removes inline width/height). |
+| `sizeRef` | `RefObject<Size>` | Internal `{ width, height }` state. |
+
+## Usage
+
+```tsx
+import { useResizable } from '@murasaki/react98'
+
+function ResizablePanel() {
+  const { setTargetRef, setResizeRef, resizing } = useResizable<HTMLDivElement>({
+    resizable: true,
+    minWidth: 200,
+    minHeight: 100,
+  })
+
+  return (
+    <div ref={setTargetRef} style={{ width: 400, height: 300 }}>
+      <p>Panel content</p>
+      <div ref={setResizeRef} className="cursor-nwse-resize">⊿</div>
+    </div>
+  )
+}
+```
+
+## Behavior
+
+- A 3 px movement threshold prevents accidental resizes from clicks.
+- When the container is smaller than `minWidth`/`minHeight`, the element is allowed to overflow rather than being forced below its minimum size.
+- The body cursor is set to `nwse-resize` during resize to prevent flicker.
+- The stored size is re-applied when the target re-mounts (e.g. after minimize/restore).

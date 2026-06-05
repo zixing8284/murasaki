@@ -2,7 +2,7 @@
 
 A Windows `.theme` file is a Windows Classic / Windows 98 style theme configuration file. It describes system colors, desktop settings, font metrics, non-client area sizing, and related UI values.
 
-For `@murasaky/react98`, the most important section is `[Control Panel\Colors]`, because those values map directly to the CSS custom properties used by the component library.
+For `@murasaki-io/react98`, the most important section is `[Control Panel\Colors]`, because those values map directly to the CSS custom properties used by the component library.
 
 Color values use this format:
 

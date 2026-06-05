@@ -6,7 +6,7 @@ import {
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { APP_ID } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
@@ -105,7 +105,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
           {/* Stripe */}
           <div className="bg-linear-to-b from-(--active-title) to-(--gradient-active-title) w-5.25 min-h-fit flex flex-col justify-end pb-4 shadow-(--shadow-raised)">
             <span className="text-(--title-text) -rotate-90 origin-center whitespace-nowrap text-xs">
-              @murasaky/react98
+              @murasaki-io/react98
             </span>
           </div>
 

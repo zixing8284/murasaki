@@ -7,7 +7,7 @@ import {
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 
 export function MenuSubmenuDemo(): React.ReactElement {
   return (

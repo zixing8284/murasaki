@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
 import type { ProcessWindowPosition } from '../../contexts/process/types'
-import { useDraggable, useResizable } from '@murasaky/react98'
+import { useDraggable, useResizable } from '@murasaki-io/react98'
 import { useCallback } from 'react'
 import directory from '../../contexts/process/directory'
 import { useProcesses } from '../../contexts/process/hooks'

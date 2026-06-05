@@ -8,7 +8,7 @@ import {
   Menu,
   MenuItem,
   MenuSeparator,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
 import { useDesktopIconDrag } from './use-desktop-icon-drag'
 

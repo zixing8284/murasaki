@@ -1,17 +1,15 @@
-# @murasaky/react98
+# @murasaki-io/react98
 
 > Windows 98 UI components for React — pixel-perfect nostalgia meets modern tooling.
 
-**22 components · 19 themes · React 19 · TypeScript · Tailwind CSS v4**
-
-[![npm](https://img.shields.io/npm/v/@murasaky/react98)](https://www.npmjs.com/package/@murasaky/react98)
-[![license](https://img.shields.io/npm/l/@murasaky/react98)](./LICENSE)
+[![npm](https://img.shields.io/npm/v/@murasaki-io/react98)](https://www.npmjs.com/package/@murasaki-io/react98)
+[![license](https://img.shields.io/npm/l/@murasaki-io/react98)](./LICENSE)
 
 ---
 
 Bring the classic Windows 98 aesthetic to your React app — sunken borders, raised buttons, beveled panels, and all 19 original color schemes. Built with Tailwind CSS v4 design tokens so every detail is themeable.
 
-**[→ Live demo & full docs](https://zixing8284.github.io/murasaki/programs/docs)**
+**[→ Live demo & full docs](https://zixing8284.github.io/murasaki)**
 
 ---
 
@@ -19,13 +17,13 @@ Bring the classic Windows 98 aesthetic to your React app — sunken borders, rai
 
 ```bash
 # npm
-npm install @murasaky/react98
+npm install @murasaki-io/react98
 
 # pnpm
-pnpm add @murasaky/react98
+pnpm add @murasaki-io/react98
 
 # yarn
-yarn add @murasaky/react98
+yarn add @murasaki-io/react98
 ```
 
 ---
@@ -37,8 +35,8 @@ yarn add @murasaky/react98
 Import the pre-built stylesheet and you're ready to go:
 
 ```tsx
-import { ThemeProvider, Button, TextBox } from '@murasaky/react98'
-import '@murasaky/react98/globals.css'
+import { ThemeProvider, Button, TextBox } from '@murasaki-io/react98'
+import '@murasaki-io/react98/globals.css'
 
 export default function App() {
   return (
@@ -56,14 +54,14 @@ Point Tailwind at the package dist so component utilities get included, then imp
 
 ```css
 /* app.css */
-@source '../node_modules/@murasaky/react98/dist';
-@import '@murasaky/react98/theme.css';
+@source '../node_modules/@murasaki-io/react98/dist';
+@import '@murasaki-io/react98/theme.css';
 ```
 
 Then use components the same way — no separate CSS import needed in your JS files:
 
 ```tsx
-import { ThemeProvider, Button } from '@murasaky/react98'
+import { ThemeProvider, Button } from '@murasaki-io/react98'
 
 export default function App() {
   return (
@@ -109,7 +107,7 @@ All 22 components ship with full keyboard navigation and ARIA semantics.
 
 ---
 
-## 19 Themes
+## Themes
 
 Switch themes at runtime — no page reload needed:
 
@@ -128,7 +126,7 @@ Switch themes at runtime — no page reload needed:
 Each theme is also available as a standalone CSS file for lean bundles:
 
 ```css
-@import '@murasaky/react98/themes/marine.css';
+@import '@murasaki-io/react98/themes/marine.css';
 ```
 
 ---
@@ -158,7 +156,7 @@ Every stateful component supports both patterns. Pass an initial value to let th
 Build a full desktop shell with draggable, resizable windows:
 
 ```tsx
-import { Window, LayerProvider } from '@murasaky/react98'
+import { Window, LayerProvider } from '@murasaki-io/react98'
 
 function Desktop() {
   return (
@@ -182,7 +180,7 @@ Wrap your desktop surface in `LayerProvider` so menus, tooltips, and window port
 Two hooks are available for custom drag and resize interactions:
 
 ```tsx
-import { useDraggable, useResizable } from '@murasaky/react98'
+import { useDraggable, useResizable } from '@murasaki-io/react98'
 ```
 
 ---

@@ -9,7 +9,7 @@ import {
   Menu,
   MenuItem,
   MenuSeparator,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'

@@ -10,7 +10,7 @@ import {
   WindowMenuBarTrigger,
   WindowStatusBar,
   WindowStatusBarField,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'

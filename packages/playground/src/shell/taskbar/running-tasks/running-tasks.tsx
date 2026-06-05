@@ -1,4 +1,4 @@
-import { Button } from '@murasaky/react98'
+import { Button } from '@murasaki-io/react98'
 import { useProcessActions, useProcesses, useProcessList } from '../../../contexts/process/hooks'
 import { AppIcon } from '../../app-icon'
 

@@ -1,14 +1,14 @@
-/* @murasaky/react98 — theme stylesheet.
+/* @murasaki-io/react98 — theme stylesheet.
    Contains CSS variable tokens, library-computed shadow tokens, and base resets.
 
    Public exports:
-   - "@murasaky/react98/theme.css"   — this file (Tailwind v4 source).
-   - "@murasaky/react98/globals.css" — pre-compiled bundle for non-Tailwind apps.
+   - "@murasaki-io/react98/theme.css"   — this file (Tailwind v4 source).
+   - "@murasaki-io/react98/globals.css" — pre-compiled bundle for non-Tailwind apps.
 
    Named skins (everything except the default `windows-98`) live in `./themes/`.
    Each skin is one `[data-theme="<id>"] { … }` block in its own file, aggregated
    by `themes/index.css`. To opt out of bundling every skin, Tailwind v4 consumers
-   may import this file's individual exports (e.g. `@murasaky/react98/themes/marine.css`)
+   may import this file's individual exports (e.g. `@murasaki-io/react98/themes/marine.css`)
    instead of relying on the default aggregator. */
 
 @import "tailwindcss";

@@ -1,7 +1,7 @@
 'use client'
 
 import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
-import { LayerProvider } from '@murasaky/react98'
+import { LayerProvider } from '@murasaki-io/react98'
 import { Code } from 'nextra/components'
 import { evaluate } from 'nextra/evaluate'
 import { useId, useState, useSyncExternalStore } from 'react'

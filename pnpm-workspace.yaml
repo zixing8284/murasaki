@@ -4,7 +4,11 @@ trustPolicy: no-downgrade
 packages:
   - packages/*
 
+patchedDependencies:
+  nextra-theme-docs@4.6.1: patches/nextra-theme-docs@4.6.1.patch
+
 catalog:
+  '@changesets/cli': ^2.29.7
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
   nextra: ^4.6.1

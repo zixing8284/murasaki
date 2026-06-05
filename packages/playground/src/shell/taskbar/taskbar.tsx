@@ -1,4 +1,4 @@
-import type { TaskbarQuickLaunchIcon } from '@murasaky/react98'
+import type { TaskbarQuickLaunchIcon } from '@murasaki-io/react98'
 import type { RefObject } from 'react'
 import {
   Button,
@@ -7,7 +7,7 @@ import {
   TaskbarQuickLaunch,
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { APP_ID } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { useQuickLaunchCount } from '../../hooks/use-quick-launch-count'

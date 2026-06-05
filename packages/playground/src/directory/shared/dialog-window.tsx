@@ -9,7 +9,7 @@ import {
   WindowProvider,
   WindowTitle,
   WindowTitleBar,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 
 export interface DialogWindowProps {
   title: string

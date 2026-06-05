@@ -1,4 +1,4 @@
-import { Checkbox, Slider } from '@murasaky/react98'
+import { Checkbox, Slider } from '@murasaki-io/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useClickAway } from '../../../hooks/use-click-away'

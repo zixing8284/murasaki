@@ -1,6 +1,6 @@
 import type { DragEvent } from 'react'
 import type { DesktopHandle } from './desktop/desktop'
-import { LayerProvider } from '@murasaky/react98'
+import { LayerProvider } from '@murasaki-io/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDesktopFiles } from '../contexts/desktop-files/hooks'
 import { isSupportedDesktopMediaFile } from '../contexts/desktop-files/storage'

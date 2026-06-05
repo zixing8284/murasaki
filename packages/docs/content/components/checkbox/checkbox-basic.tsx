@@ -1,6 +1,6 @@
 'use client'
 
-import { Checkbox } from '@murasaky/react98'
+import { Checkbox } from '@murasaki-io/react98'
 
 export function CheckboxBasicDemo(): React.ReactElement {
   return (

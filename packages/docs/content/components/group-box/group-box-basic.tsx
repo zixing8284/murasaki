@@ -1,6 +1,6 @@
 'use client'
 
-import { GroupBox, OptionButton, OptionGroup } from '@murasaky/react98'
+import { GroupBox, OptionButton, OptionGroup } from '@murasaki-io/react98'
 import { useState } from 'react'
 
 export function GroupBoxBasicDemo(): React.ReactElement {

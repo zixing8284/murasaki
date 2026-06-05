@@ -3,7 +3,7 @@ import {
   Taskbar,
   TaskbarNotificationArea,
   TaskbarSystemClock,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { assetPath } from '../../lib/asset-path'
 import { PREVIEW_TASKBAR_LOGO } from '../../lib/playground-assets'
 

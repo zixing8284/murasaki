@@ -1,6 +1,6 @@
 'use client'
 
-import { TextBox } from '@murasaky/react98'
+import { TextBox } from '@murasaki-io/react98'
 import { useState } from 'react'
 
 export function TextBoxBasicDemo(): React.ReactElement {

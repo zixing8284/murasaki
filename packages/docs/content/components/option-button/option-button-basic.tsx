@@ -1,6 +1,6 @@
 'use client'
 
-import { OptionButton, OptionGroup } from '@murasaky/react98'
+import { OptionButton, OptionGroup } from '@murasaki-io/react98'
 import { useState } from 'react'
 
 export function OptionButtonBasicDemo(): React.ReactElement {

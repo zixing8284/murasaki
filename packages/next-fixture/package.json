@@ -1,15 +1,15 @@
 {
-  "name": "@murasaky/react98-next-fixture",
+  "name": "@murasaki-io/react98-next-fixture",
   "type": "module",
   "private": true,
-  "description": "Next.js consumer fixture for @murasaky/react98",
+  "description": "Next.js consumer fixture for @murasaki-io/react98",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "preview": "next start"
   },
   "dependencies": {
-    "@murasaky/react98": "workspace:*",
+    "@murasaki-io/react98": "workspace:*",
     "next": "catalog:libs",
     "react": "catalog:libs",
     "react-dom": "catalog:libs"

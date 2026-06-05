@@ -1,6 +1,6 @@
 # Scoped layer roots
 
-@murasaky/react98 floating layers render through a package-owned scoped layer root instead of each component portaling directly to `document.body` with a large global z-index. The public `LayerProvider` creates a local portal target, and floating primitives use the internal layer portal helper to find that target. When no provider is present, the helper falls back to `document.body` for backward compatibility.
+@murasaki-io/react98 floating layers render through a package-owned scoped layer root instead of each component portaling directly to `document.body` with a large global z-index. The public `LayerProvider` creates a local portal target, and floating primitives use the internal layer portal helper to find that target. When no provider is present, the helper falls back to `document.body` for backward compatibility.
 
 ## Context
 

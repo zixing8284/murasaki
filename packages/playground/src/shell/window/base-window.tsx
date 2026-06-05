@@ -12,7 +12,7 @@ import {
   WindowResizeGrip,
   WindowTitle,
   WindowTitleBar,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'

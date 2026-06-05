@@ -1,6 +1,6 @@
-# @murasaky/react98
+# @murasaki-io/react98
 
-@murasaky/react98 is a Windows 98-themed React UI component library and playground. This context keeps only the active vocabulary that should guide future design discussions. Settled decisions and historical rationale live in `docs/adr/`.
+@murasaki-io/react98 is a Windows 98-themed React UI component library and playground. This context keeps only the active vocabulary that should guide future design discussions. Settled decisions and historical rationale live in `docs/adr/`.
 
 ## Language
 
@@ -21,7 +21,7 @@ A non-public layer of shared behavior utilities and primitive building blocks us
 _Avoid_: Public headless API, component-by-component behavior patches
 
 **Scoped layer root**:
-A consumer-placeable portal target for transient library UI such as menus, context menus, tooltips, and future popups. It keeps @murasaky/react98 floating layers inside a local stacking context instead of competing in the global `document.body` z-index namespace.
+A consumer-placeable portal target for transient library UI such as menus, context menus, tooltips, and future popups. It keeps @murasaki-io/react98 floating layers inside a local stacking context instead of competing in the global `document.body` z-index namespace.
 _Avoid_: Global z-index race, per-component body portal
 
 **Explicit global CSS import**:
@@ -49,7 +49,7 @@ A package export contract where published entry points resolve to built artifact
 _Avoid_: Source-root export, public TS source entry
 
 **Theme source stylesheet exception**:
-A named exception to **Dist-only public exports** where `@murasaky/react98/theme.css` intentionally resolves to `./src/theme.css` so Tailwind CSS v4 consumers can import the source stylesheet with library-owned theme variables. `@murasaky/react98/globals.css` remains the built CSS entry for consumers that want compiled global styles.
+A named exception to **Dist-only public exports** where `@murasaki-io/react98/theme.css` intentionally resolves to `./src/theme.css` so Tailwind CSS v4 consumers can import the source stylesheet with library-owned theme variables. `@murasaki-io/react98/globals.css` remains the built CSS entry for consumers that want compiled global styles.
 _Avoid_: Accidental source export, unrecorded package export drift
 
 **Pixel-font clipping safety**:

@@ -7,7 +7,7 @@ import {
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { Fragment, useRef } from 'react'
 
 const ACCESSORIES = [

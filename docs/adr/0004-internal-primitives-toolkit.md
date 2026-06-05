@@ -1,6 +1,6 @@
 # Internal primitive toolkit
 
-@murasaky/react98 maintains a non-public layer of primitives to keep complex component behavior consistent across the library. Generic behavior used by multiple components lives under `src/primitives/`. Component-specific context, state, and helper modules live flat inside the component directory (e.g. `components/window/window-context.ts`). These primitives are internal implementation details — they are not exported through `src/index.ts` and are not part of the published package API.
+@murasaki-io/react98 maintains a non-public layer of primitives to keep complex component behavior consistent across the library. Generic behavior used by multiple components lives under `src/primitives/`. Component-specific context, state, and helper modules live flat inside the component directory (e.g. `components/window/window-context.ts`). These primitives are internal implementation details — they are not exported through `src/index.ts` and are not part of the published package API.
 
 ## Scope
 

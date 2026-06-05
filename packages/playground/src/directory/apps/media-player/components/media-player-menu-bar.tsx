@@ -7,7 +7,7 @@ import {
   WindowMenuBarItem,
   WindowMenuBarMenu,
   WindowMenuBarTrigger,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useProcessActions } from '../../../../contexts/process/hooks'
 import { InactiveClickGuard } from '../../../../shell/window/inactive-click-guard'
 

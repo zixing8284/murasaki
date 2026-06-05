@@ -8,7 +8,7 @@ import {
   MenuItem,
   MenuSeparator,
   useContextMenu,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { Fragment } from 'react'
 
 const TARGETS = [

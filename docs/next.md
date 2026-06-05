@@ -1,19 +1,19 @@
 # Next.js Usage
 
-@murasaky/react98 is a client-first package for React Server Component frameworks. Import components from the package root, and import the stylesheet explicitly from your app root.
+@murasaki-io/react98 is a client-first package for React Server Component frameworks. Import components from the package root, and import the stylesheet explicitly from your app root.
 
 ## App Router setup
 
 Import the compiled stylesheet in your root layout:
 
 ```tsx
-import '@murasaky/react98/globals.css'
+import '@murasaki-io/react98/globals.css'
 ```
 
 Use the provider as a client boundary from a server-rendered tree:
 
 ```tsx
-import { Button, ThemeProvider } from '@murasaky/react98'
+import { Button, ThemeProvider } from '@murasaki-io/react98'
 
 export default function Page() {
   return (
@@ -32,7 +32,7 @@ This repo includes a minimal Next App Router fixture in `packages/next-fixture`.
 
 ```bash
 pnpm ui:build
-pnpm --filter @murasaky/react98-next-fixture build
+pnpm --filter @murasaki-io/react98-next-fixture build
 ```
 
-The fixture imports `@murasaky/react98/globals.css`, renders representative components through the package root, and catches package export, client boundary, stylesheet, and hydration build issues.
+The fixture imports `@murasaki-io/react98/globals.css`, renders representative components through the package root, and catches package export, client boundary, stylesheet, and hydration build issues.

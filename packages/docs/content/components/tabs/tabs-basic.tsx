@@ -1,6 +1,6 @@
 'use client'
 
-import { Tab, TabList, TabPanel, Tabs } from '@murasaky/react98'
+import { Tab, TabList, TabPanel, Tabs } from '@murasaki-io/react98'
 
 export function TabsBasicDemo(): React.ReactElement {
   return (

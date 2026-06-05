@@ -1,12 +1,12 @@
 /* Tailwind v4 does not scan node_modules by default. Include the built package
-   so utilities used by @murasaky/react98 components are emitted here. */
-@source "../node_modules/@murasaky/react98/dist";
+   so utilities used by @murasaki-io/react98 components are emitted here. */
+@source "../node_modules/@murasaki-io/react98/dist";
 /* Also scan local source during workspace development before dist is rebuilt. */
 @source "../../ui/src";
 
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@murasaky/react98/theme.css";
+@import "@murasaki-io/react98/theme.css";
 
 @utility pixelated {
   image-rendering: pixelated;

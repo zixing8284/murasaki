@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, FieldPanel, themeIds, themeLabels, ThemeProvider, useTheme } from '@murasaky/react98'
+import { Button, FieldPanel, themeIds, themeLabels, ThemeProvider, useTheme } from '@murasaki-io/react98'
 import { useState } from 'react'
 import { ThemePreview } from './theme-preview'
 

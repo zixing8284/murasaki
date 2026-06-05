@@ -10,7 +10,7 @@ import {
   WindowProvider,
   WindowTitle,
   WindowTitleBar,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { assetPath } from '../../../lib/asset-path'
 import { THEME_PREVIEW_RECYCLE_BIN } from '../../../lib/playground-assets'
 import { PreviewTaskbar } from '../../shared/preview-taskbar'

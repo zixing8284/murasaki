@@ -1,6 +1,6 @@
 # Murasaki
 
-A Windows 98-themed React UI library — [`@murasaky/react98`](https://www.npmjs.com/package/@murasaky/react98)
+A Windows 98-themed React UI library — [`@murasaki-io/react98`](https://www.npmjs.com/package/@murasaki-io/react98)
 
 - [Playground](https://zixing8284.github.io/murasaki/) · [Docs](https://zixing8284.github.io/murasaki/programs/docs/)
 
@@ -11,7 +11,7 @@ Life is hard. Building this project genuinely makes me happy.
 
 ## Packages
 
-- `packages/ui` — `@murasaky/react98` component library
+- `packages/ui` — `@murasaki-io/react98` component library
 - `packages/playground` — demo
 - `packages/docs` — component docs
 - `packages/next-fixture` — Next.js integration test

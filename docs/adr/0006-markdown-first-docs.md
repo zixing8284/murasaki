@@ -19,7 +19,7 @@ The demo system also had friction: separate `demo-*.tsx` files required manual r
 We replaced the MDX-based doc system with a markdown-first approach:
 
 - **Pure `.md` files** for all documentation — no JSX, no mixed syntax.
-- **MDXProvider** maps standard HTML elements to themed @murasaky/react98 components (`table` → `<Table>`, `pre` → `<CodeBlock>`, etc.).
+- **MDXProvider** maps standard HTML elements to themed @murasaki-io/react98 components (`table` → `<Table>`, `pre` → `<CodeBlock>`, etc.).
 - **Manual markdown tables** for props documentation — simple, no tooling, easy to write.
 - **Live demos embedded in markdown** as fenced code blocks tagged with `` ```tsx live ``.
 - **A small Vite plugin** (`vite-plugin-mdx-live`) extracts `live` code blocks at build time, compiles them to React components via esbuild, and writes a sidecar `.md.live.ts` module.

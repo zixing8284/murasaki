@@ -1,6 +1,6 @@
 'use client'
 
-import { ProgressIndicator } from '@murasaky/react98'
+import { ProgressIndicator } from '@murasaki-io/react98'
 
 export function ProgressIndicatorBasicDemo(): React.ReactElement {
   return (

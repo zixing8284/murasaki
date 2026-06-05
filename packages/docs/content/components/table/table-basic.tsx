@@ -1,6 +1,6 @@
 'use client'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@murasaky/react98'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@murasaki-io/react98'
 
 const processes = [
   { name: 'Explorer', memory: '14,280 K', status: 'Running' },

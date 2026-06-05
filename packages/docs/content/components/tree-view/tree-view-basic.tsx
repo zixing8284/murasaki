@@ -1,6 +1,6 @@
 'use client'
 
-import { TreeView, TreeViewItem } from '@murasaky/react98'
+import { TreeView, TreeViewItem } from '@murasaki-io/react98'
 
 export function TreeViewBasicDemo(): React.ReactElement {
   return (

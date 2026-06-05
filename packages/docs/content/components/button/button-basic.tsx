@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@murasaky/react98'
+import { Button } from '@murasaki-io/react98'
 
 export function ButtonBasicDemo(): React.ReactElement {
   return (

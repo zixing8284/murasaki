@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Tooltip } from '@murasaky/react98'
+import { Button, Tooltip } from '@murasaki-io/react98'
 
 export function TooltipBasicDemo(): React.ReactElement {
   return (

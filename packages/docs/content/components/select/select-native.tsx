@@ -1,6 +1,6 @@
 'use client'
 
-import { SelectNative } from '@murasaky/react98'
+import { SelectNative } from '@murasaki-io/react98'
 
 export function SelectNativeDemo(): React.ReactElement {
   return (

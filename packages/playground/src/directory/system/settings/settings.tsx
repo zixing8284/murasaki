@@ -1,5 +1,5 @@
 import type { ProcessComponentProps } from '../../../contexts/process/types'
-import { Button, GroupBox, Tab, TabList, TabPanel, Tabs } from '@murasaky/react98'
+import { Button, GroupBox, Tab, TabList, TabPanel, Tabs } from '@murasaki-io/react98'
 import { useState } from 'react'
 import { useProcessActions } from '../../../contexts/process/hooks'
 import { assetPath } from '../../../lib/asset-path'

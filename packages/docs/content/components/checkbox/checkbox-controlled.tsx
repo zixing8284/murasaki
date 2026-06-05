@@ -1,6 +1,6 @@
 'use client'
 
-import { Checkbox } from '@murasaky/react98'
+import { Checkbox } from '@murasaki-io/react98'
 import { useState } from 'react'
 
 export function CheckboxControlledDemo(): React.ReactElement {

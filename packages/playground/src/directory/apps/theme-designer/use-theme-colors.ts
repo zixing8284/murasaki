@@ -1,5 +1,5 @@
-import type { ThemeId } from '@murasaky/react98'
-import { themeIds } from '@murasaky/react98'
+import type { ThemeId } from '@murasaki-io/react98'
+import { themeIds } from '@murasaki-io/react98'
 import { useEffect, useRef, useState } from 'react'
 import { PLAYGROUND_STORAGE_KEYS, readJsonStorageItem, removeStorageItem, writeJsonStorageItem } from '../../../lib/persistence'
 import {

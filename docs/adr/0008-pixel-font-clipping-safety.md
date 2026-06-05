@@ -1,6 +1,6 @@
 # Pixel-font clipping safety
 
-@murasaky/react98 treats clipped pixel-font text as a layout-sensitive surface. When a component uses `overflow: hidden`, `text-overflow: ellipsis`, an inset field border, or a scrollable/text-like row, the clip boundary must not sit flush against the first rendered glyph column.
+@murasaki-io/react98 treats clipped pixel-font text as a layout-sensitive surface. When a component uses `overflow: hidden`, `text-overflow: ellipsis`, an inset field border, or a scrollable/text-like row, the clip boundary must not sit flush against the first rendered glyph column.
 
 ## Problem
 

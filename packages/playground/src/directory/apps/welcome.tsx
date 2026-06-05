@@ -11,7 +11,7 @@ import {
   WindowMenuBarTrigger,
   WindowStatusBar,
   WindowStatusBarField,
-} from '@murasaky/react98'
+} from '@murasaki-io/react98'
 import { useState } from 'react'
 import { assetPath } from '../../lib/asset-path'
 import { InactiveClickGuard } from '../../shell/window/inactive-click-guard'
@@ -30,7 +30,7 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
         <div className="text-center">
           <p className="font-bold">Murasaki</p>
           <p className="mt-1">Windows 98 style React component library</p>
-          <p className="mt-0.5 text-(--gray-text)">@murasaky/react98</p>
+          <p className="mt-0.5 text-(--gray-text)">@murasaki-io/react98</p>
         </div>
         <Divider className="w-full" />
         <Button className="px-6" onClick={onClose}>Close</Button>
@@ -88,12 +88,12 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
             It ships as
             {' '}
             <a
-              href="https://www.npmjs.com/package/@murasaky/react98"
+              href="https://www.npmjs.com/package/@murasaki-io/react98"
               target="_blank"
               rel="noopener noreferrer"
               className="text-(--highlight) underline"
             >
-              @murasaky/react98
+              @murasaki-io/react98
             </a>
             {' '}
             on npm (not yet) and powers this playground &mdash; a fully interactive Windows 98 desktop

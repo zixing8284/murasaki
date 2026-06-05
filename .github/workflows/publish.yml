@@ -1,14 +1,21 @@
-name: Release
+name: Release @murasaki-io/react98
 
 on:
   push:
     branches: [main]
+    paths:
+      - .changeset/**
+      - packages/ui/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/publish.yml
   workflow_dispatch:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
+  release-react98:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,19 +33,17 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm lint
+      - name: Build @murasaki-io/react98
+        run: pnpm ui:build
 
-      - run: pnpm ui:test
-
-      - run: pnpm ui:build
-
-      - name: Create release PR or publish
+      - name: Create version PR or publish @murasaki-io/react98
         uses: changesets/action@v1
         with:
           version: pnpm version-packages
           publish: pnpm release
-          commit: "chore: version packages"
-          title: "chore: version packages"
+          commit: "chore(release): version @murasaki-io/react98"
+          title: "chore(release): version @murasaki-io/react98"
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

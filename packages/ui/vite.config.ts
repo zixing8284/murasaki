@@ -31,7 +31,6 @@ export default defineConfig({
         'tw-animate-css',
       ],
       output: {
-        banner: chunk => (chunk.name === 'index' ? `'use client';` : ''),
         preserveModules: true,
         preserveModulesRoot: 'src',
         entryFileNames: '[name].js',

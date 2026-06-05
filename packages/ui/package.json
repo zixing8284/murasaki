@@ -77,7 +77,7 @@
     "@vitejs/plugin-react": "catalog:cli",
     "@vitest/browser-playwright": "catalog:cli",
     "babel-plugin-react-compiler": "catalog:cli",
-    "bumpp": "catalog:cli",
+
     "react": "catalog:libs",
     "react-dom": "catalog:libs",
     "tailwindcss": "catalog:libs",

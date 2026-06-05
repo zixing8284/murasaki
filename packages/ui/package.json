@@ -1,7 +1,7 @@
 {
   "name": "@murasaki-io/react98",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Windows 98-themed React UI component library published as @murasaki-io/react98",
   "author": "sasasa10 <zixing8284@gmail.com>",
   "license": "MIT",
@@ -77,7 +77,6 @@
     "@vitejs/plugin-react": "catalog:cli",
     "@vitest/browser-playwright": "catalog:cli",
     "babel-plugin-react-compiler": "catalog:cli",
-
     "react": "catalog:libs",
     "react-dom": "catalog:libs",
     "tailwindcss": "catalog:libs",

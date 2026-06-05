@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+### Patch Changes
+
+- 26021cb: Remove duplicate 'use client' directive from build output and clean up unused dependencies
+
 All notable changes to `@murasaki-io/react98` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

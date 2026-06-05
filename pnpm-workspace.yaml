@@ -1,8 +1,8 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
 packages:
   - packages/*
-
-allowBuilds:
-  sharp: true
 
 catalog:
   class-variance-authority: ^0.7.1
@@ -43,10 +43,3 @@ catalogs:
     '@types/node': ^25.0.10
     '@types/react': ^19.2.9
     '@types/react-dom': ^19.2.3
-
-patchedDependencies:
-  nextra-theme-docs@4.6.1: patches/nextra-theme-docs@4.6.1.patch
-
-shellEmulator: true
-
-trustPolicy: no-downgrade

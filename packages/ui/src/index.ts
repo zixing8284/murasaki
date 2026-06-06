@@ -5,7 +5,7 @@ export { Button } from './components/button/button'
 export type { ButtonProps } from './components/button/button'
 
 // Checkbox
-export { Checkbox, CheckboxLabel } from './components/checkbox/checkbox'
+export { Checkbox } from './components/checkbox/checkbox'
 export type { CheckboxProps } from './components/checkbox/checkbox'
 
 // ContextMenu

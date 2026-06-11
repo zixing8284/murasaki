@@ -156,6 +156,11 @@ export function useDraggable<
             return
           }
           hasDragStarted = true
+          // Promote the target to its own compositor layer for the duration of
+          // the drag. Without this, Chrome repaints the whole window subtree on
+          // every pointer move (a bare 2D translate does not trigger layer
+          // promotion), which gets noticeably laggy as window content grows.
+          target.style.willChange = 'transform'
           setDragging(true)
           onDragChange?.(true)
         }
@@ -176,6 +181,9 @@ export function useDraggable<
 
       const onMouseup = (): void => {
         if (hasDragStarted) {
+          // Release the compositor-layer hint so the browser can reclaim the
+          // layer once the drag is over.
+          target.style.willChange = ''
           setDragging(false)
           onDragChange?.(false)
         }

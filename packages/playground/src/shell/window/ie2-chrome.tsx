@@ -201,8 +201,6 @@ export function Ie2Chrome({
   const win = useProcess(windowId)
   const iframeElementRef = useRef<HTMLIFrameElement | null>(null)
   const cleanupMetadataSyncRef = useRef<(() => void) | undefined>(undefined)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isResizing, setIsResizing] = useState(false)
   const [address, setAddress] = useState(() => displayAddressFromPath(src))
   const { iframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
     windowId,
@@ -212,6 +210,15 @@ export function Ie2Chrome({
     iframeElementRef.current = el
     iframeRef(el)
   }, [iframeRef])
+
+  // Synchronously applies pointer-events: none at drag/resize start — before
+  // React re-renders — preventing the iframe from swallowing mousemove events
+  // during the first frame of the interaction.
+  const handleInteractionChange = useCallback((active: boolean) => {
+    if (iframeElementRef.current) {
+      iframeElementRef.current.style.pointerEvents = active ? 'none' : ''
+    }
+  }, [])
 
   const syncFrameMetadata = (iframe: HTMLIFrameElement): void => {
     setAddress(getIframeAddress(iframe, src))
@@ -263,8 +270,6 @@ export function Ie2Chrome({
   if (!win)
     return null
 
-  const isInteracting = isDragging || isResizing
-
   return (
     <RndWindow
       windowId={windowId}
@@ -273,8 +278,8 @@ export function Ie2Chrome({
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
       disableResize={disableResize}
-      onDragChange={setIsDragging}
-      onResizeChange={setIsResizing}
+      onDragChange={handleInteractionChange}
+      onResizeChange={handleInteractionChange}
     >
       <InactiveClickGuard windowId={windowId} className="shrink-0">
         <WindowMenuBar className="h-5">
@@ -419,7 +424,7 @@ export function Ie2Chrome({
           src={assetPath(src)}
           sandbox={sandbox}
           referrerPolicy={referrerPolicy}
-          className={`block size-full border-none bg-(--window) ${iframeLoaded ? '' : 'opacity-0'} ${isInteracting ? 'pointer-events-none' : ''}`}
+          className={`block size-full border-none bg-(--window) ${iframeLoaded ? '' : 'opacity-0'}`}
           title={win.process.title}
           onLoad={handleIframeLoad}
         />

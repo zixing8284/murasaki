@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useState } from 'react'
+import { useCallback, useRef } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
@@ -37,20 +37,27 @@ export function IframeWindow({
 }: IframeWindowProps): React.ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isResizing, setIsResizing] = useState(false)
-  const { iframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
+  const { iframeRef: onIframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
     windowId,
   })
 
+  // Direct ref to the iframe element. Synchronously applies pointer-events: none
+  // at drag/resize start — before React re-renders — preventing the iframe from
+  // swallowing mousemove events during the first frame of the interaction.
+  const iframeElementRef = useRef<HTMLIFrameElement | null>(null)
+  const mergedIframeRef = useCallback((el: HTMLIFrameElement | null) => {
+    iframeElementRef.current = el
+    onIframeRef(el)
+  }, [onIframeRef])
+
+  const handleInteractionChange = useCallback((active: boolean) => {
+    if (iframeElementRef.current) {
+      iframeElementRef.current.style.pointerEvents = active ? 'none' : ''
+    }
+  }, [])
+
   if (!win)
     return null
-
-  // Only during drag/resize should iframe be isolated from pointer events.
-  // Inactive state is handled by a transparent overlay (see below) so clicks
-  // on cross-origin iframes still activate the window, rather than passing
-  // through to whatever sits behind it.
-  const isInteracting = isDragging || isResizing
 
   return (
     <RndWindow
@@ -61,8 +68,8 @@ export function IframeWindow({
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
       disableResize={disableResize}
-      onDragChange={setIsDragging}
-      onResizeChange={setIsResizing}
+      onDragChange={handleInteractionChange}
+      onResizeChange={handleInteractionChange}
     >
       {/*
        * Iframe wrapper: clicking activates the window and triggers delayed focus.
@@ -96,11 +103,11 @@ export function IframeWindow({
           </div>
         )}
         <iframe
-          ref={iframeRef}
+          ref={mergedIframeRef}
           src={assetPath(src)}
           sandbox={sandbox}
           referrerPolicy={referrerPolicy}
-          className={`size-full border-none block ${isInteracting ? 'pointer-events-none' : ''}`}
+          className="size-full border-none block"
           title={win.process.title}
         />
         {/*

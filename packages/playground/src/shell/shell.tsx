@@ -8,9 +8,12 @@ import { getStartupAppIds } from '../contexts/process/directory'
 import { useProcessActions } from '../contexts/process/hooks'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useCrtTuning } from '../hooks/use-crt-tuning'
+import { useCustomWallpaperUrl } from '../hooks/use-custom-wallpaper-url'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
+import { useWallpaper } from '../hooks/use-wallpaper'
 import { assetPath } from '../lib/asset-path'
-import { DESKTOP_WALLPAPER_IMAGE } from '../lib/playground-assets'
+import { isCustomWallpaperId } from '../lib/wallpaper-storage'
+import { getWallpaperEntry } from '../lib/wallpapers'
 import { warmServiceWorkerCache } from '../sw-register'
 import { CrtOverlay } from './crt-overlay'
 import { Desktop } from './desktop/desktop'
@@ -68,6 +71,9 @@ export function Shell(): React.ReactElement {
   const [crtEnabled] = useCrtEffect()
   const [crtTuning] = useCrtTuning()
   const [gradientEnabled] = useGradientTitlebar()
+  const [wallpaperSettings] = useWallpaper()
+  const wallpaperEntry = getWallpaperEntry(wallpaperSettings.id)
+  const customWallpaperUrl = useCustomWallpaperUrl(wallpaperSettings.id)
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
 
   // const { open, deactivateAll, setContainer, linkElement } = useProcessActions()
@@ -135,6 +141,16 @@ export function Shell(): React.ReactElement {
     void importFiles(event.dataTransfer.files)
   }
 
+  const isCustom = isCustomWallpaperId(wallpaperSettings.id)
+  const wallpaperSrc = isCustom ? customWallpaperUrl : wallpaperEntry?.src
+  const wallpaperBgClasses = wallpaperSrc
+    ? wallpaperSettings.mode === 'stretch'
+      ? 'bg-no-repeat bg-center bg-cover'
+      : wallpaperSettings.mode === 'centered'
+        ? 'bg-no-repeat bg-center bg-size-[initial]'
+        : 'bg-size-[initial] bg-repeat bg-center bg-fixed'
+    : ''
+
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text)">
       {/* Monitor bezel — dark frame */}
@@ -152,8 +168,8 @@ export function Shell(): React.ReactElement {
           {/* Desktop */}
           <div
             ref={screenRef}
-            className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden bg-size-[initial] bg-repeat bg-center bg-fixed${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
-            style={isBooted ? { backgroundImage: `url(${assetPath(DESKTOP_WALLPAPER_IMAGE)})` } : undefined}
+            className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden${wallpaperBgClasses ? ` ${wallpaperBgClasses}` : ''}${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
+            style={isBooted && wallpaperSrc ? { backgroundImage: `url(${isCustom ? wallpaperSrc : assetPath(wallpaperSrc)})` } : undefined}
           >
             {!isBooted
               ? (

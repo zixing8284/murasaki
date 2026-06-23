@@ -1,24 +1,27 @@
-import { PLAYGROUND_INDEXED_DB } from '../../lib/persistence'
+/**
+ * IndexedDB storage for custom wallpaper images.
+ *
+ * Custom wallpapers are stored as Blobs in a dedicated object store so
+ * they survive page refreshes.  The wallpaper settings in localStorage
+ * reference them by a `custom:<uuid>` id.
+ */
 
-export type DesktopMediaKind = 'audio' | 'video'
+import { PLAYGROUND_INDEXED_DB } from './persistence'
 
-export interface DesktopMediaFileEntry {
+export interface WallpaperImageEntry {
   id: string
   name: string
   mimeType: string
-  size: number
   createdAt: number
-  updatedAt: number
-  kind: DesktopMediaKind
 }
 
-interface StoredDesktopMediaFile extends DesktopMediaFileEntry {
+interface StoredWallpaperImage extends WallpaperImageEntry {
   blob: Blob
 }
 
 const DATABASE_NAME = PLAYGROUND_INDEXED_DB.name
 const DATABASE_VERSION = PLAYGROUND_INDEXED_DB.version
-const STORE_NAME = PLAYGROUND_INDEXED_DB.stores.desktopMediaFiles
+const STORE_NAME = PLAYGROUND_INDEXED_DB.stores.wallpaperImages
 const ALL_STORE_NAMES = Object.values(PLAYGROUND_INDEXED_DB.stores)
 
 function openDatabase(): Promise<IDBDatabase> {
@@ -35,7 +38,7 @@ function openDatabase(): Promise<IDBDatabase> {
     }
 
     request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error ?? new Error('Failed to open desktop media database'))
+    request.onerror = () => reject(request.error ?? new Error('Failed to open wallpaper database'))
   })
 }
 
@@ -63,41 +66,38 @@ function withStore<T>(
   }))
 }
 
-export function isSupportedDesktopMediaFile(file: File): boolean {
-  return file.type.startsWith('audio/') || file.type.startsWith('video/')
+const IMAGE_MIME_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/gif',
+  'image/webp',
+  'image/bmp',
+  'image/svg+xml',
+])
+
+export function isSupportedWallpaperImage(file: File): boolean {
+  return IMAGE_MIME_TYPES.has(file.type)
 }
 
-export async function requestPersistentStorage(): Promise<void> {
-  if (!('storage' in navigator) || typeof navigator.storage.persist !== 'function') {
-    return
-  }
-
-  try {
-    await navigator.storage.persist()
-  }
-  catch {
-    // Best effort only.
-  }
+export function isCustomWallpaperId(id: string): boolean {
+  return id.startsWith('custom:')
 }
 
-export async function listDesktopMediaFiles(): Promise<DesktopMediaFileEntry[]> {
-  const records = await withStore<StoredDesktopMediaFile[]>('readonly', store => store.getAll())
+export async function listWallpaperImages(): Promise<WallpaperImageEntry[]> {
+  const records = await withStore<StoredWallpaperImage[]>('readonly', store => store.getAll())
 
   return records
     .map(({ blob: _blob, ...entry }) => entry)
     .toSorted((left, right) => left.createdAt - right.createdAt)
 }
 
-export async function saveDesktopMediaFile(file: File): Promise<DesktopMediaFileEntry> {
+export async function saveWallpaperImage(file: File): Promise<WallpaperImageEntry> {
   const timestamp = Date.now()
-  const record: StoredDesktopMediaFile = {
-    id: crypto.randomUUID(),
+  const record: StoredWallpaperImage = {
+    id: `custom:${crypto.randomUUID()}`,
     name: file.name,
     mimeType: file.type || 'application/octet-stream',
-    size: file.size,
     createdAt: timestamp,
-    updatedAt: timestamp,
-    kind: file.type.startsWith('video/') ? 'video' : 'audio',
     blob: file,
   }
 
@@ -107,14 +107,11 @@ export async function saveDesktopMediaFile(file: File): Promise<DesktopMediaFile
   return entry
 }
 
-export async function getDesktopMediaFile(id: string): Promise<File | null> {
-  const record = await withStore<StoredDesktopMediaFile | undefined>('readonly', store => store.get(id))
-  if (!record) {
-    return null
-  }
+export async function getWallpaperImageBlob(id: string): Promise<Blob | null> {
+  const record = await withStore<StoredWallpaperImage | undefined>('readonly', store => store.get(id))
+  return record?.blob ?? null
+}
 
-  return new File([record.blob], record.name, {
-    type: record.mimeType,
-    lastModified: record.updatedAt,
-  })
+export async function deleteWallpaperImage(id: string): Promise<void> {
+  await withStore('readwrite', store => store.delete(id))
 }

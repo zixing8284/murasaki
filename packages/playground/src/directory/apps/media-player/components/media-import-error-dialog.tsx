@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 import { Button, Divider } from '@murasaki-io/react98'
 import { DialogWindow } from '../../../shared/dialog-window'
 
@@ -12,7 +12,7 @@ export function MediaImportErrorDialog({
   fileName,
   message,
   onClose,
-}: MediaImportErrorDialogProps): JSX.Element {
+}: MediaImportErrorDialogProps): ReactElement {
   return (
     <DialogWindow title="Media Import Error" onClose={onClose}>
       <div className="flex w-80 max-w-[90vw] flex-col gap-3 p-4">

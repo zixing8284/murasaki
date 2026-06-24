@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 import type { UseMediaPlayerResult } from '../use-media-player'
 import { Divider, Slider, Tooltip } from '@murasaki-io/react98'
 import {
@@ -56,7 +56,7 @@ interface MediaPlayerControlsProps {
   onToggleAspectRatio: () => void
 }
 
-function ToolbarSeparator(): JSX.Element {
+function ToolbarSeparator(): ReactElement {
   return <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
 }
 
@@ -69,7 +69,7 @@ export function MediaPlayerControls({
   onSeekForward,
   onTogglePlaylist,
   onToggleAspectRatio,
-}: MediaPlayerControlsProps): JSX.Element {
+}: MediaPlayerControlsProps): ReactElement {
   const surfaceClassName = isMediaFullscreen ? 'bg-(--button-face)' : ''
   const hasCurrentTrack = player.currentTrack !== null
 

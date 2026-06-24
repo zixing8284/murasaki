@@ -1,7 +1,7 @@
-import type { DragEvent } from 'react'
+import type { CSSProperties, DragEvent } from 'react'
 import type { DesktopHandle } from './desktop/desktop'
 import { LayerProvider } from '@murasaki-io/react98'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDesktopFiles } from '../contexts/desktop-files/hooks'
 import { isSupportedDesktopMediaFile } from '../contexts/desktop-files/storage'
 import { getStartupAppIds } from '../contexts/process/directory'
@@ -11,6 +11,7 @@ import { useCrtTuning } from '../hooks/use-crt-tuning'
 import { useCustomWallpaperUrl } from '../hooks/use-custom-wallpaper-url'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { useWallpaper } from '../hooks/use-wallpaper'
+import { useWallpaperColor } from '../hooks/use-wallpaper-color'
 import { assetPath } from '../lib/asset-path'
 import { isCustomWallpaperId } from '../lib/wallpaper-storage'
 import { getWallpaperEntry } from '../lib/wallpapers'
@@ -72,6 +73,7 @@ export function Shell(): React.ReactElement {
   const [crtTuning] = useCrtTuning()
   const [gradientEnabled] = useGradientTitlebar()
   const [wallpaperSettings] = useWallpaper()
+  const [wallpaperColor] = useWallpaperColor()
   const wallpaperEntry = getWallpaperEntry(wallpaperSettings.id)
   const customWallpaperUrl = useCustomWallpaperUrl(wallpaperSettings.id)
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
@@ -83,10 +85,10 @@ export function Shell(): React.ReactElement {
   const isBooted = preload.ready && !desktopFilesLoading
 
   // Set container ref to store on mount
-  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+  const setContainerRef = (el: HTMLDivElement | null): void => {
     containerRef.current = el
     setContainer(el)
-  }, [setContainer])
+  }
 
   // Open default windows once boot is complete, and ask the SW to warm
   // its cache in the background so repeat visits are instant.
@@ -143,6 +145,7 @@ export function Shell(): React.ReactElement {
 
   const isCustom = isCustomWallpaperId(wallpaperSettings.id)
   const wallpaperSrc = isCustom ? customWallpaperUrl : wallpaperEntry?.src
+  const isNoneWallpaper = wallpaperSettings.id === 'none'
   const wallpaperBgClasses = wallpaperSrc
     ? wallpaperSettings.mode === 'stretch'
       ? 'bg-no-repeat bg-center bg-cover'
@@ -150,6 +153,12 @@ export function Shell(): React.ReactElement {
         ? 'bg-no-repeat bg-center bg-size-[initial]'
         : 'bg-size-[initial] bg-repeat bg-center bg-fixed'
     : ''
+
+  const screenStyle = {
+    ...(isBooted && wallpaperSrc ? { backgroundImage: `url(${isCustom ? wallpaperSrc : assetPath(wallpaperSrc)})` } : {}),
+    ...(isBooted && isNoneWallpaper ? { backgroundColor: wallpaperColor } : {}),
+    '--desktop-icon-label-bg': isNoneWallpaper ? 'transparent' : wallpaperColor,
+  } as CSSProperties
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text)">
@@ -169,7 +178,7 @@ export function Shell(): React.ReactElement {
           <div
             ref={screenRef}
             className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden${wallpaperBgClasses ? ` ${wallpaperBgClasses}` : ''}${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
-            style={isBooted && wallpaperSrc ? { backgroundImage: `url(${isCustom ? wallpaperSrc : assetPath(wallpaperSrc)})` } : undefined}
+            style={screenStyle}
           >
             {!isBooted
               ? (

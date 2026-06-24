@@ -1,7 +1,7 @@
 /**
  * Central registry of playground static assets.
  *
- * All `/icons/...` and `/img/...` paths shared across the shell live here
+ * All `/icons/...` and `/wallpaper/...` paths shared across the shell live here
  * so:
  *   - One source of truth feeds both the components that render the icon
  *     and the startup preloader that warms them.
@@ -21,7 +21,7 @@ export const ASSET_MANIFEST_PUBLIC_PATH = '/playground-assets.json'
 // Desktop / wallpaper
 // ---------------------------------------------------------------------------
 
-export const DESKTOP_WALLPAPER_IMAGE = '/img/animspace.gif'
+export const DESKTOP_WALLPAPER_IMAGE = '/wallpaper/SoapBubbles.bmp'
 export const DESKTOP_MEDIA_ICON = '/icons/windows98-icons/png/directory_open_file_mydocs-0.png'
 
 // ---------------------------------------------------------------------------
@@ -102,7 +102,7 @@ export const IE_TOOLBAR_ICONS = {
 
 export const PREVIEW_TASKBAR_LOGO = '/icons/windows98-icons/png/windows-4.png'
 export const THEME_PREVIEW_RECYCLE_BIN = '/icons/windows98-icons/png/recycle_bin_empty-0.png'
-export const MEDIA_PLAYER_EMPTY_BACKGROUND = '/img/media-player/mediaplayer-bg.png'
+export const MEDIA_PLAYER_EMPTY_BACKGROUND = '/icons/media/mediaplayer-bg.png'
 
 /**
  * Larger / lower-priority images. Warmed in the background after the
@@ -110,11 +110,11 @@ export const MEDIA_PLAYER_EMPTY_BACKGROUND = '/img/media-player/mediaplayer-bg.p
  */
 export const WARM_IMAGE_ASSETS = [
   MEDIA_PLAYER_EMPTY_BACKGROUND,
-  '/img/cursor.png',
-  '/img/display_16.png',
-  '/img/network.png',
-  '/img/smiley.png',
-  '/img/stars.gif',
+  '/icons/misc/cursor.png',
+  '/icons/windows98-icons/png/paint_file-0.png',
+  '/icons/misc/network.png',
+  '/icons/misc/smiley.png',
+  '/wallpaper/water.gif',
 ] as const
 
 /** De-duplicate while preserving insertion order. */

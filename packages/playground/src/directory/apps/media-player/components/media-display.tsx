@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 import { assetPath } from '../../../../lib/asset-path'
 import { MEDIA_PLAYER_EMPTY_BACKGROUND } from '../../../../lib/playground-assets'
 
@@ -19,7 +19,7 @@ export function MediaDisplay({
   mediaRefCallback,
   onVideoClick,
   onVideoDoubleClick,
-}: MediaDisplayProps): JSX.Element {
+}: MediaDisplayProps): ReactElement {
   return (
     <div
       role="button"

@@ -122,7 +122,7 @@ function isInsideEmbeddedDocsRoot(filePath: string): boolean {
 // ---------------------------------------------------------------------------
 // Playground asset manifest
 //
-// Scans `public/icons` and `public/img` for static images, hashes each
+// Scans `public/icons` and `public/wallpaper` for static images, hashes each
 // file, and emits a versioned `playground-assets.json` at build time —
 // also served by the dev/preview middleware so dev runs exercise the
 // same fetch path. The startup preloader and service worker both read
@@ -146,11 +146,11 @@ interface PlaygroundAssetsManifest {
   }
 }
 
-const MANIFEST_SCAN_ROOTS = ['icons', 'img'] as const
-const WARM_PATH_PREFIXES = ['/img/'] as const
+const MANIFEST_SCAN_ROOTS = ['icons', 'wallpaper'] as const
+const WARM_PATH_PREFIXES = ['/wallpaper/'] as const
 // Paths under `WARM_PATH_PREFIXES` that should still be critical because
 // they are visible immediately after boot (e.g. the desktop wallpaper).
-const CRITICAL_OVERRIDES = new Set<string>(['/img/animspace.gif'])
+const CRITICAL_OVERRIDES = new Set<string>(['/wallpaper/SoapBubbles.bmp'])
 
 function playgroundAssetManifestPlugin(): Plugin {
   let cachedManifest: { json: string, etag: string } | null = null

@@ -1,4 +1,4 @@
-import type { JSX, RefObject } from 'react'
+import type { ReactElement, RefObject } from 'react'
 import type { Track } from '../use-media-player'
 import { FieldPanel } from '@murasaki-io/react98'
 import { formatTime } from '../format-time'
@@ -22,7 +22,7 @@ export function PlaylistPanel({
   loading,
   activeItemRef,
   onPlayTrack,
-}: PlaylistPanelProps): JSX.Element {
+}: PlaylistPanelProps): ReactElement {
   return (
     <div className={`grid transition-[grid-template-rows] duration-100 ease-in-out ${visible ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
       <div className="min-h-0 overflow-hidden">

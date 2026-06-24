@@ -86,13 +86,13 @@ export function WindowMenuBar({
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolledValue
 
-  const setMenuBarRef = React.useCallback((node: HTMLDivElement | null) => {
+  const setMenuBarRef = (node: HTMLDivElement | null): void => {
     menuBarRef.current = node
     if (typeof ref === 'function')
       ref(node)
     else if (ref)
       ref.current = node
-  }, [ref])
+  }
 
   const setValue = (nextValue: WindowMenuBarValue): void => {
     if (!isControlled)
@@ -194,13 +194,13 @@ export function WindowMenuBarMenu({
   const contentRef = React.useRef<HTMLElement | null>(null)
   const value = valueProp ?? generatedValueId
 
-  const setTriggerRef = React.useCallback((node: HTMLButtonElement | null) => {
+  const setTriggerRef = (node: HTMLButtonElement | null): void => {
     triggerRef.current = node
-  }, [])
+  }
 
-  const setContentRef = React.useCallback((node: HTMLElement | null) => {
+  const setContentRef = (node: HTMLElement | null): void => {
     contentRef.current = node
-  }, [])
+  }
 
   const contextValue: WindowMenuBarMenuContextValue = {
     value,
@@ -286,13 +286,13 @@ export function WindowMenuBarTrigger({
   const menu = useWindowMenuBarMenuContext('WindowMenuBarTrigger')
   const { setTriggerRef: setContextTriggerRef } = menu
 
-  const setTriggerRef = React.useCallback((node: HTMLButtonElement | null) => {
+  const setTriggerRef = (node: HTMLButtonElement | null): void => {
     setContextTriggerRef(node)
     if (typeof ref === 'function')
       ref(node)
     else if (ref)
       ref.current = node
-  }, [ref, setContextTriggerRef])
+  }
 
   const handleTriggerClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     onClick?.(event)
@@ -399,10 +399,10 @@ export function WindowMenuBarContent({
     return undefined
   }, [menu.open, localOpen])
 
-  const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
+  const setMenuRef = (node: HTMLMenuElement | null): void => {
     menuRef.current = node
     setContextContentRef(node)
-  }, [setContextContentRef])
+  }
 
   // Keep positioning alive while exit animations keep the content mounted.
   const [position, ready] = useLayer({

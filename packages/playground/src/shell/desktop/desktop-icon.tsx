@@ -77,6 +77,7 @@ export function DesktopIcon({
             ? 'max-w-18 text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-break-word bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
             : 'max-w-18 text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-break-word text-(--desktop-text)'
         }
+        style={selected ? undefined : { backgroundColor: 'var(--desktop-icon-label-bg, transparent)' }}
         title={label}
       >
         {displayLabel}

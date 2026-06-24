@@ -10,7 +10,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki-io/react98'
-import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
@@ -110,7 +110,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     },
   }))
 
-  const setGridEl = useCallback((el: HTMLDivElement | null) => {
+  const setGridEl = (el: HTMLDivElement | null): (() => void) | void => {
     if (!el)
       return
     desktopRef.current = el
@@ -129,7 +129,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       observer.disconnect()
       gridRef.current = null
     }
-  }, [gridRef])
+  }
 
   const apps: IconEntry[] = Object.entries(appDirectory).reduce<IconEntry[]>((acc, [appId, entry]) => {
     if (entry.showOnDesktop) {

@@ -22,7 +22,7 @@
     "version-packages": "changeset version",
     "release": "pnpm --filter @murasaki-io/react98 publish --no-git-checks --provenance --access public",
     "skills:update": "npx skills add vercel-labs/agent-skills",
-    "doctor": "npx react-doctor@latest"
+    "react-doctor": "npx react-doctor@latest"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:root",

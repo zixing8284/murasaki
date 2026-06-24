@@ -26,10 +26,10 @@ const tabListVariants = cva([
   'list-none',
 ])
 
-export type TabListProps = React.ComponentProps<'menu'>
+export type TabListProps = React.ComponentProps<'div'>
 
 export function TabList({ children, className, ...props }: TabListProps): React.ReactElement {
-  const ref = useRef<HTMLMenuElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   // ARIA Tabs pattern: arrow keys move focus only; Enter/Space (handled per
   // Tab) activates. Disabled tabs are skipped via `aria-disabled`.
   useRovingFocus({
@@ -39,14 +39,14 @@ export function TabList({ children, className, ...props }: TabListProps): React.
     orientation: 'horizontal',
   })
   return (
-    <menu
+    <div
       ref={ref}
       role="tablist"
       className={cn(tabListVariants(), className)}
       {...props}
     >
       {children}
-    </menu>
+    </div>
   )
 }
 

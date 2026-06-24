@@ -98,6 +98,7 @@ interface FormState {
   committedCrtTuning: { scanlineOpacity: number, jitterAmount: number, rollDuration: number, rollOpacity: number }
   committedGradientEnabled: boolean
   selectedWallpaper: WallpaperSettings
+  selectedWallpaperColor: string
   committedWallpaper: WallpaperSettings
   committedWallpaperColor: string
   customWallpapers: WallpaperImageEntry[]
@@ -109,6 +110,7 @@ type FormAction
     | { type: 'SET_COMMITTED_CRT_TUNING', value: FormState['committedCrtTuning'] }
     | { type: 'SET_COMMITTED_GRADIENT_ENABLED', value: boolean }
     | { type: 'SET_SELECTED_WALLPAPER', value: WallpaperSettings }
+    | { type: 'SET_SELECTED_WALLPAPER_COLOR', value: string }
     | { type: 'SET_COMMITTED_WALLPAPER', value: WallpaperSettings }
     | { type: 'SET_COMMITTED_WALLPAPER_COLOR', value: string }
     | { type: 'SET_CUSTOM_WALLPAPERS', value: WallpaperImageEntry[] }
@@ -126,6 +128,8 @@ function formReducer(state: FormState, action: FormAction): FormState {
       return { ...state, committedGradientEnabled: action.value }
     case 'SET_SELECTED_WALLPAPER':
       return { ...state, selectedWallpaper: action.value }
+    case 'SET_SELECTED_WALLPAPER_COLOR':
+      return { ...state, selectedWallpaperColor: action.value }
     case 'SET_COMMITTED_WALLPAPER':
       return { ...state, committedWallpaper: action.value }
     case 'SET_COMMITTED_WALLPAPER_COLOR':
@@ -178,7 +182,7 @@ function ThemeTab({ selectedTheme, onSelectedThemeChange, currentGradientEnabled
 interface WallpaperTabProps {
   selectedWallpaper: WallpaperSettings
   onSelectedWallpaperChange: (value: WallpaperSettings) => void
-  currentWallpaperColor: string
+  selectedWallpaperColor: string
   onWallpaperColorChange: (value: string) => void
   customWallpapers: WallpaperImageEntry[]
   onCustomWallpaperAdd: (entry: WallpaperImageEntry) => void
@@ -187,7 +191,7 @@ interface WallpaperTabProps {
 function WallpaperTab({
   selectedWallpaper,
   onSelectedWallpaperChange,
-  currentWallpaperColor,
+  selectedWallpaperColor,
   onWallpaperColorChange,
   customWallpapers,
   onCustomWallpaperAdd,
@@ -245,7 +249,7 @@ function WallpaperTab({
         type="color"
         className="sr-only"
         aria-label="Desktop color"
-        value={currentWallpaperColor}
+        value={selectedWallpaperColor}
         onChange={event => onWallpaperColorChange(event.target.value)}
       />
 
@@ -253,7 +257,7 @@ function WallpaperTab({
         <WallpaperMonitor
           wallpaperSrc={wallpaperPreviewSrc}
           wallpaperMode={selectedWallpaper.mode}
-          screenColor={isNoneWallpaperSelected ? currentWallpaperColor : '#008080'}
+          screenColor={isNoneWallpaperSelected ? selectedWallpaperColor : '#008080'}
         />
       </div>
 
@@ -362,7 +366,7 @@ function WallpaperTab({
             <button
               type="button"
               className="min-h-[23px] w-full border border-(--button-shadow)"
-              style={{ backgroundColor: currentWallpaperColor }}
+              style={{ backgroundColor: selectedWallpaperColor }}
               onClick={handleColorPickerOpen}
               aria-label={isNoneWallpaperSelected ? 'Pick desktop background color' : 'Pick desktop icon label background color'}
               title={isNoneWallpaperSelected
@@ -504,6 +508,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     committedCrtTuning: currentCrtTuning,
     committedGradientEnabled: currentGradientEnabled,
     selectedWallpaper: currentWallpaper,
+    selectedWallpaperColor: currentWallpaperColor,
     committedWallpaper: currentWallpaper,
     committedWallpaperColor: currentWallpaperColor,
     customWallpapers: [],
@@ -528,18 +533,20 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     || !areCrtTuningSettingsEqual(currentCrtTuning, form.committedCrtTuning)
     || currentGradientEnabled !== form.committedGradientEnabled
     || !areWallpaperSettingsEqual(form.selectedWallpaper, form.committedWallpaper)
-    || currentWallpaperColor !== form.committedWallpaperColor
+    || form.selectedWallpaperColor !== form.committedWallpaperColor
 
   const applySettings = (): void => {
     if (form.selectedTheme !== currentThemeId) {
       setTheme(form.selectedTheme)
     }
-    // CRT/gradient/wallpaper are already live — just advance the committed baseline.
+    // CRT/gradient stay live; wallpaper and color are committed from the staged form values.
     dispatch({ type: 'SET_COMMITTED_CRT_ENABLED', value: currentCrtEnabled })
     dispatch({ type: 'SET_COMMITTED_CRT_TUNING', value: currentCrtTuning })
     dispatch({ type: 'SET_COMMITTED_GRADIENT_ENABLED', value: currentGradientEnabled })
+    setWallpaper(form.selectedWallpaper)
+    setWallpaperColor(form.selectedWallpaperColor)
     dispatch({ type: 'SET_COMMITTED_WALLPAPER', value: form.selectedWallpaper })
-    dispatch({ type: 'SET_COMMITTED_WALLPAPER_COLOR', value: currentWallpaperColor })
+    dispatch({ type: 'SET_COMMITTED_WALLPAPER_COLOR', value: form.selectedWallpaperColor })
   }
 
   const handleOk = (): void => {
@@ -561,16 +568,18 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     if (!areWallpaperSettingsEqual(form.selectedWallpaper, form.committedWallpaper)) {
       setWallpaper(form.committedWallpaper)
     }
-    if (currentWallpaperColor !== form.committedWallpaperColor) {
+    if (form.selectedWallpaperColor !== form.committedWallpaperColor) {
       setWallpaperColor(form.committedWallpaperColor)
     }
     actions.close(windowId)
   }
 
-  // Live-preview: wallpaper changes apply immediately on selection.
   function handleSelectedWallpaperChange(next: WallpaperSettings): void {
     dispatch({ type: 'SET_SELECTED_WALLPAPER', value: next })
-    setWallpaper(next)
+  }
+
+  function handleWallpaperColorChange(nextColor: string): void {
+    dispatch({ type: 'SET_SELECTED_WALLPAPER_COLOR', value: nextColor })
   }
 
   return (
@@ -591,8 +600,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         <WallpaperTab
           selectedWallpaper={form.selectedWallpaper}
           onSelectedWallpaperChange={handleSelectedWallpaperChange}
-          currentWallpaperColor={currentWallpaperColor}
-          onWallpaperColorChange={setWallpaperColor}
+          selectedWallpaperColor={form.selectedWallpaperColor}
+          onWallpaperColorChange={handleWallpaperColorChange}
           customWallpapers={form.customWallpapers}
           onCustomWallpaperAdd={entry => dispatch({ type: 'ADD_CUSTOM_WALLPAPER', value: entry })}
         />

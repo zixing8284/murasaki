@@ -1,6 +1,6 @@
 import type { LayerContextValue } from '../../primitives/layer-root/layer-context'
 import * as React from 'react'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { cnPure } from '../../lib/utils'
 import { LayerContext } from '../../primitives/layer-root/layer-context'
 
@@ -24,7 +24,7 @@ export function LayerProvider({
   const [localTarget, setLocalTarget] = useState<HTMLDivElement | null>(null)
   const target = container ?? localTarget
 
-  const setLayerRootRef = useCallback((node: HTMLDivElement | null) => {
+  const setLayerRootRef = (node: HTMLDivElement | null): void => {
     setLocalTarget(node)
     if (typeof ref === 'function') {
       ref(node)
@@ -32,7 +32,7 @@ export function LayerProvider({
     else if (ref) {
       ref.current = node
     }
-  }, [ref])
+  }
 
   const value: LayerContextValue = { target }
 

@@ -6,7 +6,7 @@
  * Cache strategy:
  * - `<base>/playground-assets.json` — network-first; the manifest version
  *   pins the asset cache name.
- * - `<base>/icons/`, `<base>/img/`, `<base>/assets/` — cache-first into a
+ * - `<base>/icons/`, `<base>/wallpaper/`, `<base>/assets/` — cache-first into a
  *   versioned cache keyed by the manifest version. Old versions are
  *   pruned on activate.
  * - `<base>/programs/` — HTML network-first, everything else
@@ -31,7 +31,7 @@ const CACHE_PROGRESS_MESSAGE = 'MURASAKI_CACHE_PROGRESS'
 
 const ASSETS_PREFIX = new URL('assets/', self.registration.scope).pathname
 const ICONS_PREFIX = new URL('icons/', self.registration.scope).pathname
-const IMAGES_PREFIX = new URL('img/', self.registration.scope).pathname
+const WALLPAPER_PREFIX = new URL('wallpaper/', self.registration.scope).pathname
 const PROGRAMS_PREFIX = new URL('programs/', self.registration.scope).pathname
 const MANIFEST_URL = new URL(MANIFEST_PATH, self.registration.scope).toString()
 let assetManifestPromise
@@ -63,7 +63,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  if (url.pathname.startsWith(ICONS_PREFIX) || url.pathname.startsWith(IMAGES_PREFIX) || url.pathname.startsWith(ASSETS_PREFIX)) {
+  if (url.pathname.startsWith(ICONS_PREFIX) || url.pathname.startsWith(WALLPAPER_PREFIX) || url.pathname.startsWith(ASSETS_PREFIX)) {
     event.respondWith(getAssetCacheName().then(cacheName => cacheFirst(event.request, cacheName)))
     return
   }

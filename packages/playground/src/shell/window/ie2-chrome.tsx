@@ -11,7 +11,7 @@ import {
   WindowStatusBar,
   WindowStatusBarField,
 } from '@murasaki-io/react98'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { IE_TOOLBAR_ICONS } from '../../lib/playground-assets'
@@ -206,19 +206,19 @@ export function Ie2Chrome({
     windowId,
   })
 
-  const setIframeRef = useCallback((el: HTMLIFrameElement | null) => {
+  const setIframeRef = (el: HTMLIFrameElement | null): void => {
     iframeElementRef.current = el
     iframeRef(el)
-  }, [iframeRef])
+  }
 
   // Synchronously applies pointer-events: none at drag/resize start — before
   // React re-renders — preventing the iframe from swallowing mousemove events
   // during the first frame of the interaction.
-  const handleInteractionChange = useCallback((active: boolean) => {
+  const handleInteractionChange = (active: boolean): void => {
     if (iframeElementRef.current) {
       iframeElementRef.current.style.pointerEvents = active ? 'none' : ''
     }
-  }, [])
+  }
 
   const syncFrameMetadata = (iframe: HTMLIFrameElement): void => {
     setAddress(getIframeAddress(iframe, src))

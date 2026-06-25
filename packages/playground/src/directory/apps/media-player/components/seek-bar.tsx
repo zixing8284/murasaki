@@ -1,4 +1,4 @@
-import type { JSX, PointerEvent as ReactPointerEvent } from 'react'
+import type { ReactElement, PointerEvent as ReactPointerEvent } from 'react'
 import { useRef, useState } from 'react'
 import { formatTime } from '../format-time'
 import { SeekThumbIcon } from '../media-player-icons'
@@ -11,7 +11,7 @@ interface SeekBarProps {
   onSeek: (percentage: number) => void
 }
 
-export function SeekBar({ progress, duration, onSeek }: SeekBarProps): JSX.Element {
+export function SeekBar({ progress, duration, onSeek }: SeekBarProps): ReactElement {
   const trackRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [dragProgress, setDragProgress] = useState(0)

@@ -262,6 +262,7 @@ export function ContextMenuContent({
     <LayerPortal>
       <div
         ref={ref}
+        role="menu"
         className={cnPure('fixed pointer-events-auto [z-index:var(--react98-layer-popup-z-index)]', className)}
         data-open=""
         data-context-menu-available-height={position?.availableHeight ?? ''}

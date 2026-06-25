@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 import { WindowStatusBar, WindowStatusBarField } from '@murasaki-io/react98'
 
 interface MediaPlayerStatusBarProps {
@@ -13,7 +13,7 @@ export function MediaPlayerStatusBar({
   errorMessage,
   formattedCurrentTime,
   formattedDuration,
-}: MediaPlayerStatusBarProps): JSX.Element {
+}: MediaPlayerStatusBarProps): ReactElement {
   return (
     <WindowStatusBar>
       <WindowStatusBarField className="truncate">

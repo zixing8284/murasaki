@@ -2,9 +2,10 @@ export const PLAYGROUND_CACHE_PREFIX = 'murasaki-playground-'
 
 export const PLAYGROUND_INDEXED_DB = {
   name: 'murasaki-playground',
-  version: 1,
+  version: 3,
   stores: {
     desktopMediaFiles: 'desktop-media-files',
+    wallpaperImages: 'wallpaper-images',
   },
 } as const
 
@@ -15,6 +16,8 @@ export const PLAYGROUND_STORAGE_KEYS = {
   crtEffect: 'murasaki-crt-effect',
   crtTuning: 'murasaki-crt-tuning.v1',
   gradientTitlebar: 'murasaki-gradient-titlebar',
+  wallpaper: 'murasaki-wallpaper',
+  wallpaperColor: 'murasaki-wallpaper-color',
   taskbarQuickLaunchVisibleCount: 'murasaki.playground.taskbar.quick-launch.visible-count.v1',
   themeDesignerDraft: 'murasaki.playground.theme-designer.draft.v1',
   webampSkinMuseumLastSuccess: 'webamp:skin-museum:last-success:v1',
@@ -29,6 +32,8 @@ export const PLAYGROUND_LOCAL_STORAGE_KEYS = [
   PLAYGROUND_STORAGE_KEYS.crtEffect,
   PLAYGROUND_STORAGE_KEYS.crtTuning,
   PLAYGROUND_STORAGE_KEYS.gradientTitlebar,
+  PLAYGROUND_STORAGE_KEYS.wallpaper,
+  PLAYGROUND_STORAGE_KEYS.wallpaperColor,
   PLAYGROUND_STORAGE_KEYS.taskbarQuickLaunchVisibleCount,
   PLAYGROUND_STORAGE_KEYS.themeDesignerDraft,
   PLAYGROUND_STORAGE_KEYS.webampSkinMuseumLastSuccess,

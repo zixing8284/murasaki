@@ -94,7 +94,7 @@ export function Menu({
     },
   }
 
-  const setMenuRef = React.useCallback((node: HTMLMenuElement | null) => {
+  const setMenuRef = (node: HTMLMenuElement | null): void => {
     menuRef.current = node
     if (typeof ref === 'function') {
       ref(node)
@@ -102,7 +102,7 @@ export function Menu({
     else if (ref) {
       ref.current = node
     }
-  }, [ref])
+  }
 
   useRovingFocus({
     enabled: true,
@@ -370,11 +370,11 @@ export function MenuSub({
   const openTimerRef = React.useRef<number | null>(null)
   const closeTimerRef = React.useRef<number | null>(null)
 
-  const setOpen = React.useCallback((next: boolean) => {
+  const setOpen = React.useCallback((next: boolean): void => {
     if (!isControlled)
       setUncontrolledOpen(next)
     onOpenChange?.(next)
-  }, [isControlled, onOpenChange])
+  }, [isControlled, setUncontrolledOpen, onOpenChange])
 
   const setTriggerRef = (node: HTMLLIElement | null): void => {
     triggerRef.current = node

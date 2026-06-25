@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 
 const NOW_PLAYING_BAR_CLASS = 'h-full w-0.5 origin-bottom scale-y-[var(--now-playing-bar-max)] animate-now-playing-bar bg-current motion-reduce:animate-none'
 
@@ -6,13 +6,13 @@ interface NowPlayingIndicatorProps {
   loading?: boolean
 }
 
-export function NowPlayingIndicator({ loading = false }: NowPlayingIndicatorProps): JSX.Element {
+export function NowPlayingIndicator({ loading = false }: NowPlayingIndicatorProps): ReactElement {
   if (loading) {
     return (
       <span className="flex h-2.5 w-3 items-end justify-center gap-px" aria-hidden="true">
-        <span className="h-full w-0.5 origin-bottom bg-current opacity-80 animate-pulse [animation-duration:1s] scale-y-50" />
-        <span className="h-full w-0.5 origin-bottom bg-current opacity-80 animate-pulse [animation-duration:1s] [animation-delay:333ms] scale-y-75" />
-        <span className="h-full w-0.5 origin-bottom bg-current opacity-80 animate-pulse [animation-duration:1s] [animation-delay:666ms] scale-y-50" />
+        <span className="h-full w-0.5 origin-bottom bg-current opacity-80 animate-pulse animation-duration-[1s] scale-y-50" />
+        <span className="h-full w-0.5 origin-bottom bg-current opacity-80 animate-pulse animation-duration-[1s] [animation-delay:333ms] scale-y-75" />
+        <span className="h-full w-0.5 origin-bottom bg-current opacity-80 animate-pulse animation-duration-[1s] [animation-delay:666ms] scale-y-50" />
       </span>
     )
   }

@@ -31,7 +31,7 @@ export function Tooltip({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const tooltipId = useId()
 
-  const clearTimer = useCallback(() => {
+  const clearTimer = useCallback((): void => {
     if (timerRef.current !== null) {
       clearTimeout(timerRef.current)
       timerRef.current = null

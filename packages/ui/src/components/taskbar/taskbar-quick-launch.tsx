@@ -111,7 +111,7 @@ export function TaskbarQuickLaunch({
       setUncontrolledVisibleCount(clamped)
     }
     onVisibleCountChange?.(clamped)
-  }, [icons.length, visibleCount, onVisibleCountChange])
+  }, [visibleCount, setUncontrolledVisibleCount, onVisibleCountChange, icons.length])
 
   const visibleIconsCount = Math.max(0, Math.floor(quickLaunchWidth / iconStepWidth))
 

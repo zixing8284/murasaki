@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 
 /**
  * Seek bar thumb — hollow rectangle with Win98 3D bevel borders.
@@ -6,7 +6,7 @@ import type { JSX } from 'react'
  * 2px inner (face TL / shadow BR). All four sides are equally 4px thick.
  * Center is transparent. 15×21 pixels.
  */
-export function SeekThumbIcon(): JSX.Element {
+export function SeekThumbIcon(): ReactElement {
   return (
     <svg width={15} height={21} viewBox="0 0 15 21" fill="none">
       {/* Outer Hilight — top + left (2px) */}
@@ -25,7 +25,7 @@ export function SeekThumbIcon(): JSX.Element {
   )
 }
 
-export function PlayIcon(): JSX.Element {
+export function PlayIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="3,1 3,13 12,7" fill="var(--button-text)" />
@@ -33,7 +33,7 @@ export function PlayIcon(): JSX.Element {
   )
 }
 
-export function PauseIcon(): JSX.Element {
+export function PauseIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <rect x="2" y="1" width="4" height="12" fill="var(--button-text)" />
@@ -42,7 +42,7 @@ export function PauseIcon(): JSX.Element {
   )
 }
 
-export function StopIcon(): JSX.Element {
+export function StopIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <rect x="2" y="2" width="10" height="10" fill="var(--button-text)" />
@@ -50,7 +50,7 @@ export function StopIcon(): JSX.Element {
   )
 }
 
-export function PreviousIcon(): JSX.Element {
+export function PreviousIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <rect x="1" y="2" width="2" height="10" fill="var(--button-text)" />
@@ -59,7 +59,7 @@ export function PreviousIcon(): JSX.Element {
   )
 }
 
-export function NextIcon(): JSX.Element {
+export function NextIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="1,2 1,12 10,7" fill="var(--button-text)" />
@@ -68,7 +68,7 @@ export function NextIcon(): JSX.Element {
   )
 }
 
-export function RewindIcon(): JSX.Element {
+export function RewindIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="7,2 7,12 1,7" fill="var(--button-text)" />
@@ -77,7 +77,7 @@ export function RewindIcon(): JSX.Element {
   )
 }
 
-export function FastForwardIcon(): JSX.Element {
+export function FastForwardIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="1,2 1,12 7,7" fill="var(--button-text)" />
@@ -86,7 +86,7 @@ export function FastForwardIcon(): JSX.Element {
   )
 }
 
-export function ShuffleIcon(): JSX.Element {
+export function ShuffleIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path
@@ -101,7 +101,7 @@ export function ShuffleIcon(): JSX.Element {
   )
 }
 
-export function RepeatAllIcon(): JSX.Element {
+export function RepeatAllIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path
@@ -116,7 +116,7 @@ export function RepeatAllIcon(): JSX.Element {
   )
 }
 
-export function RepeatOneIcon(): JSX.Element {
+export function RepeatOneIcon(): ReactElement {
   return (
     <span className="inline-flex items-center gap-px">
       <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
@@ -134,7 +134,7 @@ export function RepeatOneIcon(): JSX.Element {
   )
 }
 
-export function EjectIcon(): JSX.Element {
+export function EjectIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="7,1 1,8 13,8" fill="var(--button-text)" />
@@ -144,7 +144,7 @@ export function EjectIcon(): JSX.Element {
 }
 
 /** Speaker cone with two sound waves */
-export function VolumeHighIcon(): JSX.Element {
+export function VolumeHighIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       {/* Speaker body */}
@@ -158,7 +158,7 @@ export function VolumeHighIcon(): JSX.Element {
 }
 
 /** Speaker cone with one small sound wave */
-export function VolumeLowIcon(): JSX.Element {
+export function VolumeLowIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="1,5 1,9 3,9 6,12 6,2 3,5" fill="var(--button-text)" />
@@ -168,7 +168,7 @@ export function VolumeLowIcon(): JSX.Element {
 }
 
 /** Speaker cone with X (muted) */
-export function VolumeMutedIcon(): JSX.Element {
+export function VolumeMutedIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <polygon points="1,5 1,9 3,9 6,12 6,2 3,5" fill="var(--button-text)" />
@@ -178,7 +178,7 @@ export function VolumeMutedIcon(): JSX.Element {
   )
 }
 
-export function PlaylistIcon(): JSX.Element {
+export function PlaylistIcon(): ReactElement {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <rect x="1" y="2" width="9" height="1.5" fill="var(--button-text)" />
@@ -190,6 +190,6 @@ export function PlaylistIcon(): JSX.Element {
   )
 }
 
-export function AspectRatioIcon(): JSX.Element {
+export function AspectRatioIcon(): ReactElement {
   return <span className="leading-none text-(--button-text)">16:9</span>
 }

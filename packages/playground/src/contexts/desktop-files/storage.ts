@@ -19,6 +19,7 @@ interface StoredDesktopMediaFile extends DesktopMediaFileEntry {
 const DATABASE_NAME = PLAYGROUND_INDEXED_DB.name
 const DATABASE_VERSION = PLAYGROUND_INDEXED_DB.version
 const STORE_NAME = PLAYGROUND_INDEXED_DB.stores.desktopMediaFiles
+const ALL_STORE_NAMES = Object.values(PLAYGROUND_INDEXED_DB.stores)
 
 function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -26,8 +27,10 @@ function openDatabase(): Promise<IDBDatabase> {
 
     request.onupgradeneeded = () => {
       const database = request.result
-      if (!database.objectStoreNames.contains(STORE_NAME)) {
-        database.createObjectStore(STORE_NAME, { keyPath: 'id' })
+      for (const storeName of ALL_STORE_NAMES) {
+        if (!database.objectStoreNames.contains(storeName)) {
+          database.createObjectStore(storeName, { keyPath: 'id' })
+        }
       }
     }
 

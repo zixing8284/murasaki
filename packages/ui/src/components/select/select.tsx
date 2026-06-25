@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority'
 
 import * as React from 'react'
 
-import { useCallback, useEffect, useId, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { cn } from '../../lib/utils'
 import { LayerPortal } from '../../primitives/layer-root/layer-portal'
 import { useScrollbar } from '../../primitives/scrollbar/use-scrollbar'
@@ -136,10 +136,10 @@ function SelectOptionItem<T>({
   onMouseEnter,
 }: SelectOptionItemProps<T>): React.ReactElement {
   const itemRef = useRef<HTMLLIElement | null>(null)
-  const setItemRef = useCallback((node: HTMLLIElement | null) => {
+  const setItemRef = (node: HTMLLIElement | null): void => {
     itemRef.current = node
     optionRef.current[index] = node
-  }, [index, optionRef])
+  }
 
   useEffect(() => {
     return register(itemRef, { index, label })
@@ -338,12 +338,12 @@ export function Select<T = string>({
   const menuWrapperRef = useRef<HTMLDivElement>(null)
   const [triggerWidth, setTriggerWidth] = React.useState<number | undefined>(undefined)
 
-  const measureTriggerRef = useCallback((node: HTMLButtonElement | null) => {
+  const measureTriggerRef = (node: HTMLButtonElement | null): void => {
     triggerRef.current = node
     if (node) {
       setTriggerWidth(node.offsetWidth)
     }
-  }, [triggerRef])
+  }
 
   const [position, ready] = useLayer({
     anchorRef: triggerRef,

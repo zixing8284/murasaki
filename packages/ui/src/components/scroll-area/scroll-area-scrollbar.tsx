@@ -61,6 +61,7 @@ function Track({
   return (
     <div
       ref={ref}
+      role="presentation"
       data-murasaki-track={axis}
       className="absolute cursor-default"
       style={{
@@ -289,6 +290,7 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
 
   return (
     <div
+      role="presentation"
       data-murasaki-btn={direction}
       className={cnPure(
         'relative cursor-default box-border shrink-0 overflow-hidden',

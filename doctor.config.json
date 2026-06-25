@@ -2,6 +2,9 @@
   "ignore": {
     "files": [
       "packages/playground/public/**",
+      "packages/playground/dist/**",
+      "public/**",
+      "dist/**",
       "packages/docs/content/_meta.js",
       "packages/docs/content/**/_meta.js",
       "packages/docs/public/**"

@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 import {
   MenuItem,
   MenuSeparator,
@@ -18,7 +18,7 @@ interface MediaPlayerMenuBarProps {
   onOpenFile: () => void
 }
 
-export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarProps): JSX.Element {
+export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarProps): ReactElement {
   const { close } = useProcessActions()
 
   const otherMenus: readonly string[] = MEDIA_PLAYER_MENUS.filter(menu => menu !== 'File')

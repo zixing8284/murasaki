@@ -10,10 +10,13 @@ const groupBoxVariants = cva([
   'block',
   'min-w-min',
   // Custom styles
-  'm-0',
-  'p-[calc(2*1px+var(--element-spacing))]',
-  'pt-(--element-spacing)',
-  '[box-shadow:inset_1px_1px_0_var(--button-shadow),1px_1px_0_var(--button-hilight)]',
+  'relative',
+  'mb-2',
+  'mt-0 mr-0 ml-0',
+  'border border-(--button-shadow)',
+  'bg-(--button-face)',
+  'pt-3 pr-2 pb-2 pl-2',
+  '[box-shadow:inset_1px_1px_0_var(--button-hilight),1px_1px_0_var(--button-hilight)]',
 ])
 
 const legendVariants = cva(['bg-(--button-face)', 'px-1'])

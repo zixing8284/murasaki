@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useCallback, useRef } from 'react'
+import { useRef } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
@@ -45,16 +45,16 @@ export function IframeWindow({
   // at drag/resize start — before React re-renders — preventing the iframe from
   // swallowing mousemove events during the first frame of the interaction.
   const iframeElementRef = useRef<HTMLIFrameElement | null>(null)
-  const mergedIframeRef = useCallback((el: HTMLIFrameElement | null) => {
+  const mergedIframeRef = (el: HTMLIFrameElement | null): void => {
     iframeElementRef.current = el
     onIframeRef(el)
-  }, [onIframeRef])
+  }
 
-  const handleInteractionChange = useCallback((active: boolean) => {
+  const handleInteractionChange = (active: boolean): void => {
     if (iframeElementRef.current) {
       iframeElementRef.current.style.pointerEvents = active ? 'none' : ''
     }
-  }, [])
+  }
 
   if (!win)
     return null

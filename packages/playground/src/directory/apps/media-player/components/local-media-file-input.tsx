@@ -1,4 +1,4 @@
-import type { ChangeEvent, JSX, RefObject } from 'react'
+import type { ChangeEvent, ReactElement, RefObject } from 'react'
 
 interface LocalMediaFileInputProps {
   fileInputRef: RefObject<HTMLInputElement | null>
@@ -10,7 +10,7 @@ export function LocalMediaFileInput({
   fileInputRef,
   acceptedMediaTypes,
   onAddLocalFile,
-}: LocalMediaFileInputProps): JSX.Element {
+}: LocalMediaFileInputProps): ReactElement {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
 
@@ -26,7 +26,7 @@ export function LocalMediaFileInput({
       type="file"
       accept={acceptedMediaTypes}
       className="hidden"
-      aria-hidden="true"
+      aria-label="Add media file"
       onChange={handleFileChange}
     />
   )

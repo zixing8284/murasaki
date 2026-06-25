@@ -46,6 +46,7 @@ export function ScrollAreaThumb({
 
   return (
     <div
+      role="presentation"
       data-murasaki-thumb={isVertical ? 'v' : 'h'}
       className={cnPure(
         'absolute cursor-default box-border',

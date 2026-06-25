@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- df805bd: Refine GroupBox visual styling to better match Windows 98 framing with theme-token-based borders, spacing, and inset highlight treatment.
+
 ## 0.1.2
 
 ### Patch Changes

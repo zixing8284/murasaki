@@ -18,7 +18,7 @@ function listenersFor(key: string): Set<() => void> {
 }
 
 function isValidMode(value: unknown): value is WallpaperMode {
-  return value === 'tiled' || value === 'centered' || value === 'stretch'
+  return value === 'tiled' || value === 'centered' || value === 'stretch' || value === 'fill'
 }
 
 function parseStoredWallpaperSettings(value: unknown): WallpaperSettings | null {

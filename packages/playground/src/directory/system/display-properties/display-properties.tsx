@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   FieldPanel,
+  GroupBox,
   Select,
   Slider,
   Tab,
@@ -226,7 +227,7 @@ function WallpaperTab({
     try {
       const entry = await saveWallpaperImage(file)
       onCustomWallpaperAdd(entry)
-      const next: WallpaperSettings = { id: entry.id, mode: 'stretch' }
+      const next: WallpaperSettings = { id: entry.id, mode: selectedWallpaper.mode }
       onSelectedWallpaperChange(next)
     }
     catch {
@@ -261,15 +262,11 @@ function WallpaperTab({
         />
       </div>
 
-      <div className="relative border border-(--button-shadow) px-3 pb-3 pt-4">
-        <span className="pointer-events-none absolute -top-2 left-3 bg-(--button-face) px-1 text-(--button-text)">
-          Wallpaper
-        </span>
-
+      <GroupBox label="Wallpaper">
         <p className="mb-2 text-(--button-text)">Select a picture or pattern:</p>
 
-        <div className="grid grid-cols-[1fr_11rem] gap-x-3 gap-y-2">
-          <FieldPanel className="h-44">
+        <div className="flex gap-3">
+          <FieldPanel className="h-44 flex-2 min-w-0">
             <div
               id="wallpaper-list"
               role="listbox"
@@ -283,13 +280,13 @@ function WallpaperTab({
                     type="button"
                     role="option"
                     aria-selected={isSelected}
-                    className={`flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 text-left ${
+                    className={`flex min-w-full w-max cursor-pointer items-center gap-1 pl-2 pr-2 py-0.5 text-left ${
                       isSelected
-                        ? 'bg-(--hilight) text-(--hilight-text)'
+                        ? 'relative border border-dotted border-(--hilight-text) bg-(--hilight) pt-0 pb-0 pr-px text-(--hilight-text)'
                         : 'text-(--window-text)'
                     }`}
                     onClick={() => {
-                      const next: WallpaperSettings = { id: wp.id, mode: wp.defaultMode }
+                      const next: WallpaperSettings = { id: wp.id, mode: selectedWallpaper.mode }
                       onSelectedWallpaperChange(next)
                     }}
                   >
@@ -312,13 +309,13 @@ function WallpaperTab({
                     type="button"
                     role="option"
                     aria-selected={isSelected}
-                    className={`flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 text-left ${
+                    className={`flex min-w-full w-max cursor-pointer items-center gap-1 pl-2 pr-2 py-0.5 text-left ${
                       isSelected
-                        ? 'bg-(--hilight) text-(--hilight-text)'
+                        ? 'relative border border-dotted border-(--hilight-text) bg-(--hilight) pt-0 pb-0 pr-px text-(--hilight-text)'
                         : 'text-(--window-text)'
                     }`}
                     onClick={() => {
-                      const next: WallpaperSettings = { id: wp.id, mode: 'stretch' }
+                      const next: WallpaperSettings = { id: wp.id, mode: selectedWallpaper.mode }
                       onSelectedWallpaperChange(next)
                     }}
                   >
@@ -335,7 +332,7 @@ function WallpaperTab({
             </div>
           </FieldPanel>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-1 min-w-15 flex-col gap-2">
             <Button className="w-full" onClick={handleBrowseClick}>
               Browse...
             </Button>
@@ -354,6 +351,7 @@ function WallpaperTab({
                 { label: WALLPAPER_MODE_LABELS.centered, value: 'centered' },
                 { label: WALLPAPER_MODE_LABELS.tiled, value: 'tiled' },
                 { label: WALLPAPER_MODE_LABELS.stretch, value: 'stretch' },
+                { label: WALLPAPER_MODE_LABELS.fill, value: 'fill' },
               ]}
               value={selectedWallpaper.mode}
               onValueChange={(value) => {
@@ -365,7 +363,7 @@ function WallpaperTab({
             <span className="mt-1 text-(--button-text)">Color:</span>
             <button
               type="button"
-              className="min-h-[23px] w-full border border-(--button-shadow)"
+              className="min-h-5.75 w-full border border-(--button-shadow)"
               style={{ backgroundColor: selectedWallpaperColor }}
               onClick={handleColorPickerOpen}
               aria-label={isNoneWallpaperSelected ? 'Pick desktop background color' : 'Pick desktop icon label background color'}
@@ -375,7 +373,7 @@ function WallpaperTab({
             />
           </div>
         </div>
-      </div>
+      </GroupBox>
     </TabPanel>
   )
 }

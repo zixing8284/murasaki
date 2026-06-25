@@ -6,7 +6,7 @@
  * desktop with no wallpaper image.
  */
 
-export type WallpaperMode = 'tiled' | 'centered' | 'stretch'
+export type WallpaperMode = 'tiled' | 'centered' | 'stretch' | 'fill'
 
 export interface WallpaperEntry {
   id: string
@@ -116,4 +116,5 @@ export const WALLPAPER_MODE_LABELS: Record<WallpaperMode, string> = {
   tiled: 'Tiled',
   centered: 'Centered',
   stretch: 'Stretch',
+  fill: 'Fill',
 }

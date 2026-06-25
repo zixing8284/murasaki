@@ -149,9 +149,11 @@ export function Shell(): React.ReactElement {
   const wallpaperBgClasses = wallpaperSrc
     ? wallpaperSettings.mode === 'stretch'
       ? 'bg-no-repeat bg-center bg-cover'
-      : wallpaperSettings.mode === 'centered'
-        ? 'bg-no-repeat bg-center bg-size-[initial]'
-        : 'bg-size-[initial] bg-repeat bg-center bg-fixed'
+      : wallpaperSettings.mode === 'fill'
+        ? 'bg-no-repeat bg-center bg-size-[100%_100%] bg-fixed'
+        : wallpaperSettings.mode === 'centered'
+          ? 'bg-no-repeat bg-center bg-contain'
+          : 'bg-size-[initial] bg-repeat bg-center bg-fixed'
     : ''
 
   const screenStyle = {

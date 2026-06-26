@@ -20,7 +20,7 @@
     "lint": "pnpm eslint .",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm --filter @murasaki-io/react98 publish --no-git-checks --provenance --access public",
+    "release": "cd packages/ui && pnpm publish --no-git-checks --provenance --access public",
     "skills:update": "npx skills add vercel-labs/agent-skills",
     "react-doctor": "npx react-doctor@latest"
   },

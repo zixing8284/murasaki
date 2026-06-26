@@ -22,6 +22,7 @@ export interface WallpaperSettings {
 }
 
 const WALLPAPER_FILES = [
+  'animspace.gif',
   'Ascent.jpg',
   'Autumn.jpg',
   'Azul.jpg',
@@ -48,6 +49,7 @@ const WALLPAPER_FILES = [
   'RiverSumida.bmp',
   'SantaFeStucco.bmp',
   'SoapBubbles.bmp',
+  'stars.gif',
   'Stonehenge.jpg',
   'Tulips.jpg',
   'Vortec_space.jpg',
@@ -98,10 +100,10 @@ export const WALLPAPERS: WallpaperEntry[] = [
   })),
 ]
 
-const DEFAULT_WALLPAPER_ID = toWallpaperId('SoapBubbles.bmp')
+const DEFAULT_WALLPAPER_ID = toWallpaperId('animspace.gif')
 const DEFAULT_SETTINGS: WallpaperSettings = {
   id: DEFAULT_WALLPAPER_ID,
-  mode: getDefaultModeForFile('SoapBubbles.bmp'),
+  mode: getDefaultModeForFile('animspace.gif'),
 }
 
 export function getWallpaperEntry(id: string): WallpaperEntry | undefined {

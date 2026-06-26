@@ -21,7 +21,7 @@ export const ASSET_MANIFEST_PUBLIC_PATH = '/playground-assets.json'
 // Desktop / wallpaper
 // ---------------------------------------------------------------------------
 
-export const DESKTOP_WALLPAPER_IMAGE = '/wallpaper/SoapBubbles.bmp'
+export const DESKTOP_WALLPAPER_IMAGE = '/wallpaper/animspace.gif'
 export const DESKTOP_MEDIA_ICON = '/icons/windows98-icons/png/directory_open_file_mydocs-0.png'
 
 // ---------------------------------------------------------------------------

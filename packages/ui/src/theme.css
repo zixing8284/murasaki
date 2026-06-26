@@ -63,6 +63,13 @@ html,
   --info-text: rgb(0, 0, 0);
   --info-window: rgb(255, 255, 225);
 
+  /* Cursor — consumer-overridable. Defaults to system cursors so the library
+     works standalone with no assets. Consumers may remap to custom assets
+     (e.g. `url(...), default`) to theme pointer feedback library-wide,
+     including inside components, without patching individual elements. */
+  --cursor-default: default;
+  --cursor-pointer: pointer;
+
   /* Spacing */
   --element-spacing: 8px;
   --label-spacing: 6px;
@@ -122,6 +129,20 @@ html,
 }
 
 /* ==========================================================================
+   Cursor utilities — route Tailwind's cursor utilities through themeable
+   tokens so consumers can swap pointer feedback library-wide. Overrides the
+   built-in `cursor-default` / `cursor-pointer` utilities.
+   ========================================================================== */
+
+@utility cursor-default {
+  cursor: var(--cursor-default);
+}
+
+@utility cursor-pointer {
+  cursor: var(--cursor-pointer);
+}
+
+/* ==========================================================================
    3. Base styles and font faces
    ========================================================================== */
 
@@ -163,6 +184,6 @@ html,
 
   button:not(:disabled),
   [role="button"]:not(:disabled) {
-    cursor: pointer;
+    cursor: var(--cursor-pointer);
   }
 }

@@ -24,6 +24,22 @@
   @apply text-wrap wrap-break-word break-all whitespace-pre-line;
 }
 
+/*
+ * Windows 98 hover cursors.
+ *
+ * Custom `.cur` assets live in `public/cursor/`. Absolute `url()` paths in CSS
+ * are rewritten with Vite's `base`, so they stay correct under subpath deploys.
+ * These utilities intentionally override Tailwind's built-in `cursor-help`
+ * so existing/future usages pick up the pixel cursor automatically.
+ */
+@utility cursor-link {
+  cursor: url("/cursor/link.cur"), pointer;
+}
+
+@utility cursor-help {
+  cursor: url("/cursor/help.cur"), help;
+}
+
 @theme {
   --animate-now-playing-bar: now-playing-bar 0.8s ease-in-out infinite;
   --animate-startup-loading-bar: startup-loading-bar 1.4s steps(15) infinite;
@@ -166,9 +182,48 @@ html, body, #root {
 }
 
 body {
-  cursor: url("data:image/gif;base64,R0lGODlhCwATAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAALABMAAAIrhI4JlhrcBAgvSlrbxPBs7mAU9IlMaV7mwo6jY2zk+Xphh8iWint1tDgUAAA7"), auto;
+  cursor: url("/cursor/normal.cur"), auto;
   width: clamp(460px, 100%, 100%);
   font-size: 11px;
+}
+
+/*
+ * Theme the UI library's cursor tokens with the playground's pixel cursors so
+ * cursors stay consistent inside @murasaki-io/react98 components (buttons,
+ * menus, tabs, scrollbars, …) without patching each component. Win98 controls
+ * use the arrow; only real hyperlinks get the hand (see the a[href] rule).
+ * Set on <html> to win over the library's `html` token defaults by source order.
+ */
+html {
+  --cursor-default: url("/cursor/normal.cur"), default;
+  --cursor-pointer: url("/cursor/normal.cur"), default;
+}
+
+/*
+ * System-wide cursor states driven by window lifecycle.
+ *
+ * `document.body.dataset.systemCursor` is set by SystemCursorProvider:
+ *   - "working" while a window is launching (lazy chunk resolving)
+ *   - "busy"    while a window's content is loading (iframe / opt-in async)
+ *
+ * `busy` has priority over `working`. Both override hover cursors (link/help)
+ * and any Tailwind cursor utilities, matching Win98 where the hourglass takes
+ * over the whole screen regardless of what the pointer is over.
+ */
+body[data-system-cursor="working"],
+body[data-system-cursor="working"] * {
+  cursor: url("/cursor/working.cur"), progress !important;
+}
+
+body[data-system-cursor="busy"],
+body[data-system-cursor="busy"] * {
+  cursor: url("/cursor/busy.cur"), wait !important;
+}
+
+/* Hyperlinks show the hand cursor (Win98/IE behavior). Buttons do not. */
+a[href],
+[role="link"] {
+  cursor: url("/cursor/link.cur"), pointer;
 }
 
 /*

@@ -142,7 +142,7 @@ function buildButton(dir: string): HTMLDivElement {
     position: 'relative',
     width: `${BAR_SIZE}px`,
     height: `${BTN_HEIGHT}px`,
-    cursor: 'default',
+    cursor: 'var(--cursor-default)',
     boxSizing: 'border-box',
     flexShrink: '0',
     overflow: 'hidden',
@@ -194,7 +194,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     right: '0',
     backgroundColor: TRACK_BG_COLOR,
     background: CHECKER_BG,
-    cursor: 'default',
+    cursor: 'var(--cursor-default)',
   })
   vTrack.setAttribute('data-murasaki-track', 'v')
 
@@ -205,7 +205,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     minHeight: `${BAR_SIZE}px`,
     backgroundColor: 'var(--button-face)',
     boxShadow: RAISED_SHADOW,
-    cursor: 'default',
+    cursor: 'var(--cursor-default)',
     boxSizing: 'border-box',
   })
   vThumb.setAttribute('data-murasaki-thumb', 'v')
@@ -247,7 +247,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     bottom: '0',
     backgroundColor: TRACK_BG_COLOR,
     background: CHECKER_BG,
-    cursor: 'default',
+    cursor: 'var(--cursor-default)',
   })
   hTrack.setAttribute('data-murasaki-track', 'h')
 
@@ -258,7 +258,7 @@ function buildScrollbarDom(target: HTMLElement, scrollbarId: string): ScrollbarS
     minWidth: `${BAR_SIZE}px`,
     backgroundColor: 'var(--button-face)',
     boxShadow: RAISED_SHADOW,
-    cursor: 'default',
+    cursor: 'var(--cursor-default)',
     boxSizing: 'border-box',
   })
   hThumb.setAttribute('data-murasaki-thumb', 'h')

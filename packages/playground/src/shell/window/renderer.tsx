@@ -4,9 +4,21 @@ import type { ProcessComponentProps, ProcessDirectoryEntry } from '../../context
 import { Suspense } from 'react'
 import appDirectory from '../../contexts/process/directory'
 import { useProcesses } from '../../contexts/process/hooks'
+import { useSystemBusy } from '../../contexts/system-cursor'
 import { Ie2Chrome } from './ie2-chrome'
 import { IframeWindow } from './iframe-window'
 import { RndWindow } from './rnd-window'
+
+/**
+ * Suspense fallback for a launching window. While a lazy app's chunk is
+ * resolving the whole window subtree is suspended (nothing is painted yet),
+ * so this fallback represents the Win98 "application starting" phase and shows
+ * the `working` cursor until the window content mounts.
+ */
+function LaunchCursor(): null {
+  useSystemBusy(true, 'working')
+  return null
+}
 
 function renderProcessWindow(
   windowId: string,
@@ -85,7 +97,7 @@ export function WindowRenderer(): React.ReactElement {
         if (!window)
           return null
         return (
-          <Suspense key={pid}>
+          <Suspense key={pid} fallback={<LaunchCursor />}>
             {window}
           </Suspense>
         )

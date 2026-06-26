@@ -2,6 +2,7 @@ import { ThemeProvider } from '@murasaki-io/react98'
 import { DesktopFilesProvider } from './contexts/desktop-files/provider'
 import { DesktopLayoutProvider } from './contexts/desktop-layout/provider'
 import { ProcessProvider } from './contexts/process/provider'
+import { SystemCursorProvider } from './contexts/system-cursor'
 import { PLAYGROUND_STORAGE_KEYS } from './lib/persistence/schema'
 import { Shell } from './shell/shell'
 
@@ -11,7 +12,9 @@ export function App(): React.ReactElement {
       <DesktopFilesProvider>
         <DesktopLayoutProvider>
           <ProcessProvider>
-            <Shell />
+            <SystemCursorProvider>
+              <Shell />
+            </SystemCursorProvider>
           </ProcessProvider>
         </DesktopLayoutProvider>
       </DesktopFilesProvider>

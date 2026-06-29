@@ -186,4 +186,9 @@ html,
   [role="button"]:not(:disabled) {
     cursor: var(--cursor-pointer);
   }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: var(--cursor-default);
+  }
 }

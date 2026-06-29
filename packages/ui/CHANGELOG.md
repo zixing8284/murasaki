@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- 06d74ea: fix(theme): use default cursor for disabled buttons
+
 ## 0.2.0
 
 ### Minor Changes

@@ -10,6 +10,8 @@ export function WallpaperMonitor({ wallpaperSrc, wallpaperMode, screenColor }: W
   return (
     <div className="relative inline-block pb-6.5">
       <div className="relative">
+
+        {/* The screen part of the monitor */}
         <div
           className="relative z-1 box-border h-38.75 w-48.75 overflow-hidden p-3 bg-(--button-face) shadow-[1px_1px_0_1px_var(--button-dk-shadow)]"
           style={{
@@ -72,6 +74,7 @@ export function WallpaperMonitor({ wallpaperSrc, wallpaperMode, screenColor }: W
           />
         </div>
 
+        {/* The base part of the monitor's stand */}
         <div
           aria-hidden="true"
           className="absolute left-1/2 top-[calc(100%+2px)] h-2.5 w-1/2 -translate-x-1/2 bg-(--button-face)"

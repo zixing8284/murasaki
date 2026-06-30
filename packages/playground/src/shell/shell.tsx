@@ -9,9 +9,11 @@ import { useProcessActions } from '../contexts/process/hooks'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useCrtTuning } from '../hooks/use-crt-tuning'
 import { useCustomWallpaperUrl } from '../hooks/use-custom-wallpaper-url'
+import { useDesktopBgColor } from '../hooks/use-desktop-bg-color'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
+import { useIconLabelBgColor } from '../hooks/use-icon-label-bg-color'
+import { SCREEN_SIZE_PRESETS, useScreenSize } from '../hooks/use-screen-size'
 import { useWallpaper } from '../hooks/use-wallpaper'
-import { useWallpaperColor } from '../hooks/use-wallpaper-color'
 import { assetPath } from '../lib/asset-path'
 import { isCustomWallpaperId } from '../lib/wallpaper-storage'
 import { getWallpaperEntry } from '../lib/wallpapers'
@@ -73,7 +75,9 @@ export function Shell(): React.ReactElement {
   const [crtTuning] = useCrtTuning()
   const [gradientEnabled] = useGradientTitlebar()
   const [wallpaperSettings] = useWallpaper()
-  const [wallpaperColor] = useWallpaperColor()
+  const [desktopBgColor] = useDesktopBgColor()
+  const [iconLabelBgColor] = useIconLabelBgColor()
+  const [screenSize, setScreenSize] = useScreenSize()
   const wallpaperEntry = getWallpaperEntry(wallpaperSettings.id)
   const customWallpaperUrl = useCustomWallpaperUrl(wallpaperSettings.id)
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
@@ -140,7 +144,7 @@ export function Shell(): React.ReactElement {
     if (!hasSupportedFiles(event.dataTransfer.files)) {
       return
     }
-    void importFiles(event.dataTransfer.files)
+    void importFiles(Array.from(event.dataTransfer.files))
   }
 
   const isCustom = isCustomWallpaperId(wallpaperSettings.id)
@@ -157,24 +161,45 @@ export function Shell(): React.ReactElement {
     : ''
 
   const screenStyle = {
+    ...(isBooted ? { backgroundColor: desktopBgColor } : {}),
     ...(isBooted && wallpaperSrc ? { backgroundImage: `url(${isCustom ? wallpaperSrc : assetPath(wallpaperSrc)})` } : {}),
-    ...(isBooted && isNoneWallpaper ? { backgroundColor: wallpaperColor } : {}),
-    '--desktop-icon-label-bg': isNoneWallpaper ? 'transparent' : wallpaperColor,
+    '--desktop-icon-label-bg': isNoneWallpaper ? 'transparent' : iconLabelBgColor,
   } as CSSProperties
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text)">
-      {/* Monitor bezel — dark frame */}
-      <div className="[--bezel:clamp(28px,2.5vw,36px)] relative isolate size-full min-h-0 min-w-0 rounded-lg border-(length:--bezel) border-[#252627] bg-gray-950 before:pointer-events-none before:absolute before:z-0 before:-inset-[calc(var(--bezel)+2px)] before:rounded-lg before:border-2 before:border-t-[#3e3f42] before:border-r-[#19191a] before:border-b-[#0c0d0d] before:border-l-[#313235] before:content-[''] after:pointer-events-none after:absolute after:z-3 after:-inset-1 after:rounded-lg after:border-4 after:border-t-[#19191a] after:border-r-[#3e3f42] after:border-b-[#313235] after:border-l-[#0c0d0d] after:content-['']">
-        {/* Bottom bezel strip — logo badge */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-[calc(var(--bezel)*-1+6px)] z-4 flex h-[calc(var(--bezel)-12px)] items-center justify-center">
-          <div className="relative grid h-8 w-9 place-items-center leading-none">
-            <span className="relative text-[#fbfbfb] [text-shadow:0_1px_0_#000] font-bold">murasaki</span>
-          </div>
-        </div>
+    <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text)">
+      {/* Monitor bezel — Win98-style 3D border */}
+      <div
+        className="relative isolate box-border max-h-full max-w-full min-h-0 min-w-0 overflow-hidden bg-(--button-face) p-[clamp(20px,3.5vw,40px)] shadow-[2px_2px_0_1px_var(--button-dk-shadow)]"
+        style={{
+          width: screenSize.width,
+          height: screenSize.height,
+          aspectRatio: `${screenSize.width} / ${screenSize.height}`,
+          borderTop: '6px solid var(--button-hilight)',
+          borderLeft: '6px solid var(--button-hilight)',
+          borderRight: '6px solid var(--button-shadow)',
+          borderBottom: '6px solid var(--button-shadow)',
+          outline: '1px dotted var(--button-face)',
+          outlineOffset: '-5px',
+        }}
+      >
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ outline: '1px dotted var(--button-face)' }} />
+
+        {/* Inner bevel — gives depth to the bezel frame */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute z-2"
+          style={{
+            inset: 'clamp(18px,3.3vw,38px)',
+            borderTop: '2px solid var(--button-shadow)',
+            borderLeft: '2px solid var(--button-shadow)',
+            borderBottom: '2px solid var(--button-hilight)',
+            borderRight: '2px solid var(--button-hilight)',
+          }}
+        />
 
         {/* Screen surround — black with inset vignette, CRT overlay when enabled */}
-        <div className="relative z-1 size-full overflow-hidden bg-gray-950 p-[clamp(0px,1.2vw,2px)] shadow-[inset_0_0_18px_rgb(0_0_0/0.75)]">
+        <div className="relative z-1 size-full overflow-hidden bg-gray-950 p-[clamp(2px,0.4vw,4px)] shadow-[inset_0_0_24px_rgb(0_0_0/0.85)]">
           {crtEnabled && <CrtOverlay settings={crtTuning} />}
           {/* Desktop */}
           <div
@@ -238,6 +263,33 @@ export function Shell(): React.ReactElement {
                 )}
           </div>
         </div>
+
+        {/* Screen area selector */}
+        <select
+          className="absolute bottom-2 left-3 z-10 cursor-pointer appearance-none bg-(--button-face) px-1.5 py-0.5 text-[10px] text-(--button-text) shadow-(--shadow-raised)"
+          value={`${screenSize.width}x${screenSize.height}`}
+          onChange={(e) => {
+            const preset = SCREEN_SIZE_PRESETS.find(p => `${p.width}x${p.height}` === e.target.value)
+            if (preset)
+              setScreenSize({ width: preset.width, height: preset.height })
+          }}
+        >
+          {SCREEN_SIZE_PRESETS.map(preset => (
+            <option key={`${preset.width}x${preset.height}`} value={`${preset.width}x${preset.height}`}>
+              {preset.label}
+            </option>
+          ))}
+        </select>
+
+        {/* Power LED indicator */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-3 right-5 inline-block h-2 w-5"
+          style={{
+            borderTop: '3px solid #4d9046',
+            borderBottom: '3px solid #07ff00',
+          }}
+        />
       </div>
     </div>
   )

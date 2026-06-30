@@ -30,21 +30,21 @@ class GlobalAudio {
       return
 
     // Connect any media elements already in the DOM
-    document.querySelectorAll('audio, video').forEach((el) => {
+    Array.from(document.querySelectorAll('audio, video')).forEach((el) => {
       if (el instanceof HTMLMediaElement)
         connectMediaElement(el)
     })
 
     this.observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
+        for (const node of Array.from(mutation.addedNodes)) {
           if (node.nodeType !== Node.ELEMENT_NODE)
             continue
           const el = node as Element
           if (el instanceof HTMLMediaElement) {
             connectMediaElement(el)
           }
-          el.querySelectorAll('audio, video').forEach((child) => {
+          Array.from(el.querySelectorAll('audio, video')).forEach((child) => {
             if (child instanceof HTMLMediaElement)
               connectMediaElement(child)
           })

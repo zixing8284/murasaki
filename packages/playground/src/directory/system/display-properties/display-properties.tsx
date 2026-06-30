@@ -5,9 +5,10 @@ import { useEffect, useReducer } from 'react'
 import { useProcessActions } from '../../../contexts/process/hooks'
 import { useCrtEffect } from '../../../hooks/use-crt-effect'
 import { areCrtTuningSettingsEqual, useCrtTuning } from '../../../hooks/use-crt-tuning'
+import { useDesktopBgColor } from '../../../hooks/use-desktop-bg-color'
 import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'
+import { useIconLabelBgColor } from '../../../hooks/use-icon-label-bg-color'
 import { areWallpaperSettingsEqual, useWallpaper } from '../../../hooks/use-wallpaper'
-import { useWallpaperColor } from '../../../hooks/use-wallpaper-color'
 import { listWallpaperImages } from '../../../lib/wallpaper-storage'
 import { AppearanceTab } from './appearance-tab'
 import { formReducer } from './form-state'
@@ -21,7 +22,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const [currentCrtTuning, setCrtTuning] = useCrtTuning()
   const [currentGradientEnabled, setGradientEnabled] = useGradientTitlebar()
   const [currentWallpaper, setWallpaper] = useWallpaper()
-  const [currentWallpaperColor, setWallpaperColor] = useWallpaperColor()
+  const [currentDesktopBgColor, setDesktopBgColor] = useDesktopBgColor()
+  const [currentIconLabelBgColor, setIconLabelBgColor] = useIconLabelBgColor()
 
   const [form, dispatch] = useReducer(formReducer, {
     selectedTheme: currentThemeId,
@@ -29,9 +31,11 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     committedCrtTuning: currentCrtTuning,
     committedGradientEnabled: currentGradientEnabled,
     selectedWallpaper: currentWallpaper,
-    selectedWallpaperColor: currentWallpaperColor,
+    selectedDesktopBgColor: currentDesktopBgColor,
+    selectedIconLabelBgColor: currentIconLabelBgColor,
     committedWallpaper: currentWallpaper,
-    committedWallpaperColor: currentWallpaperColor,
+    committedDesktopBgColor: currentDesktopBgColor,
+    committedIconLabelBgColor: currentIconLabelBgColor,
     customWallpapers: [],
   })
 
@@ -54,20 +58,23 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     || !areCrtTuningSettingsEqual(currentCrtTuning, form.committedCrtTuning)
     || currentGradientEnabled !== form.committedGradientEnabled
     || !areWallpaperSettingsEqual(form.selectedWallpaper, form.committedWallpaper)
-    || form.selectedWallpaperColor !== form.committedWallpaperColor
+    || form.selectedDesktopBgColor !== form.committedDesktopBgColor
+    || form.selectedIconLabelBgColor !== form.committedIconLabelBgColor
 
   const applySettings = (): void => {
     if (form.selectedTheme !== currentThemeId) {
       setTheme(form.selectedTheme)
     }
-    // CRT/gradient stay live; wallpaper and color are committed from the staged form values.
+    // CRT/gradient stay live; wallpaper and colors are committed from the staged form values.
     dispatch({ type: 'SET_COMMITTED_CRT_ENABLED', value: currentCrtEnabled })
     dispatch({ type: 'SET_COMMITTED_CRT_TUNING', value: currentCrtTuning })
     dispatch({ type: 'SET_COMMITTED_GRADIENT_ENABLED', value: currentGradientEnabled })
     setWallpaper(form.selectedWallpaper)
-    setWallpaperColor(form.selectedWallpaperColor)
+    setDesktopBgColor(form.selectedDesktopBgColor)
+    setIconLabelBgColor(form.selectedIconLabelBgColor)
     dispatch({ type: 'SET_COMMITTED_WALLPAPER', value: form.selectedWallpaper })
-    dispatch({ type: 'SET_COMMITTED_WALLPAPER_COLOR', value: form.selectedWallpaperColor })
+    dispatch({ type: 'SET_COMMITTED_DESKTOP_BG_COLOR', value: form.selectedDesktopBgColor })
+    dispatch({ type: 'SET_COMMITTED_ICON_LABEL_BG_COLOR', value: form.selectedIconLabelBgColor })
   }
 
   const handleOk = (): void => {
@@ -89,8 +96,11 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     if (!areWallpaperSettingsEqual(form.selectedWallpaper, form.committedWallpaper)) {
       setWallpaper(form.committedWallpaper)
     }
-    if (form.selectedWallpaperColor !== form.committedWallpaperColor) {
-      setWallpaperColor(form.committedWallpaperColor)
+    if (form.selectedDesktopBgColor !== form.committedDesktopBgColor) {
+      setDesktopBgColor(form.committedDesktopBgColor)
+    }
+    if (form.selectedIconLabelBgColor !== form.committedIconLabelBgColor) {
+      setIconLabelBgColor(form.committedIconLabelBgColor)
     }
     actions.close(windowId)
   }
@@ -99,8 +109,22 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     dispatch({ type: 'SET_SELECTED_WALLPAPER', value: next })
   }
 
-  function handleWallpaperColorChange(nextColor: string): void {
-    dispatch({ type: 'SET_SELECTED_WALLPAPER_COLOR', value: nextColor })
+  function handleDesktopBgColorChange(nextColor: string): void {
+    dispatch({ type: 'SET_SELECTED_DESKTOP_BG_COLOR', value: nextColor })
+    setDesktopBgColor(nextColor)
+  }
+
+  function handleDesktopBgColorInput(nextColor: string): void {
+    setDesktopBgColor(nextColor)
+  }
+
+  function handleIconLabelBgColorChange(nextColor: string): void {
+    dispatch({ type: 'SET_SELECTED_ICON_LABEL_BG_COLOR', value: nextColor })
+    setIconLabelBgColor(nextColor)
+  }
+
+  function handleIconLabelBgColorInput(nextColor: string): void {
+    setIconLabelBgColor(nextColor)
   }
 
   return (
@@ -121,8 +145,12 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         <WallpaperTab
           selectedWallpaper={form.selectedWallpaper}
           onSelectedWallpaperChange={handleSelectedWallpaperChange}
-          selectedWallpaperColor={form.selectedWallpaperColor}
-          onWallpaperColorChange={handleWallpaperColorChange}
+          selectedDesktopBgColor={form.selectedDesktopBgColor}
+          onDesktopBgColorChange={handleDesktopBgColorChange}
+          onDesktopBgColorInput={handleDesktopBgColorInput}
+          selectedIconLabelBgColor={form.selectedIconLabelBgColor}
+          onIconLabelBgColorChange={handleIconLabelBgColorChange}
+          onIconLabelBgColorInput={handleIconLabelBgColorInput}
           customWallpapers={form.customWallpapers}
           onCustomWallpaperAdd={entry => dispatch({ type: 'ADD_CUSTOM_WALLPAPER', value: entry })}
         />

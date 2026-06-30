@@ -1,7 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
-import { PLAYGROUND_STORAGE_KEYS, readStorageItem, writeStorageItem } from '../lib/persistence'
+import { readStorageItem, writeStorageItem } from '../lib/persistence'
 
-const DEFAULT_WALLPAPER_COLOR = '#008080'
 const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/i
 const listenersByKey = new Map<string, Set<() => void>>()
 
@@ -14,7 +13,7 @@ function listenersFor(key: string): Set<() => void> {
   return set
 }
 
-function normalizeWallpaperColor(value: unknown): string | null {
+function normalizeHexColor(value: unknown): string | null {
   if (typeof value !== 'string')
     return null
 
@@ -22,16 +21,14 @@ function normalizeWallpaperColor(value: unknown): string | null {
   return HEX_COLOR_PATTERN.test(normalized) ? normalized : null
 }
 
-function readWallpaperColor(storageKey: string): string {
-  return normalizeWallpaperColor(readStorageItem('local', storageKey)) ?? DEFAULT_WALLPAPER_COLOR
+function emit(key: string): void {
+  for (const listener of listenersFor(key)) listener()
 }
 
-function emit(storageKey: string): void {
-  for (const listener of listenersFor(storageKey)) listener()
-}
-
-export function useWallpaperColor(): [string, (nextColor: string) => void] {
-  const storageKey = PLAYGROUND_STORAGE_KEYS.wallpaperColor
+export function useLocalStorageColor(storageKey: string, defaultValue: string): [string, (nextColor: string) => void] {
+  const readColor = useCallback((): string => {
+    return normalizeHexColor(readStorageItem('local', storageKey)) ?? defaultValue
+  }, [storageKey, defaultValue])
 
   const subscribe = useCallback((callback: () => void) => {
     const set = listenersFor(storageKey)
@@ -41,21 +38,19 @@ export function useWallpaperColor(): [string, (nextColor: string) => void] {
     }
   }, [storageKey])
 
-  const getSnapshot = useCallback((): string => {
-    return readWallpaperColor(storageKey)
-  }, [storageKey])
+  const getSnapshot = useCallback((): string => readColor(), [readColor])
+  const getServerSnapshot = useCallback((): string => defaultValue, [defaultValue])
 
-  const getServerSnapshot = useCallback((): string => DEFAULT_WALLPAPER_COLOR, [])
   const color = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
-  const setColor = (nextColor: string): void => {
-    const normalized = normalizeWallpaperColor(nextColor)
+  const setColor = useCallback((nextColor: string): void => {
+    const normalized = normalizeHexColor(nextColor)
     if (!normalized)
       return
 
     writeStorageItem('local', storageKey, normalized)
     emit(storageKey)
-  }
+  }, [storageKey])
 
   return [color, setColor]
 }

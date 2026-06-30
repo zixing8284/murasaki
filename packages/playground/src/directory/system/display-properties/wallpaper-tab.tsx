@@ -1,7 +1,7 @@
 import type { WallpaperImageEntry } from '../../../lib/wallpaper-storage'
 import type { WallpaperMode, WallpaperSettings } from '../../../lib/wallpapers'
 import { Button, FieldPanel, GroupBox, Select, TabPanel } from '@murasaki-io/react98'
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useCustomWallpaperUrl } from '../../../hooks/use-custom-wallpaper-url'
 import { assetPath } from '../../../lib/asset-path'
 import {
@@ -35,8 +35,12 @@ function formatCustomWallpaperLabel(name: string): string {
 interface WallpaperTabProps {
   selectedWallpaper: WallpaperSettings
   onSelectedWallpaperChange: (value: WallpaperSettings) => void
-  selectedWallpaperColor: string
-  onWallpaperColorChange: (value: string) => void
+  selectedDesktopBgColor: string
+  onDesktopBgColorChange: (value: string) => void
+  onDesktopBgColorInput: (value: string) => void
+  selectedIconLabelBgColor: string
+  onIconLabelBgColorChange: (value: string) => void
+  onIconLabelBgColorInput: (value: string) => void
   customWallpapers: WallpaperImageEntry[]
   onCustomWallpaperAdd: (entry: WallpaperImageEntry) => void
 }
@@ -44,14 +48,39 @@ interface WallpaperTabProps {
 export function WallpaperTab({
   selectedWallpaper,
   onSelectedWallpaperChange,
-  selectedWallpaperColor,
-  onWallpaperColorChange,
+  selectedDesktopBgColor,
+  onDesktopBgColorChange,
+  onDesktopBgColorInput,
+  selectedIconLabelBgColor,
+  onIconLabelBgColorChange,
+  onIconLabelBgColorInput,
   customWallpapers,
   onCustomWallpaperAdd,
 }: WallpaperTabProps): React.ReactElement {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const colorInputRef = useRef<HTMLInputElement>(null)
-  const isNoneWallpaperSelected = selectedWallpaper.id === 'none'
+  const desktopColorInputRef = useRef<HTMLInputElement>(null)
+  const iconLabelColorInputRef = useRef<HTMLInputElement>(null)
+
+  // Throttle onInput to 100ms to avoid excessive updates while dragging the color picker.
+  const desktopBgTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const iconLabelBgTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  const throttledDesktopBgInput = useCallback((value: string) => {
+    clearTimeout(desktopBgTimerRef.current)
+    desktopBgTimerRef.current = setTimeout(onDesktopBgColorInput, 100, value)
+  }, [onDesktopBgColorInput])
+
+  const throttledIconLabelBgInput = useCallback((value: string) => {
+    clearTimeout(iconLabelBgTimerRef.current)
+    iconLabelBgTimerRef.current = setTimeout(onIconLabelBgColorInput, 100, value)
+  }, [onIconLabelBgColorInput])
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(desktopBgTimerRef.current)
+      clearTimeout(iconLabelBgTimerRef.current)
+    }
+  }, [])
 
   const selectedWallpaperEntry = getWallpaperEntry(selectedWallpaper.id)
   const customPreviewUrl = useCustomWallpaperUrl(selectedWallpaper.id)
@@ -65,8 +94,12 @@ export function WallpaperTab({
     fileInputRef.current?.click()
   }
 
-  function handleColorPickerOpen(): void {
-    colorInputRef.current?.click()
+  function handleDesktopColorPickerOpen(): void {
+    desktopColorInputRef.current?.click()
+  }
+
+  function handleIconLabelColorPickerOpen(): void {
+    iconLabelColorInputRef.current?.click()
   }
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -98,19 +131,29 @@ export function WallpaperTab({
         onChange={e => void handleFileChange(e)}
       />
       <input
-        ref={colorInputRef}
+        ref={desktopColorInputRef}
         type="color"
         className="sr-only"
-        aria-label="Desktop color"
-        value={selectedWallpaperColor}
-        onChange={event => onWallpaperColorChange(event.target.value)}
+        aria-label="Desktop background color"
+        value={selectedDesktopBgColor}
+        onInput={event => throttledDesktopBgInput(event.currentTarget.value)}
+        onChange={event => onDesktopBgColorChange(event.currentTarget.value)}
+      />
+      <input
+        ref={iconLabelColorInputRef}
+        type="color"
+        className="sr-only"
+        aria-label="Icon label background color"
+        value={selectedIconLabelBgColor}
+        onInput={event => throttledIconLabelBgInput(event.currentTarget.value)}
+        onChange={event => onIconLabelBgColorChange(event.currentTarget.value)}
       />
 
       <div className="flex justify-center py-1">
         <WallpaperMonitor
           wallpaperSrc={wallpaperPreviewSrc}
           wallpaperMode={selectedWallpaper.mode}
-          screenColor={isNoneWallpaperSelected ? selectedWallpaperColor : '#008080'}
+          screenColor={selectedDesktopBgColor}
         />
       </div>
 
@@ -184,45 +227,61 @@ export function WallpaperTab({
             </div>
           </FieldPanel>
 
-          <div className="flex flex-1 min-w-15 flex-col gap-2">
-            <Button className="w-full" onClick={handleBrowseClick}>
-              Browse...
-            </Button>
-            <Button className="w-full" disabled>
-              Pattern...
-            </Button>
+          <div className="flex h-44 flex-1 min-w-15 flex-col justify-between">
+            <div className="flex flex-col gap-1">
+              <Button className="w-full" onClick={handleBrowseClick}>
+                Browse...
+              </Button>
+              <Button className="w-full" disabled>
+                Pattern...
+              </Button>
+            </div>
 
-            <label className="mt-1 text-(--button-text)" htmlFor="wallpaper-display">
-              Display:
-            </label>
-            <Select
-              id="wallpaper-display"
-              name="wallpaper-display"
-              className="w-full"
-              options={[
-                { label: WALLPAPER_MODE_LABELS.centered, value: 'centered' },
-                { label: WALLPAPER_MODE_LABELS.tiled, value: 'tiled' },
-                { label: WALLPAPER_MODE_LABELS.stretch, value: 'stretch' },
-                { label: WALLPAPER_MODE_LABELS.fill, value: 'fill' },
-              ]}
-              value={selectedWallpaper.mode}
-              onValueChange={(value) => {
-                const next: WallpaperSettings = { ...selectedWallpaper, mode: value as WallpaperMode }
-                onSelectedWallpaperChange(next)
-              }}
-            />
+            <div className="flex flex-col gap-0.5">
+              <label className="text-(--button-text)" htmlFor="wallpaper-display">
+                Display:
+              </label>
+              <Select
+                id="wallpaper-display"
+                name="wallpaper-display"
+                className="w-full"
+                options={[
+                  { label: WALLPAPER_MODE_LABELS.centered, value: 'centered' },
+                  { label: WALLPAPER_MODE_LABELS.tiled, value: 'tiled' },
+                  { label: WALLPAPER_MODE_LABELS.stretch, value: 'stretch' },
+                  { label: WALLPAPER_MODE_LABELS.fill, value: 'fill' },
+                ]}
+                value={selectedWallpaper.mode}
+                onValueChange={(value) => {
+                  const next: WallpaperSettings = { ...selectedWallpaper, mode: value as WallpaperMode }
+                  onSelectedWallpaperChange(next)
+                }}
+              />
+            </div>
 
-            <span className="mt-1 text-(--button-text)">Color:</span>
-            <button
-              type="button"
-              className="min-h-5.75 w-full border border-(--button-shadow)"
-              style={{ backgroundColor: selectedWallpaperColor }}
-              onClick={handleColorPickerOpen}
-              aria-label={isNoneWallpaperSelected ? 'Pick desktop background color' : 'Pick desktop icon label background color'}
-              title={isNoneWallpaperSelected
-                ? 'Pick desktop background color (used when wallpaper is None)'
-                : 'Pick desktop icon label background color (used when wallpaper is visible)'}
-            />
+            <div className="flex flex-col gap-0.5">
+              <span className="text-(--button-text)">Desktop color:</span>
+              <button
+                type="button"
+                className="h-5 w-full cursor-pointer shadow-[inset_1px_1px_0_var(--button-shadow),inset_-1px_-1px_0_var(--button-hilight)]"
+                style={{ backgroundColor: selectedDesktopBgColor }}
+                onClick={handleDesktopColorPickerOpen}
+                aria-label="Pick desktop background color"
+                title="Desktop background color"
+              />
+            </div>
+
+            <div className="flex flex-col gap-0.5">
+              <span className="text-(--button-text)">Icon label color:</span>
+              <button
+                type="button"
+                className="h-5 w-full cursor-pointer shadow-[inset_1px_1px_0_var(--button-shadow),inset_-1px_-1px_0_var(--button-hilight)]"
+                style={{ backgroundColor: selectedIconLabelBgColor }}
+                onClick={handleIconLabelColorPickerOpen}
+                aria-label="Pick icon label background color"
+                title="Icon label background color"
+              />
+            </div>
           </div>
         </div>
       </GroupBox>

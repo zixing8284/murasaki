@@ -8,9 +8,11 @@ export interface FormState {
   committedCrtTuning: { scanlineOpacity: number, jitterAmount: number, rollDuration: number, rollOpacity: number }
   committedGradientEnabled: boolean
   selectedWallpaper: WallpaperSettings
-  selectedWallpaperColor: string
+  selectedDesktopBgColor: string
+  selectedIconLabelBgColor: string
   committedWallpaper: WallpaperSettings
-  committedWallpaperColor: string
+  committedDesktopBgColor: string
+  committedIconLabelBgColor: string
   customWallpapers: WallpaperImageEntry[]
 }
 
@@ -20,9 +22,11 @@ export type FormAction
     | { type: 'SET_COMMITTED_CRT_TUNING', value: FormState['committedCrtTuning'] }
     | { type: 'SET_COMMITTED_GRADIENT_ENABLED', value: boolean }
     | { type: 'SET_SELECTED_WALLPAPER', value: WallpaperSettings }
-    | { type: 'SET_SELECTED_WALLPAPER_COLOR', value: string }
+    | { type: 'SET_SELECTED_DESKTOP_BG_COLOR', value: string }
+    | { type: 'SET_SELECTED_ICON_LABEL_BG_COLOR', value: string }
     | { type: 'SET_COMMITTED_WALLPAPER', value: WallpaperSettings }
-    | { type: 'SET_COMMITTED_WALLPAPER_COLOR', value: string }
+    | { type: 'SET_COMMITTED_DESKTOP_BG_COLOR', value: string }
+    | { type: 'SET_COMMITTED_ICON_LABEL_BG_COLOR', value: string }
     | { type: 'SET_CUSTOM_WALLPAPERS', value: WallpaperImageEntry[] }
     | { type: 'ADD_CUSTOM_WALLPAPER', value: WallpaperImageEntry }
 
@@ -38,12 +42,16 @@ export function formReducer(state: FormState, action: FormAction): FormState {
       return { ...state, committedGradientEnabled: action.value }
     case 'SET_SELECTED_WALLPAPER':
       return { ...state, selectedWallpaper: action.value }
-    case 'SET_SELECTED_WALLPAPER_COLOR':
-      return { ...state, selectedWallpaperColor: action.value }
+    case 'SET_SELECTED_DESKTOP_BG_COLOR':
+      return { ...state, selectedDesktopBgColor: action.value }
+    case 'SET_SELECTED_ICON_LABEL_BG_COLOR':
+      return { ...state, selectedIconLabelBgColor: action.value }
     case 'SET_COMMITTED_WALLPAPER':
       return { ...state, committedWallpaper: action.value }
-    case 'SET_COMMITTED_WALLPAPER_COLOR':
-      return { ...state, committedWallpaperColor: action.value }
+    case 'SET_COMMITTED_DESKTOP_BG_COLOR':
+      return { ...state, committedDesktopBgColor: action.value }
+    case 'SET_COMMITTED_ICON_LABEL_BG_COLOR':
+      return { ...state, committedIconLabelBgColor: action.value }
     case 'SET_CUSTOM_WALLPAPERS':
       return { ...state, customWallpapers: action.value }
     case 'ADD_CUSTOM_WALLPAPER':

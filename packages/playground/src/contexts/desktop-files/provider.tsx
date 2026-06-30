@@ -11,7 +11,7 @@ import {
   saveDesktopMediaFile,
 } from './storage'
 
-const getFile = (id: string): Promise<File | undefined> => getDesktopMediaFile(id)
+const getFile = (id: string): Promise<File | null> => getDesktopMediaFile(id)
 
 export function DesktopFilesProvider({ children }: { children: ReactNode }): React.ReactElement {
   const [items, setItems] = useState<DesktopMediaFileEntry[]>([])

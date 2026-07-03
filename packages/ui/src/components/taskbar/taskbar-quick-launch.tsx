@@ -181,7 +181,7 @@ export function TaskbarQuickLaunch({
       {/* Quick Launch Icons */}
       <div
         ref={quickLaunchRef}
-        className="flex flex-row items-center overflow-hidden"
+        className="flex flex-row items-center overflow-hidden shrink-0"
         style={{ width: quickLaunchWidth, minWidth: 0 }}
       >
         {visibleIcons.map(icon => (
@@ -190,13 +190,13 @@ export function TaskbarQuickLaunch({
             type="button"
             title={icon.title}
             onClick={icon.onClick}
-            className="mx-0.5 p-0.5 cursor-pointer bg-transparent border-none hover:shadow-(--shadow-raised-outer) active:shadow-(--shadow-sunken-outer)"
+            className="mx-0.5 p-0.5 shrink-0 cursor-pointer bg-transparent border-none hover:shadow-(--shadow-raised-outer) active:shadow-(--shadow-sunken-outer)"
           >
             <img
               src={icon.src}
               alt={icon.alt}
               draggable={false}
-              className="block"
+              className="block size-4 shrink-0"
               style={{ imageRendering: 'pixelated' }}
             />
           </button>

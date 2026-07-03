@@ -40,6 +40,13 @@ export interface BaseWindowProps {
   resizeRef?: Ref<HTMLDivElement>
 }
 
+function clampInitialPosition(value: number | string | undefined, size: number | undefined): number | string | undefined {
+  if (value === undefined || size === undefined)
+    return value
+
+  return `clamp(0px, ${String(value)}, max(0px, calc(100% - ${String(size)}px)))`
+}
+
 export function BaseWindow({
   windowId,
   children,
@@ -80,10 +87,10 @@ export function BaseWindow({
             zIndex,
             width: defaultSize?.width,
             height: defaultSize?.height,
-            top: defaultPosition?.top,
+            top: clampInitialPosition(defaultPosition?.top, defaultSize?.height),
             right: defaultPosition?.right,
             bottom: defaultPosition?.bottom,
-            left: defaultPosition?.left,
+            left: clampInitialPosition(defaultPosition?.left, defaultSize?.width),
           }}
           onPointerDown={(e) => {
             e.stopPropagation()

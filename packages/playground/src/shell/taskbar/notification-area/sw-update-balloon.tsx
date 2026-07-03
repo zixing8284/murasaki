@@ -84,12 +84,6 @@ export function SwUpdateBalloon(): React.ReactElement {
               </Button>
             </div>
           </div>
-
-          {/* Balloon tail (triangle pointing down toward notification area) */}
-          <div className="absolute -bottom-1.5 right-3">
-            <div className="size-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-(--window-frame)" />
-            <div className="absolute -top-1.75 left-px size-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-(--info-window)" />
-          </div>
         </div>,
         document.body,
       )}

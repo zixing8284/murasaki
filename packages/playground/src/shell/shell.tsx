@@ -6,6 +6,7 @@ import { useDesktopFiles } from '../contexts/desktop-files/hooks'
 import { isSupportedDesktopMediaFile } from '../contexts/desktop-files/storage'
 import { getStartupAppIds } from '../contexts/process/directory'
 import { useProcessActions } from '../contexts/process/hooks'
+import { ScreenBoundaryContext } from '../contexts/screen-boundary'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useCrtTuning } from '../hooks/use-crt-tuning'
 import { useCustomWallpaperUrl } from '../hooks/use-custom-wallpaper-url'
@@ -265,49 +266,51 @@ export function Shell(): React.ReactElement {
                   )
                 : (
                     <LayerProvider>
-                      {/* Desktop Area */}
-                      <div className="flex-1 overflow-hidden relative">
-                        <div
-                          className="h-full relative"
-                          ref={setContainerRef}
-                          onPointerDown={handleDesktopClick}
-                          onDragEnter={handleDragEnter}
-                          onDragOver={handleDragOver}
-                          onDragLeave={handleDragLeave}
-                          onDrop={handleDrop}
-                        >
-                          {/* Desktop Icons */}
-                          <Desktop ref={desktopRef} />
+                      <ScreenBoundaryContext value={screenRef}>
+                        {/* Desktop Area */}
+                        <div className="flex-1 overflow-hidden relative">
+                          <div
+                            className="h-full relative overflow-clip"
+                            ref={setContainerRef}
+                            onPointerDown={handleDesktopClick}
+                            onDragEnter={handleDragEnter}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                          >
+                            {/* Desktop Icons */}
+                            <Desktop ref={desktopRef} />
 
-                          {isDragActive && (
-                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
-                              <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
-                                Drop audio or video files to add them to the desktop
+                            {isDragActive && (
+                              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
+                                <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
+                                  Drop audio or video files to add them to the desktop
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          {/* All managed windows */}
-                          <WindowRenderer />
+                            {/* All managed windows */}
+                            <WindowRenderer />
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Start Menu */}
-                      {showStartMenu && (
-                        <StartMenu
-                          anchorRef={startButtonRef}
-                          screenRef={screenRef}
-                          onClose={() => setShowStartMenu(false)}
+                        {/* Start Menu */}
+                        {showStartMenu && (
+                          <StartMenu
+                            anchorRef={startButtonRef}
+                            screenRef={screenRef}
+                            onClose={() => setShowStartMenu(false)}
+                          />
+                        )}
+
+                        {/* Taskbar */}
+                        <Taskbar
+                          startButtonRef={startButtonRef}
+                          showStartMenu={showStartMenu}
+                          onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
+                          onShowDesktop={handleShowDesktop}
                         />
-                      )}
-
-                      {/* Taskbar */}
-                      <Taskbar
-                        startButtonRef={startButtonRef}
-                        showStartMenu={showStartMenu}
-                        onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
-                        onShowDesktop={handleShowDesktop}
-                      />
+                      </ScreenBoundaryContext>
                     </LayerProvider>
                   )}
             </div>

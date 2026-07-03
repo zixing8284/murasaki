@@ -60,8 +60,8 @@ void main() {
                 : vec3(0.95, 0.95, 1.05);
   col *= mix(vec3(1.0), maskTint, u_mask);
 
-  // Subtle flicker.
-  col *= 1.0 + u_flicker * sin(u_time * 60.0);
+  // Keep the brightness variation gentle to avoid noticeable screen flashing.
+  col *= 1.0 + u_flicker * sin(u_time * 10.0);
 
   // Vignette.
   vec2 c = v_uv - 0.5;
@@ -217,7 +217,7 @@ export function ShaderGlass({ stream, settings }: ShaderGlassProps): React.React
 
       const tuning = settingsRef.current
       const scan = Math.min(1, tuning.scanlineOpacity * 1.4)
-      const flicker = Math.min(0.12, tuning.jitterAmount * 0.05)
+      const flicker = Math.min(0.045, tuning.jitterAmount * 0.018)
 
       gl.uniform1i(uniforms.tex, 0)
       gl.uniform1f(uniforms.time, (performance.now() - start) * 0.001)

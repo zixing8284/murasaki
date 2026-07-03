@@ -1,6 +1,18 @@
 import type { ReactElement } from 'react'
 import type { UseMediaPlayerResult } from '../use-media-player'
-import { Divider, Slider, Tooltip } from '@murasaki-io/react98'
+import {
+  Divider,
+  MenuItem,
+  MenuSeparator,
+  Slider,
+  Tooltip,
+  WindowMenuBar,
+  WindowMenuBarContent,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+} from '@murasaki-io/react98'
+import { useCallback, useRef, useState } from 'react'
+import { useScreenBoundary } from '../../../../contexts/screen-boundary'
 import {
   AspectRatioIcon,
   EjectIcon,
@@ -56,9 +68,7 @@ interface MediaPlayerControlsProps {
   onToggleAspectRatio: () => void
 }
 
-function ToolbarSeparator(): ReactElement {
-  return <div className="w-0 self-stretch mx-1.5 border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
-}
+const COMPACT_CONTROLS_WIDTH = 560
 
 export function MediaPlayerControls({
   player,
@@ -72,6 +82,24 @@ export function MediaPlayerControls({
 }: MediaPlayerControlsProps): ReactElement {
   const surfaceClassName = isMediaFullscreen ? 'bg-(--button-face)' : ''
   const hasCurrentTrack = player.currentTrack !== null
+  const controlsRef = useRef<HTMLDivElement>(null)
+  const screenBoundary = useScreenBoundary()
+  const [compactMode, setCompactMode] = useState(false)
+
+  const setControlsRef = useCallback((el: HTMLDivElement | null): (() => void) | void => {
+    controlsRef.current = el
+    if (!el)
+      return
+    const updateCompactMode = (): void => {
+      setCompactMode(el.clientWidth < COMPACT_CONTROLS_WIDTH)
+    }
+    updateCompactMode()
+    const observer = new ResizeObserver(updateCompactMode)
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
 
   return (
     <>
@@ -85,74 +113,76 @@ export function MediaPlayerControls({
 
       <Divider />
 
-      <div className={`flex items-center gap-0 px-1 py-1 ${surfaceClassName}`}>
-        <Tooltip text={player.isPlaying ? 'Pause' : 'Play'} side="top">
-          <TransportButton onClick={player.togglePlay} disabled={!hasCurrentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
-            {player.isPlaying ? <PauseIcon /> : <PlayIcon />}
-          </TransportButton>
-        </Tooltip>
+      <div ref={setControlsRef} className={`flex flex-wrap items-center gap-x-1.5 gap-y-1 px-1 py-1 ${surfaceClassName}`}>
+        <div className="flex shrink-0 items-center gap-0">
+          <Tooltip text={player.isPlaying ? 'Pause' : 'Play'} side="top">
+            <TransportButton onClick={player.togglePlay} disabled={!hasCurrentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
+              {player.isPlaying ? <PauseIcon /> : <PlayIcon />}
+            </TransportButton>
+          </Tooltip>
 
-        <Tooltip text="Stop" side="top">
-          <TransportButton onClick={player.stop} disabled={!hasCurrentTrack} aria-label="Stop">
-            <StopIcon />
-          </TransportButton>
-        </Tooltip>
+          <Tooltip text="Stop" side="top">
+            <TransportButton onClick={player.stop} disabled={!hasCurrentTrack} aria-label="Stop">
+              <StopIcon />
+            </TransportButton>
+          </Tooltip>
 
-        <Tooltip text="Open File" side="top">
-          <TransportButton onClick={player.openFilePicker} aria-label="Open File">
-            <EjectIcon />
-          </TransportButton>
-        </Tooltip>
+          <Tooltip text="Open File" side="top">
+            <TransportButton onClick={player.openFilePicker} aria-label="Open File">
+              <EjectIcon />
+            </TransportButton>
+          </Tooltip>
 
-        <div className="w-2" />
+          <div className="w-2" />
 
-        <Tooltip text="Previous" side="top">
-          <TransportButton onClick={player.previous} disabled={!hasCurrentTrack} aria-label="Previous">
-            <PreviousIcon />
-          </TransportButton>
-        </Tooltip>
+          <Tooltip text="Previous" side="top">
+            <TransportButton onClick={player.previous} disabled={!hasCurrentTrack} aria-label="Previous">
+              <PreviousIcon />
+            </TransportButton>
+          </Tooltip>
 
-        <Tooltip text="Rewind" side="top">
-          <TransportButton onClick={onSeekBackward} disabled={!hasCurrentTrack} aria-label="Rewind">
-            <RewindIcon />
-          </TransportButton>
-        </Tooltip>
+          <Tooltip text="Rewind" side="top">
+            <TransportButton onClick={onSeekBackward} disabled={!hasCurrentTrack} aria-label="Rewind">
+              <RewindIcon />
+            </TransportButton>
+          </Tooltip>
 
-        <Tooltip text="Fast Forward" side="top">
-          <TransportButton onClick={onSeekForward} disabled={!hasCurrentTrack} aria-label="Fast Forward">
-            <FastForwardIcon />
-          </TransportButton>
-        </Tooltip>
+          <Tooltip text="Fast Forward" side="top">
+            <TransportButton onClick={onSeekForward} disabled={!hasCurrentTrack} aria-label="Fast Forward">
+              <FastForwardIcon />
+            </TransportButton>
+          </Tooltip>
 
-        <Tooltip text="Next" side="top">
-          <TransportButton onClick={player.next} disabled={!hasCurrentTrack} aria-label="Next">
-            <NextIcon />
-          </TransportButton>
-        </Tooltip>
+          <Tooltip text="Next" side="top">
+            <TransportButton onClick={player.next} disabled={!hasCurrentTrack} aria-label="Next">
+              <NextIcon />
+            </TransportButton>
+          </Tooltip>
+        </div>
 
-        <div className="w-2" />
+        {!compactMode && (
+          <div className="flex shrink-0 items-center gap-0">
+            <Tooltip text="Shuffle" side="top">
+              <TransportButton onClick={player.toggleShuffle} active={player.shuffle} aria-label="Shuffle">
+                <ShuffleIcon />
+              </TransportButton>
+            </Tooltip>
 
-        <Tooltip text="Shuffle" side="top">
-          <TransportButton onClick={player.toggleShuffle} active={player.shuffle} aria-label="Shuffle">
-            <ShuffleIcon />
-          </TransportButton>
-        </Tooltip>
+            <Tooltip text="Repeat All" side="top">
+              <TransportButton onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')} active={player.repeat === 'all'} aria-label="Repeat All">
+                <RepeatAllIcon />
+              </TransportButton>
+            </Tooltip>
 
-        <Tooltip text="Repeat All" side="top">
-          <TransportButton onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')} active={player.repeat === 'all'} aria-label="Repeat All">
-            <RepeatAllIcon />
-          </TransportButton>
-        </Tooltip>
+            <Tooltip text="Repeat One" side="top">
+              <TransportButton onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')} active={player.repeat === 'one'} aria-label="Repeat One">
+                <RepeatOneIcon />
+              </TransportButton>
+            </Tooltip>
+          </div>
+        )}
 
-        <Tooltip text="Repeat One" side="top">
-          <TransportButton onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')} active={player.repeat === 'one'} aria-label="Repeat One">
-            <RepeatOneIcon />
-          </TransportButton>
-        </Tooltip>
-
-        <ToolbarSeparator />
-
-        <div className="flex items-center gap-2 px-1">
+        <div className="flex shrink-0 items-center gap-2 px-1">
           <Tooltip text={player.muted ? 'Unmute' : 'Mute'} side="top">
             <TransportButton onClick={player.toggleMute} aria-label={player.muted ? 'Unmute' : 'Mute'}>
               {player.muted ? <VolumeMutedIcon /> : player.volume > 50 ? <VolumeHighIcon /> : <VolumeLowIcon />}
@@ -171,35 +201,62 @@ export function MediaPlayerControls({
           />
         </div>
 
-        <ToolbarSeparator />
+        {!compactMode && (
+          <div className="h-6 w-25 shrink-0 self-center overflow-hidden bg-(--button-face) p-px shadow-(--shadow-sunken)">
+            <AudioVisualizer
+              getMediaElement={player.getMediaElement}
+              isPlaying={player.isPlaying}
+              isAudio={!player.hasVideo}
+            />
+          </div>
+        )}
 
-        <div className="w-25 shadow-(--shadow-sunken) bg-(--button-face) overflow-hidden shrink-0 box-content p-px self-stretch">
-          <AudioVisualizer
-            getMediaElement={player.getMediaElement}
-            isPlaying={player.isPlaying}
-            isAudio={!player.hasVideo}
-          />
-        </div>
-
-        <ToolbarSeparator />
-
-        <div className="flex-1 flex items-center shadow-(--shadow-border-field) bg-(--window) px-1 tabular-nums whitespace-nowrap self-stretch">
+        <div className="flex min-w-24 grow items-center self-stretch whitespace-nowrap bg-(--window) px-1 tabular-nums shadow-(--shadow-border-field)">
           {player.formattedCurrentTime}
         </div>
 
-        <ToolbarSeparator />
+        {compactMode
+          ? (
+              <WindowMenuBar className="ml-auto h-auto! bg-transparent! p-0!">
+                <WindowMenuBarMenu>
+                  <Tooltip text="More" side="top">
+                    <WindowMenuBarTrigger
+                      className="min-w-6 h-5.5! px-0.5! py-0! bg-(--button-face)! text-(--button-text)! shadow-(--shadow-raised) hover:bg-(--button-face)! hover:text-(--button-text)! focus-visible:bg-(--button-face)! focus-visible:text-(--button-text)! data-[state=open]:shadow-(--shadow-sunken) data-[state=open]:bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC')]!"
+                      aria-label="More controls"
+                    >
+                      <span className="pointer-events-none text-[11px] leading-none">···</span>
+                    </WindowMenuBarTrigger>
+                  </Tooltip>
+                  <WindowMenuBarContent sideOffset={4} boundaryRef={screenBoundary ?? undefined}>
+                    <MenuItem disabled={isMediaFullscreen} onClick={onTogglePlaylist}>
+                      {showPlaylist ? 'Hide Playlist' : 'Show Playlist'}
+                    </MenuItem>
+                    <MenuItem onClick={onToggleAspectRatio}>
+                      {forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}
+                    </MenuItem>
+                    <MenuSeparator />
+                    <MenuItem onClick={player.toggleShuffle}>{player.shuffle ? 'Disable Shuffle' : 'Enable Shuffle'}</MenuItem>
+                    <MenuItem onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')}>{player.repeat === 'all' ? 'Disable Repeat All' : 'Enable Repeat All'}</MenuItem>
+                    <MenuItem onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')}>{player.repeat === 'one' ? 'Disable Repeat One' : 'Enable Repeat One'}</MenuItem>
+                  </WindowMenuBarContent>
+                </WindowMenuBarMenu>
+              </WindowMenuBar>
+            )
+          : (
+              <div className="ml-auto flex shrink-0 items-center gap-0">
+                <Tooltip text="Playlist" side="top">
+                  <TransportButton onClick={onTogglePlaylist} active={showPlaylist && !isMediaFullscreen} disabled={isMediaFullscreen} aria-label="Playlist">
+                    <PlaylistIcon />
+                  </TransportButton>
+                </Tooltip>
 
-        <Tooltip text="Playlist" side="top">
-          <TransportButton onClick={onTogglePlaylist} active={showPlaylist && !isMediaFullscreen} disabled={isMediaFullscreen} aria-label="Playlist">
-            <PlaylistIcon />
-          </TransportButton>
-        </Tooltip>
-
-        <Tooltip text={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'} side="top">
-          <TransportButton onClick={onToggleAspectRatio} active={forceAspectRatio} aria-label={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}>
-            <AspectRatioIcon />
-          </TransportButton>
-        </Tooltip>
+                <Tooltip text={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'} side="top">
+                  <TransportButton onClick={onToggleAspectRatio} active={forceAspectRatio} aria-label={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}>
+                    <AspectRatioIcon />
+                  </TransportButton>
+                </Tooltip>
+              </div>
+            )}
       </div>
     </>
   )

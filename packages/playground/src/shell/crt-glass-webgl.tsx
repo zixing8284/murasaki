@@ -10,7 +10,11 @@ void main() {
 `
 
 const FRAG = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 varying vec2 v_uv;
 
 void main() {
@@ -33,27 +37,29 @@ void main() {
   // Fresnel rim — bright white ring at curved edges
   float rim = smoothstep(0.5, 0.82, r) * smoothstep(1.0, 0.82, r);
 
-  // Specular hotspot — tight bright spot
+  // Specular hotspot — keep subtle to avoid platform-specific white bloom
   float spec = pow(NdotH, 120.0);
 
   // Broad specular sheen
-  float specBroad = pow(NdotH, 12.0) * 0.3;
+  float specBroad = pow(NdotH, 12.0);
 
-  // Additive highlights (white)
-  float highlight = rim * 0.35 + spec * 0.85 + specBroad;
+  // Conservative highlight mix for consistent output across GPU backends
+  float highlight = rim * 0.22 + spec * 0.16 + specBroad * 0.06;
+  highlight = min(highlight, 0.38);
 
-  // Mix: where we have highlights use white, otherwise use black for darkening
-  vec3 col = vec3(highlight);
-  float a = max(edgeAlpha, highlight);
+  float a = clamp(max(edgeAlpha, highlight), 0.0, 1.0);
 
-  gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+  // Premultiplied output pairs with ONE, ONE_MINUS_SRC_ALPHA blending.
+  vec3 col = vec3(highlight) * a;
+
+  gl_FragColor = vec4(col, a);
 }
 `
 
 function initWebgl(canvas: HTMLCanvasElement): (() => void) | null {
   const gl = canvas.getContext('webgl', {
     alpha: true,
-    premultipliedAlpha: false,
+    premultipliedAlpha: true,
     antialias: false,
     preserveDrawingBuffer: false,
   })
@@ -118,7 +124,7 @@ function initWebgl(canvas: HTMLCanvasElement): (() => void) | null {
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0)
 
   gl.enable(gl.BLEND)
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
   gl.viewport(0, 0, canvas.width, canvas.height)
   gl.clearColor(0, 0, 0, 0)

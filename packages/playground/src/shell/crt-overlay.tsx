@@ -1,6 +1,5 @@
 import type { CSSProperties } from 'react'
 import type { CrtTuningSettings } from '../hooks/use-crt-tuning'
-import { CrtGlassWebgl } from './crt-glass-webgl'
 
 interface CrtOverlayProps {
   settings: CrtTuningSettings
@@ -30,8 +29,6 @@ export function CrtOverlay({ settings }: CrtOverlayProps): React.ReactElement {
           }}
         />
       </div>
-      {/* Convex CRT glass curvature overlay — WebGL spherical surface simulation */}
-      <CrtGlassWebgl />
       {shouldRenderRoll && (
         <div
           aria-hidden

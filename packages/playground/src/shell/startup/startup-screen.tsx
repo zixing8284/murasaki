@@ -2,6 +2,20 @@ import type { StartupPreloadState } from './use-startup-preload'
 import { ProgressIndicator } from '@murasaki-io/react98'
 import { STARTUP_ARTWORK_DATA_URL } from './startup-artwork-data'
 
+/**
+ * Hidden elements that force the browser to fetch system cursor files eagerly.
+ * Browsers only load `.cur` resources when a CSS rule referencing them is
+ * applied to a rendered element — defining the URL in a stylesheet alone is
+ * not enough.  This block is removed once the desktop takes over.
+ */
+const CURSOR_PRELOADS = [
+  { path: '/cursor/working.cur', fallback: 'progress' },
+  { path: '/cursor/busy.cur', fallback: 'wait' },
+  { path: '/cursor/normal.cur', fallback: 'default' },
+  { path: '/cursor/link.cur', fallback: 'pointer' },
+  { path: '/cursor/help.cur', fallback: 'help' },
+] as const
+
 interface StartupScreenProps {
   preload: StartupPreloadState
   waitingForDesktopFiles: boolean
@@ -30,6 +44,15 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
 
   return (
     <div className="flex size-full cursor-wait items-center justify-center bg-(--background) px-4 py-6 text-(--button-text)">
+      {/* Force browser to fetch .cur files while the splash is visible. */}
+      {CURSOR_PRELOADS.map(c => (
+        <span
+          key={c.path}
+          aria-hidden
+          className="pointer-events-none fixed size-px opacity-0"
+          style={{ cursor: `url("${c.path}"), ${c.fallback}` }}
+        />
+      ))}
       <div className="w-full max-w-107.5 bg-(--button-face) shadow-(--shadow-raised)">
         <div className="p-1">
           <div className="mb-3 shadow-(--shadow-sunken)">

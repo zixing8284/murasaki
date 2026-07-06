@@ -7,6 +7,7 @@ import {
   NETWORK_ONLINE_ICONS,
   PREVIEW_TASKBAR_LOGO,
   START_MENU_ICONS,
+  SYSTEM_CURSORS,
   TASKBAR_QUICK_LAUNCH_ICONS,
   THEME_PREVIEW_RECYCLE_BIN,
   uniquePaths,
@@ -42,6 +43,7 @@ export function getCriticalAssetPaths(): string[] {
     ...NETWORK_ONLINE_ICONS,
     NETWORK_OFFLINE_ICON,
     ...Object.values(IE_TOOLBAR_ICONS),
+    ...SYSTEM_CURSORS,
   ])
 }
 

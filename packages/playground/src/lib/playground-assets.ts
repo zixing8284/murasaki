@@ -104,6 +104,18 @@ export const PREVIEW_TASKBAR_LOGO = '/icons/windows98-icons/png/windows-4.png'
 export const THEME_PREVIEW_RECYCLE_BIN = '/icons/windows98-icons/png/recycle_bin_empty-0.png'
 export const MEDIA_PLAYER_EMPTY_BACKGROUND = '/icons/media/mediaplayer-bg.png'
 
+// ---------------------------------------------------------------------------
+// System cursors
+// ---------------------------------------------------------------------------
+
+export const SYSTEM_CURSORS = [
+  '/cursor/normal.cur',
+  '/cursor/busy.cur',
+  '/cursor/working.cur',
+  '/cursor/link.cur',
+  '/cursor/help.cur',
+] as const
+
 /**
  * Larger / lower-priority images. Warmed in the background after the
  * desktop is interactive so first paint isn't blocked.

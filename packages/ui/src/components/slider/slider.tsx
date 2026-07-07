@@ -69,23 +69,18 @@ const trackVariants = cva(
     'bg-(--window-text)',
     // Win98 track 3D effect using box-shadow
     'shadow-[1px_0_0_var(--button-hilight),1px_1px_0_var(--button-hilight),0_1px_0_var(--button-hilight),-1px_0_0_var(--button-dk-shadow),-1px_-1px_0_var(--button-dk-shadow),0_-1px_0_var(--button-dk-shadow),-1px_1px_0_var(--button-hilight),1px_-1px_var(--button-dk-shadow)]',
-    'border-r',
-    'border-b',
-    'border-(--button-shadow)',
   ],
   {
     variants: {
       vertical: {
         true: [
-          'w-0.5',
+          'w-px',
           'h-full',
           'left-1/2',
           '-translate-x-1/2',
-          'border-t',
-          'border-b-0',
           'shadow-[1px_0_0_var(--button-hilight),1px_1px_0_var(--button-hilight),0_1px_0_var(--button-hilight),0_-1px_0_var(--button-dk-shadow),-1px_-1px_0_var(--button-dk-shadow),-1px_0_0_var(--button-dk-shadow),-1px_1px_0_var(--button-dk-shadow),1px_-1px_var(--button-dk-shadow)]',
         ],
-        false: ['h-0.5', 'w-full', 'top-1/2', '-translate-y-1/2'],
+        false: ['h-px', 'w-full', 'top-1/2', '-translate-y-1/2'],
       },
     },
     defaultVariants: {
@@ -139,7 +134,7 @@ const tickMarkVariants = cva(['bg-(--button-text)', 'shrink-0'], {
 
 // Tick label styles
 const tickLabelVariants = cva(
-  ['text-(--button-text)', 'text-[10px]', 'select-none', 'leading-none'],
+  ['text-(--button-text)', 'select-none', 'leading-none'],
   {
     variants: {
       vertical: {
@@ -300,14 +295,16 @@ export function Slider({
           ? (
               <RectThumbIcon
                 active={isPointerDown}
-                className={cn(thumbVariants({ vertical }), disabled && 'grayscale')}
+                disabled={disabled ?? false}
+                className={cn(thumbVariants({ vertical }))}
                 style={getThumbStyle()}
               />
             )
           : (
               <TriangleThumbIcon
                 active={isPointerDown}
-                className={cn(thumbVariants({ vertical }), disabled && 'grayscale')}
+                disabled={disabled ?? false}
+                className={cn(thumbVariants({ vertical }))}
                 style={getThumbStyle()}
               />
             )}

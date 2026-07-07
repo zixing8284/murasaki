@@ -139,7 +139,7 @@ export function ProgressIndicator({
                 items-center justify-center"
                 >
                   {!hideValue && (
-                    <span className="text-xs">
+                    <span>
                       {Math.round(clampedValue)}
                       %
                     </span>
@@ -155,7 +155,7 @@ export function ProgressIndicator({
                   }}
                 >
                   {!hideValue && (
-                    <span className="text-xs">
+                    <span>
                       {Math.round(clampedValue)}
                       %
                     </span>

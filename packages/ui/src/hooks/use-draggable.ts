@@ -69,6 +69,16 @@ export function useDraggable<
   // Store cleanup function for document-level event listeners
   const cleanupRef = useRef<(() => void) | null>(null)
 
+  // Latest-callback ref — keeps onDragChange current without adding it to
+  // onMousedown's useCallback deps. If onDragChange were a dep, any re-render
+  // that creates a new function reference (e.g. iframe load completing mid-drag)
+  // would recreate onMousedown, trigger the useEffect cleanup, and remove the
+  // live document-level mousemove/mouseup listeners, orphaning the drag.
+  const onDragChangeRef = useRef(onDragChange)
+  useEffect(() => {
+    onDragChangeRef.current = onDragChange
+  }, [onDragChange])
+
   const setTargetRef = useCallback((el: TTarget | null) => {
     targetRef.current = el
     // Re-apply stored transform when element is re-mounted (e.g., after minimize/restore)
@@ -162,7 +172,7 @@ export function useDraggable<
           // promotion), which gets noticeably laggy as window content grows.
           target.style.willChange = 'transform'
           setDragging(true)
-          onDragChange?.(true)
+          onDragChangeRef.current?.(true)
         }
 
         // Clamp to boundaries
@@ -185,7 +195,7 @@ export function useDraggable<
           // layer once the drag is over.
           target.style.willChange = ''
           setDragging(false)
-          onDragChange?.(false)
+          onDragChangeRef.current?.(false)
         }
         document.removeEventListener('mousemove', onMousemove)
         document.removeEventListener('mouseup', onMouseup)
@@ -201,7 +211,7 @@ export function useDraggable<
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },
-    [container, onDragChange],
+    [container],
   )
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { TreeViewBasicDemo } from './tree-view/tree-view-basic'
+import { TreeViewCustomIconDemo } from './tree-view/tree-view-custom-icon'
 
 # TreeView
 
@@ -9,12 +10,16 @@ import { TreeViewBasicDemo } from './tree-view/tree-view-basic'
 | Export | Key props | Description |
 |--------|-----------|-------------|
 | `TreeView` | `children`, `className` | Root tree container. |
-| `TreeViewItem` | `label`, `icon`, `defaultExpanded`, `expanded`, `onExpandedChange`, `selected`, `preventCollapse`, `disabled`, `onClick` | Leaf or branch item. |
+| `TreeViewItem` | `label`, `icon`, `expandIcon`, `collapseIcon`, `defaultExpanded`, `expanded`, `onExpandedChange`, `selected`, `preventCollapse`, `disabled`, `onClick` | Leaf or branch item. |
 
 ## Examples
 
 <ComponentExample name="tree-view-basic" title="Explorer tree">
   <TreeViewBasicDemo />
+</ComponentExample>
+
+<ComponentExample name="tree-view-custom-icon" title="Custom expand / collapse icons">
+  <TreeViewCustomIconDemo />
 </ComponentExample>
 
 ## ARIA

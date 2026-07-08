@@ -4,7 +4,7 @@ import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
 import { LayerProvider } from '@murasaki-io/react98'
 import { Code } from 'nextra/components'
 import { evaluate } from 'nextra/evaluate'
-import { useId, useState, useSyncExternalStore } from 'react'
+import { useId, useState } from 'react'
 
 type ComponentExamplePreviewTheme = 'auto' | 'none'
 
@@ -23,47 +23,6 @@ interface ComponentExampleClientProps {
   compiledSource: string
   /** MDX children: the live demo JSX. */
   children?: ReactNode
-}
-
-type ExampleTheme = 'windows-98' | 'slate'
-
-function getDocsExampleTheme(): ExampleTheme {
-  if (typeof document === 'undefined')
-    return 'windows-98'
-
-  const root = document.documentElement
-  const rootStyle = getComputedStyle(root)
-
-  if (
-    root.classList.contains('dark')
-    || root.style.colorScheme === 'dark'
-    || rootStyle.colorScheme === 'dark'
-  ) {
-    return 'slate'
-  }
-
-  return 'windows-98'
-}
-
-function subscribeDocsExampleTheme(onChange: () => void): () => void {
-  if (typeof document === 'undefined')
-    return () => {}
-
-  const root = document.documentElement
-  const observer = new MutationObserver(onChange)
-  observer.observe(root, { attributes: true, attributeFilter: ['class', 'style'] })
-
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  mediaQuery.addEventListener('change', onChange)
-
-  return () => {
-    observer.disconnect()
-    mediaQuery.removeEventListener('change', onChange)
-  }
-}
-
-function getServerDocsExampleTheme(): ExampleTheme {
-  return 'windows-98'
 }
 
 function getExampleChildren(children: ReactNode): ReactNode[] {
@@ -114,11 +73,7 @@ export function ComponentExampleClient({
   compiledSource,
   children,
 }: ComponentExampleClientProps): ReactElement {
-  const exampleTheme = useSyncExternalStore(
-    subscribeDocsExampleTheme,
-    getDocsExampleTheme,
-    getServerDocsExampleTheme,
-  )
+  const exampleTheme = 'windows-98'
   const previewElements = getExampleChildren(children)
 
   const [tab, setTab] = useState<'preview' | 'code'>('preview')

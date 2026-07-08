@@ -41,7 +41,7 @@ body {
   -webkit-font-smoothing: none;
 }
 
-/* Tether the preview background to the scoped React98 theme token when active. */
+/* Preview background follows the scoped React98 theme token. */
 [data-theme] {
   --m98-docs-preview-bg: var(--button-face);
 }

@@ -1,6 +1,6 @@
 # LayerProvider
 
-`LayerProvider` creates a scoped portal root for floating @murasaki/react98 UI such as submenus, context menus, tooltips, and windows that do not receive an explicit portal container.
+`LayerProvider` creates a scoped portal root for floating @murasaki-io/react98 UI such as submenus, context menus, tooltips, and windows that do not receive an explicit portal container.
 
 Use it at an app shell or framed-surface seam when library popups should stay inside the same stacking context as the surface that triggered them.
 
@@ -17,7 +17,7 @@ Other div props are passed to the generated local layer root when `container` is
 ## Usage
 
 ```tsx
-import { LayerProvider } from '@murasaki/react98'
+import { LayerProvider } from '@murasaki-io/react98'
 
 export function DesktopShell() {
   return (

@@ -11,12 +11,13 @@ import { useId } from 'react'
 
 export function TriangleThumbIcon({
   active,
+  disabled,
   ...props
-}: React.SVGProps<SVGSVGElement> & { active?: boolean }): React.ReactElement {
+}: React.SVGProps<SVGSVGElement> & { active?: boolean, disabled?: boolean }): React.ReactElement {
   const patternId = useId()
-  const faceFill = active ? `url(#${patternId})` : 'var(--button-face)'
+  const faceFill = (active || disabled) ? `url(#${patternId})` : 'var(--button-face)'
   return (
-    <svg fill="none" height={21} viewBox="0 0 11 21" width={11} {...props}>
+    <svg fill="none" height={21} shapeRendering="crispEdges" viewBox="0 0 11 21" width={11} {...props}>
       <defs>
         <pattern height="2" id={patternId} patternUnits="userSpaceOnUse" width="2" x="0" y="0">
           <rect fill="var(--button-face)" height="1" width="1" x="0" y="0" />
@@ -55,12 +56,13 @@ export function TriangleThumbIcon({
 
 export function RectThumbIcon({
   active,
+  disabled,
   ...props
-}: React.SVGProps<SVGSVGElement> & { active?: boolean }): React.ReactElement {
+}: React.SVGProps<SVGSVGElement> & { active?: boolean, disabled?: boolean }): React.ReactElement {
   const patternId = useId()
-  const faceFill = active ? `url(#${patternId})` : 'var(--button-face)'
+  const faceFill = (active || disabled) ? `url(#${patternId})` : 'var(--button-face)'
   return (
-    <svg fill="none" height={21} viewBox="0 0 11 21" width={11} {...props}>
+    <svg fill="none" height={21} shapeRendering="crispEdges" viewBox="0 0 11 21" width={11} {...props}>
       <defs>
         <pattern height="2" id={patternId} patternUnits="userSpaceOnUse" width="2" x="0" y="0">
           <rect fill="var(--button-face)" height="1" width="1" x="0" y="0" />

@@ -14,6 +14,7 @@ const labelVariants = cva([
   'gap-2',
   'leading-3.25',
   'relative',
+  'text-(--button-text)',
   'ml-[calc(var(--checkbox-width)+var(--label-spacing))]',
   // label::before — static box
   'before:content-[\'\']',
@@ -42,10 +43,15 @@ const checkboxVariants = cva([
   'active:[&+label::before]:bg-(--button-face)',
   // input:checked + label svg { show checkmark }
   'checked:[&+label_svg]:block',
+  // input[disabled] + label { gray text + default cursor + etched effect }
+  'disabled:[&+label]:text-(--gray-text)',
+  'disabled:[&+label]:cursor-default',
+  'disabled:[&+label]:[text-shadow:1px_1px_0_var(--button-hilight)]',
   // input[disabled] + label::before { background: var(--button-face); }
   'disabled:[&+label::before]:bg-(--button-face)',
   // input[disabled]:checked + label svg { gray out checkmark }
   'disabled:checked:[&+label_svg]:text-(--gray-text)',
+  'disabled:checked:[&+label_svg]:drop-shadow-[1px_1px_0_var(--button-hilight)]',
 ])
 
 const checkmarkVariants = cva([

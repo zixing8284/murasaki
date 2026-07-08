@@ -73,9 +73,6 @@ const treeViewDisclosureStyles = cva([
   'border',
   'border-(--button-shadow)',
   'bg-(--window)',
-  'pl-px',
-  'text-center',
-  'leading-2.75',
   'text-(--window-text)',
 ])
 
@@ -98,6 +95,10 @@ interface TreeViewItemProps {
   preventCollapse?: boolean
   /** Whether this item is disabled */
   disabled?: boolean
+  /** Icon to show when the branch is collapsed (replaces the default '+') */
+  expandIcon?: React.ReactNode
+  /** Icon to show when the branch is expanded (replaces the default '-') */
+  collapseIcon?: React.ReactNode
   /** Additional CSS classes */
   className?: string
   /** Click handler for the item */
@@ -114,6 +115,8 @@ export function TreeViewItem({
   selected = false,
   preventCollapse = false,
   disabled = false,
+  expandIcon,
+  collapseIcon,
   className,
   onClick,
 }: TreeViewItemProps): React.ReactElement {
@@ -169,7 +172,7 @@ export function TreeViewItem({
                   data-tree-view-disclosure=""
                   className={treeViewDisclosureStyles()}
                 >
-                  {expanded ? '-' : '+'}
+                  {expanded ? (collapseIcon ?? '-') : (expandIcon ?? '+')}
                 </span>
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>

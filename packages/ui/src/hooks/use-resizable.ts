@@ -82,6 +82,14 @@ export function useResizable<
   // Store cleanup function for document-level event listeners
   const cleanupRef = useRef<(() => void) | null>(null)
 
+  // Latest-callback ref — same pattern as useDraggable. Keeps onResizeChange
+  // current without making onMousedown depend on it, so re-renders mid-resize
+  // never orphan live document-level mousemove/mouseup listeners.
+  const onResizeChangeRef = useRef(onResizeChange)
+  useEffect(() => {
+    onResizeChangeRef.current = onResizeChange
+  }, [onResizeChange])
+
   const setTargetRef = useCallback((el: TTarget | null) => {
     targetRef.current = el
     // Re-apply stored size when element is re-mounted (e.g., after minimize/restore)
@@ -169,7 +177,7 @@ export function useResizable<
           }
           hasResizeStarted = true
           setResizing(true)
-          onResizeChange?.(true)
+          onResizeChangeRef.current?.(true)
         }
 
         const newWidth = Math.min(
@@ -189,7 +197,7 @@ export function useResizable<
       const onMouseup = (): void => {
         if (hasResizeStarted) {
           setResizing(false)
-          onResizeChange?.(false)
+          onResizeChangeRef.current?.(false)
         }
         document.body.style.cursor = originalCursor
         document.removeEventListener('mousemove', onMousemove)
@@ -207,7 +215,7 @@ export function useResizable<
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },
-    [container, minWidth, minHeight, maxWidth, maxHeight, onResizeChange],
+    [container, minWidth, minHeight, maxWidth, maxHeight],
   )
 
   useEffect(() => {

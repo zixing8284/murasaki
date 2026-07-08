@@ -50,6 +50,9 @@ export function AppearanceTab({
   onGradientEnabledChange,
 }: AppearanceTabProps): React.ReactElement {
   const crtTuningDisabled = !currentCrtEnabled
+  const disabledTextClass = crtTuningDisabled
+    ? 'text-(--gray-text) [text-shadow:1px_1px_0_var(--button-hilight)]'
+    : 'text-(--button-text)'
 
   return (
     <TabPanel value="appearance" className="flex flex-col gap-3 p-3">
@@ -60,11 +63,11 @@ export function AppearanceTab({
         Enable CRT monitor effect
       </Checkbox>
 
-      <div className={`flex flex-col gap-2 p-2${crtTuningDisabled ? ' opacity-60' : ''}`}>
-        <div className="text-(--button-text)">CRT tuning</div>
+      <div className="flex flex-col gap-2 p-2">
+        <div className={disabledTextClass}>CRT tuning</div>
 
         <div className="flex flex-wrap items-center gap-1">
-          <span className="mr-1 text-(--button-text)">Presets:</span>
+          <span className={`mr-1 ${disabledTextClass}`}>Presets:</span>
           {Object.values(CRT_PRESETS).map((preset) => {
             const active = areCrtTuningSettingsEqual(currentCrtTuning, preset.settings)
             return (
@@ -80,7 +83,7 @@ export function AppearanceTab({
           })}
         </div>
 
-        <label className="grid grid-cols-[7rem_1fr_auto] items-center gap-2 text-(--button-text)">
+        <label className={`grid grid-cols-[7rem_1fr_auto] items-center gap-2 ${disabledTextClass}`}>
           <span>Scanlines</span>
           <Slider
             disabled={crtTuningDisabled}
@@ -93,7 +96,7 @@ export function AppearanceTab({
           <span className="w-8 text-right">{Math.round(currentCrtTuning.scanlineOpacity * 100)}</span>
         </label>
 
-        <label className="grid grid-cols-[7rem_1fr_auto] items-center gap-2 text-(--button-text)">
+        <label className={`grid grid-cols-[7rem_1fr_auto] items-center gap-2 ${disabledTextClass}`}>
           <span>Jitter</span>
           <Slider
             disabled={crtTuningDisabled}
@@ -106,7 +109,7 @@ export function AppearanceTab({
           <span className="w-8 text-right">{currentCrtTuning.jitterAmount.toFixed(2)}</span>
         </label>
 
-        <label className="grid grid-cols-[7rem_1fr_auto] items-center gap-2 text-(--button-text)">
+        <label className={`grid grid-cols-[7rem_1fr_auto] items-center gap-2 ${disabledTextClass}`}>
           <span>Roll (sec)</span>
           <Slider
             disabled={crtTuningDisabled}
@@ -119,7 +122,7 @@ export function AppearanceTab({
           <span className="w-8 text-right">{currentCrtTuning.rollDuration.toFixed(1)}</span>
         </label>
 
-        <label className="grid grid-cols-[7rem_1fr_auto] items-center gap-2 text-(--button-text)">
+        <label className={`grid grid-cols-[7rem_1fr_auto] items-center gap-2 ${disabledTextClass}`}>
           <span>Roll fade</span>
           <Slider
             disabled={crtTuningDisabled}

@@ -100,7 +100,7 @@ function ToolbarGrip(): ReactElement {
 }
 
 function ToolbarImageIcon({ src }: { src: string }): ReactElement {
-  return <img src={assetPath(src)} alt="" className="size-4 object-contain pixelated" draggable={false} />
+  return <img src={assetPath(src)} alt="" className="size-5 object-contain pixelated" draggable={false} />
 }
 
 function ToolbarButton({
@@ -110,7 +110,7 @@ function ToolbarButton({
   onClick,
 }: ToolbarButtonProps): ReactElement {
   const iconClassName = [
-    'flex size-4 items-center justify-center overflow-hidden',
+    'flex size-5 items-center justify-center overflow-hidden',
     disabled ? '[&_img]:grayscale [&_img]:opacity-55 [&_img]:contrast-75' : undefined,
   ].filter(Boolean).join(' ')
 
@@ -121,7 +121,7 @@ function ToolbarButton({
         aria-label={label}
         disabled={disabled}
         title={label}
-        className="size-7 shrink-0 border-none bg-(--button-face) shadow-(--shadow-raised) flex items-center justify-center p-0 text-(--button-text) active:not-disabled:shadow-(--shadow-sunken) disabled:text-(--gray-text) disabled:[text-shadow:1px_1px_0_var(--button-hilight)] focus:outline-dotted focus:outline-1 focus:outline-(--button-text) focus:-outline-offset-3"
+        className="size-8 shrink-0 border-none bg-(--button-face) shadow-(--shadow-raised) flex items-center justify-center p-0 text-(--button-text) active:not-disabled:shadow-(--shadow-sunken) disabled:text-(--gray-text) disabled:[text-shadow:1px_1px_0_var(--button-hilight)] focus:outline-dotted focus:outline-1 focus:outline-(--button-text) focus:-outline-offset-3"
         onClick={onClick}
       >
         <span className={iconClassName}>
@@ -313,7 +313,7 @@ export function Ie2Chrome({
               <MenuItem reserveIconSpace disabled>Toolbars</MenuItem>
               <MenuItem reserveIconSpace disabled>Status Bar</MenuItem>
               <MenuSeparator />
-              <MenuItem reserveIconSpace onClick={handleRefresh}>Refresh</MenuItem>
+              <MenuItem icon={<img src={assetPath('/icons/misc/icon-refresh.png')} alt="" className="size-4 object-contain pixelated" draggable={false} />} onClick={handleRefresh}>Refresh</MenuItem>
               <MenuItem reserveIconSpace disabled>Source</MenuItem>
               <MenuItem reserveIconSpace disabled>Full Screen</MenuItem>
             </WindowMenuBarContent>

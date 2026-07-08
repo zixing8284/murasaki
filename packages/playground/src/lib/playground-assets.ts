@@ -90,7 +90,7 @@ export const IE_TOOLBAR_ICONS = {
   html: '/icons/windows98-icons/png/html-0.png',
   mail: '/icons/windows98-icons/png/mailbox_world-1.png',
   print: '/icons/windows98-icons/png/printer-1.png',
-  refresh: '/icons/windows98-icons/png/overlay_refresh-1.png',
+  refresh: '/icons/misc/icon-refresh.png',
   search: '/icons/windows98-icons/png/search_web-1.png',
   stop: '/icons/windows98-icons/png/no-0.png',
   windows: '/icons/windows98-icons/png/windows-4.png',

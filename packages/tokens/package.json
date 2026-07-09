@@ -1,0 +1,50 @@
+{
+  "name": "@murasaki-io/tokens",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Platform-agnostic design tokens for murasaki-io/react98 — colors, spacing, bevel recipes, icons, and theme definitions",
+  "author": "sasasa10 <zixing8284@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/zixing8284/murasaki#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zixing8284/murasaki.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zixing8284/murasaki/issues"
+  },
+  "keywords": [
+    "design-tokens",
+    "windows-98",
+    "win98",
+    "theme",
+    "retro"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
+    "demo": "vite demo --open",
+    "typecheck": "tsc --noEmit",
+    "verify": "npx tsx scripts/verify-portability.ts",
+    "preview": "npx tsx scripts/preview.ts"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "typescript": "catalog:cli",
+    "vite": "catalog:cli"
+  }
+}

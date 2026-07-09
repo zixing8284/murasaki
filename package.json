@@ -17,6 +17,8 @@
     "ui:dev": "pnpm --filter @murasaki-io/react98 dev",
     "ui:test": "pnpm --filter @murasaki-io/react98 test",
     "ui:test:watch": "pnpm --filter @murasaki-io/react98 test:watch",
+    "tokens:build": "pnpm --filter @murasaki-io/tokens build",
+    "tokens:dev": "pnpm --filter @murasaki-io/tokens dev",
     "lint": "pnpm eslint .",
     "changeset": "changeset",
     "version-packages": "changeset version",

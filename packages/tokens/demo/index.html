@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@murasaki-io/tokens — Visual Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Pixelated MS Sans Serif", "MS Sans Serif", Tahoma, Geneva, sans-serif;
+      font-size: 11px;
+      background: #008080;
+      color: #000;
+      padding: 24px;
+    }
+    h1 { font-size: 16px; margin-bottom: 16px; color: #fff; text-shadow: 1px 1px 0 #000; }
+    h2 { font-size: 13px; margin: 16px 0 8px; }
+    .row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+
+    .theme-card {
+      width: 200px; padding: 2px;
+      border: 2px solid;
+      border-color: var(--hl) var(--dk) var(--dk) var(--hl);
+      background: var(--face);
+    }
+    .theme-card .title-bar {
+      background: linear-gradient(90deg, var(--active-title), var(--grad-title));
+      color: var(--title-text); padding: 2px 4px; font-weight: bold;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .theme-card .title-btn {
+      width: 16px; height: 14px; background: var(--face); color: var(--text);
+      border: 2px solid; border-color: var(--hl) var(--dk) var(--dk) var(--hl);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; line-height: 1; cursor: pointer;
+    }
+    .theme-card .title-btn:active { border-color: var(--dk) var(--hl) var(--hl) var(--dk); }
+    .theme-card .body {
+      padding: 8px; background: var(--win); color: var(--win-text); min-height: 60px;
+      border: 2px solid; border-color: var(--dk) var(--hl) var(--hl) var(--dk);
+    }
+    .theme-card .swatches {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 6px;
+    }
+    .theme-card .swatch { height: 16px; border: 1px solid #0003; }
+    .theme-card .swatch-label {
+      font-size: 8px; text-align: center; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .bevel-box {
+      width: 120px; height: 40px;
+      display: flex; align-items: center; justify-content: center; font-weight: bold;
+    }
+
+    .btn {
+      padding: 4px 16px; background: var(--face); color: var(--text); border: none;
+      font-family: inherit; font-size: 11px; cursor: pointer;
+      box-shadow: inset -1px -1px var(--dk), inset 1px 1px var(--hl),
+                  inset -2px -2px var(--shadow), inset 2px 2px var(--light);
+    }
+    .btn:active {
+      box-shadow: inset -1px -1px var(--hl), inset 1px 1px var(--dk),
+                  inset -2px -2px var(--light), inset 2px 2px var(--shadow);
+    }
+    .btn-primary {
+      box-shadow: inset -2px -2px #000, inset 1px 1px #000,
+                  inset 2px 2px var(--hl), inset -3px -3px var(--shadow), inset 3px 3px var(--light);
+    }
+    .btn:disabled { color: var(--gray); text-shadow: 1px 1px 0 var(--hl); cursor: default; }
+
+    .icon-grid {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+      padding: 8px; background: var(--face); color: var(--text);
+      border: 2px solid; border-color: var(--hl) var(--dk) var(--dk) var(--hl);
+    }
+    .icon-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .icon-item svg { display: block; }
+    .icon-label { font-size: 9px; color: #666; }
+
+    .cr-item {
+      display: flex; align-items: center; gap: 4px;
+      cursor: pointer; user-select: none;
+    }
+
+    .theme-select {
+      padding: 2px 4px; font-family: inherit; font-size: 11px;
+      background: var(--win);
+      border: 2px solid; border-color: var(--dk) var(--hl) var(--hl) var(--dk);
+    }
+
+    .section {
+      background: #c0c0c0; padding: 12px; margin-bottom: 16px;
+      border: 2px solid; border-color: #fff #000 #000 #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>@murasaki-io/tokens — Visual Demo</h1>
+  <p style="color:#fff;margin-bottom:12px">All visual elements below are rendered purely from platform-agnostic token data.</p>
+
+  <div class="section">
+    <h2>Theme Selector</h2>
+    <select id="themeSelect" class="theme-select"></select>
+  </div>
+
+  <div class="section">
+    <h2>Theme Cards</h2>
+    <div id="themeCards" class="row"></div>
+  </div>
+
+  <div class="section">
+    <h2>Bevel Presets</h2>
+    <div class="row" id="bevelDemo"></div>
+  </div>
+
+  <div class="section">
+    <h2>Buttons</h2>
+    <div class="row" id="buttonDemo"></div>
+  </div>
+
+  <div class="section">
+    <h2>Icons (from token data)</h2>
+    <div id="iconDemo"></div>
+  </div>
+
+  <div class="section">
+    <h2>Checkbox & Radio (interactive)</h2>
+    <div class="row" id="crDemo"></div>
+  </div>
+
+  <script type="module">
+    import { themes, themeIds } from '../dist/themes/index.js'
+    import { defaultBevels } from '../dist/bevels.js'
+    import { closeIcon, maximizeIcon, minimizeIcon, restoreIcon, helpIcon } from '../dist/icons/window-icons.js'
+    import { checkmarkIcon } from '../dist/icons/checkbox-icons.js'
+    import { radioBorderIcon, radioDotIcon } from '../dist/icons/radio-icons.js'
+    import { arrowUpIcon, arrowDownIcon } from '../dist/icons/scroll-icons.js'
+    import { buttonDownIcon } from '../dist/icons/select-icons.js'
+
+    // ── Helpers ──
+
+    function resolveColor(theme, tokenName) {
+      if (tokenName === 'currentColor') return theme.buttonText
+      return theme[tokenName] || '#ff00ff'
+    }
+
+    function renderIcon(iconData, theme, size) {
+      const [vw, vh] = iconData.viewBox
+      const scale = size / Math.max(vw, vh)
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('width', String(Math.round(vw * scale)))
+      svg.setAttribute('height', String(Math.round(vh * scale)))
+      svg.setAttribute('viewBox', `0 0 ${vw} ${vh}`)
+      svg.setAttribute('fill', 'none')
+      svg.style.shapeRendering = 'crispEdges'
+      for (const shape of iconData.shapes) {
+        const color = resolveColor(theme, shape.fill)
+        if (shape.d) {
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          path.setAttribute('d', shape.d)
+          path.setAttribute('fill', color)
+          path.setAttribute('fill-rule', 'evenodd')
+          svg.appendChild(path)
+        } else if (shape.rect) {
+          const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+          r.setAttribute('x', String(shape.rect.x))
+          r.setAttribute('y', String(shape.rect.y))
+          r.setAttribute('width', String(shape.rect.width))
+          r.setAttribute('height', String(shape.rect.height))
+          r.setAttribute('fill', color)
+          svg.appendChild(r)
+        }
+      }
+      return svg
+    }
+
+    function applyThemeVars(el, t) {
+      el.style.setProperty('--face', t.buttonFace)
+      el.style.setProperty('--text', t.buttonText)
+      el.style.setProperty('--hl', t.buttonHilight)
+      el.style.setProperty('--light', t.buttonLight)
+      el.style.setProperty('--shadow', t.buttonShadow)
+      el.style.setProperty('--dk', t.buttonDkShadow)
+      el.style.setProperty('--gray', t.grayText)
+      el.style.setProperty('--win', t.window)
+      el.style.setProperty('--win-text', t.windowText)
+      el.style.setProperty('--active-title', t.activeTitle)
+      el.style.setProperty('--grad-title', t.gradientActiveTitle)
+      el.style.setProperty('--title-text', t.titleText)
+      el.style.setProperty('--bg', t.background)
+      el.style.setProperty('--menu', t.menu)
+      el.style.setProperty('--menu-hl', t.menuHilight)
+    }
+
+    // ── DOM refs ──
+
+    const select = document.getElementById('themeSelect')
+    const cardsContainer = document.getElementById('themeCards')
+    const bevelContainer = document.getElementById('bevelDemo')
+    const btnContainer = document.getElementById('buttonDemo')
+    const iconContainer = document.getElementById('iconDemo')
+    const crContainer = document.getElementById('crDemo')
+
+    function currentTheme() {
+      return themes[select.value] || themes['windows-98']
+    }
+
+    // ── Theme Cards ──
+
+    // Generate SVG markup string from icon data (for innerHTML usage)
+    function iconSvgMarkup(iconData, theme, size) {
+      const [vw, vh] = iconData.viewBox
+      const scale = size / Math.max(vw, vh)
+      const w = Math.round(vw * scale)
+      const h = Math.round(vh * scale)
+      let paths = ''
+      for (const shape of iconData.shapes) {
+        const color = resolveColor(theme, shape.fill)
+        if (shape.d) {
+          paths += `<path d="${shape.d}" fill="${color}" fill-rule="evenodd"/>`
+        } else if (shape.rect) {
+          const r = shape.rect
+          paths += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="${color}"/>`
+        }
+      }
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${vw} ${vh}" fill="none" style="shape-rendering:crispEdges;display:block">${paths}</svg>`
+    }
+
+    for (const id of themeIds) {
+      const t = themes[id]
+      const card = document.createElement('div')
+      card.className = 'theme-card'
+      applyThemeVars(card, t)
+      card.innerHTML = `
+        <div class="title-bar">
+          <span>${id}</span>
+          <div style="display:flex;gap:2px">
+            <div class="title-btn">${iconSvgMarkup(minimizeIcon, t, 8)}</div>
+            <div class="title-btn">${iconSvgMarkup(maximizeIcon, t, 8)}</div>
+            <div class="title-btn">${iconSvgMarkup(closeIcon, t, 8)}</div>
+          </div>
+        </div>
+        <div class="body">
+          <div style="margin-bottom:4px;font-weight:bold">${id}</div>
+          <div class="swatches">
+            ${['buttonFace','buttonHilight','buttonShadow','buttonDkShadow',
+               'activeTitle','gradientActiveTitle','window','windowFrame',
+               'menu','menuHilight','hilight','background'].map(k =>
+              `<div><div class="swatch" style="background:${t[k]}"></div><div class="swatch-label">${k.replace('button','').slice(0,8)}</div></div>`
+            ).join('')}
+          </div>
+        </div>
+      `
+      cardsContainer.appendChild(card)
+    }
+
+    // ── Bevels ──
+
+    function renderBevels(t) {
+      bevelContainer.innerHTML = ''
+      for (const [name, recipe] of Object.entries(defaultBevels)) {
+        const shadow = recipe.layers.map(l => {
+          const color = resolveColor(t, l.colorToken)
+          const sign = l.edge === 'top-left' ? '' : '-'
+          return `inset ${sign}${l.offset}px ${sign}${l.offset}px ${color}`
+        }).join(', ')
+        const box = document.createElement('div')
+        box.className = 'bevel-box'
+        box.style.boxShadow = shadow
+        box.style.background = t.buttonFace
+        box.textContent = name
+        bevelContainer.appendChild(box)
+      }
+    }
+    renderBevels(themes['windows-98'])
+
+    // ── Buttons ──
+
+    function renderButtons(t) {
+      applyThemeVars(btnContainer, t)
+      btnContainer.innerHTML = `
+        <button class="btn">Normal</button>
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn" disabled>Disabled</button>
+        <button class="btn">OK</button>
+        <button class="btn">Cancel</button>
+      `
+    }
+    renderButtons(themes['windows-98'])
+
+    // ── Icons ──
+
+    const iconList = [
+      ['Close', closeIcon, 20],
+      ['Maximize', maximizeIcon, 20],
+      ['Minimize', minimizeIcon, 20],
+      ['Restore', restoreIcon, 20],
+      ['Help', helpIcon, 20],
+      ['Arrow Up', arrowUpIcon, 24],
+      ['Arrow Down', arrowDownIcon, 24],
+      ['Dropdown', buttonDownIcon, 24],
+    ]
+
+    function renderIcons(t) {
+      iconContainer.innerHTML = ''
+      const grid = document.createElement('div')
+      grid.className = 'icon-grid'
+      applyThemeVars(grid, t)
+      for (const [label, icon, size] of iconList) {
+        const item = document.createElement('div')
+        item.className = 'icon-item'
+        item.appendChild(renderIcon(icon, t, size))
+        const lbl = document.createElement('span')
+        lbl.className = 'icon-label'
+        lbl.textContent = label
+        item.appendChild(lbl)
+        grid.appendChild(item)
+      }
+      iconContainer.appendChild(grid)
+    }
+    renderIcons(themes['windows-98'])
+
+    // ── Checkbox & Radio (interactive) ──
+
+    const checkboxStates = [false, true]
+    let radioSelected = 1
+
+    function renderCR() {
+      const t = currentTheme()
+      crContainer.innerHTML = ''
+
+      // Two checkboxes
+      for (let i = 0; i < 2; i++) {
+        const wrap = document.createElement('div')
+        wrap.className = 'cr-item'
+        const box = document.createElement('div')
+        box.style.width = '13px'
+        box.style.height = '13px'
+        box.style.flexShrink = '0'
+        box.style.background = t.window
+        box.style.boxShadow = `inset -1px -1px ${t.buttonHilight}, inset 1px 1px ${t.buttonShadow}, inset -2px -2px ${t.buttonLight}, inset 2px 2px ${t.buttonDkShadow}`
+        box.style.display = 'flex'
+        box.style.alignItems = 'center'
+        box.style.justifyContent = 'center'
+        if (checkboxStates[i]) {
+          box.appendChild(renderIcon(checkmarkIcon, t, 7))
+        }
+        wrap.appendChild(box)
+        const lbl = document.createElement('span')
+        lbl.textContent = checkboxStates[i] ? 'Checked' : 'Unchecked'
+        wrap.appendChild(lbl)
+        wrap.addEventListener('click', () => {
+          checkboxStates[i] = !checkboxStates[i]
+          renderCR()
+        })
+        crContainer.appendChild(wrap)
+      }
+
+      // Two radios
+      for (let i = 0; i < 2; i++) {
+        const wrap = document.createElement('div')
+        wrap.className = 'cr-item'
+        const box = document.createElement('div')
+        box.style.width = '12px'
+        box.style.height = '12px'
+        box.style.flexShrink = '0'
+        box.style.position = 'relative'
+        box.appendChild(renderIcon(radioBorderIcon, t, 12))
+        if (radioSelected === i) {
+          const dot = renderIcon(radioDotIcon, t, 4)
+          dot.style.position = 'absolute'
+          dot.style.top = '4px'
+          dot.style.left = '4px'
+          box.appendChild(dot)
+        }
+        wrap.appendChild(box)
+        const lbl = document.createElement('span')
+        lbl.textContent = radioSelected === i ? 'Selected' : 'Unselected'
+        wrap.appendChild(lbl)
+        wrap.addEventListener('click', () => {
+          radioSelected = i
+          renderCR()
+        })
+        crContainer.appendChild(wrap)
+      }
+    }
+    renderCR()
+
+    // ── Theme Selector ──
+
+    for (const id of themeIds) {
+      const opt = document.createElement('option')
+      opt.value = id
+      opt.textContent = id
+      select.appendChild(opt)
+    }
+
+    select.addEventListener('change', () => {
+      const t = currentTheme()
+      document.body.style.background = t.background
+      // Theme cards use inline vars, skip re-render
+      renderBevels(t)
+      renderButtons(t)
+      renderIcons(t)
+      renderCR()
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "@murasaki-io/rn",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@murasaki-io/tokens": "workspace:*",
+    "expo": "^57.0.0",
+    "expo-font": "^57.0.0",
+    "expo-router": "^57.0.0",
+    "expo-status-bar": "^57.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-native": "^0.86.0",
+    "react-native-gesture-handler": "^3.0.0",
+    "react-native-safe-area-context": "^5.8.0",
+    "react-native-screens": "^4.25.0",
+    "react-native-svg": "^15.15.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}

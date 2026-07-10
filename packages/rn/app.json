@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "murasaki-rn",
+    "slug": "murasaki-rn",
+    "version": "0.1.0",
+    "scheme": "murasaki-rn",
+    "platforms": ["ios", "android", "web"],
+    "newArchEnabled": true
+  }
+}

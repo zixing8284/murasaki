@@ -8,6 +8,7 @@ import { areCrtTuningSettingsEqual, useCrtTuning } from '../../../hooks/use-crt-
 import { useDesktopBgColor } from '../../../hooks/use-desktop-bg-color'
 import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../../../hooks/use-icon-label-bg-color'
+import { useMonitorFrame } from '../../../hooks/use-monitor-frame'
 import { areWallpaperSettingsEqual, useWallpaper } from '../../../hooks/use-wallpaper'
 import { listWallpaperImages } from '../../../lib/wallpaper-storage'
 import { AppearanceTab } from './appearance-tab'
@@ -20,6 +21,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const actions = useProcessActions()
   const [currentCrtEnabled, setCrtEnabled] = useCrtEffect()
   const [currentCrtTuning, setCrtTuning] = useCrtTuning()
+  const [currentMonitorFrame, setMonitorFrame] = useMonitorFrame()
   const [currentGradientEnabled, setGradientEnabled] = useGradientTitlebar()
   const [currentWallpaper, setWallpaper] = useWallpaper()
   const [currentDesktopBgColor, setDesktopBgColor] = useDesktopBgColor()
@@ -29,6 +31,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     selectedTheme: currentThemeId,
     committedCrtEnabled: currentCrtEnabled,
     committedCrtTuning: currentCrtTuning,
+    committedMonitorFrame: currentMonitorFrame,
     committedGradientEnabled: currentGradientEnabled,
     selectedWallpaper: currentWallpaper,
     selectedDesktopBgColor: currentDesktopBgColor,
@@ -56,6 +59,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const hasPendingChanges = form.selectedTheme !== currentThemeId
     || currentCrtEnabled !== form.committedCrtEnabled
     || !areCrtTuningSettingsEqual(currentCrtTuning, form.committedCrtTuning)
+    || currentMonitorFrame !== form.committedMonitorFrame
     || currentGradientEnabled !== form.committedGradientEnabled
     || !areWallpaperSettingsEqual(form.selectedWallpaper, form.committedWallpaper)
     || form.selectedDesktopBgColor !== form.committedDesktopBgColor
@@ -68,6 +72,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     // CRT/gradient stay live; wallpaper and colors are committed from the staged form values.
     dispatch({ type: 'SET_COMMITTED_CRT_ENABLED', value: currentCrtEnabled })
     dispatch({ type: 'SET_COMMITTED_CRT_TUNING', value: currentCrtTuning })
+    dispatch({ type: 'SET_COMMITTED_MONITOR_FRAME', value: currentMonitorFrame })
     dispatch({ type: 'SET_COMMITTED_GRADIENT_ENABLED', value: currentGradientEnabled })
     setWallpaper(form.selectedWallpaper)
     setDesktopBgColor(form.selectedDesktopBgColor)
@@ -89,6 +94,9 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     }
     if (!areCrtTuningSettingsEqual(currentCrtTuning, form.committedCrtTuning)) {
       setCrtTuning(form.committedCrtTuning)
+    }
+    if (currentMonitorFrame !== form.committedMonitorFrame) {
+      setMonitorFrame(form.committedMonitorFrame)
     }
     if (currentGradientEnabled !== form.committedGradientEnabled) {
       setGradientEnabled(form.committedGradientEnabled)
@@ -156,6 +164,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         />
 
         <AppearanceTab
+          currentMonitorFrame={currentMonitorFrame}
+          onMonitorFrameChange={setMonitorFrame}
           currentCrtEnabled={currentCrtEnabled}
           onCrtEnabledChange={setCrtEnabled}
           currentCrtTuning={currentCrtTuning}

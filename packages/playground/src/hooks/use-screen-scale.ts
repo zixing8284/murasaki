@@ -29,7 +29,7 @@ export const SCREEN_SCALE_OPTIONS: ScreenScaleOption[] = [
   { label: '200%', value: 2 },
 ]
 
-const DEFAULT_SCALE: ScreenScale = 1
+const DEFAULT_SCALE: ScreenScale = 'fit'
 
 const ALLOWED_SCALES = new Set<number>(
   SCREEN_SCALE_OPTIONS.map(o => o.value).filter((v): v is number => typeof v === 'number'),

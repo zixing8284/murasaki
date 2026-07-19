@@ -33,6 +33,8 @@ const CRT_PRESETS = {
 } as const
 
 interface AppearanceTabProps {
+  currentMonitorFrame: boolean
+  onMonitorFrameChange: (value: boolean) => void
   currentCrtEnabled: boolean
   onCrtEnabledChange: (value: boolean) => void
   currentCrtTuning: CrtTuningSettings
@@ -42,6 +44,8 @@ interface AppearanceTabProps {
 }
 
 export function AppearanceTab({
+  currentMonitorFrame,
+  onMonitorFrameChange,
   currentCrtEnabled,
   onCrtEnabledChange,
   currentCrtTuning,
@@ -56,6 +60,13 @@ export function AppearanceTab({
 
   return (
     <TabPanel value="appearance" className="flex flex-col gap-3 p-3">
+      <Checkbox
+        checked={currentMonitorFrame}
+        onCheckedChange={onMonitorFrameChange}
+      >
+        Show CRT monitor frame
+      </Checkbox>
+
       <Checkbox
         checked={currentCrtEnabled}
         onCheckedChange={onCrtEnabledChange}

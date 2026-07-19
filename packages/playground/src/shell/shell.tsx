@@ -14,6 +14,7 @@ import { useDesktopBgColor } from '../hooks/use-desktop-bg-color'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../hooks/use-icon-label-bg-color'
 import { useMonitorFrame } from '../hooks/use-monitor-frame'
+import { usePinchZoomPause } from '../hooks/use-pinch-zoom-pause'
 import { SCREEN_SCALE_OPTIONS, useScreenScale } from '../hooks/use-screen-scale'
 import { SCREEN_SIZE_PRESETS, useScreenSize } from '../hooks/use-screen-size'
 import { useShaderGlass } from '../hooks/use-shader-glass'
@@ -78,6 +79,11 @@ export function Shell(): React.ReactElement {
   const dragDepthRef = useRef(0)
   const [crtEnabled] = useCrtEffect()
   const [crtTuning] = useCrtTuning()
+
+  // Pause the full-screen CRT animations during trackpad pinch-zoom so they do
+  // not compete with the browser's per-frame page re-rasterization. Only wires
+  // up listeners while the CRT effect is active.
+  usePinchZoomPause(crtEnabled)
   const [monitorFrame] = useMonitorFrame()
   const shaderGlass = useShaderGlass(screenRef)
   const [gradientEnabled] = useGradientTitlebar()
@@ -158,14 +164,21 @@ export function Shell(): React.ReactElement {
   const isCustom = isCustomWallpaperId(wallpaperSettings.id)
   const wallpaperSrc = isCustom ? customWallpaperUrl : wallpaperEntry?.src
   const isNoneWallpaper = wallpaperSettings.id === 'none'
+  // Note: avoid `background-attachment: fixed` (`bg-fixed`). A viewport-fixed
+  // background cannot be promoted to its own compositor layer, so the browser
+  // must repaint the full-viewport wallpaper on every frame — this is the main
+  // cause of stutter during trackpad pinch-zoom (which re-rasterizes the page
+  // per frame), especially with the animated tiled default wallpaper. The
+  // desktop never scrolls and fills the viewport in the default layout, so
+  // scroll-attachment renders identically while staying compositable.
   const wallpaperBgClasses = wallpaperSrc
     ? wallpaperSettings.mode === 'stretch'
       ? 'bg-no-repeat bg-center bg-cover'
       : wallpaperSettings.mode === 'fill'
-        ? 'bg-no-repeat bg-center bg-size-[100%_100%] bg-fixed'
+        ? 'bg-no-repeat bg-center bg-size-[100%_100%]'
         : wallpaperSettings.mode === 'centered'
           ? 'bg-no-repeat bg-center bg-contain'
-          : 'bg-size-[initial] bg-repeat bg-center bg-fixed'
+          : 'bg-size-[initial] bg-repeat bg-center'
     : ''
 
   const screenStyle = {

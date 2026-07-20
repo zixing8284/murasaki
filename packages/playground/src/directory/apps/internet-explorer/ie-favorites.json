@@ -1,0 +1,29 @@
+[
+  {
+    "type": "folder",
+    "name": "My Homepage",
+    "children": [
+      {
+        "type": "link",
+        "name": "zixing8284.github.io",
+        "url": "https://zixing8284.github.io/"
+      }
+    ]
+  },
+  {
+    "type": "folder",
+    "name": "My Projects",
+    "children": [
+      {
+        "type": "link",
+        "name": "vite-win-process",
+        "url": "https://zixing8284.github.io/vite-win-process/"
+      },
+      {
+        "type": "link",
+        "name": "fancy-term",
+        "url": "https://fancy-term.vercel.app/"
+      }
+    ]
+  }
+]

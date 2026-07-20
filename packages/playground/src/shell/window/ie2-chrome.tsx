@@ -32,6 +32,10 @@ interface Ie2ChromeProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Toggle handler for the Favorites toolbar button. When omitted the button is disabled. */
+  onFavoritesClick?: () => void
+  /** Renders a sidebar (e.g. Favorites) next to the page. Receives a `navigate` helper. */
+  renderSidebar?: (navigate: (url: string) => void) => ReactNode
 }
 
 interface ToolbarButtonProps {
@@ -41,9 +45,17 @@ interface ToolbarButtonProps {
   onClick?: () => void
 }
 
+function resolveIframeSrc(path: string): string {
+  if (path.startsWith('https://') || path.startsWith('http://') || path.startsWith('//'))
+    return path
+  return assetPath(path)
+}
+
 function displayAddressFromPath(path: string): string {
-  const localUrl = new URL(path, 'http://murasaki.local')
-  return localUrl.href
+  // resolveIframeSrc handles external URLs unchanged and applies the Vite
+  // BASE_URL prefix to local asset paths, giving us a root-relative or
+  // absolute URL that new URL() can then anchor to the real runtime origin.
+  return new URL(resolveIframeSrc(path), window.location.href).href
 }
 
 function getIframeAddress(iframe: HTMLIFrameElement, fallbackSrc: string): string {
@@ -69,12 +81,25 @@ function internetExplorerTitle(pageTitle: string | undefined): string {
   return `${trimmedTitle}${suffix}`
 }
 
-function getIframeTitle(iframe: HTMLIFrameElement): string {
+/** Best-effort title derived from a URL's hostname, for cross-origin pages whose document title cannot be read. */
+function titleFromUrl(url: string): string {
+  try {
+    const resolved = new URL(resolveIframeSrc(url), window.location.href)
+    // Same-origin pages are local assets; derive no hostname title for them.
+    if (resolved.origin === window.location.origin)
+      return internetExplorerTitle(undefined)
+    return internetExplorerTitle(resolved.hostname)
+  }
+  catch { /* invalid URL */ }
+  return internetExplorerTitle(undefined)
+}
+
+function getIframeTitle(iframe: HTMLIFrameElement, fallbackUrl: string): string {
   try {
     return internetExplorerTitle(iframe.contentDocument?.title ?? iframe.contentWindow?.document.title)
   }
   catch {
-    return internetExplorerTitle(FALLBACK_PAGE_TITLE)
+    return titleFromUrl(fallbackUrl)
   }
 }
 
@@ -196,11 +221,14 @@ export function Ie2Chrome({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  onFavoritesClick,
+  renderSidebar,
 }: Ie2ChromeProps): ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
   const iframeElementRef = useRef<HTMLIFrameElement | null>(null)
   const cleanupMetadataSyncRef = useRef<(() => void) | undefined>(undefined)
+  const currentSrcRef = useRef(src)
   const [address, setAddress] = useState(() => displayAddressFromPath(src))
   const { iframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
     windowId,
@@ -221,8 +249,8 @@ export function Ie2Chrome({
   }
 
   const syncFrameMetadata = (iframe: HTMLIFrameElement): void => {
-    setAddress(getIframeAddress(iframe, src))
-    actions.title(windowId, getIframeTitle(iframe))
+    setAddress(getIframeAddress(iframe, currentSrcRef.current))
+    actions.title(windowId, getIframeTitle(iframe, currentSrcRef.current))
   }
 
   const handleIframeLoad = (event: SyntheticEvent<HTMLIFrameElement>): void => {
@@ -233,18 +261,30 @@ export function Ie2Chrome({
     cleanupMetadataSyncRef.current = installFrameMetadataSync(iframe, () => syncFrameMetadata(iframe))
   }
 
-  const handleHome = (): void => {
+  // Navigate the embedded page and eagerly sync the address bar, window title,
+  // and taskbar running-task label. The load handler later reconciles with the
+  // real document title once the page settles (same-origin) or keeps the
+  // hostname-derived title (cross-origin).
+  const navigateTo = (url: string): void => {
     const iframe = iframeElementRef.current
     if (!iframe)
       return
 
-    const homeSrc = assetPath(src)
+    currentSrcRef.current = url
+    setAddress(displayAddressFromPath(url))
+    actions.title(windowId, titleFromUrl(url))
+
+    const target = resolveIframeSrc(url)
     try {
-      iframe.contentWindow?.location.assign(homeSrc)
+      iframe.contentWindow?.location.assign(target)
     }
     catch {
-      iframe.src = homeSrc
+      iframe.src = target
     }
+  }
+
+  const handleHome = (): void => {
+    navigateTo(src)
   }
 
   const handleRefresh = (): void => {
@@ -371,7 +411,7 @@ export function Ie2Chrome({
           <ToolbarButton label="Search" disabled>
             <ToolbarImageIcon src={ICONS.search} />
           </ToolbarButton>
-          <ToolbarButton label="Favorites" disabled>
+          <ToolbarButton label="Favorites" disabled={!onFavoritesClick} onClick={onFavoritesClick}>
             <ToolbarImageIcon src={ICONS.favorites} />
           </ToolbarButton>
           <ToolbarSeparator />
@@ -405,40 +445,43 @@ export function Ie2Chrome({
         </div>
       </InactiveClickGuard>
 
-      <div
-        className="relative flex-1 min-h-0 bg-(--window) overscroll-contain touch-none"
-        onPointerDown={(event) => {
-          event.stopPropagation()
-          actions.activate(windowId)
-          focusIframe()
-        }}
-        onPointerLeave={cancelIframeInteraction}
-      >
-        {!iframeLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-(--button-face)">
-            <span className="text-xs text-(--window-text)">Loading…</span>
-          </div>
-        )}
-        <iframe
-          ref={setIframeRef}
-          src={assetPath(src)}
-          sandbox={sandbox}
-          referrerPolicy={referrerPolicy}
-          className={`block size-full border-none bg-(--window) ${iframeLoaded ? '' : 'opacity-0'}`}
-          title={win.process.title}
-          onLoad={handleIframeLoad}
-        />
-        {!win.isActive && (
-          <div
-            aria-hidden
-            className="absolute inset-0 cursor-default"
-            onPointerDown={(event) => {
-              event.stopPropagation()
-              actions.activate(windowId)
-              focusIframe()
-            }}
+      <div className="flex flex-1 min-h-0 min-w-0">
+        {renderSidebar?.(navigateTo)}
+        <div
+          className="relative flex-1 min-h-0 bg-(--window) overscroll-contain touch-none"
+          onPointerDown={(event) => {
+            event.stopPropagation()
+            actions.activate(windowId)
+            focusIframe()
+          }}
+          onPointerLeave={cancelIframeInteraction}
+        >
+          {!iframeLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-(--button-face)">
+              <span className="text-xs text-(--window-text)">Loading…</span>
+            </div>
+          )}
+          <iframe
+            ref={setIframeRef}
+            src={resolveIframeSrc(src)}
+            sandbox={sandbox}
+            referrerPolicy={referrerPolicy}
+            className={`block size-full border-none bg-(--window) ${iframeLoaded ? '' : 'opacity-0'}`}
+            title={win.process.title}
+            onLoad={handleIframeLoad}
           />
-        )}
+          {!win.isActive && (
+            <div
+              aria-hidden
+              className="absolute inset-0 cursor-default"
+              onPointerDown={(event) => {
+                event.stopPropagation()
+                actions.activate(windowId)
+                focusIframe()
+              }}
+            />
+          )}
+        </div>
       </div>
 
       <WindowStatusBar className="shrink-0 pt-1">

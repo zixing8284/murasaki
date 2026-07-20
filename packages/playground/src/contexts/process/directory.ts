@@ -137,6 +137,18 @@ const directory = {
     showOnDesktop: true,
     window: { type: 'none' },
   },
+  internetexplorer: {
+    name: 'Internet Explorer',
+    Component: lazy(() =>
+      import('../../directory/apps/internet-explorer/internet-explorer').then(m => ({ default: m.InternetExplorer })),
+    ),
+    defaultTitle: 'Microsoft Internet Explorer',
+    icon: { sm: '/icons/windows98-icons/png/msie2-3.png', lg: '/icons/windows98-icons/png/msie2-0.png' },
+    singleton: true,
+    defaultSize: { width: 900, height: 620 },
+    defaultPosition: { top: '5%', left: '5%' },
+    window: { type: 'none' },
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory
@@ -161,6 +173,7 @@ export const APP_ID = {
   MEDIA_PLAYER: 'mediaplayer',
   OUTLOOK_EXPRESS: 'outlookexpress',
   WEBAMP: 'webamp',
+  INTERNET_EXPLORER: 'internetexplorer',
 } as const satisfies Record<string, AppId>
 
 export function getStartupAppIds(): AppId[] {

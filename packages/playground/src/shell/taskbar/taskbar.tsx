@@ -41,6 +41,10 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onSh
     open(APP_ID.OUTLOOK_EXPRESS)
   }
 
+  const handleOpenInternetExplorer = (): void => {
+    open(APP_ID.INTERNET_EXPLORER)
+  }
+
   const handleOpenWelcome = (): void => {
     open(APP_ID.WELCOME)
   }
@@ -50,6 +54,7 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onSh
     ...QUICK_LAUNCH_LABELS[index],
     ...(index === 0 ? { onClick: onShowDesktop } : {}),
     ...(index === 1 ? { onClick: handleOpenOutlookExpress } : {}),
+    ...(index === 2 ? { onClick: handleOpenInternetExplorer } : {}),
     ...(index === 3 ? { onClick: handleOpenWelcome } : {}),
   }))
 

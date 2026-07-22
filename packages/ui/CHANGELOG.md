@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- e397189: Add `font-display: swap` to all @font-face declarations to improve font loading behavior and reduce FOIT (Flash of Invisible Text)
+
 ## 0.3.0
 
 ### Minor Changes

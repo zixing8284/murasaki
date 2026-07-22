@@ -110,6 +110,7 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - Use Conventional Commits.
 - Use branch names like `type/description`.
 - Do not assume repo hooks will fix issues automatically; run `pnpm lint` yourself.
+- When a change under `packages/ui` affects the published package contents, behavior, styling, or API, add a changeset.
 - Publishing `packages/ui` is manual: bump the package version, run `pnpm ui:build`, then publish from `packages/ui`.
 
 ## Agent skills

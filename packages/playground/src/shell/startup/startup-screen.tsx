@@ -1,5 +1,6 @@
 import type { StartupPreloadState } from './use-startup-preload'
 import { ProgressIndicator } from '@murasaki-io/react98'
+import { assetPath } from '../../lib/asset-path'
 import { STARTUP_ARTWORK_DATA_URL } from './startup-artwork-data'
 
 /**
@@ -50,7 +51,7 @@ export function StartupScreen({ preload, waitingForDesktopFiles }: StartupScreen
           key={c.path}
           aria-hidden
           className="pointer-events-none fixed size-px opacity-0"
-          style={{ cursor: `url("${c.path}"), ${c.fallback}` }}
+          style={{ cursor: `url("${assetPath(c.path)}"), ${c.fallback}` }}
         />
       ))}
       <div className="w-full max-w-107.5 bg-(--button-face) shadow-(--shadow-raised)">

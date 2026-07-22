@@ -152,6 +152,7 @@ html,
     src: url("./assets/fonts/marlett.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
   }
 
   @font-face {
@@ -160,6 +161,7 @@ html,
       url("./assets/fonts/ms_sans_serif.woff") format("woff");
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
   }
 
   @font-face {
@@ -168,6 +170,7 @@ html,
       url("./assets/fonts/ms_sans_serif_bold.woff") format("woff");
     font-weight: bold;
     font-style: normal;
+    font-display: swap;
   }
 
   * {

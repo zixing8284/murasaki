@@ -51,11 +51,25 @@ function resolveIframeSrc(path: string): string {
   return assetPath(path)
 }
 
+/**
+ * Decodes percent-encoded sequences (e.g. Chinese characters) so the address
+ * bar reads like a real browser's Unicode display. decodeURI preserves reserved
+ * delimiters (`/`, `?`, `#`, `&`, …); malformed input falls back to the raw URL.
+ */
+function decodeAddressForDisplay(url: string): string {
+  try {
+    return decodeURI(url)
+  }
+  catch {
+    return url
+  }
+}
+
 function displayAddressFromPath(path: string): string {
   // resolveIframeSrc handles external URLs unchanged and applies the Vite
   // BASE_URL prefix to local asset paths, giving us a root-relative or
   // absolute URL that new URL() can then anchor to the real runtime origin.
-  return new URL(resolveIframeSrc(path), window.location.href).href
+  return decodeAddressForDisplay(new URL(resolveIframeSrc(path), window.location.href).href)
 }
 
 function getIframeAddress(iframe: HTMLIFrameElement, fallbackSrc: string): string {

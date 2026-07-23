@@ -22,6 +22,9 @@ import { RndWindow } from './rnd-window'
 const IE_TITLE_SUFFIX = 'Microsoft Internet Explorer'
 const FALLBACK_PAGE_TITLE = 'New Tab - Microsoft Internet Explorer'
 
+/** Keep the loading bar on screen at least this long so instant local loads still animate. */
+const MIN_LOADING_MS = 1200
+
 const ICONS = IE_TOOLBAR_ICONS
 
 interface Ie2ChromeProps {
@@ -195,7 +198,11 @@ function patchHistoryMethod(
   }
 }
 
-function installFrameMetadataSync(iframe: HTMLIFrameElement, sync: () => void): (() => void) | undefined {
+function installFrameMetadataSync(
+  iframe: HTMLIFrameElement,
+  sync: () => void,
+  onNavigateStart?: () => void,
+): (() => void) | undefined {
   try {
     const frameWindow = iframe.contentWindow
     const titleElement = iframe.contentDocument?.querySelector('title')
@@ -211,12 +218,16 @@ function installFrameMetadataSync(iframe: HTMLIFrameElement, sync: () => void): 
 
     frameWindow.addEventListener('hashchange', handleNavigation)
     frameWindow.addEventListener('popstate', handleNavigation)
+    if (onNavigateStart)
+      frameWindow.addEventListener('beforeunload', onNavigateStart)
     if (observer && titleElement)
       observer.observe(titleElement, { childList: true, characterData: true, subtree: true })
 
     return () => {
       frameWindow.removeEventListener('hashchange', handleNavigation)
       frameWindow.removeEventListener('popstate', handleNavigation)
+      if (onNavigateStart)
+        frameWindow.removeEventListener('beforeunload', onNavigateStart)
       restorePushState()
       restoreReplaceState()
       observer?.disconnect()
@@ -243,7 +254,10 @@ export function Ie2Chrome({
   const iframeElementRef = useRef<HTMLIFrameElement | null>(null)
   const cleanupMetadataSyncRef = useRef<(() => void) | undefined>(undefined)
   const currentSrcRef = useRef(src)
+  const loadingStartRef = useRef<number>(0)
+  const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const [address, setAddress] = useState(() => displayAddressFromPath(src))
+  const [loadingUrl, setLoadingUrl] = useState<string | null>(() => displayAddressFromPath(src))
   const { iframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
     windowId,
   })
@@ -267,12 +281,45 @@ export function Ie2Chrome({
     actions.title(windowId, getIframeTitle(iframe, currentSrcRef.current))
   }
 
+  // Show the loading bar and record when loading began.
+  const beginLoading = (url: string): void => {
+    if (loadingTimerRef.current !== undefined) {
+      clearTimeout(loadingTimerRef.current)
+      loadingTimerRef.current = undefined
+    }
+    loadingStartRef.current = Date.now()
+    setLoadingUrl(url)
+  }
+
+  // Hide the loading bar, but keep it visible for at least MIN_LOADING_MS so
+  // instant local navigations still show a perceptible progress animation.
+  const endLoading = (): void => {
+    const elapsed = Date.now() - loadingStartRef.current
+    const remaining = MIN_LOADING_MS - elapsed
+    if (remaining <= 0) {
+      setLoadingUrl(null)
+      return
+    }
+    if (loadingTimerRef.current !== undefined)
+      clearTimeout(loadingTimerRef.current)
+    loadingTimerRef.current = setTimeout(() => {
+      loadingTimerRef.current = undefined
+      setLoadingUrl(null)
+    }, remaining)
+  }
+
   const handleIframeLoad = (event: SyntheticEvent<HTMLIFrameElement>): void => {
     const iframe = event.currentTarget
 
+    endLoading()
     cleanupMetadataSyncRef.current?.()
     syncFrameMetadata(iframe)
-    cleanupMetadataSyncRef.current = installFrameMetadataSync(iframe, () => syncFrameMetadata(iframe))
+    // onNavigateStart fires on same-origin beforeunload to show the loading bar
+    // before the new page arrives; cross-origin navigations stay at "Done"
+    const onNavigateStart = (): void => {
+      beginLoading(getIframeAddress(iframe, currentSrcRef.current))
+    }
+    cleanupMetadataSyncRef.current = installFrameMetadataSync(iframe, () => syncFrameMetadata(iframe), onNavigateStart)
   }
 
   // Navigate the embedded page and eagerly sync the address bar, window title,
@@ -285,7 +332,9 @@ export function Ie2Chrome({
       return
 
     currentSrcRef.current = url
-    setAddress(displayAddressFromPath(url))
+    const displayUrl = displayAddressFromPath(url)
+    setAddress(displayUrl)
+    beginLoading(displayUrl)
     actions.title(windowId, titleFromUrl(url))
 
     const target = resolveIframeSrc(url)
@@ -315,9 +364,14 @@ export function Ie2Chrome({
   }
 
   useEffect(() => {
+    loadingStartRef.current = Date.now()
     return () => {
       cleanupMetadataSyncRef.current?.()
       cleanupMetadataSyncRef.current = undefined
+      if (loadingTimerRef.current !== undefined) {
+        clearTimeout(loadingTimerRef.current)
+        loadingTimerRef.current = undefined
+      }
     }
   }, [])
 
@@ -499,11 +553,35 @@ export function Ie2Chrome({
       </div>
 
       <WindowStatusBar className="shrink-0 pt-1">
-        <WindowStatusBarField className="truncate">
-          {iframeLoaded ? 'Done' : 'Loading...'}
+        <WindowStatusBarField className="flex min-w-0 items-center gap-1">
+          <img
+            src={assetPath(ICONS.html)}
+            alt=""
+            className="size-4 shrink-0 object-contain pixelated"
+            draggable={false}
+          />
+          <span className="min-w-0 truncate">
+            {loadingUrl !== null ? `Opening page ${loadingUrl}` : 'Done'}
+          </span>
         </WindowStatusBarField>
-        <WindowStatusBarField grow={false} className="w-30 truncate">
-          Internet
+        <WindowStatusBarField grow={false} className="w-36 p-0.5">
+          <div className="relative h-full min-h-3 overflow-hidden bg-(--button-face)">
+            {loadingUrl !== null && (
+              <div
+                className="absolute top-px bottom-px left-0 animate-ie-loading bg-(--hilight)"
+              />
+            )}
+          </div>
+        </WindowStatusBarField>
+        <WindowStatusBarField grow={false} className="w-10" />
+        <WindowStatusBarField grow={false} className="flex w-32 items-center gap-1">
+          <img
+            src={assetPath('/icons/misc/network.png')}
+            alt=""
+            className="size-4 shrink-0 object-contain pixelated"
+            draggable={false}
+          />
+          <span>Internet</span>
         </WindowStatusBarField>
       </WindowStatusBar>
     </RndWindow>

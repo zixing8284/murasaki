@@ -43,6 +43,17 @@
 @theme {
   --animate-now-playing-bar: now-playing-bar 0.8s ease-in-out infinite;
   --animate-startup-loading-bar: startup-loading-bar 1.4s steps(15) infinite;
+  --animate-ie-loading: ie-loading 1.9s cubic-bezier(0.2, 0.95, 0.35, 1) forwards;
+
+  @keyframes ie-loading {
+    0% { width: 0%; }
+    18% { width: 52%; }
+    45% { width: 78%; }
+    72% { width: 90%; }
+    84% { width: 93%; }
+    92% { width: 93%; }
+    100% { width: 100%; }
+  }
 
   @keyframes now-playing-bar {
     0%, 100% {

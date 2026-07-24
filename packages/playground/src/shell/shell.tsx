@@ -87,6 +87,15 @@ export function Shell(): React.ReactElement {
   const [monitorFrame] = useMonitorFrame()
   const shaderGlass = useShaderGlass(screenRef)
   const [gradientEnabled] = useGradientTitlebar()
+
+  // Stop CRT Glass when the monitor frame is hidden — the effect is only
+  // meaningful inside the bezel, and leaving the capture stream running
+  // wastes resources when the controls and output panel are gone.
+  useEffect(() => {
+    if (!monitorFrame && shaderGlass.active) {
+      shaderGlass.stop()
+    }
+  }, [monitorFrame, shaderGlass])
   const [wallpaperSettings] = useWallpaper()
   const [desktopBgColor] = useDesktopBgColor()
   const [iconLabelBgColor] = useIconLabelBgColor()

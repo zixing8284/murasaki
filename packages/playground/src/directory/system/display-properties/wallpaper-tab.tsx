@@ -16,7 +16,7 @@ import {
 } from '../../../lib/wallpapers'
 import { WallpaperMonitor } from './wallpaper-monitor'
 
-const WALLPAPER_LIST_ICON = '/icons/windows98-icons/png/paint_file-0.png'
+const WALLPAPER_LIST_ICON = '/icons/paint-file-16.png'
 
 function formatCustomWallpaperLabel(name: string): string {
   const base = name

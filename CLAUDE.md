@@ -86,7 +86,7 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - App metadata is registered in `packages/playground/src/contexts/process/directory.ts`.
 - Window implementations live under `packages/playground/src/directory/`.
 - The Component Docs playground app is an iframe wrapper around `/programs/docs/index.html`; it should not own a second docs runtime.
-- Playground reusable icons belong under `packages/playground/public/icons/` (especially `icons/windows98-icons/png/`). Use `packages/playground/public/img/` for content imagery, wallpapers, backgrounds, and app-specific bitmaps. For small symbolic UI assets, search `public/icons/` first.
+- Playground reusable icons belong under `packages/playground/public/icons/` as flat `{name}-{size}.png` files. Use `packages/playground/public/wallpaper/` for wallpapers and backgrounds. For small symbolic UI assets, search `public/icons/` first.
 
 ## Docs Architecture
 

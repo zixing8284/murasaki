@@ -421,7 +421,7 @@ export function Ie2Chrome({
               <MenuItem reserveIconSpace disabled>Toolbars</MenuItem>
               <MenuItem reserveIconSpace disabled>Status Bar</MenuItem>
               <MenuSeparator />
-              <MenuItem icon={<img src={assetPath('/icons/misc/icon-refresh.png')} alt="" className="size-4 object-contain pixelated" draggable={false} />} onClick={handleRefresh}>Refresh</MenuItem>
+              <MenuItem icon={<img src={assetPath('/icons/refresh-20.png')} alt="" className="size-4 object-contain pixelated" draggable={false} />} onClick={handleRefresh}>Refresh</MenuItem>
               <MenuItem reserveIconSpace disabled>Source</MenuItem>
               <MenuItem reserveIconSpace disabled>Full Screen</MenuItem>
             </WindowMenuBarContent>
@@ -576,7 +576,7 @@ export function Ie2Chrome({
         <WindowStatusBarField grow={false} className="w-10" />
         <WindowStatusBarField grow={false} className="flex w-32 items-center gap-1">
           <img
-            src={assetPath('/icons/misc/network.png')}
+            src={assetPath('/icons/network-16.png')}
             alt=""
             className="size-4 shrink-0 object-contain pixelated"
             draggable={false}

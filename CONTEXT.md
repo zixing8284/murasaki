@@ -57,5 +57,5 @@ A layout rule for Windows 98 pixel-font text where the element that clips text a
 _Avoid_: Flush clipped glyph, nested zero-padding overflow clip, font-smoothing workaround
 
 **Playground public asset boundary**:
-A playground convention that keeps reusable semantic icons under `packages/playground/public/icons/` and content/decorative bitmaps under `packages/playground/public/img/`; the `img` directory name stays singular.
-_Avoid_: New semantic icons in `public/img`, unsearchable one-off asset paths
+A playground convention that keeps reusable semantic icons under `packages/playground/public/icons/` as flat `{name}-{size}.png` files, and wallpapers/backgrounds under `packages/playground/public/wallpaper/`.
+_Avoid_: New semantic icons in `public/wallpaper`, unsearchable one-off asset paths

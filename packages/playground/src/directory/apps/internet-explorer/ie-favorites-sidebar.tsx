@@ -5,9 +5,9 @@ import { assetPath } from '../../../lib/asset-path'
 import favoritesData from './ie-favorites.json'
 
 const ICON = {
-  folderClosed: '/icons/windows98-icons/png/directory_closed_cool-4.png',
-  folderOpen: '/icons/windows98-icons/png/directory_open_file_mydocs-0.png',
-  html: '/icons/windows98-icons/png/html-0.png',
+  folderClosed: '/icons/folder-closed-16.png',
+  folderOpen: '/icons/folder-my-docs-32.png',
+  html: '/icons/html-file-16.png',
 }
 
 interface FavoritesLink {
@@ -88,7 +88,7 @@ export function IeFavoritesSidebar({ onNavigate, onClose }: IeFavoritesSidebarPr
     <div className="m-0.5 flex w-44 shrink-0 flex-col overflow-hidden shadow-(--shadow-border-field)">
       <div className="flex shrink-0 items-center gap-1.5 bg-(--button-face) px-1.5 py-0.5">
         <img
-          src={assetPath('/icons/windows98-icons/png/directory_favorites-1.png')}
+          src={assetPath('/icons/favorites-16.png')}
           alt=""
           className="size-4 shrink-0 object-contain pixelated"
           draggable={false}

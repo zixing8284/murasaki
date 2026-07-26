@@ -22,7 +22,7 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
     <DialogWindow title="About Murasaki" onClose={onClose}>
       <div className="flex flex-col items-center gap-3 p-4 w-72">
         <img
-          src={assetPath('/icons/windows98-icons/png/user_computer-0.png')}
+          src={assetPath('/icons/my-computer-16.png')}
           alt="welcome"
           className="size-12 pixelated"
           draggable={false}
@@ -68,7 +68,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
       <ScrollArea className="flex-1 min-h-0 bg-(--window) p-4 text-(--window-text)">
         <div className="flex items-start gap-4 mb-4">
           <img
-            src={assetPath('/icons/windows98-icons/png/user_computer-0.png')}
+            src={assetPath('/icons/my-computer-16.png')}
             alt="welcome"
             className="size-16 pixelated shrink-0"
             draggable={false}

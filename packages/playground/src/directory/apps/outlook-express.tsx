@@ -24,7 +24,7 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
     <DialogWindow title="About Outlook Express" onClose={onClose}>
       <div className="flex flex-col items-center gap-3 p-4 w-64">
         <img
-          src={assetPath('/icons/windows98-icons/png/outlook_express-2.png')}
+          src={assetPath('/icons/outlook-express-16.png')}
           alt=""
           className="size-12 pixelated"
           draggable={false}

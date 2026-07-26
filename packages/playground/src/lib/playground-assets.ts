@@ -22,40 +22,40 @@ export const ASSET_MANIFEST_PUBLIC_PATH = '/playground-assets.json'
 // ---------------------------------------------------------------------------
 
 export const DESKTOP_WALLPAPER_IMAGE = '/wallpaper/animspace.gif'
-export const DESKTOP_MEDIA_ICON = '/icons/windows98-icons/png/directory_open_file_mydocs-0.png'
+export const DESKTOP_MEDIA_ICON = '/icons/folder-my-docs-32.png'
 
 // ---------------------------------------------------------------------------
 // Start menu icons
 // ---------------------------------------------------------------------------
 
 export const START_MENU_ICONS = {
-  windowsUpdate: '/icons/windows98-icons/png/windows_update_small-0.png',
-  programs: '/icons/windows98-icons/png/file_program_group-1.png',
-  documents: '/icons/windows98-icons/png/directory_open_file_mydocs-2.png',
-  settings: '/icons/windows98-icons/png/settings_gear-1.png',
-  find: '/icons/windows98-icons/png/search_file-2.png',
-  help: '/icons/windows98-icons/png/help_book_small-1.png',
-  run: '/icons/windows98-icons/png/console_prompt-1.png',
-  logOff: '/icons/windows98-icons/png/users_key-1.png',
-  shutDown: '/icons/windows98-icons/png/shut_down_normal-1.png',
+  windowsUpdate: '/icons/windows-update-16.png',
+  programs: '/icons/program-group-16.png',
+  documents: '/icons/folder-my-docs-16.png',
+  settings: '/icons/settings-16.png',
+  find: '/icons/search-file-16.png',
+  help: '/icons/help-16.png',
+  run: '/icons/console-prompt-16.png',
+  logOff: '/icons/log-off-16.png',
+  shutDown: '/icons/shut-down-16.png',
   // programs submenu
-  accessories: '/icons/windows98-icons/png/file_program_group-1.png',
-  notepad: '/icons/windows98-icons/png/notepad-0.png',
-  calculator: '/icons/windows98-icons/png/calculator-1.png',
-  paint: '/icons/windows98-icons/png/paint_old-1.png',
-  internetExplorer: '/icons/windows98-icons/png/msie2-3.png',
-  welcome: '/icons/windows98-icons/png/user_computer-1.png',
-  mediaPlayer: '/icons/windows98-icons/png/media_player-1.png',
-  webamp: '/icons/desktop/Webamp16.png',
-  themeDesigner: '/icons/windows98-icons/png/themes-1.png',
+  accessories: '/icons/program-group-16.png',
+  notepad: '/icons/notepad-16.png',
+  calculator: '/icons/calculator-16.png',
+  paint: '/icons/paint-16.png',
+  internetExplorer: '/icons/internet-explorer-16.png',
+  welcome: '/icons/my-computer-32.png',
+  mediaPlayer: '/icons/media-player-16.png',
+  webamp: '/icons/webamp-16.png',
+  themeDesigner: '/icons/themes-16.png',
   // settings submenu
-  controlPanel: '/icons/windows98-icons/png/directory_control_panel-1.png',
-  printers: '/icons/windows98-icons/png/printer-1.png',
-  taskbar: '/icons/windows98-icons/png/start_menu_shortcuts.png',
+  controlPanel: '/icons/control-panel-16.png',
+  printers: '/icons/printer-16.png',
+  taskbar: '/icons/taskbar-32.png',
   // find submenu
-  findFiles: '/icons/windows98-icons/png/search_file-2.png',
-  findComputer: '/icons/windows98-icons/png/search_computer-1.png',
-  findWeb: '/icons/windows98-icons/png/search_web-1.png',
+  findFiles: '/icons/search-file-16.png',
+  findComputer: '/icons/search-computer-16.png',
+  findWeb: '/icons/search-web-16.png',
 } as const
 
 // ---------------------------------------------------------------------------
@@ -63,45 +63,45 @@ export const START_MENU_ICONS = {
 // ---------------------------------------------------------------------------
 
 export const TASKBAR_QUICK_LAUNCH_ICONS = [
-  '/icons/windows98-icons/png/desktop-3.png',
-  '/icons/windows98-icons/png/outlook_express-2.png',
-  '/icons/windows98-icons/png/msie2-3.png',
-  '/icons/windows98-icons/png/user_computer-0.png',
+  '/icons/desktop-16.png',
+  '/icons/outlook-express-16.png',
+  '/icons/internet-explorer-16.png',
+  '/icons/my-computer-16.png',
 ] as const
 
 export const NETWORK_ONLINE_ICONS = [
-  '/icons/windows98-icons/png/conn_pcs_on_off.png',
-  '/icons/windows98-icons/png/conn_pcs_off_on.png',
-  '/icons/windows98-icons/png/conn_pcs_on_on.png',
+  '/icons/network-partial-on-off-16.png',
+  '/icons/network-partial-off-on-16.png',
+  '/icons/network-connected-16.png',
 ] as const
 
-export const NETWORK_OFFLINE_ICON = '/icons/windows98-icons/png/conn_pcs_no_network.png'
+export const NETWORK_OFFLINE_ICON = '/icons/network-disconnected-16.png'
 
-export const VOLUME_ICON = '/icons/windows98-icons/png/loudspeaker_rays-1.png'
-export const VOLUME_MUTED_ICON = '/icons/windows98-icons/png/loudspeaker_muted-1.png'
+export const VOLUME_ICON = '/icons/volume-on-16.png'
+export const VOLUME_MUTED_ICON = '/icons/volume-muted-16.png'
 
 // ---------------------------------------------------------------------------
 // Internet Explorer toolbar
 // ---------------------------------------------------------------------------
 
 export const IE_TOOLBAR_ICONS = {
-  favorites: '/icons/windows98-icons/png/directory_favorites-1.png',
-  home: '/icons/windows98-icons/png/homepage-1.png',
-  html: '/icons/windows98-icons/png/html-0.png',
-  mail: '/icons/windows98-icons/png/mailbox_world-1.png',
-  print: '/icons/windows98-icons/png/printer-1.png',
-  refresh: '/icons/misc/icon-refresh.png',
-  search: '/icons/windows98-icons/png/search_web-1.png',
-  stop: '/icons/windows98-icons/png/no-0.png',
-  windows: '/icons/windows98-icons/png/windows-4.png',
+  favorites: '/icons/favorites-16.png',
+  home: '/icons/homepage-16.png',
+  html: '/icons/html-file-16.png',
+  mail: '/icons/mailbox-16.png',
+  print: '/icons/printer-16.png',
+  refresh: '/icons/refresh-20.png',
+  search: '/icons/search-web-16.png',
+  stop: '/icons/no-entry-16.png',
+  windows: '/icons/windows-logo-16.png',
 } as const
 
 // ---------------------------------------------------------------------------
 // Misc preview / app surfaces
 // ---------------------------------------------------------------------------
 
-export const PREVIEW_TASKBAR_LOGO = '/icons/windows98-icons/png/windows-4.png'
-export const THEME_PREVIEW_RECYCLE_BIN = '/icons/windows98-icons/png/recycle_bin_empty-0.png'
+export const PREVIEW_TASKBAR_LOGO = '/icons/windows-logo-16.png'
+export const THEME_PREVIEW_RECYCLE_BIN = '/icons/recycle-bin-32.png'
 export const MEDIA_PLAYER_EMPTY_BACKGROUND = '/icons/media/mediaplayer-bg.png'
 
 // ---------------------------------------------------------------------------
@@ -122,10 +122,10 @@ export const SYSTEM_CURSORS = [
  */
 export const WARM_IMAGE_ASSETS = [
   MEDIA_PLAYER_EMPTY_BACKGROUND,
-  '/icons/misc/cursor.png',
-  '/icons/windows98-icons/png/paint_file-0.png',
-  '/icons/misc/network.png',
-  '/icons/misc/smiley.png',
+  '/icons/cursor-12x21.png',
+  '/icons/paint-file-16.png',
+  '/icons/network-16.png',
+  '/icons/smiley-16.png',
   '/wallpaper/water.gif',
 ] as const
 

@@ -8,8 +8,8 @@ const sizeClass = {
 } as const
 
 const shortcutOverlay = {
-  sm: '/icons/windows98-icons/png/overlay_shortcut-0.png',
-  lg: '/icons/windows98-icons/png/overlay_shortcut-1.png',
+  sm: '/icons/overlay-shortcut-16.png',
+  lg: '/icons/overlay-shortcut-32.png',
 } as const
 
 interface AppIconProps {

@@ -5,9 +5,9 @@ import { useProcessActions } from '../../../contexts/process/hooks'
 import { assetPath } from '../../../lib/asset-path'
 import { didResetComplete, resetPlaygroundData } from '../../../lib/persistence'
 
-const CLEAR_CACHE_ICON = '/icons/windows98-icons/png/directory_open_file_mydocs-0.png'
-const WARNING_ICON = '/icons/windows98-icons/png/no-0.png'
-const BACKUP_ICON = '/icons/windows98-icons/png/printer_diskette-0.png'
+const CLEAR_CACHE_ICON = '/icons/folder-my-docs-32.png'
+const WARNING_ICON = '/icons/no-entry-16.png'
+const BACKUP_ICON = '/icons/backup-floppy-32.png'
 
 function CacheIcon(): React.ReactElement {
   return (

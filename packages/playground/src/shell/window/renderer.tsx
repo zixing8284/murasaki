@@ -10,14 +10,19 @@ import { IframeWindow } from './iframe-window'
 import { RndWindow } from './rnd-window'
 
 /**
- * Suspense fallback for a launching window. While a lazy app's chunk is
- * resolving the whole window subtree is suspended (nothing is painted yet),
- * so this fallback represents the Win98 "application starting" phase and shows
- * the `working` cursor until the window content mounts.
+ * Loading placeholder rendered inside the window frame while a lazy component
+ * chunk is still resolving. The window frame (title bar, borders) is already
+ * visible — only the content area shows this placeholder, matching the
+ * behavior of iframe-based windows which also display the frame immediately
+ * with a "Loading…" indicator while the embedded content loads.
  */
-function LaunchCursor(): null {
+function WindowLoadingPlaceholder(): React.ReactElement {
   useSystemBusy(true, 'working')
-  return null
+  return (
+    <div className="size-full flex items-center justify-center">
+      <span className="text-xs text-(--gray-text)">Loading…</span>
+    </div>
+  )
 }
 
 function renderProcessWindow(
@@ -59,10 +64,10 @@ function renderProcessWindow(
     return Component ? <Component windowId={windowId} /> : null
   }
 
-  if (!Component) {
-    return null
-  }
-
+  // The RndWindow frame is always rendered immediately. The component content
+  // is wrapped in its own Suspense boundary so that the frame stays visible
+  // while the lazy chunk resolves — only the content area shows a loading
+  // placeholder, consistent with how iframe windows behave.
   return (
     <RndWindow
       windowId={windowId}
@@ -72,7 +77,11 @@ function renderProcessWindow(
       disableMinimize={windowConfig?.disableMinimize}
       disableResize={windowConfig?.disableResize}
     >
-      <Component windowId={windowId} />
+      <Suspense fallback={<WindowLoadingPlaceholder />}>
+        {Component
+          ? <Component windowId={windowId} />
+          : <WindowLoadingPlaceholder />}
+      </Suspense>
     </RndWindow>
   )
 }
@@ -93,14 +102,7 @@ export function WindowRenderer(): React.ReactElement {
         // Ephemeral processes carry their own Component; regular ones use the directory
         const Component = proc.Component
           ?? entry?.Component
-        const window = renderProcessWindow(pid, entry, Component)
-        if (!window)
-          return null
-        return (
-          <Suspense key={pid} fallback={<LaunchCursor />}>
-            {window}
-          </Suspense>
-        )
+        return renderProcessWindow(pid, entry, Component)
       })}
     </>
   )

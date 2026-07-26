@@ -4,6 +4,9 @@ trustPolicy: no-downgrade
 packages:
   - packages/*
 
+overrides:
+  semver: ^7.7.3
+
 patchedDependencies:
   nextra-theme-docs@4.6.1: patches/nextra-theme-docs@4.6.1.patch
 
@@ -47,3 +50,6 @@ catalogs:
     '@types/node': ^25.0.10
     '@types/react': ^19.2.9
     '@types/react-dom': ^19.2.3
+
+allowBuilds:
+  sharp: true

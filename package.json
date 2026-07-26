@@ -2,7 +2,7 @@
   "name": "@murasaki-io/react98-workspace",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@11.17.0",
   "scripts": {
     "play": "pnpm --filter @murasaki-io/react98-playground dev",
     "play:build": "pnpm --filter @murasaki-io/react98-playground build",
@@ -21,8 +21,8 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "cd packages/ui && pnpm publish --no-git-checks --provenance --access public",
-    "skills:update": "npx skills add vercel-labs/agent-skills",
-    "react-doctor": "npx react-doctor@latest"
+    "skills:update": "pnpm dlx skills add vercel-labs/agent-skills",
+    "react-doctor": "pnpm dlx react-doctor@latest"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:root",

@@ -566,7 +566,7 @@ export function Ie2Chrome({
         </WindowStatusBarField>
         <WindowStatusBarField grow={false} className="w-36 p-0.5">
           <div className="relative h-full min-h-3 overflow-hidden bg-(--button-face)">
-            {loadingUrl !== null && (
+            {iframeLoaded && loadingUrl !== null && (
               <div
                 className="absolute top-px bottom-px left-0 animate-ie-loading bg-(--hilight)"
               />

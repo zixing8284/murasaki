@@ -39,7 +39,7 @@ export function WindowFrame({
         frameVariants(),
         positioning === 'fixed' ? 'fixed' : 'absolute',
         state.maximized && 'inset-0! size-full! max-h-full translate-y-0! transform-[translate(0px,0px)]!',
-        state.minimized && 'hidden',
+        state.minimized && 'invisible',
         className,
       )}
       {...props}

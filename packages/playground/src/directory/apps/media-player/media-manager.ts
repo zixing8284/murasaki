@@ -218,7 +218,6 @@ export class MediaManager {
     if (isNew) {
       this.currentSrc = track.url
       el.src = track.url
-      el.preload = 'auto'
     }
     else {
       el.currentTime = 0
@@ -233,9 +232,6 @@ export class MediaManager {
     })
 
     this.startLocalLoadTimeout(track)
-
-    if (isNew)
-      el.load()
   }
 
   async loadAndPlay(track: Track): Promise<void> {

@@ -78,12 +78,12 @@ export const defaultBevels: Record<BevelPreset, BevelRecipe> = {
 
   borderField: {
     layers: [
-      // Sunken outer: bright top-left, shadow bottom-right
-      { edge: 'top-left', colorToken: 'buttonHilight', offset: 1 },
-      { edge: 'bottom-right', colorToken: 'buttonShadow', offset: 1 },
-      // Raised inner: light top-left, dark bottom-right
-      { edge: 'top-left', colorToken: 'buttonLight', offset: 2 },
-      { edge: 'bottom-right', colorToken: 'buttonDkShadow', offset: 2 },
+      // Sunken outer: bright bottom-right, shadow top-left
+      { edge: 'bottom-right', colorToken: 'buttonHilight', offset: 1 },
+      { edge: 'top-left', colorToken: 'buttonShadow', offset: 1 },
+      // Raised inner: light bottom-right, dark top-left
+      { edge: 'bottom-right', colorToken: 'buttonLight', offset: 2 },
+      { edge: 'top-left', colorToken: 'buttonDkShadow', offset: 2 },
     ],
   },
 }

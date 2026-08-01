@@ -164,7 +164,7 @@ export function useResizable<
 
       // Save original cursor and set resize cursor on body to prevent flicker
       const originalCursor = document.body.style.cursor
-      document.body.style.cursor = 'nwse-resize'
+      document.body.style.cursor = 'var(--cursor-nwse-resize, nwse-resize)'
 
       let hasResizeStarted = false
 

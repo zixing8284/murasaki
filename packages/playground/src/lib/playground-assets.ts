@@ -52,6 +52,7 @@ export const START_MENU_ICONS = {
   controlPanel: '/icons/control-panel-16.png',
   printers: '/icons/printer-16.png',
   taskbar: '/icons/taskbar-32.png',
+  mouse: '/icons/mouse-16.png',
   // find submenu
   findFiles: '/icons/search-file-16.png',
   findComputer: '/icons/search-computer-16.png',
@@ -114,6 +115,10 @@ export const SYSTEM_CURSORS = [
   '/cursor/working.cur',
   '/cursor/link.cur',
   '/cursor/help.cur',
+  '/cursor/text.cur',
+  '/cursor/not-allowed.cur',
+  '/cursor/ew-resize.cur',
+  '/cursor/nwse-resize.cur',
 ] as const
 
 /**

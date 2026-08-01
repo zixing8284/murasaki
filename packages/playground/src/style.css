@@ -204,7 +204,7 @@ html, body, #root {
 }
 
 body {
-  cursor: url("/cursor/normal.cur"), auto;
+  cursor: var(--cursor-default);
   width: clamp(460px, 100%, 100%);
   font-size: 11px;
 }
@@ -215,10 +215,58 @@ body {
  * menus, tabs, scrollbars, …) without patching each component. Win98 controls
  * use the arrow; only real hyperlinks get the hand (see the a[href] rule).
  * Set on <html> to win over the library's `html` token defaults by source order.
+ *
+ * The Mouse Properties window swaps the whole set by toggling
+ * `data-cursor-scheme` on <html> (see the `windows-3d` block below). The base
+ * set is the default "Windows Standard" scheme; `--cursor-link/progress/wait`
+ * are playground-local so link and system-busy cursors switch schemes too.
  */
 html {
   --cursor-default: url("/cursor/normal.cur"), default;
   --cursor-pointer: url("/cursor/normal.cur"), default;
+  --cursor-text: url("/cursor/text.cur"), text;
+  --cursor-not-allowed: url("/cursor/not-allowed.cur"), not-allowed;
+  --cursor-move: url("/cursor/move.cur"), move;
+  --cursor-ew-resize: url("/cursor/ew-resize.cur"), ew-resize;
+  --cursor-ns-resize: url("/cursor/ns-resize.cur"), ns-resize;
+  --cursor-nwse-resize: url("/cursor/nwse-resize.cur"), nwse-resize;
+  --cursor-nesw-resize: url("/cursor/nesw-resize.cur"), nesw-resize;
+  --cursor-link: url("/cursor/link.cur"), pointer;
+  --cursor-progress: url("/cursor/working.cur"), progress;
+  --cursor-wait: url("/cursor/busy.cur"), wait;
+}
+
+html[data-cursor-scheme="windows-3d"] {
+  --cursor-default: url("/cursor/3d/normal.cur"), default;
+  --cursor-pointer: url("/cursor/3d/normal.cur"), default;
+  --cursor-text: url("/cursor/3d/text.cur"), text;
+  --cursor-not-allowed: url("/cursor/3d/not-allowed.cur"), not-allowed;
+  --cursor-move: url("/cursor/3d/move.cur"), move;
+  --cursor-ew-resize: url("/cursor/3d/ew-resize.cur"), ew-resize;
+  --cursor-ns-resize: url("/cursor/3d/ns-resize.cur"), ns-resize;
+  --cursor-nwse-resize: url("/cursor/3d/nwse-resize.cur"), nwse-resize;
+  --cursor-nesw-resize: url("/cursor/3d/nesw-resize.cur"), nesw-resize;
+  --cursor-link: url("/cursor/3d/link.cur"), pointer;
+  --cursor-progress: url("/cursor/3d/working.cur"), progress;
+  --cursor-wait: url("/cursor/3d/busy.cur"), wait;
+}
+
+/* Skin browser-native editable controls that live outside the UI library. */
+textarea:not(:disabled),
+input:not(:disabled):is(
+  [type="text"],
+  [type="search"],
+  [type="email"],
+  [type="tel"],
+  [type="url"],
+  [type="password"],
+  [type="number"],
+  :not([type])
+),
+[contenteditable="true"],
+[contenteditable="plaintext-only"],
+[role="textbox"] {
+  cursor: var(--cursor-text);
 }
 
 /*
@@ -234,18 +282,18 @@ html {
  */
 body[data-system-cursor="working"],
 body[data-system-cursor="working"] * {
-  cursor: url("/cursor/working.cur"), progress !important;
+  cursor: var(--cursor-progress) !important;
 }
 
 body[data-system-cursor="busy"],
 body[data-system-cursor="busy"] * {
-  cursor: url("/cursor/busy.cur"), wait !important;
+  cursor: var(--cursor-wait) !important;
 }
 
 /* Hyperlinks show the hand cursor (Win98/IE behavior). Buttons do not. */
 a[href],
 [role="link"] {
-  cursor: url("/cursor/link.cur"), pointer;
+  cursor: var(--cursor-link);
 }
 
 /*

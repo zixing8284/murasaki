@@ -41,6 +41,7 @@ const baseFieldStyles = [
   'bg-(--window)',
   'text-(--window-text)',
   'outline-none',
+  'not-disabled:cursor-text',
   // Disabled & readonly states
   'disabled:bg-(--button-face)',
   'read-only:bg-(--button-face)',

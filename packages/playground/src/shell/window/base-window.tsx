@@ -44,7 +44,8 @@ function clampInitialPosition(value: number | string | undefined, size: number |
   if (value === undefined || size === undefined)
     return value
 
-  return `clamp(0px, ${String(value)}, max(0px, calc(100% - ${String(size)}px)))`
+  const length = typeof value === 'number' ? `${value}px` : value
+  return `clamp(0px, round(${length}, 1px), max(0px, calc(100% - ${String(size)}px)))`
 }
 
 export function BaseWindow({

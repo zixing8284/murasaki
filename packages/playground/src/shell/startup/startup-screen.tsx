@@ -15,6 +15,10 @@ const CURSOR_PRELOADS = [
   { path: '/cursor/normal.cur', fallback: 'default' },
   { path: '/cursor/link.cur', fallback: 'pointer' },
   { path: '/cursor/help.cur', fallback: 'help' },
+  { path: '/cursor/text.cur', fallback: 'text' },
+  { path: '/cursor/not-allowed.cur', fallback: 'not-allowed' },
+  { path: '/cursor/ew-resize.cur', fallback: 'ew-resize' },
+  { path: '/cursor/nwse-resize.cur', fallback: 'nwse-resize' },
 ] as const
 
 interface StartupScreenProps {

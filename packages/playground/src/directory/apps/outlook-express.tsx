@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   MenuItem,
+  TextBox,
   WindowMenuBar,
   WindowMenuBarContent,
   WindowMenuBarMenu,
@@ -105,23 +106,23 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
       <div className="flex flex-col gap-1 bg-(--button-face) p-2 shrink-0">
         <div className="flex items-center gap-2">
           <span className="w-12 text-right text-(--window-text) shrink-0">To:</span>
-          <input
+          <TextBox
             type="email"
             value={DEFAULT_TO}
             readOnly
             aria-label="To"
-            className="flex-1 h-5 border-none bg-(--button-face) px-1.5 text-(--gray-text) shadow-(--shadow-border-field) outline-none"
+            className="flex-1"
           />
         </div>
         <div className="flex items-center gap-2">
           <span className="w-12 text-right text-(--window-text) shrink-0">Subject:</span>
-          <input
+          <TextBox
             type="text"
             value={subject}
-            onChange={e => setSubject(e.target.value)}
+            onValueChange={setSubject}
             placeholder="(no subject)"
             aria-label="Subject"
-            className="flex-1 h-5 border-none bg-(--window) px-1.5 text-(--window-text) shadow-(--shadow-border-field) outline-none"
+            className="flex-1"
           />
         </div>
       </div>
@@ -129,12 +130,13 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
       <Divider />
 
       <div className="flex-1 min-h-0 bg-(--button-face) p-1">
-        <textarea
+        <TextBox
+          multiline
           value={body}
-          onChange={e => setBody(e.target.value)}
+          onValueChange={setBody}
           placeholder="Write your message here..."
           aria-label="Message body"
-          className="size-full resize-none border-none bg-(--window) p-1.5 text-(--window-text) shadow-(--shadow-border-field) outline-none"
+          className="size-full"
         />
       </div>
 

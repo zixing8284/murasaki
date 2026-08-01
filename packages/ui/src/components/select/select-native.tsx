@@ -22,6 +22,8 @@ const selectVariants = cva([
   // Colors
   'bg-(--window)',
   'text-(--window-text)',
+  // Cursor (token-routed so consumers can skin it)
+  'cursor-pointer',
   // Focus state
   'focus:outline-none',
   'focus:text-(--hilight-text)',

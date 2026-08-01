@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@murasaki-io/react98'
+import { CursorSchemeProvider } from './contexts/cursor-scheme'
 import { DesktopFilesProvider } from './contexts/desktop-files/provider'
 import { DesktopLayoutProvider } from './contexts/desktop-layout/provider'
 import { ProcessProvider } from './contexts/process/provider'
@@ -12,9 +13,11 @@ export function App(): React.ReactElement {
       <DesktopFilesProvider>
         <DesktopLayoutProvider>
           <ProcessProvider>
-            <SystemCursorProvider>
-              <Shell />
-            </SystemCursorProvider>
+            <CursorSchemeProvider>
+              <SystemCursorProvider>
+                <Shell />
+              </SystemCursorProvider>
+            </CursorSchemeProvider>
           </ProcessProvider>
         </DesktopLayoutProvider>
       </DesktopFilesProvider>

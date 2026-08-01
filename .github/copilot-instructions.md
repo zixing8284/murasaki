@@ -74,12 +74,14 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - Keep styling theme-first: use CSS variable-backed utilities such as `bg-(--button-face)` and `text-(--window-text)`.
 - Treat shared theme config as library-owned and theme variable values as consumer-customizable.
 - Pixel-font text in sunken/input-like fields must have left breathing room. Avoid placing text flush against a 1px inset border; prefer at least `pl-2` on native fields or a small inner text offset for list rows.
-- For clipped pixel-font text, follow ADR 0008: the text display element should own both left padding and `overflow-hidden`/ellipsis, or otherwise keep the clip rect away from the first glyph. Avoid nested zero-padding clipped spans as a font-smoothing workaround.
+- Pixel-font left-edge clipping (the recurring "first glyph shaved ~1px" bug) is a sub-pixel alignment problem, not a padding problem. Root cause and rules are in ADR 0008: (1) snap movable/absolutely-positioned layers to whole pixels — window origins resolve through `round(<position>, 1px)` and drag with integer deltas, and any percentage/fractional origin must be rounded; never add a global scale `transform` to the desktop; (2) don't clip pixel text unless truncation is actually required (use a plain `whitespace-nowrap` span); (3) only when truncation is required, the clipping element itself owns `padding-left` + `overflow-hidden`/ellipsis so the clip rect stays off the glyph. Do not scatter ad-hoc padding/margin on non-clipping wrappers, and do not change global font smoothing.
 - The library's global font-size is 11px. Do not override it with arbitrary text sizes (`text-[10px]`, `text-xs`, `text-sm`, etc.) unless the design explicitly requires a different size. Rely on the default to keep typography consistent across the UI.
 - `@murasaki-io/react98/theme.css` is the named source stylesheet export exception: it intentionally resolves to `packages/ui/src/theme.css` for Tailwind CSS v4 consumers. Do not treat it as permission to expose other source files.
 
 ## Playground Architecture
 
+- The playground is the library's reference implementation. Build UI from `@murasaki-io/react98` components (`TextBox`, `NumberBox`, `Select`, `Button`, `Checkbox`, …) rather than raw native form controls or bespoke field styling, so it exercises and showcases the real component surface. Native elements are acceptable only for behavior the library does not model (hidden `type="file"` / `type="color"` pickers) or composite host chrome with no component equivalent.
+- Cursor responsibilities are split: `packages/ui` owns semantic cursor tokens and component-level cursor behavior, while `packages/playground` owns concrete cursor assets, cursor scheme switching, preload/persistence, and the Mouse Properties demo.
 - Window/process state is managed from `packages/playground/src/contexts/process/`.
 - App metadata is registered in `packages/playground/src/contexts/process/directory.ts`.
 - Window implementations live under `packages/playground/src/directory/`.

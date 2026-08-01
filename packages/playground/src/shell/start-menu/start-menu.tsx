@@ -218,6 +218,12 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 >
                   Control Panel
                 </MenuItem>
+                <MenuItem
+                  icon={<StartIcon src={ICON.mouse} />}
+                  onClick={() => launch(APP_ID.MOUSE_PROPERTIES)}
+                >
+                  Mouse…
+                </MenuItem>
                 <MenuItem icon={<StartIcon src={ICON.printers} />} disabled>Printers</MenuItem>
                 <MenuItem icon={<StartIcon src={ICON.taskbar} />} disabled>Taskbar…</MenuItem>
               </MenuSubContent>

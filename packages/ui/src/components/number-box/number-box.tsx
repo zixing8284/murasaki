@@ -37,6 +37,7 @@ const inputVariants = cva([
   'text-(--window-text)',
   'outline-none',
   'border-none',
+  'not-disabled:cursor-text',
   'pl-2',
   'pr-1.5',
   'py-0.75',

@@ -69,6 +69,13 @@ html,
      including inside components, without patching individual elements. */
   --cursor-default: default;
   --cursor-pointer: pointer;
+  --cursor-text: text;
+  --cursor-not-allowed: not-allowed;
+  --cursor-move: move;
+  --cursor-ew-resize: ew-resize;
+  --cursor-ns-resize: ns-resize;
+  --cursor-nwse-resize: nwse-resize;
+  --cursor-nesw-resize: nesw-resize;
 
   /* Spacing */
   --element-spacing: 8px;
@@ -131,7 +138,7 @@ html,
 /* ==========================================================================
    Cursor utilities — route Tailwind's cursor utilities through themeable
    tokens so consumers can swap pointer feedback library-wide. Overrides the
-   built-in `cursor-default` / `cursor-pointer` utilities.
+   built-in cursor utilities; each is only emitted when the class is used.
    ========================================================================== */
 
 @utility cursor-default {
@@ -140,6 +147,34 @@ html,
 
 @utility cursor-pointer {
   cursor: var(--cursor-pointer);
+}
+
+@utility cursor-text {
+  cursor: var(--cursor-text);
+}
+
+@utility cursor-not-allowed {
+  cursor: var(--cursor-not-allowed);
+}
+
+@utility cursor-move {
+  cursor: var(--cursor-move);
+}
+
+@utility cursor-ew-resize {
+  cursor: var(--cursor-ew-resize);
+}
+
+@utility cursor-ns-resize {
+  cursor: var(--cursor-ns-resize);
+}
+
+@utility cursor-nwse-resize {
+  cursor: var(--cursor-nwse-resize);
+}
+
+@utility cursor-nesw-resize {
+  cursor: var(--cursor-nesw-resize);
 }
 
 /* ==========================================================================

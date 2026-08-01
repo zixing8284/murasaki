@@ -56,6 +56,10 @@ _Avoid_: Accidental source export, unrecorded package export drift
 A layout rule for Windows 98 pixel-font text where the element that clips text also keeps a small left inset before the first glyph, preventing fractional device-pixel alignment from dropping the glyph's leftmost column.
 _Avoid_: Flush clipped glyph, nested zero-padding overflow clip, font-smoothing workaround
 
+**Cursor ownership split**:
+A rendering and implementation contract where `packages/ui` owns semantic cursor tokens, component-level cursor behavior, and the default token-to-utility mapping, while `packages/playground` owns concrete `.cur` resources, cursor scheme switching, preload/persistence, and the Mouse Properties demo window.
+_Avoid_: Hardcoded browser defaults, duplicate cursor assets in the library, scheme logic buried inside reusable UI components
+
 **Playground public asset boundary**:
 A playground convention that keeps reusable semantic icons under `packages/playground/public/icons/` as flat `{name}-{size}.png` files, and wallpapers/backgrounds under `packages/playground/public/wallpaper/`.
 _Avoid_: New semantic icons in `public/wallpaper`, unsearchable one-off asset paths

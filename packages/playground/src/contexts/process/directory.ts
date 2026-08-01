@@ -78,6 +78,18 @@ const directory = {
     defaultPosition: { top: '8%', left: '22%' },
     window: { disableMaximize: true, disableResize: true, contentClassName: 'p-2' },
   },
+  mouseproperties: {
+    name: 'Mouse Properties',
+    Component: lazy(() =>
+      import('../../directory/system/mouse-properties/mouse-properties').then(m => ({ default: m.MouseProperties })),
+    ),
+    defaultTitle: 'Mouse Properties',
+    icon: { sm: '/icons/mouse-16.png', lg: '/icons/mouse-32.png' },
+    singleton: true,
+    defaultSize: { width: 400, height: 464 },
+    defaultPosition: { top: '10%', left: '28%' },
+    window: { disableMaximize: true, disableResize: true, contentClassName: 'p-2' },
+  },
   jspaint: {
     name: 'JSPaint',
     defaultTitle: 'JSPaint',
@@ -168,6 +180,7 @@ export const APP_ID = {
   NOTEPAD: 'notepad',
   DISPLAY_PROPERTIES: 'displayproperties',
   SETTINGS: 'settings',
+  MOUSE_PROPERTIES: 'mouseproperties',
   JSPaintApp: 'jspaint',
   THEME_DESIGNER: 'themedesigner',
   MEDIA_PLAYER: 'mediaplayer',

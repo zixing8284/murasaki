@@ -165,7 +165,7 @@ export function TaskbarQuickLaunch({
 
   useEffect(() => {
     if (isDragging) {
-      document.body.style.cursor = 'ew-resize'
+      document.body.style.cursor = 'var(--cursor-ew-resize, ew-resize)'
     }
     else {
       document.body.style.cursor = ''

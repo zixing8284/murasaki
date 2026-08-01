@@ -43,10 +43,6 @@ const triggerVariants = cva([
   'disabled:cursor-not-allowed',
 ])
 
-// Mirrors win99.dev: a single element owns padding + overflow + ellipsis,
-// so the clip rect never lands on the glyph's left stem column. Avoids
-// pixel-font left-edge clipping when AA is disabled and the layout box
-// falls on a fractional device pixel.
 const triggerLabelVariants = cva([
   'flex',
   'box-border',

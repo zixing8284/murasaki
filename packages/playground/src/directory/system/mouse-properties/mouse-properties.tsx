@@ -1,7 +1,7 @@
 import type { ProcessComponentProps } from '../../../contexts/process/types'
 import type { CursorSchemeId } from '../../../lib/cursor-scheme'
 import { Button, GroupBox, ScrollArea, Select, Tab, TabList, TabPanel, Tabs } from '@murasaki-io/react98'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useCursorScheme } from '../../../contexts/cursor-scheme'
 import { useProcessActions } from '../../../contexts/process/hooks'
 import { assetPath } from '../../../lib/asset-path'
@@ -31,25 +31,30 @@ function PointerImage({ src, className }: { src: string, className?: string }): 
 export function MouseProperties({ windowId }: ProcessComponentProps): React.ReactElement {
   const { close } = useProcessActions()
   const { schemeId, setSchemeId } = useCursorScheme()
-  const initialSchemeRef = useRef<CursorSchemeId>(schemeId)
 
   const [draftId, setDraftId] = useState<CursorSchemeId>(schemeId)
+  const [appliedId, setAppliedId] = useState<CursorSchemeId>(schemeId)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const scheme = CURSOR_SCHEMES[draftId]
+  const hasPendingChanges = draftId !== appliedId
 
   const chooseScheme = (id: CursorSchemeId): void => {
     setDraftId(id)
     setSelectedIndex(0)
-    setSchemeId(id)
+  }
+
+  const handleApply = (): void => {
+    setSchemeId(draftId)
+    setAppliedId(draftId)
   }
 
   const handleOk = (): void => {
-    setSchemeId(draftId)
+    if (hasPendingChanges)
+      handleApply()
     close(windowId)
   }
 
   const handleCancel = (): void => {
-    setSchemeId(initialSchemeRef.current)
     close(windowId)
   }
 
@@ -146,7 +151,7 @@ export function MouseProperties({ windowId }: ProcessComponentProps): React.Reac
       <div className="flex justify-end gap-(--grouped-button-spacing)">
         <Button onClick={handleOk} className="min-w-18.75">OK</Button>
         <Button onClick={handleCancel} className="min-w-18.75">Cancel</Button>
-        <Button disabled className="min-w-18.75">Apply</Button>
+        <Button onClick={handleApply} disabled={!hasPendingChanges} className="min-w-18.75">Apply</Button>
       </div>
     </div>
   )

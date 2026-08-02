@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react'
 import type { AppId } from '../../contexts/process/directory'
 import type { ProcessComponentProps, ProcessDirectoryEntry } from '../../contexts/process/types'
-import { Suspense } from 'react'
+import { Fragment, Suspense } from 'react'
 import appDirectory from '../../contexts/process/directory'
 import { useProcesses } from '../../contexts/process/hooks'
 import { useSystemBusy } from '../../contexts/system-cursor'
@@ -102,7 +102,15 @@ export function WindowRenderer(): React.ReactElement {
         // Ephemeral processes carry their own Component; regular ones use the directory
         const Component = proc.Component
           ?? entry?.Component
-        return renderProcessWindow(pid, entry, Component)
+        // Key by stable PID so each window keeps its own fiber, DOM node and
+        // imperative drag transform. Without a key React reconciles by list
+        // index, so closing a window reuses a sibling's fiber and the surviving
+        // window loses its dragged position.
+        return (
+          <Fragment key={pid}>
+            {renderProcessWindow(pid, entry, Component)}
+          </Fragment>
+        )
       })}
     </>
   )

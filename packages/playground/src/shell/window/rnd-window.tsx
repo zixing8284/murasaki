@@ -2,9 +2,11 @@ import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
 import type { ProcessWindowPosition } from '../../contexts/process/types'
 import { useDraggable, useResizable } from '@murasaki-io/react98'
+import { useCallback, useRef, useState } from 'react'
 import directory from '../../contexts/process/directory'
 import { useProcesses } from '../../contexts/process/hooks'
 import { BaseWindow } from './base-window'
+import { readWindowPosition, writeWindowPosition } from './window-position-persistence'
 
 interface RndWindowProps {
   windowId: string
@@ -40,6 +42,13 @@ export function RndWindow({
   const defaultSize = entry?.defaultSize
   const defaultPosition = entry?.defaultPosition
 
+  // Read stored position once on mount (singleton windows only)
+  const [initialStoredPosition] = useState<{ left: number, top: number } | null>(
+    () => (appId && entry?.singleton !== false) ? readWindowPosition(appId) : null,
+  )
+
+  const frameRef = useRef<HTMLDivElement | null>(null)
+
   // Cascade non-singleton windows so they don't stack at the same position
   const cascadePosition: ProcessWindowPosition | undefined = (() => {
     if (!appId || !defaultPosition || entry?.singleton !== false)
@@ -58,10 +67,34 @@ export function RndWindow({
     }
   })()
 
+  // Stored position wins over cascade/default for singleton windows
+  const resolvedDefaultPosition: ProcessWindowPosition | undefined = initialStoredPosition
+    ? { top: initialStoredPosition.top, left: initialStoredPosition.left }
+    : cascadePosition
+
+  // Write position to session storage when drag ends
+  const handleDragChange = useCallback(
+    (isDragging: boolean) => {
+      if (!isDragging && appId && entry?.singleton !== false) {
+        const frameEl = frameRef.current
+        if (frameEl) {
+          const frameRect = frameEl.getBoundingClientRect()
+          const containerRect = portalContainer?.getBoundingClientRect() ?? { left: 0, top: 0 }
+          writeWindowPosition(appId, {
+            left: Math.round(frameRect.left - containerRect.left),
+            top: Math.round(frameRect.top - containerRect.top),
+          })
+        }
+      }
+      onDragChange?.(isDragging)
+    },
+    [appId, entry, portalContainer, onDragChange],
+  )
+
   const { setTargetRef: setDragTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     draggable: true,
-    onDragChange,
+    onDragChange: handleDragChange,
     clampPositionOnResize: true,
   })
   const { setTargetRef: setResizeTargetRef, setResizeRef, resizing } = useResizable<HTMLDivElement, HTMLDivElement>({
@@ -72,8 +105,9 @@ export function RndWindow({
     onResizeChange,
   })
 
-  // Merge two target refs into a single callback ref
+  // Merge target refs into a single callback ref; also capture element for position writes
   const setTargetRef = (el: HTMLDivElement | null): void => {
+    frameRef.current = el
     setDragTargetRef(el)
     setResizeTargetRef(el)
   }
@@ -88,7 +122,7 @@ export function RndWindow({
       disableMinimize={disableMinimize}
       disableResize={disableResize}
       defaultSize={defaultSize}
-      defaultPosition={cascadePosition}
+      defaultPosition={resolvedDefaultPosition}
       isInteracting={dragging || resizing}
       frameRef={setTargetRef}
       dragRef={setDragRef}

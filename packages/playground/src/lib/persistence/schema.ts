@@ -18,7 +18,6 @@ export const PLAYGROUND_STORAGE_KEYS = {
   monitorFrame: 'murasaki-monitor-frame',
   gradientTitlebar: 'murasaki-gradient-titlebar',
   wallpaper: 'murasaki-wallpaper',
-  wallpaperColor: 'murasaki-wallpaper-color',
   desktopBgColor: 'murasaki-desktop-bg-color',
   iconLabelBgColor: 'murasaki-icon-label-bg-color',
   screenSize: 'murasaki-screen-size',
@@ -29,6 +28,7 @@ export const PLAYGROUND_STORAGE_KEYS = {
   webampSkinMuseumLastSuccess: 'webamp:skin-museum:last-success:v1',
   webampPosition: 'webamp:position:v1',
   webampMilkdropBlacklist: 'webamp:milkdrop-blacklist:v1',
+  windowPositions: 'murasaki.window.positions.v1',
 } as const
 
 export const PLAYGROUND_LOCAL_STORAGE_KEYS = [
@@ -40,7 +40,6 @@ export const PLAYGROUND_LOCAL_STORAGE_KEYS = [
   PLAYGROUND_STORAGE_KEYS.monitorFrame,
   PLAYGROUND_STORAGE_KEYS.gradientTitlebar,
   PLAYGROUND_STORAGE_KEYS.wallpaper,
-  PLAYGROUND_STORAGE_KEYS.wallpaperColor,
   PLAYGROUND_STORAGE_KEYS.desktopBgColor,
   PLAYGROUND_STORAGE_KEYS.iconLabelBgColor,
   PLAYGROUND_STORAGE_KEYS.screenSize,
@@ -54,4 +53,5 @@ export const PLAYGROUND_LOCAL_STORAGE_KEYS = [
 export const PLAYGROUND_SESSION_STORAGE_KEYS = [
   PLAYGROUND_STORAGE_KEYS.webampPosition,
   PLAYGROUND_STORAGE_KEYS.webampMilkdropBlacklist,
+  PLAYGROUND_STORAGE_KEYS.windowPositions,
 ] as const

@@ -359,7 +359,7 @@ export function Ie2Chrome({
       iframe.contentWindow?.location.reload()
     }
     catch {
-      iframe.setAttribute('src', iframe.src)
+      iframe.src = resolveIframeSrc(currentSrcRef.current)
     }
   }
 

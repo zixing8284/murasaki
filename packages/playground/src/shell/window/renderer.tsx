@@ -19,7 +19,7 @@ import { RndWindow } from './rnd-window'
 function WindowLoadingPlaceholder(): React.ReactElement {
   useSystemBusy(true, 'working')
   return (
-    <div className="size-full flex items-center justify-center">
+    <div className="size-full min-h-40 flex items-center justify-center">
       <span className="text-xs text-(--gray-text)">Loading…</span>
     </div>
   )

@@ -96,7 +96,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
               @murasaki-io/react98
             </a>
             {' '}
-            on npm (not yet) and powers this playground &mdash; a fully interactive Windows 98 desktop
+            on npm and powers this playground &mdash; a fully interactive Windows 98 desktop
             running in your browser.
           </p>
         </section>

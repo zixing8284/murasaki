@@ -1,5 +1,12 @@
 # @murasaki-io/react98-playground
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies [8f9cb4a]
+  - @murasaki-io/react98@0.4.1
+
 ## 0.0.8
 
 ### Patch Changes

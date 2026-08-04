@@ -32,7 +32,7 @@ export function WindowButtons({
   ...props
 }: WindowButtonsProps): React.ReactElement {
   return (
-    <div className={cn('flex gap-0.5', className)} {...props}>
+    <div className={cn('flex', className)} {...props}>
       {children}
     </div>
   )
@@ -48,7 +48,7 @@ export function WindowCloseButton({
   return (
     <button
       aria-label="Close"
-      className={cn(buttonVariants(), className)}
+      className={cn(buttonVariants(), 'ml-0.5', className)}
       type="button"
       {...props}
     >
@@ -125,7 +125,7 @@ export function WindowHelpButton({
   return (
     <button
       aria-label="Help"
-      className={cn(buttonVariants(), className)}
+      className={cn(buttonVariants(), 'ml-0.5', className)}
       type="button"
       {...props}
     >

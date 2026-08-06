@@ -62,7 +62,7 @@ const directory = {
     icon: { sm: '/icons/display-settings-16.png', lg: '/icons/display-settings-32.png' },
     singleton: true,
     ephemeral: true,
-    defaultSize: { width: 420 },
+    defaultSize: { width: 420, height: 560 },
     defaultPosition: { top: '12%', left: '25%' },
     window: { disableMaximize: true, disableMinimize: true, disableResize: true, contentClassName: 'p-2' },
   },

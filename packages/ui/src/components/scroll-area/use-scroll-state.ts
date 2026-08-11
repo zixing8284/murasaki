@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 
+import { getScreenFromLocalMatrix, scaleMagnitude } from '../../lib/pointer-transform'
 import { computeThumb, REPEAT_MS, SCROLL_STEP } from './scroll-area-constants'
 
 // ─── Re-export constants for consumers ───────────────────────────────────────
@@ -79,8 +80,8 @@ export interface UseScrollStateResult {
   scrollStep: (axis: 'v' | 'h', direction: -1 | 1) => void
   /** Scroll the viewport by page */
   scrollPage: (axis: 'v' | 'h', direction: -1 | 1) => void
-  /** Begin thumb drag. Returns cleanup. */
-  startDrag: (axis: 'v' | 'h', startMousePos: number) => void
+  /** Begin thumb drag. */
+  startDrag: (axis: 'v' | 'h', startPos: number, pointerId: number) => void
   /** Auto-repeat helper for arrow buttons: calls action on interval while held. */
   startRepeat: (action: () => void) => () => void
   /** Hide native scrollbar style element ID */
@@ -236,15 +237,20 @@ export function useScrollState(
   }
 
   // ── Thumb drag ──
-  const startDrag = (axis: 'v' | 'h', startMousePos: number): void => {
+  const startDrag = (axis: 'v' | 'h', startPos: number, pointerId: number): void => {
     const el = viewportRef.current
     if (!el)
       return
 
     const startScroll = axis === 'v' ? el.scrollTop : el.scrollLeft
+    // Divide pointer deltas by the ancestor scale so the thumb tracks the pointer
+    // inside a scaled container (identity when unscaled).
+    const scale = scaleMagnitude(getScreenFromLocalMatrix(el))
 
-    const onMove = (ev: MouseEvent): void => {
-      const delta = (axis === 'v' ? ev.clientY : ev.clientX) - startMousePos
+    const onMove = (ev: PointerEvent): void => {
+      if (ev.pointerId !== pointerId)
+        return
+      const delta = ((axis === 'v' ? ev.clientY : ev.clientX) - startPos) / scale
       const trackSize = axis === 'v'
         ? (vTrackRef.current?.clientHeight ?? 0)
         : (hTrackRef.current?.clientWidth ?? 0)
@@ -265,13 +271,17 @@ export function useScrollState(
       syncLayout()
     }
 
-    const onUp = (): void => {
-      document.removeEventListener('mousemove', onMove)
-      document.removeEventListener('mouseup', onUp)
+    const onUp = (ev: PointerEvent): void => {
+      if (ev.pointerId !== pointerId)
+        return
+      document.removeEventListener('pointermove', onMove)
+      document.removeEventListener('pointerup', onUp)
+      document.removeEventListener('pointercancel', onUp)
     }
 
-    document.addEventListener('mousemove', onMove)
-    document.addEventListener('mouseup', onUp)
+    document.addEventListener('pointermove', onMove)
+    document.addEventListener('pointerup', onUp)
+    document.addEventListener('pointercancel', onUp)
   }
 
   // ── Auto-repeat for arrow buttons ──

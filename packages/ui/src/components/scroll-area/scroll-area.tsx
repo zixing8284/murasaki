@@ -33,6 +33,27 @@ export function ScrollArea({
   const viewportRef = React.useRef<HTMLDivElement>(null)
   const scrollState = useScrollState(viewportRef)
 
+  // The scrollbars are siblings of the viewport, so wheel/two-finger scroll over
+  // them has no scrollable ancestor. Forward it to the viewport (non-passive so
+  // preventDefault works; React's onWheel is passive).
+  React.useEffect(() => {
+    const vp = viewportRef.current
+    const root = vp?.parentElement
+    if (!vp || !root)
+      return
+    const onWheel = (e: WheelEvent): void => {
+      if (vp.contains(e.target as Node))
+        return
+      if (e.deltaY !== 0)
+        vp.scrollTop += e.deltaY
+      if (e.deltaX !== 0)
+        vp.scrollLeft += e.deltaX
+      e.preventDefault()
+    }
+    root.addEventListener('wheel', onWheel, { passive: false })
+    return () => root.removeEventListener('wheel', onWheel)
+  }, [])
+
   const contextValue = {
     viewportRef,
     metrics: scrollState.metrics,

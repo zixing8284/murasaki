@@ -8,6 +8,9 @@ import { CloseIcon, HelpIcon, MaximizeIcon, MinimizeIcon, RestoreIcon } from './
 const buttonVariants = cva([
   'w-4',
   'h-3.5',
+  // Enlarge the hit target on touch/coarse pointers (still fits the 18px title bar).
+  'pointer-coarse:w-5',
+  'pointer-coarse:h-4',
   'inline-flex',
   'items-center',
   'justify-center',

@@ -198,14 +198,22 @@ html[data-zooming] .crt-roll {
 
 html, body, #root {
   height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
+/* Lock the shell as a fixed, non-scrolling surface so touch devices don't
+   rubber-band or pan the page. Windows and scroll areas still scroll internally. */
+html, body {
+  position: fixed;
+  inset: 0;
+  overscroll-behavior: none;
+}
+
 body {
   cursor: var(--cursor-default);
-  width: clamp(460px, 100%, 100%);
   font-size: 11px;
 }
 

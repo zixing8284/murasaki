@@ -16,7 +16,7 @@ export interface ScrollAreaContextValue {
   /** Scroll the viewport by page */
   scrollPage: (axis: 'v' | 'h', direction: -1 | 1) => void
   /** Begin thumb drag */
-  startDrag: (axis: 'v' | 'h', startMousePos: number) => void
+  startDrag: (axis: 'v' | 'h', startPos: number, pointerId: number) => void
   /** Auto-repeat helper for arrow buttons */
   startRepeat: (action: () => void) => () => void
   /** Bar thickness (width for vertical, used for layout) */

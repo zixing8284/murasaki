@@ -22,7 +22,7 @@ export function WindowResizeGrip({
     <div
       ref={ref}
       className={cn(
-        'absolute right-0.5 bottom-0.5 size-4 cursor-nwse-resize overflow-hidden',
+        'absolute right-0.5 bottom-0.5 size-4 cursor-nwse-resize overflow-hidden touch-none',
         // Marlett "p" (\0070) — shadow dots, offset right 4px
         'before:content-["p"] before:absolute before:bottom-0.5 before:right-1',
         'before:font-["Marlett"] before:text-base before:leading-none',

@@ -36,7 +36,7 @@ function Track({
 }: TrackProps): React.ReactElement {
   const isVertical = axis === 'v'
 
-  const onMouseDown = (e: React.MouseEvent): void => {
+  const onPointerDown = (e: React.PointerEvent): void => {
     // Don't page-scroll if the click was on the thumb itself
     const target = e.target as HTMLElement
     if (target.closest('[data-murasaki-thumb]'))
@@ -70,7 +70,7 @@ function Track({
         backgroundColor: TRACK_BG_COLOR,
         ...positionStyle,
       }}
-      onMouseDown={onMouseDown}
+      onPointerDown={onPointerDown}
     >
       {children}
     </div>
@@ -159,7 +159,7 @@ function VerticalBar({
     <div
       data-murasaki-vbar=""
       className={cnPure('absolute top-0 right-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border will-change-transform', className)}
-      style={{ width: barSize, height, ...style }}
+      style={{ width: barSize, height, touchAction: 'none', ...style }}
       {...props}
     >
       <ArrowButton
@@ -218,7 +218,7 @@ function HorizontalBar({
     <div
       data-murasaki-hbar=""
       className={cnPure('absolute bottom-0 left-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border will-change-transform', className)}
-      style={{ height: btnHeight, width, ...style }}
+      style={{ height: btnHeight, width, touchAction: 'none', ...style }}
       {...props}
     >
       <ArrowButton
@@ -267,7 +267,9 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
   const cleanupRef = React.useRef<(() => void) | null>(null)
   const Icon = ICON_MAP[direction]
 
-  const onMouseDown = (e: React.MouseEvent): void => {
+  const onPointerDown = (e: React.PointerEvent): void => {
+    if (e.button !== 0)
+      return
     e.preventDefault()
     setPressed(true)
     cleanupRef.current = startRepeat(action)
@@ -276,9 +278,11 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
       setPressed(false)
       cleanupRef.current?.()
       cleanupRef.current = null
-      document.removeEventListener('mouseup', onUp)
+      document.removeEventListener('pointerup', onUp)
+      document.removeEventListener('pointercancel', onUp)
     }
-    document.addEventListener('mouseup', onUp)
+    document.addEventListener('pointerup', onUp)
+    document.addEventListener('pointercancel', onUp)
   }
 
   // Cleanup on unmount
@@ -297,7 +301,7 @@ function ArrowButton({ direction, action, startRepeat, className }: ArrowButtonP
         className,
       )}
       style={{ width: 16, height: 17 }}
-      onMouseDown={onMouseDown}
+      onPointerDown={onPointerDown}
     >
       <Icon className="block pointer-events-none" pressed={pressed} />
     </div>

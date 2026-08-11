@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki-io/react98'
+import { useRef } from 'react'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
 import { useDesktopIconDrag } from './use-desktop-icon-drag'
 
@@ -59,6 +60,11 @@ export function DesktopIcon({
     onDragPreviewChange,
   })
 
+  // Touch never synthesizes `dblclick`, so opening cannot rely on onDoubleClick.
+  // Track the previous tap time and treat two quick taps as an open, which works
+  // uniformly for mouse and touch/pen (including device-emulation mode).
+  const lastTapRef = useRef(0)
+
   const dragging = dragOffset !== null
   const zIndex = dragging ? 2 : selected ? 1 : undefined
   // Two-line label budget at 72px width / 11px font. Selected state shows the
@@ -104,11 +110,18 @@ export function DesktopIcon({
             if (suppressClickRef.current) {
               suppressClickRef.current = false
               event.preventDefault()
+              // A drag just ended — don't pair this click with the next tap.
+              lastTapRef.current = 0
+              return
             }
-          }}
-          onDoubleClick={(event) => {
-            event.stopPropagation()
-            onOpen()
+            const now = Date.now()
+            if (now - lastTapRef.current <= 400) {
+              lastTapRef.current = 0
+              onOpen()
+            }
+            else {
+              lastTapRef.current = now
+            }
           }}
           onKeyDown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {

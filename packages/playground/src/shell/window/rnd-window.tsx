@@ -91,7 +91,7 @@ export function RndWindow({
     [appId, entry, portalContainer, onDragChange],
   )
 
-  const { setTargetRef: setDragTargetRef, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
+  const { setTargetRef: setDragTargetRef, setDragRef, setHandleRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
     container: portalContainer,
     draggable: true,
     onDragChange: handleDragChange,
@@ -105,11 +105,15 @@ export function RndWindow({
     onResizeChange,
   })
 
-  // Merge target refs into a single callback ref; also capture element for position writes
+  // Merge frame target refs into a single callback ref; also capture the element
+  // for position writes. The drag listener lives on the frame (so it fires even
+  // when touch-adjustment snaps the event target onto a sibling below the title
+  // bar); the title bar is the coordinate region that gates where a drag begins.
   const setTargetRef = (el: HTMLDivElement | null): void => {
     frameRef.current = el
     setDragTargetRef(el)
     setResizeTargetRef(el)
+    setDragRef(el)
   }
 
   return (
@@ -125,7 +129,7 @@ export function RndWindow({
       defaultPosition={resolvedDefaultPosition}
       isInteracting={dragging || resizing}
       frameRef={setTargetRef}
-      dragRef={setDragRef}
+      dragRef={setHandleRef}
       resizeRef={setResizeRef}
     >
       {children}

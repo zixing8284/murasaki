@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 
+import { getScreenFromLocalMatrix, scaleMagnitude } from '../../lib/pointer-transform'
 import { computeThumb } from './compute-thumb'
 import { BAR_SIZE, BTN_HEIGHT, REPEAT_MS, SCROLL_STEP, THUMB_BOX_SHADOW, TRACK_BG_COLOR, TRACK_BG_IMAGE, TRACK_BG_SIZE } from './scrollbar-constants'
 
@@ -406,7 +407,9 @@ function addButtonBehavior(
   const borderPaths = btn.querySelectorAll<SVGPathElement>('[data-murasaki-border]')
   const arrow = btn.querySelector<SVGPathElement>('[data-murasaki-arrow]')
 
-  const onDown = (e: MouseEvent): void => {
+  const onDown = (e: PointerEvent): void => {
+    if (e.button !== 0)
+      return
     e.preventDefault()
 
     // Swap border fills to pressed state
@@ -447,11 +450,13 @@ function addButtonBehavior(
     }
   }
 
-  btn.addEventListener('mousedown', onDown)
-  document.addEventListener('mouseup', onUp)
+  btn.addEventListener('pointerdown', onDown)
+  document.addEventListener('pointerup', onUp)
+  document.addEventListener('pointercancel', onUp)
   s.cleanups.push(() => {
-    btn.removeEventListener('mousedown', onDown)
-    document.removeEventListener('mouseup', onUp)
+    btn.removeEventListener('pointerdown', onDown)
+    document.removeEventListener('pointerup', onUp)
+    document.removeEventListener('pointercancel', onUp)
   })
 }
 
@@ -465,13 +470,24 @@ function addDragBehavior(
   // Drag behavior maps mouse delta in track space to native scroll delta.
   const t = s.target
 
-  const onDown = (e: MouseEvent): void => {
+  // Touch drags on the thumb must not be claimed by the browser for scrolling.
+  thumb.style.touchAction = 'none'
+
+  const onDown = (e: PointerEvent): void => {
+    if (e.button !== 0)
+      return
     e.preventDefault()
-    const startMouse = axis === 'v' ? e.clientY : e.clientX
+    const pointerId = e.pointerId
+    // Divide pointer deltas by the ancestor scale so thumb drag maps to content
+    // pixels correctly even inside a scaled container (identity when unscaled).
+    const scale = scaleMagnitude(getScreenFromLocalMatrix(thumb))
+    const startPos = axis === 'v' ? e.clientY : e.clientX
     const startScroll = axis === 'v' ? t.scrollTop : t.scrollLeft
 
-    const onMove = (ev: MouseEvent): void => {
-      const delta = (axis === 'v' ? ev.clientY : ev.clientX) - startMouse
+    const onMove = (ev: PointerEvent): void => {
+      if (ev.pointerId !== pointerId)
+        return
+      const delta = ((axis === 'v' ? ev.clientY : ev.clientX) - startPos) / scale
       const track = axis === 'v' ? s.vTrack : s.hTrack
       const thumbSize = axis === 'v'
         ? Number.parseFloat(s.vThumb.style.height)
@@ -495,17 +511,21 @@ function addDragBehavior(
       syncLayout(s)
     }
 
-    const onUp = (): void => {
-      document.removeEventListener('mousemove', onMove)
-      document.removeEventListener('mouseup', onUp)
+    const onUp = (ev: PointerEvent): void => {
+      if (ev.pointerId !== pointerId)
+        return
+      document.removeEventListener('pointermove', onMove)
+      document.removeEventListener('pointerup', onUp)
+      document.removeEventListener('pointercancel', onUp)
     }
 
-    document.addEventListener('mousemove', onMove)
-    document.addEventListener('mouseup', onUp)
+    document.addEventListener('pointermove', onMove)
+    document.addEventListener('pointerup', onUp)
+    document.addEventListener('pointercancel', onUp)
   }
 
-  thumb.addEventListener('mousedown', onDown)
-  s.cleanups.push(() => thumb.removeEventListener('mousedown', onDown))
+  thumb.addEventListener('pointerdown', onDown)
+  s.cleanups.push(() => thumb.removeEventListener('pointerdown', onDown))
 }
 
 // ── Bind all events ──
@@ -513,6 +533,25 @@ function addDragBehavior(
 function bindEvents(s: ScrollbarState): void {
   // Central wiring point for all runtime behaviors and observers.
   const t = s.target
+
+  // The bars overlay the scroller as siblings, so touch/wheel over them has no
+  // scrollable ancestor. Own touch gestures and forward wheel to the scroller.
+  s.vBar.style.touchAction = 'none'
+  s.hBar.style.touchAction = 'none'
+  const onBarWheel = (e: WheelEvent): void => {
+    if (e.deltaY !== 0)
+      t.scrollTop += e.deltaY
+    if (e.deltaX !== 0)
+      t.scrollLeft += e.deltaX
+    e.preventDefault()
+    syncLayout(s)
+  }
+  s.vBar.addEventListener('wheel', onBarWheel, { passive: false })
+  s.hBar.addEventListener('wheel', onBarWheel, { passive: false })
+  s.cleanups.push(() => {
+    s.vBar.removeEventListener('wheel', onBarWheel)
+    s.hBar.removeEventListener('wheel', onBarWheel)
+  })
 
   // Scroll → sync layout (passive: handler only reads state, never preventDefault)
   const onScroll = (): void => {
@@ -568,7 +607,7 @@ function bindEvents(s: ScrollbarState): void {
   })
 
   // Track click → page scroll
-  const onVTrack = (e: MouseEvent): void => {
+  const onVTrack = (e: PointerEvent): void => {
     if (e.target === s.vThumb) {
       return
     }
@@ -582,10 +621,10 @@ function bindEvents(s: ScrollbarState): void {
     }
     syncLayout(s)
   }
-  s.vTrack.addEventListener('mousedown', onVTrack)
-  s.cleanups.push(() => s.vTrack.removeEventListener('mousedown', onVTrack))
+  s.vTrack.addEventListener('pointerdown', onVTrack)
+  s.cleanups.push(() => s.vTrack.removeEventListener('pointerdown', onVTrack))
 
-  const onHTrack = (e: MouseEvent): void => {
+  const onHTrack = (e: PointerEvent): void => {
     if (e.target === s.hThumb) {
       return
     }
@@ -599,8 +638,8 @@ function bindEvents(s: ScrollbarState): void {
     }
     syncLayout(s)
   }
-  s.hTrack.addEventListener('mousedown', onHTrack)
-  s.cleanups.push(() => s.hTrack.removeEventListener('mousedown', onHTrack))
+  s.hTrack.addEventListener('pointerdown', onHTrack)
+  s.cleanups.push(() => s.hTrack.removeEventListener('pointerdown', onHTrack))
 
   // Thumb drag
   addDragBehavior(s, s.vThumb, 'v')

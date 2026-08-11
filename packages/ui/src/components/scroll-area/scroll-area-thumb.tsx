@@ -36,11 +36,14 @@ export function ScrollAreaThumb({
         height: BTN_HEIGHT,
       }
 
-  const onMouseDown = (e: React.MouseEvent): void => {
+  const onPointerDown = (e: React.PointerEvent): void => {
+    if (e.button !== 0)
+      return
     e.preventDefault()
     startDrag(
       isVertical ? 'v' : 'h',
       isVertical ? e.clientY : e.clientX,
+      e.pointerId,
     )
   }
 
@@ -53,8 +56,8 @@ export function ScrollAreaThumb({
         'bg-(--button-face)',
         className,
       )}
-      style={{ ...thumbStyle, minWidth: BAR_SIZE, minHeight: BAR_SIZE, boxShadow: THUMB_BOX_SHADOW, ...style }}
-      onMouseDown={onMouseDown}
+      style={{ ...thumbStyle, minWidth: BAR_SIZE, minHeight: BAR_SIZE, boxShadow: THUMB_BOX_SHADOW, touchAction: 'none', ...style }}
+      onPointerDown={onPointerDown}
       {...props}
     />
   )

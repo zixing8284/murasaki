@@ -15,7 +15,6 @@ import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../hooks/use-icon-label-bg-color'
 import { useMonitorFrame } from '../hooks/use-monitor-frame'
 import { usePinchZoomPause } from '../hooks/use-pinch-zoom-pause'
-import { SCREEN_SCALE_OPTIONS, useScreenScale } from '../hooks/use-screen-scale'
 import { SCREEN_SIZE_PRESETS, useScreenSize } from '../hooks/use-screen-size'
 import { useShaderGlass } from '../hooks/use-shader-glass'
 import { useWallpaper } from '../hooks/use-wallpaper'
@@ -100,7 +99,6 @@ export function Shell(): React.ReactElement {
   const [desktopBgColor] = useDesktopBgColor()
   const [iconLabelBgColor] = useIconLabelBgColor()
   const [screenSize, setScreenSize] = useScreenSize()
-  const [screenScale, setScreenScale] = useScreenScale()
   const wallpaperEntry = getWallpaperEntry(wallpaperSettings.id)
   const customWallpaperUrl = useCustomWallpaperUrl(wallpaperSettings.id)
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
@@ -196,57 +194,44 @@ export function Shell(): React.ReactElement {
     '--desktop-icon-label-bg': isNoneWallpaper ? 'transparent' : iconLabelBgColor,
   } as CSSProperties
 
-  // Monitor sizing — three distinct modes:
+  // Monitor sizing — the monitor always fits the viewport (no manual scale):
   //
-  // 1. fit + single monitor: bezel uses native resolution with CSS max-h/w-full
-  //    so the element tries to be screenSize.width × screenSize.height but is
-  //    capped by the viewport. A larger preset (e.g. 1600×1200) fills more of
-  //    the viewport than a smaller one (640×480), restoring the original visual
-  //    differentiation between resolution choices.
+  // 1. single monitor: bezel uses native resolution capped by CSS max-h/w-full,
+  //    so a larger preset (e.g. 1600×1200) fills more of the viewport than a
+  //    smaller one (640×480), keeping the resolution choices visually distinct.
   //
-  // 2. fit + CRT glass: each panel is computed to half the available viewport
-  //    so both always fit side-by-side without overflow.
+  // 2. CRT glass: each panel is computed to half the available viewport so both
+  //    always fit side-by-side without overflow.
   //
-  // 3. numeric scale: explicit px sizes derived from native × scale factor.
-  //    The outer container scrolls so nothing is clipped.
-  //
-  // All sizes are real CSS pixels — not a transform — so window drag/resize
-  // coordinate math stays correct.
+  // All sizes are real CSS pixels, so window drag/resize coordinate math stays
+  // correct (portrait rotation is handled by the transform-aware drag hooks).
   const aspect = screenSize.width / screenSize.height
   const pad = 'clamp(0.5rem,2.5vw,1.25rem)'
   const glassActive = shaderGlass.active
-  const isFit = screenScale === 'fit'
 
-  // Half-viewport formula used when both panels must fit side-by-side in Fit mode
+  // Half-viewport formula used when both panels must fit side-by-side
   const glassFitW = `min(calc((100vw - ${pad} * 2 - 0.75rem) / 2), calc((100vh - ${pad} * 2) * ${String(aspect)}))`
   const glassFitH = `min(calc((100vw - ${pad} * 2 - 0.75rem) / 2 / ${String(aspect)}), calc(100vh - ${pad} * 2))`
 
-  // Explicit px for numeric scale
-  const numericW = isFit ? 0 : Math.round(screenSize.width * (screenScale as number))
-  const numericH = isFit ? 0 : Math.round(screenSize.height * (screenScale as number))
-
-  // Bezel inline size style — each mode sets different properties
-  const bezelSizeStyle: CSSProperties = isFit && !glassActive
+  // Bezel inline size style — native resolution capped to viewport, or half-viewport beside the glass panel
+  const bezelSizeStyle: CSSProperties = !glassActive
     ? { width: screenSize.width, height: screenSize.height, aspectRatio: `${screenSize.width} / ${screenSize.height}` }
-    : isFit
-      ? { width: glassFitW, height: glassFitH }
-      : { width: numericW, height: numericH }
+    : { width: glassFitW, height: glassFitH }
 
   // CRT output panel size style
-  const crtPanelSizeStyle: CSSProperties = isFit
-    ? { width: glassFitW, height: glassFitH }
-    : { width: numericW, height: numericH }
+  // CRT output panel size style
+  const crtPanelSizeStyle: CSSProperties = { width: glassFitW, height: glassFitH }
 
   // Structural classes/styles that switch between no-bezel and bezel modes without
   // changing the element type at each tree position. React updates props in-place so
   // WindowRenderer (and open windows such as DisplayProperties) never unmounts on toggle.
   const alignmentWrapperClass = !monitorFrame
     ? 'relative size-full'
-    : (isFit && !glassActive ? 'contents' : isFit ? 'flex items-center gap-3 max-h-full max-w-full' : 'm-auto flex items-center gap-3')
+    : (!glassActive ? 'contents' : 'flex items-center gap-3 max-h-full max-w-full')
 
   const bezelContainerClass = !monitorFrame
     ? 'relative size-full overflow-hidden'
-    : `relative isolate box-border min-h-0 min-w-0 overflow-hidden bg-(--button-face) p-[clamp(20px,3.5vw,40px)] shadow-[2px_2px_0_1px_var(--button-dk-shadow)]${isFit && !glassActive ? ' max-h-full max-w-full' : ''}`
+    : `relative isolate box-border min-h-0 min-w-0 overflow-hidden bg-(--button-face) p-[clamp(20px,3.5vw,40px)] shadow-[2px_2px_0_1px_var(--button-dk-shadow)]${!glassActive ? ' max-h-full max-w-full' : ''}`
 
   const bezelContainerStyle: CSSProperties | undefined = monitorFrame
     ? {
@@ -334,7 +319,7 @@ export function Shell(): React.ReactElement {
   )
 
   return (
-    <div className={`flex h-screen w-full bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text) ${isFit ? 'items-center justify-center overflow-hidden' : 'overflow-auto'}`}>
+    <div className="flex h-screen w-full bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden">
       {/*
         Alignment wrapper — className switches between modes but element type stays `div`,
         so React updates props in-place and never remounts the subtree below.
@@ -370,7 +355,7 @@ export function Shell(): React.ReactElement {
                 }}
               />
 
-              {/* Display controls: resolution + scale + CRT Glass */}
+              {/* Display controls: resolution + CRT Glass */}
               <div className="absolute bottom-2 left-3 z-10 flex items-center gap-1">
                 <select
                   className="cursor-pointer appearance-none bg-(--button-face) px-1.5 py-0.5 text-[10px] text-(--button-text) shadow-(--shadow-raised)"
@@ -384,23 +369,6 @@ export function Shell(): React.ReactElement {
                   {SCREEN_SIZE_PRESETS.map(preset => (
                     <option key={`${preset.width}x${preset.height}`} value={`${preset.width}x${preset.height}`}>
                       {preset.label}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  aria-label="Display scale"
-                  title="Scale the monitor — enlarge so tall windows fit, or use Fit for both panels"
-                  className="cursor-pointer appearance-none bg-(--button-face) px-1.5 py-0.5 text-[10px] text-(--button-text) shadow-(--shadow-raised)"
-                  value={String(screenScale)}
-                  onChange={(e) => {
-                    const option = SCREEN_SCALE_OPTIONS.find(o => String(o.value) === e.target.value)
-                    if (option)
-                      setScreenScale(option.value)
-                  }}
-                >
-                  {SCREEN_SCALE_OPTIONS.map(option => (
-                    <option key={String(option.value)} value={String(option.value)}>
-                      {option.label}
                     </option>
                   ))}
                 </select>

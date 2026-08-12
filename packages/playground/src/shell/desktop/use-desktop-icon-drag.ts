@@ -1,7 +1,9 @@
-import type { PointerEvent as ReactPointerEvent, RefObject } from 'react'
+import type { RefObject } from 'react'
 import type { DesktopLayoutContextValue, GridLayout } from '../../contexts/desktop-layout'
-import { useEffect, useRef } from 'react'
+import type { ShellInputPoint, ShellInputSession, ShellInputSurface } from '../input/shell-input-registry'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { calcGridDropDelta } from '../../contexts/desktop-layout'
+import { useShellInputSurface } from '../input/shell-input-registry'
 
 const DRAG_THRESHOLD = 3
 
@@ -23,7 +25,6 @@ interface DragItem {
 }
 
 interface DragState {
-  pointerId: number
   startClientX: number
   startClientY: number
   moved: boolean
@@ -42,6 +43,7 @@ export interface UseDesktopIconDragOptions {
   isCellOccupied: DesktopCellOccupancyChecker
   onSelect: (id: string, additive: boolean, preserveSelectedGroup: boolean) => void
   onDragPreviewChange: (preview: DesktopDragPreview | null) => void
+  onOpen: () => void
 }
 
 export interface UseDesktopIconDragReturn {
@@ -51,7 +53,7 @@ export interface UseDesktopIconDragReturn {
    * inside its onClick handler.
    */
   suppressClickRef: RefObject<boolean>
-  handlePointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void
+  setIconRef: (el: HTMLDivElement | null) => void
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -129,32 +131,34 @@ export function useDesktopIconDrag({
   isCellOccupied,
   onSelect,
   onDragPreviewChange,
+  onOpen,
 }: UseDesktopIconDragOptions): UseDesktopIconDragReturn {
-  const dragRef = useRef<DragState | null>(null)
-  const cleanupRef = useRef<(() => void) | null>(null)
   const suppressClickRef = useRef(false)
+  const iconRef = useRef<HTMLDivElement | null>(null)
+  const lastTapRef = useRef(0)
+  const [iconElement, setIconElement] = useState<HTMLDivElement | null>(null)
 
-  // Abort any in-flight drag when the icon unmounts (e.g. removed mid-drag).
-  // Listeners live on `window`, so without this they would leak.
-  useEffect(() => () => cleanupRef.current?.(), [])
+  const setIconRef = (el: HTMLDivElement | null): void => {
+    iconRef.current = el
+    setIconElement(el)
+  }
 
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
-    if (event.button !== 0)
-      return
-    event.preventDefault()
-    event.stopPropagation()
-
+  const beginDrag = useCallback((point: ShellInputPoint): ShellInputSession | null => {
     // Resolve grid position for this icon. Auto-placed icons (no stored position)
     // have no explicit col/row, so compute the position from the DOM layout.
     const grid = gridRef.current
+    const iconEl = iconRef.current
+    if (!iconEl)
+      return null
+
     let resolvedCol = col
     let resolvedRow = row
     if (resolvedCol === undefined || resolvedRow === undefined) {
       if (!grid)
-        return
-      const pos = readGridPosFromDOM(event.currentTarget, grid)
+        return null
+      const pos = readGridPosFromDOM(iconEl, grid)
       if (!pos)
-        return
+        return null
       resolvedCol = pos.col
       resolvedRow = pos.row
     }
@@ -180,68 +184,26 @@ export function useDesktopIconDrag({
 
     const isSelected = selectedIds.includes(id)
     const items = buildDragItems(id, resolvedCol, resolvedRow, resolvedPositions, selectedIds)
-    onSelect(id, event.ctrlKey || event.metaKey, isSelected && selectedIds.length > 1)
+    onSelect(id, point.ctrlKey || point.metaKey, isSelected && selectedIds.length > 1)
 
-    // Defensive reset: clear any stale state from a previous drag that was
-    // never completed (e.g. pointerup swallowed by an overlay or iframe).
-    cleanupRef.current?.()
-
-    const iconEl = event.currentTarget
     const drag: DragState = {
-      pointerId: event.pointerId,
-      startClientX: event.clientX,
-      startClientY: event.clientY,
+      startClientX: point.clientX,
+      startClientY: point.clientY,
       moved: false,
       iconEl,
       items,
-    }
-    dragRef.current = drag
-
-    const onPointerMove = (e: PointerEvent): void => {
-      if (e.pointerId !== drag.pointerId)
-        return
-      const dx = e.clientX - drag.startClientX
-      const dy = e.clientY - drag.startClientY
-
-      if (!drag.moved) {
-        if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD)
-          return
-        drag.moved = true
-      }
-
-      onDragPreviewChange({
-        ids: drag.items.map(item => item.id),
-        offset: { dx, dy },
-      })
-    }
-
-    function cleanup(): void {
-      // Only the most-recent cleanup may run. Stale closures (e.g. from a
-      // re-entrant pointerdown) become no-ops here.
-      if (cleanupRef.current !== cleanup)
-        return
-      cleanupRef.current = null
-      dragRef.current = null
-      window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('pointerup', onPointerUp)
-      window.removeEventListener('pointercancel', onPointerCancel)
-      window.removeEventListener('blur', onAbort)
-      document.removeEventListener('visibilitychange', onVisibility)
-      onDragPreviewChange(null)
     }
 
     function commitDrop(clientX: number, clientY: number): void {
       if (!drag.moved)
         return
       suppressClickRef.current = true
-
-      const previousPointerEvents = drag.iconEl.style.pointerEvents
-      drag.iconEl.style.pointerEvents = 'none'
-      const hitTarget = drag.iconEl.ownerDocument.elementFromPoint(clientX, clientY)
-      drag.iconEl.style.pointerEvents = previousPointerEvents
-
       const grid = gridRef.current
-      if (!grid || !hitTarget || !grid.contains(hitTarget))
+      if (!grid)
+        return
+
+      const gridRect = grid.getBoundingClientRect()
+      if (clientX < gridRect.left || clientX > gridRect.right || clientY < gridRect.top || clientY > gridRect.bottom)
         return
 
       const delta = calcGridDropDelta(grid, clientX - drag.startClientX, clientY - drag.startClientY)
@@ -274,36 +236,59 @@ export function useDesktopIconDrag({
       setPositions(nextPositions)
     }
 
-    function onPointerUp(e: PointerEvent): void {
-      if (e.pointerId !== drag.pointerId)
-        return
-      commitDrop(e.clientX, e.clientY)
-      cleanup()
+    const finish = (): void => {
+      onDragPreviewChange(null)
     }
 
-    function onPointerCancel(e: PointerEvent): void {
-      if (e.pointerId !== drag.pointerId)
-        return
-      cleanup()
+    return {
+      captureIframes: true,
+      onMove(nextPoint) {
+        const dx = nextPoint.clientX - drag.startClientX
+        const dy = nextPoint.clientY - drag.startClientY
+
+        if (!drag.moved) {
+          if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD)
+            return
+          drag.moved = true
+        }
+
+        onDragPreviewChange({
+          ids: drag.items.map(item => item.id),
+          offset: { dx, dy },
+        })
+      },
+      onEnd(endPoint) {
+        if (drag.moved) {
+          commitDrop(endPoint.clientX, endPoint.clientY)
+        }
+        else {
+          const now = Date.now()
+          if (now - lastTapRef.current <= 400) {
+            lastTapRef.current = 0
+            onOpen()
+          }
+          else {
+            lastTapRef.current = now
+          }
+        }
+        finish()
+      },
+      onCancel: finish,
     }
+  }, [col, gridRef, id, isCellOccupied, onDragPreviewChange, onOpen, onSelect, positions, row, selectedIds, setPositions])
 
-    function onAbort(): void {
-      cleanup()
+  const surface = useMemo<ShellInputSurface | null>(() => {
+    if (!iconElement)
+      return null
+    return {
+      id: `desktop-icon:${id}`,
+      element: iconElement,
+      priority: 1000,
+      onStart: beginDrag,
     }
+  }, [beginDrag, iconElement, id])
 
-    function onVisibility(): void {
-      if (document.visibilityState === 'hidden')
-        cleanup()
-    }
+  useShellInputSurface(surface)
 
-    window.addEventListener('pointermove', onPointerMove)
-    window.addEventListener('pointerup', onPointerUp)
-    window.addEventListener('pointercancel', onPointerCancel)
-    window.addEventListener('blur', onAbort)
-    document.addEventListener('visibilitychange', onVisibility)
-
-    cleanupRef.current = cleanup
-  }
-
-  return { suppressClickRef, handlePointerDown }
+  return { suppressClickRef, setIconRef }
 }

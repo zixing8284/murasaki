@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
 import type { ProcessWindowPosition } from '../../contexts/process/types'
-import { useDraggable, useResizable } from '@murasaki-io/react98'
 import { useCallback, useRef, useState } from 'react'
 import directory from '../../contexts/process/directory'
-import { useProcesses } from '../../contexts/process/hooks'
+import { useProcessActions, useProcesses } from '../../contexts/process/hooks'
+import { useShellWindowInteraction } from '../input/use-shell-window-interaction'
 import { BaseWindow } from './base-window'
 import { readWindowPosition, writeWindowPosition } from './window-position-persistence'
 
@@ -36,6 +36,7 @@ export function RndWindow({
   onResizeChange,
 }: RndWindowProps): React.ReactElement | null {
   const { processes, container } = useProcesses()
+  const actions = useProcessActions()
   const portalContainer = processes[windowId]?.componentWindow ?? container
   const appId = processes[windowId]?.appId as AppId | undefined
   const entry = appId ? directory[appId] : undefined
@@ -91,29 +92,28 @@ export function RndWindow({
     [appId, entry, portalContainer, onDragChange],
   )
 
-  const { setTargetRef: setDragTargetRef, setDragRef, setHandleRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>({
+  const {
+    dragging,
+    resizing,
+    setDragHandleRef,
+    setFrameRef,
+    setResizeHandleRef,
+  } = useShellWindowInteraction({
+    windowId,
     container: portalContainer,
     draggable: true,
-    onDragChange: handleDragChange,
-    clampPositionOnResize: true,
-  })
-  const { setTargetRef: setResizeTargetRef, setResizeRef, resizing } = useResizable<HTMLDivElement, HTMLDivElement>({
-    container: portalContainer,
     resizable: !disableResize,
+    onActivate: () => actions.activate(windowId),
+    onDragChange: handleDragChange,
+    onResizeChange,
+    clampPositionOnResize: true,
     minWidth: defaultSize?.width,
     minHeight: defaultSize?.height,
-    onResizeChange,
   })
 
-  // Merge frame target refs into a single callback ref; also capture the element
-  // for position writes. The drag listener lives on the frame (so it fires even
-  // when touch-adjustment snaps the event target onto a sibling below the title
-  // bar); the title bar is the coordinate region that gates where a drag begins.
-  const setTargetRef = (el: HTMLDivElement | null): void => {
+  const setFrame = (el: HTMLDivElement | null): void => {
     frameRef.current = el
-    setDragTargetRef(el)
-    setResizeTargetRef(el)
-    setDragRef(el)
+    setFrameRef(el)
   }
 
   return (
@@ -128,9 +128,9 @@ export function RndWindow({
       defaultSize={defaultSize}
       defaultPosition={resolvedDefaultPosition}
       isInteracting={dragging || resizing}
-      frameRef={setTargetRef}
-      dragRef={setHandleRef}
-      resizeRef={setResizeRef}
+      frameRef={setFrame}
+      dragRef={setDragHandleRef}
+      resizeRef={setResizeHandleRef}
     >
       {children}
     </BaseWindow>

@@ -24,6 +24,7 @@ import { getWallpaperEntry } from '../lib/wallpapers'
 import { warmServiceWorkerCache } from '../sw-register'
 import { CrtOverlay } from './crt-overlay'
 import { Desktop } from './desktop/desktop'
+import { ShellInputProvider } from './input/shell-input'
 import { ShaderGlass } from './shader-glass'
 import { StartMenu } from './start-menu/start-menu'
 import { StartupScreen } from './startup/startup-screen'
@@ -73,6 +74,7 @@ export function Shell(): React.ReactElement {
   const [isDragActive, setIsDragActive] = useState(false)
   const screenRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [shellInputRoot, setShellInputRoot] = useState<HTMLDivElement | null>(null)
   const startButtonRef = useRef<HTMLButtonElement>(null)
   const desktopRef = useRef<DesktopHandle>(null)
   const dragDepthRef = useRef(0)
@@ -113,6 +115,11 @@ export function Shell(): React.ReactElement {
   const setContainerRef = (el: HTMLDivElement | null): void => {
     containerRef.current = el
     setContainer(el)
+  }
+
+  const setScreenRootRef = (el: HTMLDivElement | null): void => {
+    screenRef.current = el
+    setShellInputRoot(el)
   }
 
   // Open default windows once boot is complete, and ask the SW to warm
@@ -254,7 +261,7 @@ export function Shell(): React.ReactElement {
       {crtEnabled && <CrtOverlay settings={crtTuning} />}
       {/* Desktop */}
       <div
-        ref={screenRef}
+        ref={setScreenRootRef}
         className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden${wallpaperBgClasses ? ` ${wallpaperBgClasses}` : ''}${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
         style={screenStyle}
       >
@@ -267,51 +274,53 @@ export function Shell(): React.ReactElement {
             )
           : (
               <LayerProvider>
-                <ScreenBoundaryContext value={screenRef}>
-                  {/* Desktop Area */}
-                  <div className="flex-1 overflow-hidden relative">
-                    <div
-                      className="h-full relative overflow-clip"
-                      ref={setContainerRef}
-                      onPointerDown={handleDesktopClick}
-                      onDragEnter={handleDragEnter}
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={handleDrop}
-                    >
-                      {/* Desktop Icons */}
-                      <Desktop ref={desktopRef} />
+                <ShellInputProvider rootElement={shellInputRoot}>
+                  <ScreenBoundaryContext value={screenRef}>
+                    {/* Desktop Area */}
+                    <div className="flex-1 overflow-hidden relative">
+                      <div
+                        className="h-full relative overflow-clip"
+                        ref={setContainerRef}
+                        onPointerDown={handleDesktopClick}
+                        onDragEnter={handleDragEnter}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                      >
+                        {/* Desktop Icons */}
+                        <Desktop ref={desktopRef} />
 
-                      {isDragActive && (
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
-                          <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
-                            Drop audio or video files to add them to the desktop
+                        {isDragActive && (
+                          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
+                            <div className="px-4 py-2 text-[11px] text-(--button-text) bg-(--button-face) shadow-(--shadow-raised)">
+                              Drop audio or video files to add them to the desktop
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {/* All managed windows */}
-                      <WindowRenderer />
+                        {/* All managed windows */}
+                        <WindowRenderer />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Start Menu */}
-                  {showStartMenu && (
-                    <StartMenu
-                      anchorRef={startButtonRef}
-                      screenRef={screenRef}
-                      onClose={() => setShowStartMenu(false)}
+                    {/* Start Menu */}
+                    {showStartMenu && (
+                      <StartMenu
+                        anchorRef={startButtonRef}
+                        screenRef={screenRef}
+                        onClose={() => setShowStartMenu(false)}
+                      />
+                    )}
+
+                    {/* Taskbar */}
+                    <Taskbar
+                      startButtonRef={startButtonRef}
+                      showStartMenu={showStartMenu}
+                      onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
+                      onShowDesktop={handleShowDesktop}
                     />
-                  )}
-
-                  {/* Taskbar */}
-                  <Taskbar
-                    startButtonRef={startButtonRef}
-                    showStartMenu={showStartMenu}
-                    onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
-                    onShowDesktop={handleShowDesktop}
-                  />
-                </ScreenBoundaryContext>
+                  </ScreenBoundaryContext>
+                </ShellInputProvider>
               </LayerProvider>
             )}
       </div>

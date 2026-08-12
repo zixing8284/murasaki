@@ -1,6 +1,7 @@
-import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, PointerEvent as ReactPointerEvent, Ref } from 'react'
+import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import type { GridLayout, GridPosition } from '../../contexts/desktop-layout/storage'
 import type { AppId } from '../../contexts/process/directory'
+import type { ShellInputPoint, ShellInputSession, ShellInputSurface } from '../input/shell-input-registry'
 import type { DesktopDragPreview } from './use-desktop-icon-drag'
 import {
   ContextMenu,
@@ -10,7 +11,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki-io/react98'
-import { useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
@@ -19,6 +20,7 @@ import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
 import { AppIcon } from '../app-icon'
+import { useShellInputSurface } from '../input/shell-input-registry'
 import { DesktopIcon } from './desktop-icon'
 
 export interface DesktopHandle {
@@ -40,15 +42,6 @@ interface SelectionRect {
   startY: number
   currentX: number
   currentY: number
-}
-
-interface SelectionDragState {
-  pointerId: number
-  startX: number
-  startY: number
-  additive: boolean
-  baseSelectedIds: string[]
-  moved: boolean
 }
 
 const gridStyle: CSSProperties = {
@@ -100,11 +93,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
   const [desktopEl, setDesktopEl] = useState<HTMLDivElement | null>(null)
-  const selectionCleanupRef = useRef<(() => void) | null>(null)
 
   useImperativeHandle(ref, () => ({
     clearSelection(): void {
-      selectionCleanupRef.current?.()
       setSelectedIconIds([])
       setDragPreview(null)
     },
@@ -186,7 +177,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const selectedIconIdSet = new Set(selectedIconIds)
   const dragPreviewIdSet = new Set(dragPreview?.ids ?? [])
 
-  const getDesktopPoint = (clientX: number, clientY: number): { x: number, y: number } | null => {
+  const getDesktopPoint = useCallback((clientX: number, clientY: number): { x: number, y: number } | null => {
     const desktop = desktopRef.current
     if (!desktop)
       return null
@@ -196,9 +187,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       x: Math.max(0, Math.min(clientX - rect.left, rect.width)),
       y: Math.max(0, Math.min(clientY - rect.top, rect.height)),
     }
-  }
+  }, [])
 
-  const getIconIdsInSelection = (rect: SelectionRect): string[] => {
+  const getIconIdsInSelection = useCallback((rect: SelectionRect): string[] => {
     const desktop = desktopRef.current
     if (!desktop)
       return []
@@ -231,9 +222,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     })
 
     return selectedIds
-  }
-
-  useEffect(() => () => selectionCleanupRef.current?.(), [])
+  }, [])
 
   const handleIconSelect = (id: string, additive: boolean, preserveSelectedGroup: boolean): void => {
     setSelectedIconIds((currentIds) => {
@@ -250,23 +239,16 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     })
   }
 
-  const handleBackgroundPointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
-    if (event.button !== 0 || event.target !== event.currentTarget)
-      return
-
-    event.preventDefault()
-    selectionCleanupRef.current?.()
-
-    const start = getDesktopPoint(event.clientX, event.clientY)
+  const beginLassoSelection = useCallback((point: ShellInputPoint): ShellInputSession | null => {
+    const start = getDesktopPoint(point.clientX, point.clientY)
     if (!start)
-      return
+      return null
 
-    const drag: SelectionDragState = {
-      pointerId: event.pointerId,
+    const drag = {
       startX: start.x,
       startY: start.y,
-      additive: event.ctrlKey || event.metaKey,
-      baseSelectedIds: event.ctrlKey || event.metaKey ? selectedIconIds : [],
+      additive: point.ctrlKey || point.metaKey,
+      baseSelectedIds: point.ctrlKey || point.metaKey ? selectedIconIds : [],
       moved: false,
     }
     setDragPreview(null)
@@ -274,11 +256,8 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       setSelectedIconIds([])
     setSelectionRect({ startX: start.x, startY: start.y, currentX: start.x, currentY: start.y })
 
-    const onPointerMove = (moveEvent: PointerEvent): void => {
-      if (moveEvent.pointerId !== drag.pointerId)
-        return
-
-      const current = getDesktopPoint(moveEvent.clientX, moveEvent.clientY)
+    const update = (nextPoint: ShellInputPoint): void => {
+      const current = getDesktopPoint(nextPoint.clientX, nextPoint.clientY)
       if (!current)
         return
 
@@ -308,46 +287,29 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       )
     }
 
-    function cleanup(): void {
-      if (selectionCleanupRef.current !== cleanup)
-        return
-      selectionCleanupRef.current = null
-      window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('pointerup', onPointerUp)
-      window.removeEventListener('pointercancel', onPointerCancel)
-      window.removeEventListener('blur', onAbort)
-      document.removeEventListener('visibilitychange', onVisibility)
-      setSelectionRect(null)
-    }
+    const finish = (): void => setSelectionRect(null)
 
-    function onPointerUp(upEvent: PointerEvent): void {
-      if (upEvent.pointerId !== drag.pointerId)
-        return
-      cleanup()
+    return {
+      onMove: update,
+      onEnd: finish,
+      onCancel: finish,
     }
+  }, [getDesktopPoint, getIconIdsInSelection, selectedIconIds])
 
-    function onPointerCancel(cancelEvent: PointerEvent): void {
-      if (cancelEvent.pointerId !== drag.pointerId)
-        return
-      cleanup()
+  const lassoSurface = useMemo<ShellInputSurface | null>(() => {
+    if (!desktopEl)
+      return null
+    return {
+      id: 'desktop:lasso',
+      element: desktopEl,
+      priority: 100,
+      contains(point: ShellInputPoint) {
+        return document.elementFromPoint(point.clientX, point.clientY) === desktopEl
+      },
+      onStart: beginLassoSelection,
     }
-
-    function onAbort(): void {
-      cleanup()
-    }
-
-    function onVisibility(): void {
-      if (document.visibilityState === 'hidden')
-        cleanup()
-    }
-
-    window.addEventListener('pointermove', onPointerMove)
-    window.addEventListener('pointerup', onPointerUp)
-    window.addEventListener('pointercancel', onPointerCancel)
-    window.addEventListener('blur', onAbort)
-    document.addEventListener('visibilitychange', onVisibility)
-    selectionCleanupRef.current = cleanup
-  }
+  }, [beginLassoSelection, desktopEl])
+  useShellInputSurface(lassoSurface)
 
   const handleImportClick = (): void => {
     fileInputRef.current?.click()
@@ -362,7 +324,6 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   }
 
   const handleRefresh = async (): Promise<void> => {
-    selectionCleanupRef.current?.()
     setSelectedIconIds([])
     setDragPreview(null)
     setRefreshing(true)
@@ -385,7 +346,6 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
           data-area="desktop"
           className="absolute inset-0"
           style={gridStyle}
-          onPointerDown={handleBackgroundPointerDown}
         >
           {!refreshing && iconEntries.map((entry) => {
             const pos = renderedPositions[entry.id]

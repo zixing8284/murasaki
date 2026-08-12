@@ -100,6 +100,7 @@ export function BaseWindow({
         >
           <WindowTitleBar
             ref={dragRef}
+            className="touch-none pointer-coarse:h-6"
             onDoubleClick={disableMaximize ? undefined : () => actions.toggleMaximize(windowId)}
           >
             <WindowTitle icon={titleIcon ?? defaultIcon}>{proc.title}</WindowTitle>

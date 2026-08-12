@@ -63,3 +63,15 @@ _Avoid_: Hardcoded browser defaults, duplicate cursor assets in the library, sch
 **Playground public asset boundary**:
 A playground convention that keeps reusable semantic icons under `packages/playground/public/icons/` as flat `{name}-{size}.png` files, and wallpapers/backgrounds under `packages/playground/public/wallpaper/`.
 _Avoid_: New semantic icons in `public/wallpaper`, unsearchable one-off asset paths
+
+**Playground shell input manager**:
+A playground-owned input layer for desktop-shell interactions that must behave like an operating-system surface rather than isolated UI components: window drag/resize, desktop icon drag/drop, desktop lasso selection, shell chrome hit-testing, iframe capture during interaction, and scrollbar/scroll-area touch affordances. It owns mobile/device-emulation gesture arbitration for the playground while the package UI library stays focused on reusable primitives.
+_Avoid_: Per-component touch patches, scattered gesture glue, app-shell behavior leaking into generic UI components
+
+**Raw touch point activation**:
+A mobile input rule where shell interactions are decided from the native touch coordinates (`Touch.clientX` / `Touch.clientY`) rather than the adjusted event target. Browser touch-adjustment may retarget pointer/click events to a nearby element inside the touch contact area; shell behavior that needs Windows-like precision uses the raw touch point as the source of truth.
+_Avoid_: Touch-circle edge activation, target-snapping-dependent behavior, synthetic event assumptions
+
+**Shell input registry**:
+A registry owned by the playground shell input manager where windows, resize handles, desktop icons, desktop background lasso zones, iframe surfaces, and other shell interaction surfaces register their geometry and callbacks. The shell root listens once and dispatches gestures to registered surfaces by raw input coordinates.
+_Avoid_: Each component installing its own global listeners, duplicated gesture thresholds, target-based touch ownership

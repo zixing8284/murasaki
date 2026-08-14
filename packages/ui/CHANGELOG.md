@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+### Patch Changes
+
+- 8f9cb4a: Remove gap between minimize and maximize buttons in window titlebar to match real Windows 98 behavior. The close button retains a small left margin for accurate spacing.
+
 ## 0.4.0
 
 ### Minor Changes

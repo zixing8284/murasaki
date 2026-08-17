@@ -17,6 +17,8 @@ interface RndWindowProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Show the working cursor over this window while it is loading */
+  loadingCursor?: boolean
   /** Called when dragging starts/stops — use to disable iframe pointer-events during drag */
   onDragChange?: (dragging: boolean) => void
   /** Called when resize starts/stops — use to disable iframe pointer-events during resize */
@@ -32,6 +34,7 @@ export function RndWindow({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  loadingCursor = false,
   onDragChange,
   onResizeChange,
 }: RndWindowProps): React.ReactElement | null {
@@ -128,6 +131,7 @@ export function RndWindow({
       defaultSize={defaultSize}
       defaultPosition={resolvedDefaultPosition}
       isInteracting={dragging || resizing}
+      loadingCursor={loadingCursor}
       frameRef={setFrame}
       dragRef={setDragHandleRef}
       resizeRef={setResizeHandleRef}

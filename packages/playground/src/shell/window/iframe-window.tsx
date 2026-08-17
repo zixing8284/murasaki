@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useRef } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
+import { useSystemBusy } from '../../contexts/system-cursor'
 import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
 import { RndWindow } from './rnd-window'
@@ -37,9 +38,12 @@ export function IframeWindow({
 }: IframeWindowProps): React.ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
-  const { iframeRef: onIframeRef, iframeLoaded, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
+  const { iframeRef: onIframeRef, iframeLoaded, isLoading, focusIframe, cancelIframeInteraction, sandbox, referrerPolicy } = useIframeWindow({
     windowId,
   })
+
+  // Register desktop-level working cursor while iframe content loads
+  useSystemBusy(isLoading, 'working')
 
   // Direct ref to the iframe element. Synchronously applies pointer-events: none
   // at drag/resize start — before React re-renders — preventing the iframe from
@@ -68,6 +72,7 @@ export function IframeWindow({
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
       disableResize={disableResize}
+      loadingCursor={isLoading}
       onDragChange={handleInteractionChange}
       onResizeChange={handleInteractionChange}
     >

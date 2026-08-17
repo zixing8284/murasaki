@@ -32,6 +32,8 @@ export interface BaseWindowProps {
   defaultPosition?: ProcessWindowPosition
   /** Whether the window is currently being dragged or resized */
   isInteracting?: boolean
+  /** Show the working cursor over this window while it is loading */
+  loadingCursor?: boolean
   /** Callback ref for the window frame element (used by RndWindow for drag/resize targeting) */
   frameRef?: Ref<HTMLDivElement>
   /** Callback ref for the title bar element (used by RndWindow as drag handle) */
@@ -60,6 +62,7 @@ export function BaseWindow({
   defaultSize,
   defaultPosition,
   isInteracting = false,
+  loadingCursor = false,
   frameRef,
   dragRef,
   resizeRef,
@@ -83,6 +86,7 @@ export function BaseWindow({
       <WindowPortal container={portalContainer}>
         <WindowFrame
           ref={frameRef}
+          data-system-cursor={loadingCursor ? 'working' : undefined}
           className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''} ${className ?? ''}`}
           style={{
             zIndex,

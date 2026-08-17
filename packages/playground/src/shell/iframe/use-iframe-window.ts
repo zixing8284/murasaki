@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProcessActions } from '../../contexts/process'
-import { useSystemBusy } from '../../contexts/system-cursor'
 import { IFRAME_CONFIG } from './iframe-config'
 
 export interface UseIframeWindowOptions {
@@ -10,6 +9,7 @@ export interface UseIframeWindowOptions {
 export interface UseIframeWindowReturn {
   iframeRef: React.RefCallback<HTMLIFrameElement>
   iframeLoaded: boolean
+  isLoading: boolean
   focusIframe: () => void
   /** Sends a cancel interaction message to the iframe */
   cancelIframeInteraction: () => void
@@ -39,10 +39,6 @@ export function useIframeWindow({
   const actions = useProcessActions()
   const [isLoading, setIsLoading] = useState(true)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
-
-  // Show the `busy` cursor while the embedded content is still loading — the
-  // window frame is already visible but its content is not interactive yet.
-  useSystemBusy(isLoading, 'busy')
 
   const focusIframe = (): void => {
     iframeRef.current?.focus()
@@ -125,6 +121,7 @@ export function useIframeWindow({
   return {
     iframeRef: setIframeRef,
     iframeLoaded: !isLoading,
+    isLoading,
     focusIframe,
     cancelIframeInteraction,
     referrerPolicy: IFRAME_CONFIG.referrerPolicy,

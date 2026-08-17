@@ -278,23 +278,33 @@ input:not(:disabled):is(
 }
 
 /*
- * System-wide cursor states driven by window lifecycle.
+ * Dual-layer cursor system matching Win98 per-thread behavior.
  *
- * `document.body.dataset.systemCursor` is set by SystemCursorProvider:
- *   - "working" while a window is launching (lazy chunk resolving)
- *   - "busy"    while a window's content is loading (iframe / opt-in async)
+ * Layer 1 — Desktop cursor (`data-desktop-cursor` on the desktop container):
+ * Set by SystemCursorProvider when any window is opening/loading. Appears
+ * "global" because the desktop container is behind all windows, matching
+ * Win98 where Explorer's thread cursor covers the entire screen.
  *
- * `busy` has priority over `working`. Both override hover cursors (link/help)
- * and any Tailwind cursor utilities, matching Win98 where the hourglass takes
- * over the whole screen regardless of what the pointer is over.
+ * Layer 2 — Per-window cursor (`data-system-cursor` on a window frame):
+ * Set on individual window frames while that window is loading. Overrides
+ * the desktop cursor via source order (both 0,1,0 !important, per-window
+ * comes later). Cursor inherits naturally to all children.
  */
-body[data-system-cursor="working"],
-body[data-system-cursor="working"] * {
+[data-desktop-cursor="working"],
+[data-desktop-cursor="working"] * {
   cursor: var(--cursor-progress) !important;
 }
+[data-desktop-cursor="busy"],
+[data-desktop-cursor="busy"] * {
+  cursor: var(--cursor-wait) !important;
+}
 
-body[data-system-cursor="busy"],
-body[data-system-cursor="busy"] * {
+[data-system-cursor="working"],
+[data-system-cursor="working"] * {
+  cursor: var(--cursor-progress) !important;
+}
+[data-system-cursor="busy"],
+[data-system-cursor="busy"] * {
   cursor: var(--cursor-wait) !important;
 }
 

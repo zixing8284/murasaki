@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { SystemCursorKind } from './types'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useProcesses } from '../process/hooks'
 import { SystemCursorContext } from './context'
 
 interface CursorCounts {
@@ -12,7 +13,7 @@ const EMPTY_COUNTS: CursorCounts = { working: 0, busy: 0 }
 
 /**
  * Resolve the highest-priority active cursor kind. `busy` outranks `working`;
- * an empty string clears the attribute so the default body cursor applies.
+ * an empty string clears the attribute so the default cursor applies.
  */
 function resolveCursor(counts: CursorCounts): SystemCursorKind | '' {
   if (counts.busy > 0)
@@ -23,14 +24,20 @@ function resolveCursor(counts: CursorCounts): SystemCursorKind | '' {
 }
 
 /**
- * Provides a ref-counted registry of transient system cursor sources and
- * reflects the effective state onto `document.body.dataset.systemCursor`.
+ * Provides a ref-counted registry of transient desktop-level cursor sources
+ * and reflects the effective state onto the desktop container element via
+ * `data-desktop-cursor`.
+ *
+ * This matches Win98 where Explorer's thread cursor appears "global" because
+ * the desktop window covers the entire screen. Per-window cursors use
+ * `data-system-cursor` on individual window frames and override the desktop
+ * cursor via higher CSS specificity.
  *
  * Sources register via `useSystemBusy`. Multiple windows can be launching or
- * loading at once; the body shows the highest-priority active kind. CSS in
- * `style.css` maps each `data-system-cursor` value to a pixel `.cur` asset.
+ * loading at once; the desktop shows the highest-priority active kind.
  */
 export function SystemCursorProvider({ children }: { children: ReactNode }): React.ReactElement {
+  const { container } = useProcesses()
   const [counts, setCounts] = useState<CursorCounts>(EMPTY_COUNTS)
 
   // Stable actions for the provider's lifetime — only closes over setCounts.
@@ -51,18 +58,24 @@ export function SystemCursorProvider({ children }: { children: ReactNode }): Rea
   const lastWrittenRef = useRef<string | null>(null)
 
   useEffect(() => {
+    if (!container)
+      return
     if (lastWrittenRef.current === cursor)
       return
     lastWrittenRef.current = cursor
     if (cursor)
-      document.body.dataset.systemCursor = cursor
+      container.dataset.desktopCursor = cursor
     else
-      delete document.body.dataset.systemCursor
-  }, [cursor])
+      delete container.dataset.desktopCursor
+  }, [cursor, container])
 
-  useEffect(() => () => {
-    delete document.body.dataset.systemCursor
-  }, [])
+  useEffect(() => {
+    if (!container)
+      return
+    return () => {
+      delete container.dataset.desktopCursor
+    }
+  }, [container])
 
   return (
     <SystemCursorContext value={actions}>

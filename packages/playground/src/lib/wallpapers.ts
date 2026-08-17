@@ -100,10 +100,9 @@ export const WALLPAPERS: WallpaperEntry[] = [
   })),
 ]
 
-const DEFAULT_WALLPAPER_ID = toWallpaperId('animspace.gif')
 const DEFAULT_SETTINGS: WallpaperSettings = {
-  id: DEFAULT_WALLPAPER_ID,
-  mode: getDefaultModeForFile('animspace.gif'),
+  id: 'none',
+  mode: 'tiled',
 }
 
 export function getWallpaperEntry(id: string): WallpaperEntry | undefined {

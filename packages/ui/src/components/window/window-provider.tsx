@@ -7,7 +7,7 @@ export interface WindowProviderProps {
   children: React.ReactNode
   /** Whether window appears active (focused). Default: true */
   active?: boolean
-  /** Whether window is minimized (hidden via CSS, DOM preserved). Default: false */
+  /** Whether window is minimized (invisible via CSS, DOM preserved). Default: false */
   minimized?: boolean
   /** Initial maximized state. Default: false */
   defaultMaximized?: boolean

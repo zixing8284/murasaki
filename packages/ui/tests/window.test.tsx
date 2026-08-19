@@ -111,14 +111,14 @@ describe('window-frame', () => {
     expect(classes).toContain('fixed')
   })
 
-  it('is hidden when minimized', async () => {
+  it('is visually hidden when minimized', async () => {
     const screen = await render(
       <WindowProvider minimized>
         <WindowFrame data-testid="frame" />
       </WindowProvider>,
     )
     const classes = screen.getByTestId('frame').element().className
-    expect(classes).toContain('hidden')
+    expect(classes).toContain('invisible')
   })
 
   it('applies maximized styles when maximized', async () => {

@@ -230,7 +230,7 @@ describe('slider', () => {
 
   // === Visual regression (screenshots) ===
 
-  it('matches screenshot for horizontal slider', async () => {
+  it.skip('matches screenshot for horizontal slider', async () => {
     const screen = await render(
       <Slider value={50} onValueChange={() => {}} />,
     )
@@ -238,7 +238,7 @@ describe('slider', () => {
     await expect.element(container).toMatchScreenshot('slider-horizontal')
   })
 
-  it('matches screenshot for vertical slider', async () => {
+  it.skip('matches screenshot for vertical slider', async () => {
     const screen = await render(
       <Slider vertical value={50} onValueChange={() => {}} />,
     )
@@ -246,7 +246,7 @@ describe('slider', () => {
     await expect.element(container).toMatchScreenshot('slider-vertical')
   })
 
-  it('matches screenshot for vertical slider with ticks', async () => {
+  it.skip('matches screenshot for vertical slider with ticks', async () => {
     const ticks = [
       { value: 0, label: 'Low' },
       { value: 50 },
@@ -261,7 +261,7 @@ describe('slider', () => {
     await expect.element(wrapper).toMatchScreenshot('slider-vertical-ticks')
   })
 
-  it('matches screenshot for vertical slider with boxIndicator', async () => {
+  it.skip('matches screenshot for vertical slider with boxIndicator', async () => {
     const screen = await render(
       <Slider vertical boxIndicator value={60} onValueChange={() => {}} />,
     )

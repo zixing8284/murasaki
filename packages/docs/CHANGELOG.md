@@ -1,5 +1,12 @@
 # @murasaki-io/react98-docs
 
+## 0.0.11
+
+### Patch Changes
+
+- Updated dependencies [e040d9b]
+  - @murasaki-io/react98@0.5.0
+
 ## 0.0.10
 
 ### Patch Changes

@@ -1,5 +1,6 @@
 import { ButtonBasicDemo } from './button/button-basic'
 import { ButtonStateDemo } from './button/button-state'
+import { ButtonIconDemo } from './button/button-icon'
 
 # Button
 
@@ -12,8 +13,11 @@ The `Button` component renders a Windows 98 styled push button with raised 3D bo
 | `active` | `boolean` | `false` | Renders the button in a pressed state. |
 | `disabled` | `boolean` | `false` | Disables button interaction. |
 | `primary` | `boolean` | `false` | Applies the primary button emphasis. |
+| `iconOnly` | `boolean` | `false` | Square variant for icon-only buttons: drops the 75px min-width, removes horizontal padding, and restores the real text color so `fill="currentColor"` SVG icons render. |
 | `className` | `string` | - | Adds custom classes to the button. |
 | `children` | `ReactNode` | - | Button label content. |
+
+> Label text is painted with a transparent color + `text-shadow` trick for the embossed Win98 look. That makes `fill="currentColor"` SVG icons inherit a *transparent* color on the default (labeled) variant — use `iconOnly` for icon buttons, which restores `--button-text` and removes the shadow.
 
 ## Examples
 
@@ -23,6 +27,10 @@ The `Button` component renders a Windows 98 styled push button with raised 3D bo
 
 <ComponentExample name="button-state" title="Pressed state">
   <ButtonStateDemo />
+</ComponentExample>
+
+<ComponentExample name="button-icon" title="Icon-only buttons">
+  <ButtonIconDemo />
 </ComponentExample>
 
 ## ARIA

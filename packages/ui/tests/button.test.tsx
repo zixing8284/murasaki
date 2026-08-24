@@ -80,4 +80,18 @@ describe('button', () => {
     const classes = btn.element().className
     expect(classes).toContain('shadow-(--shadow-raised)')
   })
+
+  it('applies iconOnly square styling without the 75px min-width', async () => {
+    const screen = await render(
+      <Button iconOnly aria-label="Play">▶</Button>,
+    )
+    const btn = screen.getByRole('button')
+    const classes = btn.element().className
+    // Square sizing replaces the wide default
+    expect(classes).toContain('min-w-0')
+    expect(classes).toContain('size-[23px]')
+    expect(classes).not.toContain('min-w-[75px]')
+    // Icon buttons restore the real text color so `currentColor` SVG icons render
+    expect(classes).toContain('text-(--button-text)')
+  })
 })

@@ -142,6 +142,34 @@ describe('slider', () => {
     await expect.element(input).toBeDisabled()
   })
 
+  // === Fill (filled progress) ===
+
+  it('renders a horizontal fill bar spanning the current value', async () => {
+    const screen = await render(
+      <Slider fill value={50} onValueChange={() => {}} />,
+    )
+    const fill = screen.container.querySelector('[data-slider-fill]') as HTMLElement
+    expect(fill).not.toBeNull()
+    expect(fill.style.width).toBe('50%')
+    expect(fill.className).toContain('bg-(--hilight)')
+  })
+
+  it('renders a vertical fill bar spanning the current value', async () => {
+    const screen = await render(
+      <Slider fill vertical value={25} onValueChange={() => {}} />,
+    )
+    const fill = screen.container.querySelector('[data-slider-fill]') as HTMLElement
+    expect(fill).not.toBeNull()
+    expect(fill.style.height).toBe('25%')
+  })
+
+  it('does not render a fill bar by default', async () => {
+    const screen = await render(
+      <Slider value={50} onValueChange={() => {}} />,
+    )
+    expect(screen.container.querySelector('[data-slider-fill]')).toBeNull()
+  })
+
   it('renders vertical ticks with labels', async () => {
     const ticks = [
       { value: 0, label: 'Low' },

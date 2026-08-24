@@ -147,6 +147,13 @@ describe('select', () => {
     expect(hiddenInput.value).toBe('banana')
   })
 
+  it('omits the hidden input when name is not provided', async () => {
+    const screen = await render(
+      <Select options={fruitOptions} />,
+    )
+    expect(screen.container.querySelector('input[type="hidden"]')).toBeNull()
+  })
+
   // === Controlled mode ===
 
   it('reflects controlled value', async () => {

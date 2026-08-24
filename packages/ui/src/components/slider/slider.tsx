@@ -62,6 +62,19 @@ const trackWrapperVariants = cva(['relative'], {
   },
 })
 
+// Fill styles (optional filled progress portion of the track)
+const fillVariants = cva(['absolute', 'pointer-events-none'], {
+  variants: {
+    vertical: {
+      true: ['w-0.5', 'left-1/2', '-translate-x-1/2', 'bottom-0'],
+      false: ['h-0.5', 'top-1/2', '-translate-y-1/2', 'left-0'],
+    },
+  },
+  defaultVariants: {
+    vertical: false,
+  },
+})
+
 // Track styles (the groove)
 const trackVariants = cva(
   [
@@ -157,6 +170,8 @@ export interface TickMark {
 export interface SliderProps extends Omit<React.ComponentProps<'input'>, 'onChange' | 'type'> {
   /** Use a box indicator instead of the default triangle */
   boxIndicator?: boolean
+  /** Render a filled portion of the track from `min` to the current value */
+  fill?: boolean
   /** Callback fired with the next numeric value */
   onValueChange?: (value: number) => void
   /** Render the slider vertically */
@@ -168,6 +183,7 @@ export interface SliderProps extends Omit<React.ComponentProps<'input'>, 'onChan
 export function Slider({
   className,
   boxIndicator = false,
+  fill = false,
   vertical = false,
   min = 0,
   max = 100,
@@ -288,6 +304,18 @@ export function Slider({
 
         {/* Custom track */}
         <div className={cn(trackVariants({ vertical }))} />
+
+        {/* Filled progress portion (optional) */}
+        {fill && (
+          <div
+            className={cn(
+              fillVariants({ vertical }),
+              disabled ? 'bg-(--gray-text)' : 'bg-(--hilight)',
+            )}
+            data-slider-fill=""
+            style={vertical ? { height: `${String(percentage)}%` } : { width: `${String(percentage)}%` }}
+          />
+        )}
 
         {/* Custom thumb */}
         {boxIndicator

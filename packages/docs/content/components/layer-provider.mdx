@@ -2,7 +2,32 @@
 
 `LayerProvider` creates a scoped portal root for floating @murasaki-io/react98 UI such as submenus, context menus, tooltips, and windows that do not receive an explicit portal container.
 
+It keeps menus and popups inside your desktop/shell container instead of leaking them to `document.body`. Without it, floating layers fall back to `document.body`, which breaks `overflow: hidden` shells (menus get clipped or escape the surface), loses `z-index` / stacking-context isolation, and lets popups render outside the very container they belong to.
+
 Use it at an app shell or framed-surface seam when library popups should stay inside the same stacking context as the surface that triggered them.
+
+```tsx
+// ❌ Without LayerProvider: a tooltip/submenu inside this shell portals to
+// document.body and escapes the `overflow-hidden` + `isolate` surface.
+function DesktopWithoutLayer() {
+  return (
+    <div className="relative isolate overflow-hidden">
+      <Desktop />
+    </div>
+  )
+}
+
+// ✅ With LayerProvider: floating layers render into the shell's local root.
+function DesktopWithLayer() {
+  return (
+    <div className="relative isolate overflow-hidden">
+      <LayerProvider>
+        <Desktop />
+      </LayerProvider>
+    </div>
+  )
+}
+```
 
 ## Props
 

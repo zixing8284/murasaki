@@ -131,6 +131,14 @@ export type {
   TreeViewProps,
 } from './components/tree-view/tree-view'
 
+// Window convenience component
+export { Window } from './components/window/window'
+export type {
+  WindowPosition,
+  WindowProps,
+  WindowSize,
+} from './components/window/window'
+
 // Window compound components
 export {
   WindowButtons,

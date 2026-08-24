@@ -74,6 +74,15 @@ export default function App() {
 
 > Adjust the `@source` path to be relative to your CSS file's location.
 
+### `globals.css` vs `theme.css`
+
+| Entry | What it is | Use when |
+|---|---|---|
+| `@murasaki-io/react98/globals.css` | Pre-compiled bundle: theme tokens + **the library's own component utilities**, already expanded to plain CSS. | You are **not** using Tailwind — just import it and go. |
+| `@murasaki-io/react98/theme.css` | Tailwind CSS v4 *source*: design tokens, theme skins, and `@import "tailwindcss"`. | You **are** using Tailwind v4 — pair it with `@source` so your build compiles the utilities. |
+
+`globals.css` only carries the classes the components themselves use — it does **not** include general-purpose Tailwind utilities (e.g. `w-screen`, `flex`, `gap-2`). If you skip Tailwind, layout the *rest* of your app with your own CSS (or set up Tailwind v4 separately).
+
 ---
 
 ## Components
@@ -100,10 +109,12 @@ All 22 components ship with full keyboard navigation and ARIA semantics.
 | `FieldPanel` | Labeled field group |
 | `GroupBox` | Named box for grouping controls |
 | `Divider` | Horizontal or vertical separator |
-| `Window` | Draggable and resizable window shell |
+| `Window` | Ready-to-use draggable & resizable window shell (title + content) |
 | `Taskbar` | Desktop taskbar with quick-launch |
 | `ThemeProvider` | Theme context root |
 | `LayerProvider` | Scoped floating layer portal |
+
+The `Window` suite is actually a small family: `Window` is the convenience shell, while `WindowProvider`, `WindowFrame`, `WindowTitleBar`, `WindowContent`, `WindowMenuBar*`, `WindowStatusBar`, `WindowResizeGrip`, and `WindowPortal` are the composable primitives you can use for full control. See [Windows and floating layers](#windows-and-floating-layers) below.
 
 ---
 
@@ -153,7 +164,7 @@ Every stateful component supports both patterns. Pass an initial value to let th
 
 ## Windows and floating layers
 
-Build a full desktop shell with draggable, resizable windows:
+Build a full desktop shell with a draggable, resizable window:
 
 ```tsx
 import { Window, LayerProvider } from '@murasaki-io/react98'
@@ -162,7 +173,12 @@ function Desktop() {
   return (
     <div className="relative isolate overflow-hidden w-screen h-screen">
       <LayerProvider>
-        <Window title="My Document" defaultPosition={{ x: 80, y: 60 }}>
+        <Window
+          title="My Document"
+          defaultPosition={{ x: 80, y: 60 }}
+          defaultSize={{ width: 480, height: 320 }}
+          onClose={() => {/* remove window */}}
+        >
           <p>Hello from 1998!</p>
         </Window>
       </LayerProvider>
@@ -171,7 +187,83 @@ function Desktop() {
 }
 ```
 
-Wrap your desktop surface in `LayerProvider` so menus, tooltips, and window portals render inside your shell instead of leaking to `document.body`.
+`Window` wires up drag (via the title bar) and resize (via the bottom-right grip) for you. It accepts `defaultPosition` / `defaultSize` / `draggable` / `resizable` (both on by default) plus `active`, `minimized`, `defaultMaximized`, `minimizable`, `maximizable`, `closable`, `positioning`, `container`, and `onClose` / `onMinimize`.
+
+Wrap your desktop surface in `LayerProvider` so menus, tooltips, and window portals render inside your shell instead of leaking to `document.body`. Without it, floating layers (submenus, context menus, tooltips, default window portals) fall back to `document.body`, which breaks `overflow: hidden` / `isolation` shells and z-index isolation.
+
+### Build a complete window from primitives
+
+For menu bars, status bars, custom chrome, or portals into a window manager, compose the primitives directly:
+
+```tsx
+import {
+  WindowProvider,
+  WindowFrame,
+  WindowTitleBar,
+  WindowTitle,
+  WindowButtons,
+  WindowMinimizeButton,
+  WindowMaximizeButton,
+  WindowCloseButton,
+  WindowMenuBar,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+  WindowMenuBarContent,
+  WindowContent,
+  WindowStatusBar,
+  WindowStatusBarField,
+  WindowResizeGrip,
+  useDraggable,
+  useResizable,
+  MenuItem,
+} from '@murasaki-io/react98'
+
+function MyWindow() {
+  const { setTargetRef: setDragTarget, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>()
+  const { setTargetRef: setResizeTarget, setResizeRef, resizing } = useResizable<HTMLDivElement, HTMLDivElement>({ minWidth: 320, minHeight: 200 })
+
+  const setFrameRef = (el: HTMLDivElement | null) => {
+    setDragTarget(el)
+    setResizeTarget(el)
+  }
+
+  return (
+    <WindowProvider positioning="absolute">
+      <WindowFrame ref={setFrameRef} style={{ left: 80, top: 60, width: 480, height: 320 }}>
+        <WindowTitleBar ref={setDragRef}>
+          <WindowTitle>Notepad 98</WindowTitle>
+          <WindowButtons>
+            <WindowMinimizeButton />
+            <WindowMaximizeButton />
+            <WindowCloseButton />
+          </WindowButtons>
+        </WindowTitleBar>
+        <WindowMenuBar>
+          <WindowMenuBarMenu value="file">
+            <WindowMenuBarTrigger>File</WindowMenuBarTrigger>
+            <WindowMenuBarContent>
+              <MenuItem reserveIconSpace>New</MenuItem>
+              <MenuItem reserveIconSpace>Open…</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+        </WindowMenuBar>
+        <WindowContent className="p-2">Your app content</WindowContent>
+        <WindowStatusBar>
+          <WindowStatusBarField>Ready</WindowStatusBarField>
+        </WindowStatusBar>
+        <WindowResizeGrip ref={setResizeRef} />
+      </WindowFrame>
+    </WindowProvider>
+  )
+}
+```
+
+The mental model behind these pieces:
+
+- `left` / `top` (and `width` / `height`) are **static inline styles** you set once for the initial layout.
+- Dragging adds a `translate()` **transform** on top of the base position (`useDraggable`), and re-clamps to the container/viewport.
+- Resizing **overwrites the inline `width` / `height`** (`useResizable`).
+- `WindowResizeGrip` is the visual grip; wire it to `setResizeRef`. `useDraggable`'s mousedown ignores clicks on `button` / `a` / `input` elements so the title-bar buttons still work.
 
 ---
 
@@ -183,12 +275,23 @@ Two hooks are available for custom drag and resize interactions:
 import { useDraggable, useResizable } from '@murasaki-io/react98'
 ```
 
+- `useDraggable` moves a target element via CSS `translate()` when a handle is dragged. Attach `setTargetRef` to the movable element and `setDragRef` to the drag handle.
+- `useResizable` resizes a target element by writing inline `width` / `height` when a handle is dragged. Attach `setTargetRef` to the element and `setResizeRef` to the resize handle.
+
+Both accept a `container` boundary element (defaults to the viewport) and `draggable` / `resizable` toggles.
+
 ---
 
 ## Requirements
 
 - React 19+
 - Tailwind CSS v4 (optional — `globals.css` works without it)
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history and breaking changes.
 
 ---
 

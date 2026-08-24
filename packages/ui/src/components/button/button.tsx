@@ -37,6 +37,21 @@ const buttonVariants = cva(
       primary: {
         true: ['shadow-(--shadow-raised-primary)'],
       },
+      iconOnly: {
+        true: [
+          // Drop the 75px minimum width and the horizontal padding so a plain
+          // icon button stays square instead of stretching into a pill.
+          'min-w-0',
+          'p-0',
+          'size-[23px]',
+          // The base styles paint label text through a transparent color +
+          // text-shadow trick. SVG icons with `fill="currentColor"` inherit the
+          // transparent color, so restore the real color and drop the shadow
+          // (there is no glyph to emboss).
+          'text-(--button-text)',
+          'text-shadow-none',
+        ],
+      },
     },
   },
 )
@@ -49,11 +64,12 @@ export function Button({
   className,
   active,
   primary,
+  iconOnly,
   type = 'button',
   ...props
 }: ButtonProps): React.ReactElement {
   return (
-    <button type={type} className={cn(buttonVariants({ active, primary, className }))} data-active={active || undefined} {...props}>
+    <button type={type} className={cn(buttonVariants({ active, primary, iconOnly, className }))} data-active={active || undefined} {...props}>
       {children}
     </button>
   )

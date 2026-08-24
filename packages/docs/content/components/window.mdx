@@ -1,11 +1,44 @@
+import { WindowConvenienceDemo } from './window/window-convenience'
 import { WindowBasicDemo } from './window/window-basic'
 import { WindowMenuDemo } from './window/window-menu'
 
 # Window
 
-The Window suite is a set of composable primitives for Windows 98 application chrome.
+The Window suite is a set of composable primitives for Windows 98 application chrome, plus a ready-to-use `Window` convenience component.
 
-## Props
+- `Window` — wires up `WindowProvider` + `WindowFrame` + `WindowTitleBar` + drag/resize for the common "title + content" case.
+- The primitives below give you full control for menu bars, status bars, portals, and window-manager shells.
+
+## `Window` (convenience)
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `ReactNode` | - | Title shown in the title bar. |
+| `icon` | `ReactNode` | - | Icon rendered before the title. |
+| `defaultPosition` | `{ x?: number, y?: number }` | - | Initial top-left position, applied as static `left`/`top` inline styles. |
+| `defaultSize` | `{ width?: number, height?: number }` | - | Initial size, applied as `width`/`height` inline styles. |
+| `draggable` | `boolean` | `true` | Dragging the title bar moves the window. |
+| `resizable` | `boolean` | `true` | Bottom-right grip resizes the window. |
+| `minWidth` / `minHeight` | `number` | `defaultSize` or `200` / `120` | Minimum size while resizing. |
+| `maxWidth` / `maxHeight` | `number` | unlimited | Maximum size while resizing. |
+| `active` | `boolean` | `true` | Active (focused) styling. |
+| `minimized` | `boolean` | `false` | Hides the window via CSS. |
+| `defaultMaximized` | `boolean` | `false` | Initial maximized state. |
+| `maximizable` | `boolean` | `true` | Whether the window can be maximized. |
+| `minimizable` | `boolean` | `true` | Render the minimize button. |
+| `closable` | `boolean` | `true` | Render the close button. |
+| `positioning` | `'absolute' \| 'fixed'` | `'absolute'` | Positioning mode. |
+| `container` | `HTMLElement \| null` | viewport | Boundary element for drag/resize. |
+| `titleBarButtons` | `ReactNode` | - | Extra buttons after minimize/maximize/close. |
+| `contentClassName` / `titleBarClassName` | `string` | - | Classes for the content body / title bar. |
+| `onClose` | `() => void` | - | Fired when the close button is clicked. |
+| `onMinimize` | `() => void` | - | Fired when the minimize button is clicked. |
+
+Other div props (including `ref` and `className`) are forwarded to the frame element.
+
+## Primitives
 
 | Export | Key props | Description |
 |--------|-----------|-------------|
@@ -22,13 +55,94 @@ The Window suite is a set of composable primitives for Windows 98 application ch
 
 ## Examples
 
-<ComponentExample name="window-basic" title="Application window">
+<ComponentExample name="window-convenience" title="Convenience window" previewClassName="h-72 min-h-72">
+  <WindowConvenienceDemo />
+</ComponentExample>
+
+<ComponentExample name="window-basic" title="Primitives assembly">
   <WindowBasicDemo />
 </ComponentExample>
 
 <ComponentExample name="window-menu" title="Menu bar dropdowns">
   <WindowMenuDemo />
 </ComponentExample>
+
+## Build a complete window from primitives
+
+The convenience component covers the common case. When you need a menu bar, status bar, custom buttons, or a portal, compose the primitives and wire the two interaction hooks yourself:
+
+```tsx
+import {
+  WindowProvider,
+  WindowFrame,
+  WindowTitleBar,
+  WindowTitle,
+  WindowButtons,
+  WindowMinimizeButton,
+  WindowMaximizeButton,
+  WindowCloseButton,
+  WindowMenuBar,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+  WindowMenuBarContent,
+  WindowContent,
+  WindowStatusBar,
+  WindowStatusBarField,
+  WindowResizeGrip,
+  useDraggable,
+  useResizable,
+  MenuItem,
+} from '@murasaki-io/react98'
+
+function MyWindow() {
+  const { setTargetRef: setDragTarget, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>()
+  const { setTargetRef: setResizeTarget, setResizeRef } = useResizable<HTMLDivElement, HTMLDivElement>({
+    minWidth: 320,
+    minHeight: 200,
+  })
+
+  const setFrameRef = (el: HTMLDivElement | null) => {
+    setDragTarget(el)
+    setResizeTarget(el)
+  }
+
+  return (
+    <WindowProvider positioning="absolute">
+      <WindowFrame ref={setFrameRef} style={{ left: 80, top: 60, width: 480, height: 320 }}>
+        <WindowTitleBar ref={setDragRef}>
+          <WindowTitle>Notepad 98</WindowTitle>
+          <WindowButtons>
+            <WindowMinimizeButton />
+            <WindowMaximizeButton />
+            <WindowCloseButton />
+          </WindowButtons>
+        </WindowTitleBar>
+        <WindowMenuBar>
+          <WindowMenuBarMenu value="file">
+            <WindowMenuBarTrigger>File</WindowMenuBarTrigger>
+            <WindowMenuBarContent>
+              <MenuItem reserveIconSpace>New</MenuItem>
+              <MenuItem reserveIconSpace>Open…</MenuItem>
+            </WindowMenuBarContent>
+          </WindowMenuBarMenu>
+        </WindowMenuBar>
+        <WindowContent className="p-2">Your app content</WindowContent>
+        <WindowStatusBar>
+          <WindowStatusBarField>Ready</WindowStatusBarField>
+        </WindowStatusBar>
+        <WindowResizeGrip ref={setResizeRef} />
+      </WindowFrame>
+    </WindowProvider>
+  )
+}
+```
+
+### Positioning model
+
+- `left` / `top` and `width` / `height` are **static inline styles** you set once for the initial layout.
+- Dragging adds a `translate()` **transform** on top of the base position; `useDraggable` re-clamps it to the container/viewport.
+- Resizing **overwrites the inline `width` / `height`**; `useResizable` clamps it to `minWidth`/`minHeight`/`maxWidth`/`maxHeight` and the container/viewport.
+- `useDraggable` ignores mousedowns on `button` / `a` / `input` / `select` / `textarea` / `[role="button"]`, so the title-bar buttons keep working.
 
 ## ARIA
 
@@ -40,4 +154,4 @@ Window chrome primitives do not add global keyboard shortcuts. Title-bar buttons
 
 ## SSR
 
-WindowProvider owns maximized state. Use `defaultMaximized` for initial layout and keep positioning classes stable across hydration.
+`WindowProvider` owns maximized state. Use `defaultMaximized` for initial layout and keep positioning classes stable across hydration.

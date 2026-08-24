@@ -15,6 +15,13 @@ export type {
   WindowMinimizeButtonProps,
 } from './window-buttons'
 
+export { Window } from './window-component'
+export type {
+  WindowPosition,
+  WindowProps,
+  WindowSize,
+} from './window-component'
+
 export { WindowContent } from './window-content'
 export type { WindowContentProps } from './window-content'
 

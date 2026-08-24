@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import {
   useWindowContext,
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -328,5 +329,72 @@ describe('window integration', () => {
 
     // Button should now say Restore
     await expect.element(screen.getByRole('button', { name: 'Restore' })).toBeInTheDocument()
+  })
+})
+
+describe('window (convenience)', () => {
+  it('renders title and content', async () => {
+    const screen = await render(
+      <Window title="My Document">
+        <p>Hello from 1998!</p>
+      </Window>,
+    )
+    await expect.element(screen.getByText('My Document')).toBeInTheDocument()
+    await expect.element(screen.getByText('Hello from 1998!')).toBeInTheDocument()
+    await expect.element(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
+    await expect.element(screen.getByRole('button', { name: 'Minimize' })).toBeInTheDocument()
+    await expect.element(screen.getByRole('button', { name: 'Maximize' })).toBeInTheDocument()
+  })
+
+  it('applies defaultPosition and defaultSize as inline styles', async () => {
+    const screen = await render(
+      <Window
+        data-testid="frame"
+        title="Doc"
+        defaultPosition={{ x: 80, y: 60 }}
+        defaultSize={{ width: 320, height: 240 }}
+      >
+        body
+      </Window>,
+    )
+    const frame = screen.getByTestId('frame').element() as HTMLElement
+    expect(frame.style.left).toBe('80px')
+    expect(frame.style.top).toBe('60px')
+    expect(frame.style.width).toBe('320px')
+    expect(frame.style.height).toBe('240px')
+  })
+
+  it('fires onClose and onMinimize', async () => {
+    const handleClose = vi.fn()
+    const handleMinimize = vi.fn()
+    const screen = await render(
+      <Window title="Doc" onClose={handleClose} onMinimize={handleMinimize}>
+        body
+      </Window>,
+    )
+    await screen.getByRole('button', { name: 'Close' }).click()
+    await screen.getByRole('button', { name: 'Minimize' }).click()
+    expect(handleClose).toHaveBeenCalledOnce()
+    expect(handleMinimize).toHaveBeenCalledOnce()
+  })
+
+  it('omits minimize/close buttons when disabled', async () => {
+    const screen = await render(
+      <Window title="Doc" minimizable={false} closable={false}>
+        body
+      </Window>,
+    )
+    expect(screen.container.querySelector('button[aria-label="Minimize"]')).toBeNull()
+    expect(screen.container.querySelector('button[aria-label="Close"]')).toBeNull()
+    await expect.element(screen.getByRole('button', { name: 'Maximize' })).toBeInTheDocument()
+  })
+
+  it('omits the resize grip when resizable is false', async () => {
+    const screen = await render(
+      <Window title="Doc" resizable={false}>
+        body
+      </Window>,
+    )
+    expect(screen.container.querySelector('[data-resize-handle]')).toBeNull()
   })
 })

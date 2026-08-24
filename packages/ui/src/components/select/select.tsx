@@ -193,8 +193,9 @@ export interface SelectProps<T = string>
   menuMaxHeight?: number | string
   /**
    * The name attribute for form submission.
+   * Optional — omit for UI-only selects that do not participate in a form.
    */
-  name: string
+  name?: string
   /**
    * Callback fired with the next selected value and option.
    */
@@ -387,11 +388,13 @@ export function Select<T = string>({
       {...props}
     >
       {/* Hidden input for form submission */}
-      <input
-        name={name}
-        type="hidden"
-        value={selectedOption ? String(selectedOption.value) : ''}
-      />
+      {name !== undefined && (
+        <input
+          name={name}
+          type="hidden"
+          value={selectedOption ? String(selectedOption.value) : ''}
+        />
+      )}
 
       {/* Trigger button - styled like native select */}
       <button

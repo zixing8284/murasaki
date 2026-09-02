@@ -1,0 +1,170 @@
+# Build a desktop
+
+This guide assembles the primitives into a small Windows 98 desktop: draggable, resizable windows, a taskbar, and simple window management (activation and z-index). Everything here is built from public `@murasaki-io/react98` exports.
+
+If you only need a single window, start from the [Window](/components/window) reference. This guide ties the pieces together end to end.
+
+## 1. A draggable, resizable window
+
+`Window` is a context root that renders no DOM, so you own the frame and wire the interaction hooks yourself. The [`useDraggable`](/hooks/use-draggable) hook moves the frame when its title bar is dragged; [`useResizable`](/hooks/use-resizable) resizes it from a grip.
+
+```tsx
+import {
+  useDraggable,
+  useResizable,
+  Window,
+  WindowButtons,
+  WindowCloseButton,
+  WindowContent,
+  WindowFrame,
+  WindowMaximizeButton,
+  WindowMinimizeButton,
+  WindowTitle,
+  WindowTitleBar,
+  WindowResizeGrip,
+} from '@murasaki-io/react98'
+
+interface DesktopWindowProps {
+  title: string
+  active: boolean
+  style?: React.CSSProperties
+  onClose: () => void
+  onActivate: () => void
+  children: React.ReactNode
+}
+
+function DesktopWindow({ title, active, style, onClose, onActivate, children }: DesktopWindowProps) {
+  const { setTargetRef: setDragTarget, setDragRef } = useDraggable<HTMLDivElement, HTMLDivElement>()
+  const { setTargetRef: setResizeTarget, setResizeRef } = useResizable<HTMLDivElement, HTMLDivElement>({
+    minWidth: 240,
+    minHeight: 160,
+  })
+
+  const setFrameRef = (el: HTMLDivElement | null) => {
+    setDragTarget(el)
+    setResizeTarget(el)
+  }
+
+  return (
+    <Window active={active} positioning="absolute">
+      <WindowFrame ref={setFrameRef} style={style} onPointerDown={onActivate}>
+        <WindowTitleBar ref={setDragRef}>
+          <WindowTitle>{title}</WindowTitle>
+          <WindowButtons>
+            <WindowMinimizeButton />
+            <WindowMaximizeButton />
+            <WindowCloseButton onClick={onClose} />
+          </WindowButtons>
+        </WindowTitleBar>
+        <WindowContent className="p-2">{children}</WindowContent>
+        <WindowResizeGrip ref={setResizeRef} />
+      </WindowFrame>
+    </Window>
+  )
+}
+```
+
+The `active` prop drives the title-bar highlight, and `onPointerDown` lets the desktop bring the window to the front. `useDraggable` ignores presses on buttons and inputs, so the title-bar controls keep working.
+
+## 2. A taskbar
+
+`Taskbar` is the shell footer. Compose a Start button, a task button per open window, and the system clock.
+
+```tsx
+import { Button, Taskbar, TaskbarDivider, TaskbarNotificationArea, TaskbarSystemClock } from '@murasaki-io/react98'
+
+interface DesktopTaskbarProps {
+  windows: { id: string, title: string }[]
+  activeId: string | null
+  onSelect: (id: string) => void
+}
+
+function DesktopTaskbar({ windows, activeId, onSelect }: DesktopTaskbarProps) {
+  return (
+    <Taskbar>
+      <Button className="font-bold">Start</Button>
+      <TaskbarDivider />
+      <div className="flex flex-1 gap-1 overflow-hidden">
+        {windows.map(win => (
+          <Button
+            key={win.id}
+            active={win.id === activeId}
+            className="min-w-0 flex-1 justify-start truncate"
+            onClick={() => onSelect(win.id)}
+          >
+            {win.title}
+          </Button>
+        ))}
+      </div>
+      <TaskbarNotificationArea>
+        <TaskbarSystemClock />
+      </TaskbarNotificationArea>
+    </Taskbar>
+  )
+}
+```
+
+## 3. Putting it together
+
+The desktop keeps a list of open windows and a stacking order. Bringing a window to the front is just moving its id to the end of the order; the array index becomes its `z-index`.
+
+```tsx
+import { useState } from 'react'
+
+interface OpenWindow {
+  id: string
+  title: string
+}
+
+export function Desktop() {
+  const [windows, setWindows] = useState<OpenWindow[]>([
+    { id: 'welcome', title: 'Welcome' },
+    { id: 'notepad', title: 'Untitled - Notepad' },
+  ])
+  // Stacking order: last id is the front-most window.
+  const [order, setOrder] = useState<string[]>(['welcome', 'notepad'])
+
+  const activeId = order.at(-1) ?? null
+  const bringToFront = (id: string) => setOrder(prev => [...prev.filter(x => x !== id), id])
+  const close = (id: string) => {
+    setWindows(prev => prev.filter(w => w.id !== id))
+    setOrder(prev => prev.filter(x => x !== id))
+  }
+
+  return (
+    <div className="relative size-full overflow-hidden bg-(--desktop)">
+      <div className="absolute inset-0 bottom-7">
+        {windows.map((win, index) => (
+          <DesktopWindow
+            key={win.id}
+            title={win.title}
+            active={win.id === activeId}
+            style={{ left: 24 + index * 28, top: 24 + index * 28, width: 360, height: 240, zIndex: order.indexOf(win.id) + 1 }}
+            onClose={() => close(win.id)}
+            onActivate={() => bringToFront(win.id)}
+          >
+            <p className="m-0">Window body for {win.title}.</p>
+          </DesktopWindow>
+        ))}
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0">
+        <DesktopTaskbar windows={windows} activeId={activeId} onSelect={bringToFront} />
+      </div>
+    </div>
+  )
+}
+```
+
+A few things worth calling out:
+
+- **Positioning** — `left` / `top` / `width` / `height` are static inline styles for the initial layout. `useDraggable` layers a `translate()` transform on top, and `useResizable` overwrites `width` / `height`. Neither touches your `zIndex`.
+- **Stacking** — deriving `zIndex` from the order array keeps the front-most window on top and matches the taskbar's active button. Any transient layer that must sit above windows (menus, dialogs) should use a [`LayerProvider`](/components/layer-provider) rather than competing z-indexes.
+- **Boundaries** — pass a `container` element to `useDraggable` / `useResizable` to clamp windows to the desktop instead of the viewport.
+
+## Where to go next
+
+- [Window](/components/window) — the frame, title bar, menu bar, and status bar slots.
+- [useDraggable](/hooks/use-draggable) and [useResizable](/hooks/use-resizable) — the interaction hooks.
+- [Taskbar](/components/taskbar) — quick launch, dividers, notification area, and clock.
+- [LayerProvider](/components/layer-provider) — a scoped portal root for floating UI.

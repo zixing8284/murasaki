@@ -1,6 +1,6 @@
 import type { WallpaperImageEntry } from '../../../lib/wallpaper-storage'
 import type { WallpaperMode, WallpaperSettings } from '../../../lib/wallpapers'
-import { Button, FieldPanel, GroupBox, Select, TabPanel } from '@murasaki-io/react98'
+import { Button, FieldPanel, GroupBox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabPanel } from '@murasaki-io/react98'
 import { useCallback, useEffect, useRef } from 'react'
 import { useCustomWallpaperUrl } from '../../../hooks/use-custom-wallpaper-url'
 import { assetPath } from '../../../lib/asset-path'
@@ -242,21 +242,23 @@ export function WallpaperTab({
                 Display:
               </label>
               <Select
-                id="wallpaper-display"
                 name="wallpaper-display"
-                className="w-full"
-                options={[
-                  { label: WALLPAPER_MODE_LABELS.centered, value: 'centered' },
-                  { label: WALLPAPER_MODE_LABELS.tiled, value: 'tiled' },
-                  { label: WALLPAPER_MODE_LABELS.stretch, value: 'stretch' },
-                  { label: WALLPAPER_MODE_LABELS.fill, value: 'fill' },
-                ]}
                 value={selectedWallpaper.mode}
                 onValueChange={(value) => {
                   const next: WallpaperSettings = { ...selectedWallpaper, mode: value as WallpaperMode }
                   onSelectedWallpaperChange(next)
                 }}
-              />
+              >
+                <SelectTrigger id="wallpaper-display" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="centered">{WALLPAPER_MODE_LABELS.centered}</SelectItem>
+                  <SelectItem value="tiled">{WALLPAPER_MODE_LABELS.tiled}</SelectItem>
+                  <SelectItem value="stretch">{WALLPAPER_MODE_LABELS.stretch}</SelectItem>
+                  <SelectItem value="fill">{WALLPAPER_MODE_LABELS.fill}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex flex-col gap-0.5">

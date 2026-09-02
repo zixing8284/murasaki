@@ -42,6 +42,13 @@ function getFocusable(container: HTMLElement): HTMLElement[] {
  *
  * Out of scope: focus guards for portal escape, sentinel nodes for Shadow DOM,
  * programmatic focus return targets.
+ *
+ * @example
+ * ```tsx
+ * const dialogRef = useRef<HTMLDivElement>(null)
+ * useFocusScope({ enabled: open, containerRef: dialogRef, autoFocus: true, restoreFocus: true })
+ * return open ? <div ref={dialogRef} role="dialog">…</div> : null
+ * ```
  */
 export function useFocusScope({
   enabled,

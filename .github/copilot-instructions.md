@@ -59,6 +59,7 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - Shared internal primitives live in `packages/ui/src/primitives/`. These cover behavior needed by more than one component (e.g. scrollbar, layer-root, focus scoping). Component-specific context, state, and helpers live flat in the component directory (e.g. `window/window-context.ts`).
 - Public exports go through `packages/ui/src/index.ts`.
 - Use **flat named exports** for public primitives.
+- Public multi-part components use a **compound API** (a headless root plus named parts, shadcn/ui-style). The root is the component's own name and is typically a context-only provider that renders no DOM; the parts consume its context. Prefer this over prop-driven convenience wrappers.
 - Use value-level callbacks for controlled state (`onValueChange`, `onCheckedChange`); reserve native names like `onChange` for native DOM event passthrough.
 - Use **CVA** for variant-heavy styling.
 - Use `cn()` by default and `cnPure()` only when the base font injection should be skipped.

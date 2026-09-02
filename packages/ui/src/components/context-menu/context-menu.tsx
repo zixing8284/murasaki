@@ -244,7 +244,7 @@ export function ContextMenuContent({
     if (!closeOnItemClick || event.defaultPrevented)
       return
     const target = event.target instanceof Element
-      ? event.target.closest('[role="menuitem"]')
+      ? event.target.closest('[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"]')
       : null
     if (target && target.getAttribute('aria-disabled') !== 'true') {
       close()

@@ -1,6 +1,6 @@
 'use client'
 
-import { Select } from '@murasaki-io/react98'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@murasaki-io/react98'
 
 const countryOptions = [
   { value: 'cn', label: 'China' },
@@ -21,6 +21,18 @@ const countryOptions = [
 
 export function SelectScrollableDemo(): React.ReactElement {
   return (
-    <Select name="country" label="Country:" options={countryOptions} defaultValue="cn" menuMaxHeight={96} width={220} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <label htmlFor="select-country">Country:</label>
+      <Select name="country" defaultValue="cn">
+        <SelectTrigger id="select-country" className="w-[220px]">
+          <SelectValue placeholder="Select a country" />
+        </SelectTrigger>
+        <SelectContent maxHeight={96}>
+          {countryOptions.map(option => (
+            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   )
 }

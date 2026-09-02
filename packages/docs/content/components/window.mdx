@@ -1,63 +1,73 @@
-import { WindowConvenienceDemo } from './window/window-convenience'
 import { WindowBasicDemo } from './window/window-basic'
 import { WindowMenuDemo } from './window/window-menu'
 
 # Window
 
-The Window suite is a set of composable primitives for Windows 98 application chrome, plus a ready-to-use `Window` convenience component.
+The Window suite is a set of composable primitives for Windows 98 application chrome. `Window` is the root: it owns window state (active, maximized, minimized) and shares it with the slots below.
 
-- `Window` — wires up `WindowProvider` + `WindowFrame` + `WindowTitleBar` + drag/resize for the common "title + content" case.
-- The primitives below give you full control for menu bars, status bars, portals, and window-manager shells.
+`Window` renders **no DOM of its own** — it is a context provider, like a shadcn/ui root. That is deliberate: window managers need full control over layout, portalling, stacking, and drag/resize, so those concerns stay in your app while `Window` only coordinates state. Wire the [`useDraggable`](/hooks/use-draggable) and [`useResizable`](/hooks/use-resizable) hooks onto the frame yourself — see [Build a complete window](#build-a-complete-window) below.
 
-## `Window` (convenience)
+## Composition
 
-### Props
+Use the following composition to build a Window:
+
+```
+Window
+└── WindowFrame
+    ├── WindowTitleBar
+    │   ├── WindowTitle
+    │   └── WindowButtons
+    │       ├── WindowMinimizeButton
+    │       ├── WindowMaximizeButton
+    │       └── WindowCloseButton
+    ├── WindowMenuBar
+    │   └── WindowMenuBarMenu
+    │       ├── WindowMenuBarTrigger
+    │       └── WindowMenuBarContent
+    │           ├── MenuItem
+    │           ├── MenuCheckboxItem
+    │           ├── MenuRadioGroup
+    │           │   └── MenuRadioItem
+    │           ├── MenuSeparator
+    │           └── MenuSub
+    │               ├── MenuSubTrigger
+    │               └── MenuSubContent
+    ├── WindowContent
+    ├── WindowStatusBar
+    │   └── WindowStatusBarField
+    └── WindowResizeGrip
+```
+
+## Props
+
+### `Window`
+
+The root context provider. Renders no element of its own.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `title` | `ReactNode` | - | Title shown in the title bar. |
-| `icon` | `ReactNode` | - | Icon rendered before the title. |
-| `defaultPosition` | `{ x?: number, y?: number }` | - | Initial top-left position, applied as static `left`/`top` inline styles. |
-| `defaultSize` | `{ width?: number, height?: number }` | - | Initial size, applied as `width`/`height` inline styles. |
-| `draggable` | `boolean` | `true` | Dragging the title bar moves the window. |
-| `resizable` | `boolean` | `true` | Bottom-right grip resizes the window. |
-| `minWidth` / `minHeight` | `number` | `defaultSize` or `200` / `120` | Minimum size while resizing. |
-| `maxWidth` / `maxHeight` | `number` | unlimited | Maximum size while resizing. |
-| `active` | `boolean` | `true` | Active (focused) styling. |
-| `minimized` | `boolean` | `false` | Hides the window via CSS. |
+| `active` | `boolean` | `true` | Active (focused) styling for descendant slots. |
+| `minimized` | `boolean` | `false` | Hides the frame via CSS while preserving the DOM. |
 | `defaultMaximized` | `boolean` | `false` | Initial maximized state. |
-| `maximizable` | `boolean` | `true` | Whether the window can be maximized. |
-| `minimizable` | `boolean` | `true` | Render the minimize button. |
-| `closable` | `boolean` | `true` | Render the close button. |
-| `positioning` | `'absolute' \| 'fixed'` | `'absolute'` | Positioning mode. |
-| `container` | `HTMLElement \| null` | viewport | Boundary element for drag/resize. |
-| `titleBarButtons` | `ReactNode` | - | Extra buttons after minimize/maximize/close. |
-| `contentClassName` / `titleBarClassName` | `string` | - | Classes for the content body / title bar. |
-| `onClose` | `() => void` | - | Fired when the close button is clicked. |
-| `onMinimize` | `() => void` | - | Fired when the minimize button is clicked. |
+| `positioning` | `'absolute' \| 'fixed'` | `'fixed'` | Positioning mode inherited by the frame and overlay. |
+| `maximizable` | `boolean` | `true` | Whether the maximize control is enabled. |
 
-Other div props (including `ref` and `className`) are forwarded to the frame element.
-
-## Primitives
+### Slots
 
 | Export | Key props | Description |
 |--------|-----------|-------------|
-| `WindowProvider` | `active`, `minimized`, `defaultMaximized`, `positioning`, `maximizable` | State and behavior provider. |
-| `WindowFrame` | `positioning`, div props | Outer raised frame. |
+| `WindowFrame` | div props | Outer raised frame. |
 | `WindowTitleBar`, `WindowTitle`, `WindowButtons` | div props | Title bar slots. |
 | `WindowMinimizeButton`, `WindowMaximizeButton`, `WindowCloseButton`, `WindowHelpButton` | button props | Title bar controls. |
-| `WindowMenuBar`, `WindowMenuBarMenu`, `WindowMenuBarTrigger`, `WindowMenuBarContent`, `WindowMenuBarItem` | `value`, `defaultValue`, `onValueChange`, menu/menuitem props | Top-level window menu bar with optional dropdown coordination. |
+| `WindowMenuBar`, `WindowMenuBarMenu`, `WindowMenuBarTrigger`, `WindowMenuBarContent`, `WindowMenuBarItem` | `value`, `defaultValue`, `onValueChange`, menu/menuitem props | Top-level window menu bar with dropdown coordination. |
 | `WindowContent` | div props | Scroll/content body. |
 | `WindowOverlay` | `positioning`, div props | Semi-transparent backdrop (`aria-hidden`). Inherits positioning from context. |
 | `WindowPortal` | `container` | Portal that respects the scoped `LayerProvider` target. Falls back to `document.body`. |
 | `WindowResizeGrip` | div props | Bottom-right resize handle rendered with Marlett font glyphs. Hidden when maximized. |
 | `WindowStatusBar`, `WindowStatusBarField` | div props | Bottom status area. |
+| `useWindowContext` | - | Read `state` / `actions` / `meta` inside custom chrome. |
 
 ## Examples
-
-<ComponentExample name="window-convenience" title="Convenience window" previewClassName="h-72 min-h-72">
-  <WindowConvenienceDemo />
-</ComponentExample>
 
 <ComponentExample name="window-basic" title="Primitives assembly">
   <WindowBasicDemo />
@@ -67,31 +77,31 @@ Other div props (including `ref` and `className`) are forwarded to the frame ele
   <WindowMenuDemo />
 </ComponentExample>
 
-## Build a complete window from primitives
+## Build a complete window
 
-The convenience component covers the common case. When you need a menu bar, status bar, custom buttons, or a portal, compose the primitives and wire the two interaction hooks yourself:
+Because `Window` renders no DOM, a draggable, resizable window is assembled by wiring the interaction hooks onto the frame and title bar yourself:
 
 ```tsx
 import {
-  WindowProvider,
-  WindowFrame,
-  WindowTitleBar,
-  WindowTitle,
-  WindowButtons,
-  WindowMinimizeButton,
-  WindowMaximizeButton,
-  WindowCloseButton,
-  WindowMenuBar,
-  WindowMenuBarMenu,
-  WindowMenuBarTrigger,
-  WindowMenuBarContent,
-  WindowContent,
-  WindowStatusBar,
-  WindowStatusBarField,
-  WindowResizeGrip,
+  MenuItem,
   useDraggable,
   useResizable,
-  MenuItem,
+  Window,
+  WindowButtons,
+  WindowCloseButton,
+  WindowContent,
+  WindowFrame,
+  WindowMaximizeButton,
+  WindowMenuBar,
+  WindowMenuBarContent,
+  WindowMenuBarMenu,
+  WindowMenuBarTrigger,
+  WindowMinimizeButton,
+  WindowResizeGrip,
+  WindowStatusBar,
+  WindowStatusBarField,
+  WindowTitle,
+  WindowTitleBar,
 } from '@murasaki-io/react98'
 
 function MyWindow() {
@@ -107,7 +117,7 @@ function MyWindow() {
   }
 
   return (
-    <WindowProvider positioning="absolute">
+    <Window positioning="absolute">
       <WindowFrame ref={setFrameRef} style={{ left: 80, top: 60, width: 480, height: 320 }}>
         <WindowTitleBar ref={setDragRef}>
           <WindowTitle>Notepad 98</WindowTitle>
@@ -132,10 +142,12 @@ function MyWindow() {
         </WindowStatusBar>
         <WindowResizeGrip ref={setResizeRef} />
       </WindowFrame>
-    </WindowProvider>
+    </Window>
   )
 }
 ```
+
+For a full desktop shell — multiple windows, z-index stacking, taskbar, and position persistence — see the [Build a desktop](/guides/build-a-desktop) guide.
 
 ### Positioning model
 
@@ -154,4 +166,4 @@ Window chrome primitives do not add global keyboard shortcuts. Title-bar buttons
 
 ## SSR
 
-`WindowProvider` owns maximized state. Use `defaultMaximized` for initial layout and keep positioning classes stable across hydration.
+`Window` owns maximized state. Use `defaultMaximized` for initial layout and keep positioning classes stable across hydration.

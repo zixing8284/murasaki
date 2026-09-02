@@ -4,12 +4,12 @@ import { userEvent } from 'vitest/browser'
 
 import {
   MenuItem,
+  Window,
   WindowMenuBar,
   WindowMenuBarContent,
   WindowMenuBarItem,
   WindowMenuBarMenu,
   WindowMenuBarTrigger,
-  WindowProvider,
 } from '../src'
 
 function TestWindowMenuBar({ onValueChange }: { onValueChange?: (value: string | null) => void }): React.ReactElement {
@@ -69,12 +69,12 @@ function AnimatedTestWindowMenuBar(): React.ReactElement {
 describe('window menu bar', () => {
   it('renders a menubar with menu items', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowMenuBar>
           <WindowMenuBarItem>File</WindowMenuBarItem>
           <WindowMenuBarItem>Edit</WindowMenuBarItem>
         </WindowMenuBar>
-      </WindowProvider>,
+      </Window>,
     )
 
     await expect.element(screen.getByRole('menubar')).toBeInTheDocument()
@@ -86,11 +86,11 @@ describe('window menu bar', () => {
     const onClick = vi.fn()
 
     const screen = await render(
-      <WindowProvider active={false}>
+      <Window active={false}>
         <WindowMenuBar>
           <WindowMenuBarItem onClick={onClick}>File</WindowMenuBarItem>
         </WindowMenuBar>
-      </WindowProvider>,
+      </Window>,
     )
 
     await screen.getByRole('menuitem', { name: 'File' }).click()

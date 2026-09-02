@@ -57,6 +57,13 @@ const BACKWARD_KEYS: Record<RovingOrientation, ReadonlyArray<string>> = {
  *
  * Out of scope: tabIndex management (consumer keeps control), typeahead
  * (see `useTypeahead`), grid two-axis movement.
+ *
+ * @example
+ * ```tsx
+ * const listRef = useRef<HTMLUListElement>(null)
+ * useRovingFocus({ enabled: open, containerRef: listRef, itemSelector: '[role="option"]', orientation: 'vertical' })
+ * return <ul ref={listRef} role="listbox">…</ul>
+ * ```
  */
 export function useRovingFocus({
   enabled,

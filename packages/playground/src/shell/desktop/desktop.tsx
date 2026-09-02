@@ -371,7 +371,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
           })}
           {selectionBox && (selectionBox.width > SELECTION_THRESHOLD || selectionBox.height > SELECTION_THRESHOLD) && (
             <div
-              className="absolute pointer-events-none z-20"
+              // No positive z-index: the marquee stays on the desktop layer,
+              // below the windows (which use positive stack-order z-indexes).
+              className="absolute pointer-events-none"
               style={{
                 ...selectionBoxStyle,
                 left: selectionBox.left,

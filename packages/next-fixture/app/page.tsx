@@ -2,24 +2,24 @@ import {
   Button,
   ScrollArea,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   ThemeProvider,
   Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
   WindowFrame,
   WindowMaximizeButton,
   WindowMinimizeButton,
-  WindowProvider,
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki-io/react98'
-
-const options = [
-  { label: 'Windows 98', value: 'windows-98' },
-  { label: 'Windows 95', value: 'windows-95' },
-  { label: 'Slate', value: 'slate' },
-]
 
 const rows = Array.from(
   { length: 16 },
@@ -30,7 +30,7 @@ export default function Page(): React.ReactElement {
   return (
     <ThemeProvider defaultTheme="windows-98" storageKey={null}>
       <main className="fixturePage">
-        <WindowProvider positioning="absolute">
+        <Window positioning="absolute">
           <WindowFrame className="fixtureWindow">
             <WindowTitleBar>
               <WindowTitle>@murasaki-io/react98</WindowTitle>
@@ -41,16 +41,25 @@ export default function Page(): React.ReactElement {
               </WindowButtons>
             </WindowTitleBar>
             <WindowContent className="fixtureContent">
-              <Tooltip text="Rendered through the package client boundary">
-                <Button>Hover me</Button>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button>Hover me</Button>
+                </TooltipTrigger>
+                <TooltipContent>Rendered through the package client boundary</TooltipContent>
               </Tooltip>
-              <Select
-                defaultValue="windows-98"
-                label="Theme"
-                name="theme"
-                options={options}
-                width={220}
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <label htmlFor="fixture-theme">Theme</label>
+                <Select defaultValue="windows-98" name="theme">
+                  <SelectTrigger id="fixture-theme" className="w-[220px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="windows-98">Windows 98</SelectItem>
+                    <SelectItem value="windows-95">Windows 95</SelectItem>
+                    <SelectItem value="slate">Slate</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <ScrollArea className="fixtureScrollArea">
                 <div className="fixtureScrollContent">
                   {rows.map(row => (
@@ -60,7 +69,7 @@ export default function Page(): React.ReactElement {
               </ScrollArea>
             </WindowContent>
           </WindowFrame>
-        </WindowProvider>
+        </Window>
       </main>
     </ThemeProvider>
   )

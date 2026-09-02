@@ -1,6 +1,6 @@
 'use client'
 
-import { Select } from '@murasaki-io/react98'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@murasaki-io/react98'
 import { EdgeTestStage } from '../../../components/edge-test-stage'
 
 const OPTIONS = [
@@ -18,13 +18,16 @@ const OPTIONS = [
 
 function SelectSlot({ id }: { id: string, label: string }): React.ReactElement {
   return (
-    <Select
-      name={`select-${id}`}
-      options={OPTIONS}
-      defaultValue="alpha"
-      width={140}
-      menuMaxHeight={160}
-    />
+    <Select name={`select-${id}`} defaultValue="alpha">
+      <SelectTrigger className="w-[140px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent maxHeight={160}>
+        {OPTIONS.map(option => (
+          <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 

@@ -1,6 +1,6 @@
 import type { ProcessComponentProps } from '../../../contexts/process/types'
 import type { CursorSchemeId } from '../../../lib/cursor-scheme'
-import { Button, GroupBox, ScrollArea, Select, Tab, TabList, TabPanel, Tabs } from '@murasaki-io/react98'
+import { Button, GroupBox, ScrollArea, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tab, TabList, TabPanel, Tabs } from '@murasaki-io/react98'
 import { useState } from 'react'
 import { useCursorScheme } from '../../../contexts/cursor-scheme'
 import { useProcessActions } from '../../../contexts/process/hooks'
@@ -11,11 +11,6 @@ import {
   cursorPointerPath,
   DEFAULT_CURSOR_SCHEME_ID,
 } from '../../../lib/cursor-scheme'
-
-const schemeOptions = CURSOR_SCHEME_IDS.map(id => ({
-  label: CURSOR_SCHEMES[id].name,
-  value: id,
-}))
 
 function PointerImage({ src, className }: { src: string, className?: string }): React.ReactElement {
   return (
@@ -83,12 +78,18 @@ export function MouseProperties({ windowId }: ProcessComponentProps): React.Reac
               <div className="flex min-w-0 flex-1 flex-col gap-2">
                 <Select
                   name="cursor-scheme"
-                  aria-label="Cursor scheme"
-                  className="w-full"
-                  options={schemeOptions}
                   value={draftId}
                   onValueChange={value => chooseScheme(value as CursorSchemeId)}
-                />
+                >
+                  <SelectTrigger aria-label="Cursor scheme" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURSOR_SCHEME_IDS.map(id => (
+                      <SelectItem key={id} value={id}>{CURSOR_SCHEMES[id].name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <div className="flex gap-(--grouped-button-spacing)">
                   <Button disabled className="flex-1">Save As...</Button>
                   <Button disabled className="flex-1">Delete</Button>

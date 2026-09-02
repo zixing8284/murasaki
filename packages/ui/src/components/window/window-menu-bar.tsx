@@ -428,7 +428,7 @@ export function WindowMenuBarContent({
   React.useLayoutEffect(() => {
     if (!menu.open)
       return
-    const firstItem = menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')
+    const firstItem = menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"]),[role="menuitemcheckbox"]:not([aria-disabled="true"]),[role="menuitemradio"]:not([aria-disabled="true"])')
     firstItem?.focus()
   }, [menu.open])
 
@@ -438,7 +438,7 @@ export function WindowMenuBarContent({
       return
 
     const item = event.target instanceof Element
-      ? event.target.closest<HTMLElement>('[role="menuitem"]')
+      ? event.target.closest<HTMLElement>('[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"]')
       : null
     if (!item)
       return

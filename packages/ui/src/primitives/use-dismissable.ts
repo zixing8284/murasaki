@@ -48,6 +48,16 @@ export interface UseDismissableOptions {
  * - Optional window blur (iframe click proxy), also top-most only.
  *
  * Focus/scroll-lock are out of scope and belong to `useFocusScope`.
+ *
+ * @example
+ * ```tsx
+ * useDismissable({
+ *   enabled: open,
+ *   onDismiss: () => setOpen(false),
+ *   outsidePointer: true,
+ *   layerRefs: [triggerRef, contentRef],
+ * })
+ * ```
  */
 export function useDismissable({
   enabled,

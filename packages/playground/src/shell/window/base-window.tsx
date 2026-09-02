@@ -1,6 +1,7 @@
 import type { ReactNode, Ref } from 'react'
 import type { ProcessWindowPosition } from '../../contexts/process/types'
 import {
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -8,7 +9,6 @@ import {
   WindowMaximizeButton,
   WindowMinimizeButton,
   WindowPortal,
-  WindowProvider,
   WindowResizeGrip,
   WindowTitle,
   WindowTitleBar,
@@ -82,7 +82,7 @@ export function BaseWindow({
     : <AppIcon appId={proc.appId} size="sm" />
 
   return (
-    <WindowProvider active={isActive} minimized={proc.minimized} positioning="absolute" maximizable={!disableMaximize}>
+    <Window active={isActive} minimized={proc.minimized} positioning="absolute" maximizable={!disableMaximize}>
       <WindowPortal container={portalContainer}>
         <WindowFrame
           ref={frameRef}
@@ -120,6 +120,6 @@ export function BaseWindow({
           {!disableResize && <WindowResizeGrip ref={resizeRef} />}
         </WindowFrame>
       </WindowPortal>
-    </WindowProvider>
+    </Window>
   )
 }

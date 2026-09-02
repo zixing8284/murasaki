@@ -1,31 +1,92 @@
 import { SelectBasicDemo } from './select/select-basic'
+import { SelectGroupedDemo } from './select/select-grouped'
 import { SelectNativeDemo } from './select/select-native'
 import { SelectScrollableDemo } from './select/select-scrollable'
 import { SelectEdgeTestDemo } from './select/select-edge-test'
 
 # Select
 
-The `Select` component renders a Windows 98 styled custom select with a trigger button and an option list. `SelectNative` provides a native select alternative.
+`Select` is a composable, Windows 98 styled dropdown built from small parts, following the shadcn/ui structure. Compose a `SelectTrigger` (with a `SelectValue`) and a `SelectContent` of `SelectItem`s. For a plain browser dropdown with native form and mobile semantics, use [`SelectNative`](#native-select).
+
+## Composition
+
+Use the following composition to build a Select:
+
+```
+Select
+├── SelectTrigger
+│   └── SelectValue
+└── SelectContent
+    ├── SelectItem
+    ├── SelectSeparator
+    └── SelectGroup
+        ├── SelectLabel
+        ├── SelectItem
+        └── SelectItem
+```
 
 ## Props
 
+### `Select`
+
+The root. Owns selection state and provides context to the parts. Renders no visible element of its own (plus a hidden form input when `name` is set).
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `name` | `string` | - | Name used for form submission. Optional — omit for UI-only selects. |
-| `options` | `SelectOption[]` | - | Options with `value` and optional `label`. |
-| `value` | `T` | - | Controlled selected value. |
-| `defaultValue` | `T` | - | Initial selected value for uncontrolled usage. |
-| `onValueChange` | `(value, option) => void` | - | Selection value change callback. |
-| `label` | `string` | - | Optional visible label. |
-| `disabled` | `boolean` | `false` | Disables the select. |
-| `menuMaxHeight` | `number \| string` | - | Maximum height of the custom option list. |
-| `width` | `CSSProperties['width']` | - | Width of the select control. |
+| `value` | `string` | - | Selected value (controlled). |
+| `defaultValue` | `string` | - | Initial selected value (uncontrolled). |
+| `onValueChange` | `(value: string) => void` | - | Called with the next value on selection. |
+| `open` | `boolean` | - | Popup open state (controlled). |
+| `defaultOpen` | `boolean` | `false` | Initial popup open state (uncontrolled). |
+| `onOpenChange` | `(open: boolean) => void` | - | Called when the popup opens or closes. |
+| `disabled` | `boolean` | `false` | Disables the trigger and prevents opening. |
+| `name` | `string` | - | Name for the hidden form input. Omit for UI-only selects. |
+| `required` | `boolean` | - | Marks the hidden form input as required. |
+
+### `SelectTrigger`
+
+The button that opens the listbox, rendering the Windows 98 arrow affordance. Accepts native `button` props (including `id`, `className`).
+
+### `SelectValue`
+
+Shows the selected item's label inside the trigger.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `ReactNode` | - | Shown when no value is selected. |
+
+### `SelectContent`
+
+The portalled popup listbox. Handles positioning, keyboard navigation, typeahead, the custom scrollbar, and dismissal. Accepts native `ul` props.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `maxHeight` | `number \| string` | - | Upper bound for the listbox height before it scrolls. |
+
+### `SelectItem`
+
+A selectable option. Its plain-text `children` double as the display + typeahead label.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | The value committed when the item is chosen. |
+| `disabled` | `boolean` | `false` | Prevents selection of this item. |
+| `textValue` | `string` | - | Label used for display/typeahead when `children` is not a plain string (e.g. contains an icon). |
+
+### `SelectGroup`, `SelectLabel`, `SelectSeparator`
+
+`SelectGroup` wraps related items and is labelled by its `SelectLabel`. `SelectSeparator` draws a divider between items or groups.
 
 ## Examples
 
 <ComponentExample name="select-basic" title="Custom select"
   previewClassName="h-60 min-h-60">
   <SelectBasicDemo />
+</ComponentExample>
+
+<ComponentExample name="select-grouped" title="Groups and labels"
+  previewClassName="h-72 min-h-72">
+  <SelectGroupedDemo />
 </ComponentExample>
 
 <ComponentExample name="select-native" title="Native select">
@@ -41,18 +102,23 @@ The `Select` component renders a Windows 98 styled custom select with a trigger 
   <SelectEdgeTestDemo />
 </ComponentExample>
 
+## Native select
+
+`SelectNative` wraps the browser's `<select>` element for cases that need real native form behavior or the native mobile picker. It takes `label`, `name`, and standard `select` props, with native `<option>` children.
+
 ## ARIA
 
-The custom select uses combobox and listbox roles. The selected option exposes `aria-selected`, and disabled state is communicated through `aria-disabled`.
+The trigger is a `combobox` with `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls`. The popup is a `listbox` of `option`s that expose `aria-selected` and `aria-disabled`. Groups use `role="group"` associated with their `SelectLabel` through `aria-labelledby`.
 
 ## Keyboard
 
 | Key | Behavior |
 |-----|----------|
-| `Enter` / `Space` / `ArrowDown` | Opens the custom select. |
+| `Enter` / `Space` / `ArrowDown` / `ArrowUp` | Opens the select. |
 | `ArrowUp` / `ArrowDown` | Moves through options while open. |
 | `Home` / `End` | Jumps to the first or last option. |
 | Printable characters | Moves focus to the next option whose label starts with the typed buffer. |
+| `Enter` / `Space` | Selects the focused option. |
 | `Escape` | Closes without selecting. |
 | `Tab` | Closes and moves focus onward. |
 

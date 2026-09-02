@@ -1,13 +1,13 @@
 import type { CSSProperties } from 'react'
 import {
   Button,
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
   WindowFrame,
   WindowMaximizeButton,
   WindowMinimizeButton,
-  WindowProvider,
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki-io/react98'
@@ -48,7 +48,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
       </div>
 
       {/* Inactive Window */}
-      <WindowProvider active={false} positioning="absolute" maximizable={false}>
+      <Window active={false} positioning="absolute" maximizable={false}>
         <WindowFrame className="top-3 left-13 w-84 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Inactive Window</WindowTitle>
@@ -64,10 +64,10 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
             </div>
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
 
       {/* Active Window */}
-      <WindowProvider active positioning="absolute" maximizable={false}>
+      <Window active positioning="absolute" maximizable={false}>
         <WindowFrame className="top-9 left-14 w-92 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Active Window</WindowTitle>
@@ -94,10 +94,10 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
             </div>
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
 
       {/* Message Box */}
-      <WindowProvider active positioning="absolute" maximizable={false}>
+      <Window active positioning="absolute" maximizable={false}>
         <WindowFrame className="top-24 left-18 w-64 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Message Box</WindowTitle>
@@ -111,7 +111,7 @@ export function DesignerPreview({ colors }: DesignerPreviewProps): React.ReactEl
             <Button>Close message</Button>
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
 
       {/* Tooltip */}
       <div

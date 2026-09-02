@@ -16,6 +16,13 @@
 - When both are provided, the controlled value wins.
 - Internal state is managed with component-local state, not `useRef` hacks.
 
+## Compound composition
+
+- Multi-part components use a compound API: a headless root plus named parts (e.g. `Select` → `SelectTrigger` / `SelectContent` / `SelectItem`), mirroring the shadcn/ui structure.
+- The outermost tag is the component's own name. The root is typically a context provider that renders no DOM of its own; parts consume the root context and throw when used outside it.
+- Component-local context lives flat in the component directory (ADR 0004); it is internal, exposed only as an exported context type where useful.
+- Prefer this composition over prop-driven "convenience" components.
+
 ## `data-*` state attributes
 
 - Components expose boolean state as `data-*` attributes on their DOM root for CSS styling (`data-open`, `data-disabled`, `data-selected`, `data-orientation`).

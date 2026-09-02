@@ -1,9 +1,17 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { Select } from '../src'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '../src'
 
-// Reusable options for test cases
 const fruitOptions = [
   { value: 'apple', label: 'Apple' },
   { value: 'banana', label: 'Banana' },
@@ -15,69 +23,87 @@ const scrollOptions = Array.from({ length: 12 }, (_, index) => ({
   label: `Item ${index + 1}`,
 }))
 
+interface HelperProps {
+  root?: Partial<React.ComponentProps<typeof Select>>
+  trigger?: Partial<React.ComponentProps<typeof SelectTrigger>>
+  content?: Partial<React.ComponentProps<typeof SelectContent>>
+  placeholder?: React.ReactNode
+  options?: { value: string, label: string }[]
+}
+
+function renderSelect({
+  root,
+  trigger,
+  content,
+  placeholder = 'Select…',
+  options = fruitOptions,
+}: HelperProps = {}) {
+  return render(
+    <Select name="fruit" {...root}>
+      <SelectTrigger {...trigger}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent {...content}>
+        {options.map(option => (
+          <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>,
+  )
+}
+
 describe('select', () => {
   // === Rendering ===
 
   it('renders a combobox trigger button', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toBeInTheDocument()
   })
 
-  it('displays the first option by default when no value/defaultValue', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('shows the placeholder when nothing is selected', async () => {
+    const screen = await renderSelect({ placeholder: 'Pick one' })
     const trigger = screen.getByRole('combobox')
-    await expect.element(trigger).toHaveTextContent('Apple')
+    await expect.element(trigger).toHaveTextContent('Pick one')
   })
 
   it('displays defaultValue option label initially', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} defaultValue="banana" />,
-    )
+    const screen = await renderSelect({ root: { defaultValue: 'banana' } })
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Banana')
   })
 
   it('renders aria-expanded="false" when closed', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'false')
   })
 
   // === Open / Close ===
 
-  it('opens the menu on trigger click (aria-expanded="true")', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('opens the listbox on trigger click (aria-expanded="true")', async () => {
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.click()
 
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'true')
-    // Listbox should now be visible
     await expect.element(screen.getByRole('listbox')).toBeInTheDocument()
   })
 
   it('renders all options in the listbox when open', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     await screen.getByRole('combobox').click()
 
     const options = document.querySelectorAll('[role="option"]')
     expect(options).toHaveLength(3)
   })
 
-  it('keeps custom scrollbar inside the select menu layer', async () => {
-    const screen = await render(
-      <Select name="items" options={scrollOptions} menuMaxHeight={64} width={160} />,
-    )
+  it('keeps the custom scrollbar inside the select menu layer', async () => {
+    const screen = await renderSelect({
+      options: scrollOptions,
+      content: { maxHeight: 64 },
+      trigger: { className: 'w-40' },
+    })
     await screen.getByRole('combobox').click()
 
     const listbox = screen.getByRole('listbox').element() as HTMLUListElement
@@ -105,28 +131,21 @@ describe('select', () => {
     })
   })
 
-  it('closes the menu when an option is clicked', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('closes the listbox when an option is clicked', async () => {
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.click()
 
-    // Click the second option
     await screen.getByRole('option', { name: 'Banana' }).click()
 
-    // Menu should be closed
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'false')
-    // Trigger should now show the selected option
     await expect.element(trigger).toHaveTextContent('Banana')
   })
 
   // === Selection ===
 
   it('updates display when an option is selected (uncontrolled)', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.click()
     await screen.getByRole('option', { name: 'Cherry' }).click()
@@ -134,13 +153,10 @@ describe('select', () => {
   })
 
   it('updates the hidden input value on selection', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     await screen.getByRole('combobox').click()
     await screen.getByRole('option', { name: 'Banana' }).click()
 
-    // The hidden input carries the selected value for form submission
     const hiddenInput = screen.container.querySelector(
       'input[type="hidden"][name="fruit"]',
     ) as HTMLInputElement
@@ -148,66 +164,62 @@ describe('select', () => {
   })
 
   it('omits the hidden input when name is not provided', async () => {
-    const screen = await render(
-      <Select options={fruitOptions} />,
-    )
+    const screen = await renderSelect({ root: { name: undefined } })
     expect(screen.container.querySelector('input[type="hidden"]')).toBeNull()
   })
 
   // === Controlled mode ===
 
   it('reflects controlled value', async () => {
-    const screen = await render(
-      <Select
-        name="fruit"
-        options={fruitOptions}
-        value="cherry"
-        onValueChange={() => {}}
-      />,
-    )
+    const screen = await renderSelect({ root: { value: 'cherry', onValueChange: () => {} } })
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Cherry')
   })
 
   it('calls onValueChange when an option is selected', async () => {
     const handleChange = vi.fn()
-    const screen = await render(
-      <Select
-        name="fruit"
-        options={fruitOptions}
-        value="apple"
-        onValueChange={handleChange}
-      />,
-    )
+    const screen = await renderSelect({ root: { value: 'apple', onValueChange: handleChange } })
     await screen.getByRole('combobox').click()
     await screen.getByRole('option', { name: 'Cherry' }).click()
 
-    expect(handleChange).toHaveBeenCalledWith(
-      'cherry',
-      expect.objectContaining({ value: 'cherry', label: 'Cherry' }),
-    )
+    expect(handleChange).toHaveBeenCalledWith('cherry')
   })
 
   // === Disabled ===
 
   it('does not open when disabled', async () => {
+    const screen = await renderSelect({ root: { disabled: true } })
+    const trigger = screen.getByRole('combobox')
+    // Native click — Playwright refuses to click disabled buttons.
+    ;(trigger.element() as HTMLElement).click()
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false')
+    expect(document.querySelector('[role="listbox"]')).toBeNull()
+  })
+
+  it('does not select a disabled item', async () => {
     const screen = await render(
-      <Select name="fruit" options={fruitOptions} disabled />,
+      <Select name="fruit" defaultValue="apple">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana" disabled>Banana</SelectItem>
+        </SelectContent>
+      </Select>,
     )
     const trigger = screen.getByRole('combobox')
-    // Use native click — Playwright refuses to click disabled buttons
-    ;(trigger.element() as HTMLElement).click()
-    // Menu should NOT appear
-    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false')
-    expect(screen.container.querySelector('[role="listbox"]')).toBeNull()
+    await trigger.click()
+    const banana = screen.getByRole('option', { name: 'Banana' })
+    await expect.element(banana).toHaveAttribute('aria-disabled', 'true')
+    ;(banana.element() as HTMLElement).click()
+    await expect.element(trigger).toHaveTextContent('Apple')
   })
 
   // === Keyboard navigation ===
 
-  it('opens menu on Enter key', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('opens the listbox on Enter key', async () => {
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
     await userEvent.keyboard('{Enter}')
@@ -215,10 +227,8 @@ describe('select', () => {
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'true')
   })
 
-  it('opens menu on ArrowDown key', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('opens the listbox on ArrowDown key', async () => {
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
     await userEvent.keyboard('{ArrowDown}')
@@ -226,47 +236,34 @@ describe('select', () => {
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'true')
   })
 
-  it('closes menu on Escape key', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('closes the listbox on Escape key', async () => {
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.click()
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'true')
 
-    // Press Escape — focus may have moved to an option, so press on document
     await userEvent.keyboard('{Escape}')
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'false')
   })
 
-  it('selects option with Enter key after navigating with ArrowDown', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+  it('selects an option with Enter after navigating with ArrowDown', async () => {
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
-
-    // Open the menu via keyboard
     await userEvent.keyboard('{Enter}')
 
-    // Wait for menu to appear and first option to be focused
     await vi.waitFor(() => {
-      const listbox = document.querySelector('[role="listbox"]')
-      expect(listbox).not.toBeNull()
+      const focused = document.querySelector('[role="option"]:focus') as HTMLElement
+      expect(focused?.textContent).toBe('Apple')
     })
 
-    // ArrowDown moves focus from Apple (index 0) to Banana (index 1)
     await userEvent.keyboard('{ArrowDown}')
-
-    // Wait for Banana to receive focus
     await vi.waitFor(() => {
       const focused = document.querySelector('[role="option"]:focus') as HTMLElement
       expect(focused?.textContent).toBe('Banana')
     })
 
-    // Enter selects the focused option and closes the menu
     await userEvent.keyboard('{Enter}')
-
     await vi.waitFor(() => {
       expect(trigger.element().getAttribute('aria-expanded')).toBe('false')
     })
@@ -274,9 +271,7 @@ describe('select', () => {
   })
 
   it('moves focus to first and last options with Home and End', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
     await userEvent.keyboard('{Enter}')
@@ -300,9 +295,7 @@ describe('select', () => {
   })
 
   it('moves focus with typeahead and selects the matched option', async () => {
-    const screen = await render(
-      <Select name="fruit" options={fruitOptions} />,
-    )
+    const screen = await renderSelect()
     const trigger = screen.getByRole('combobox')
     await trigger.element().focus()
     await userEvent.keyboard('{Enter}')
@@ -314,7 +307,6 @@ describe('select', () => {
     })
 
     await userEvent.keyboard('{Enter}')
-
     await vi.waitFor(() => {
       expect(trigger.element().getAttribute('aria-expanded')).toBe('false')
     })
@@ -323,53 +315,69 @@ describe('select', () => {
 
   // === Callbacks ===
 
-  it('calls onOpen / onClose callbacks', async () => {
-    const onOpen = vi.fn()
-    const onClose = vi.fn()
-    const screen = await render(
-      <Select
-        name="fruit"
-        options={fruitOptions}
-        onOpen={onOpen}
-        onClose={onClose}
-      />,
-    )
+  it('calls onOpenChange when opening and closing', async () => {
+    const onOpenChange = vi.fn()
+    const screen = await renderSelect({ root: { onOpenChange } })
     const trigger = screen.getByRole('combobox')
 
-    // Open
     await trigger.click()
-    expect(onOpen).toHaveBeenCalledOnce()
+    expect(onOpenChange).toHaveBeenCalledWith(true)
 
-    // Select an option (closes)
     await screen.getByRole('option', { name: 'Banana' }).click()
-    expect(onClose).toHaveBeenCalledOnce()
+    expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
-  // === formatDisplay ===
+  // === Groups ===
 
-  it('uses formatDisplay for custom trigger text', async () => {
+  it('associates a group with its label', async () => {
     const screen = await render(
-      <Select
-        name="fruit"
-        options={fruitOptions}
-        defaultValue="cherry"
-        formatDisplay={opt => `Selected: ${opt.label}`}
-      />,
+      <Select name="animal" defaultValue="cat">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Pets</SelectLabel>
+            <SelectItem value="cat">Cat</SelectItem>
+            <SelectItem value="dog">Dog</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Wild</SelectLabel>
+            <SelectItem value="lion">Lion</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>,
     )
-    const trigger = screen.getByRole('combobox')
-    await expect.element(trigger).toHaveTextContent('Selected: Cherry')
+    await screen.getByRole('combobox').click()
+
+    const groups = document.querySelectorAll('[role="group"]')
+    expect(groups).toHaveLength(2)
+    const firstGroup = groups[0] as HTMLElement
+    const labelId = firstGroup.getAttribute('aria-labelledby')
+    expect(labelId).toBeTruthy()
+    expect(document.getElementById(labelId!)?.textContent).toBe('Pets')
+    expect(document.querySelector('[role="separator"]')).not.toBeNull()
   })
 
-  // === Label ===
+  // === Label association ===
 
-  it('renders a label element when label prop is provided', async () => {
+  it('associates an external label with the trigger via htmlFor', async () => {
     const screen = await render(
-      <Select name="fruit" options={fruitOptions} label="Pick fruit" />,
+      <>
+        <label htmlFor="fruit-trigger">Pick fruit</label>
+        <Select name="fruit">
+          <SelectTrigger id="fruit-trigger">
+            <SelectValue placeholder="Select…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="apple">Apple</SelectItem>
+          </SelectContent>
+        </Select>
+      </>,
     )
     await expect.element(screen.getByText('Pick fruit')).toBeInTheDocument()
-    // The label should be associated with the trigger via htmlFor
     const label = screen.container.querySelector('label')
-    expect(label).not.toBeNull()
     const trigger = screen.getByRole('combobox')
     expect(label!.htmlFor).toBe(trigger.element().id)
   })

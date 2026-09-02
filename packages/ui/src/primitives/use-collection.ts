@@ -24,6 +24,15 @@ export interface UseCollectionResult<T = unknown> {
  *
  * Out of scope: navigation, focus, selection — see future `useRovingFocus`
  * and `useTypeahead`.
+ *
+ * @example
+ * ```tsx
+ * const collection = useCollection<{ label: string }>()
+ * // inside each item:
+ * useEffect(() => collection.register(itemRef, { label }), [collection, label])
+ * // read items in DOM order:
+ * const items = collection.getItems()
+ * ```
  */
 export function useCollection<T = unknown>(): UseCollectionResult<T> {
   const itemsRef = useRef<Set<CollectionItem<T>>>(new Set())

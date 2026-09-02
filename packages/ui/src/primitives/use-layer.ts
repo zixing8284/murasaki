@@ -254,6 +254,16 @@ function getAlignedPosition({
  *   consumers can apply `max-height` and engage internal scrolling
  * - Optional exact layer measurement via `layerRef` and ResizeObserver
  * - Recomputes on `scroll` (capture) and `resize` while open
+ *
+ * @example
+ * ```tsx
+ * const anchorRef = useRef<HTMLButtonElement>(null)
+ * const layerRef = useRef<HTMLDivElement>(null)
+ * const [position, ready] = useLayer({ anchorRef, layerRef, open, side: 'bottom', align: 'start' })
+ * return open
+ *   ? <div ref={layerRef} style={{ position: 'fixed', left: position?.x, top: position?.y, opacity: ready ? 1 : 0 }}>…</div>
+ *   : null
+ * ```
  */
 export function useLayer({
   anchorRef,

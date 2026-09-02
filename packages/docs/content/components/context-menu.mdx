@@ -5,6 +5,25 @@ import { ContextMenuEdgeTestDemo } from './context-menu/context-menu-edge-test'
 
 `ContextMenu` manages right-click menu coordinates and renders menu content in a portal.
 
+## Composition
+
+Use the following composition to build a ContextMenu:
+
+```
+ContextMenu
+├── ContextMenuTrigger
+└── ContextMenuContent
+    └── Menu
+        ├── MenuItem
+        ├── MenuCheckboxItem
+        ├── MenuRadioGroup
+        │   └── MenuRadioItem
+        ├── MenuSeparator
+        └── MenuSub
+            ├── MenuSubTrigger
+            └── MenuSubContent
+```
+
 ## Props
 
 | Export | Key props | Description |

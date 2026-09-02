@@ -15,13 +15,6 @@ export type {
   WindowMinimizeButtonProps,
 } from './window-buttons'
 
-export { Window } from './window-component'
-export type {
-  WindowPosition,
-  WindowProps,
-  WindowSize,
-} from './window-component'
-
 export { WindowContent } from './window-content'
 export type { WindowContentProps } from './window-content'
 
@@ -57,12 +50,12 @@ export type { WindowOverlayProps } from './window-overlay'
 export { WindowPortal } from './window-portal'
 export type { WindowPortalProps } from './window-portal'
 
-// Compound Window components
-export { WindowProvider } from './window-provider'
-export type { WindowProviderProps } from './window-provider'
-
 export { WindowResizeGrip } from './window-resize-grip'
 export type { WindowResizeGripProps } from './window-resize-grip'
+
+// Window root (context provider)
+export { Window } from './window-root'
+export type { WindowProps } from './window-root'
 
 export { WindowStatusBar, WindowStatusBarField } from './window-status-bar'
 export type { WindowStatusBarFieldProps, WindowStatusBarProps } from './window-status-bar'

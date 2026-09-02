@@ -1,7 +1,8 @@
+import type { LayerSide } from '../src'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { Tooltip } from '../src'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../src'
 
 function installAnimationFrameController(): {
   count: () => number
@@ -43,23 +44,42 @@ function installAnimationFrameController(): {
   }
 }
 
+function TooltipCase({
+  text,
+  side,
+  delay = 0,
+  children,
+}: {
+  text: string
+  side?: LayerSide
+  delay?: number
+  children: React.ReactElement
+}): React.ReactElement {
+  return (
+    <Tooltip delay={delay}>
+      <TooltipTrigger>{children}</TooltipTrigger>
+      <TooltipContent side={side}>{text}</TooltipContent>
+    </Tooltip>
+  )
+}
+
 describe('tooltip', () => {
   // === Rendering ===
 
   it('renders the trigger element', async () => {
     const screen = await render(
-      <Tooltip text="Save file">
+      <TooltipCase text="Save file" delay={400}>
         <button>Save</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     await expect.element(screen.getByRole('button')).toBeInTheDocument()
   })
 
   it('does not show tooltip by default', async () => {
     await render(
-      <Tooltip text="Save file">
+      <TooltipCase text="Save file" delay={400}>
         <button>Save</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     expect(document.querySelector('[role="tooltip"]')).toBeNull()
   })
@@ -68,9 +88,9 @@ describe('tooltip', () => {
 
   it('does not override aria-label on the trigger', async () => {
     const screen = await render(
-      <Tooltip text="Save file">
+      <TooltipCase text="Save file" delay={400}>
         <button>Save</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     const btn = screen.getByRole('button')
     expect(btn.element().hasAttribute('aria-label')).toBe(false)
@@ -78,9 +98,9 @@ describe('tooltip', () => {
 
   it('preserves consumer-set aria-label on the trigger', async () => {
     const screen = await render(
-      <Tooltip text="Save file">
+      <TooltipCase text="Save file" delay={400}>
         <button aria-label="Save document">Save</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     const btn = screen.getByRole('button')
     await expect.element(btn).toHaveAttribute('aria-label', 'Save document')
@@ -88,30 +108,27 @@ describe('tooltip', () => {
 
   it('tooltip popup has role="tooltip"', async () => {
     const screen = await render(
-      <Tooltip text="Save file" delay={0}>
+      <TooltipCase text="Save file">
         <button>Save</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     await userEvent.hover(screen.getByRole('button').element())
-    // Wait for tooltip to appear
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
   })
 
-  it('sets aria-describedby on wrapper when tooltip is visible', async () => {
+  it('sets aria-describedby on the trigger when the tooltip is visible', async () => {
     const screen = await render(
-      <Tooltip text="Save file" delay={0}>
+      <TooltipCase text="Save file">
         <button>Save</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     const btn = screen.getByRole('button')
     const wrapper = btn.element().parentElement!
-    // Before hover — no aria-describedby
     expect(wrapper.getAttribute('aria-describedby')).toBeNull()
 
     await userEvent.hover(btn.element())
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
 
-    // After hover — aria-describedby on wrapper references the tooltip
     const tooltipEl = screen.getByRole('tooltip').element()
     expect(wrapper.getAttribute('aria-describedby')).toBe(tooltipEl.id)
   })
@@ -120,9 +137,9 @@ describe('tooltip', () => {
 
   it('shows tooltip on pointer enter after delay', async () => {
     const screen = await render(
-      <Tooltip text="Help text" delay={0}>
+      <TooltipCase text="Help text">
         <button>Hover me</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     await userEvent.hover(screen.getByRole('button').element())
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
@@ -131,9 +148,9 @@ describe('tooltip', () => {
 
   it('hides tooltip on pointer leave', async () => {
     const screen = await render(
-      <Tooltip text="Help text" delay={0}>
+      <TooltipCase text="Help text">
         <button>Hover me</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     await userEvent.hover(screen.getByRole('button').element())
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
@@ -144,9 +161,9 @@ describe('tooltip', () => {
 
   it('shows tooltip on focus', async () => {
     const screen = await render(
-      <Tooltip text="Focused help" delay={0}>
+      <TooltipCase text="Focused help">
         <button>Focus me</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     screen.getByRole('button').element().focus()
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
@@ -154,9 +171,9 @@ describe('tooltip', () => {
 
   it('hides tooltip on blur', async () => {
     const screen = await render(
-      <Tooltip text="Focused help" delay={0}>
+      <TooltipCase text="Focused help">
         <button>Focus me</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     screen.getByRole('button').element().focus()
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
@@ -167,11 +184,10 @@ describe('tooltip', () => {
 
   it('hides tooltip on Escape key', async () => {
     const screen = await render(
-      <Tooltip text="Escape me" delay={0}>
+      <TooltipCase text="Escape me">
         <button>Press Escape</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
-    // Focus the button so keyboard events are dispatched on it
     screen.getByRole('button').element().focus()
     await expect.element(screen.getByRole('tooltip')).toBeInTheDocument()
 
@@ -181,11 +197,11 @@ describe('tooltip', () => {
 
   // === Tooltip content ===
 
-  it('displays the text prop as tooltip content', async () => {
+  it('displays the content as tooltip text', async () => {
     const screen = await render(
-      <Tooltip text="Detailed description" delay={0}>
+      <TooltipCase text="Detailed description">
         <button>Info</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     await userEvent.hover(screen.getByRole('button').element())
     await expect.element(screen.getByText('Detailed description')).toBeInTheDocument()
@@ -193,9 +209,9 @@ describe('tooltip', () => {
 
   it('supports left and right preferred sides', async () => {
     const leftScreen = await render(
-      <Tooltip text="Left side" side="left" delay={0}>
+      <TooltipCase text="Left side" side="left">
         <button>Left trigger</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
 
     await userEvent.hover(leftScreen.getByRole('button', { name: 'Left trigger' }).element())
@@ -205,9 +221,9 @@ describe('tooltip', () => {
     await expect.poll(() => document.querySelector('[role="tooltip"]')).toBeNull()
 
     const rightScreen = await render(
-      <Tooltip text="Right side" side="right" delay={0}>
+      <TooltipCase text="Right side" side="right">
         <button>Right trigger</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
 
     await userEvent.hover(rightScreen.getByRole('button', { name: 'Right trigger' }).element())
@@ -217,9 +233,9 @@ describe('tooltip', () => {
   it('uses the measured tooltip width for the first visible position', async () => {
     const screen = await render(
       <div style={{ paddingLeft: 220, paddingTop: 120 }}>
-        <Tooltip text="Short" side="bottom" delay={0}>
+        <TooltipCase text="Short" side="bottom">
           <button>Measured trigger</button>
-        </Tooltip>
+        </TooltipCase>
       </div>,
     )
     const trigger = screen.getByRole('button', { name: 'Measured trigger' }).element()
@@ -255,9 +271,9 @@ describe('tooltip', () => {
   it('forwards existing event handlers on the trigger', async () => {
     const handleClick = vi.fn()
     const screen = await render(
-      <Tooltip text="Click me tooltip" delay={0}>
+      <TooltipCase text="Click me tooltip">
         <button onClick={handleClick}>Click</button>
-      </Tooltip>,
+      </TooltipCase>,
     )
     await screen.getByRole('button').click()
     expect(handleClick).toHaveBeenCalledOnce()

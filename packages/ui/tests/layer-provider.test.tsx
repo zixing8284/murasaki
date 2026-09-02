@@ -13,6 +13,8 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '../src'
 
 function getLayerRoot(): HTMLElement {
@@ -88,8 +90,11 @@ function ContextMenuFixture(): React.ReactElement {
 function TooltipFixture(): React.ReactElement {
   return (
     <LayerProvider>
-      <Tooltip text="Save file" delay={0}>
-        <button type="button">Save</button>
+      <Tooltip delay={0}>
+        <TooltipTrigger>
+          <button type="button">Save</button>
+        </TooltipTrigger>
+        <TooltipContent>Save file</TooltipContent>
       </Tooltip>
     </LayerProvider>
   )

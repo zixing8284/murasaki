@@ -25,6 +25,16 @@ export interface UseTypeaheadResult {
  * The hook only manages buffer accumulation and timeout reset. Resolving the
  * search string to an item is the consumer's responsibility (via `onMatch`)
  * because matching strategy varies (prefix vs. fuzzy, case sensitivity, etc.).
+ *
+ * @example
+ * ```tsx
+ * const { onChar } = useTypeahead({
+ *   enabled: open,
+ *   onMatch: search => focusFirstItemStartingWith(search),
+ * })
+ * // in a keydown handler:
+ * if (event.key.length === 1) onChar(event.key)
+ * ```
  */
 export function useTypeahead({
   enabled,

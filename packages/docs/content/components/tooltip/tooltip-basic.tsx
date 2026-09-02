@@ -1,15 +1,21 @@
 'use client'
 
-import { Button, Tooltip } from '@murasaki-io/react98'
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@murasaki-io/react98'
 
 export function TooltipBasicDemo(): React.ReactElement {
   return (
     <div className="flex gap-3">
-      <Tooltip text="Save changes" delay={150}>
-        <Button>Save</Button>
+      <Tooltip delay={150}>
+        <TooltipTrigger>
+          <Button>Save</Button>
+        </TooltipTrigger>
+        <TooltipContent>Save changes</TooltipContent>
       </Tooltip>
-      <Tooltip text="Opens below the control" side="bottom">
-        <Button>Help</Button>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button>Help</Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">Opens below the control</TooltipContent>
       </Tooltip>
     </div>
   )

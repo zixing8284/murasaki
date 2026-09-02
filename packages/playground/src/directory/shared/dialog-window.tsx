@@ -1,12 +1,12 @@
 import type { ReactElement, ReactNode } from 'react'
 import {
   useWindowContext,
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
   WindowFrame,
   WindowOverlay,
-  WindowProvider,
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki-io/react98'
@@ -34,7 +34,7 @@ export function DialogWindow({
 
   return (
     <WindowOverlay positioning="absolute" className="z-50 flex items-center justify-center">
-      <WindowProvider active={state.active} positioning="absolute">
+      <Window active={state.active} positioning="absolute">
         <WindowFrame className="relative">
           <WindowTitleBar>
             <WindowTitle>{title}</WindowTitle>
@@ -46,7 +46,7 @@ export function DialogWindow({
             {children}
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
     </WindowOverlay>
   )
 }

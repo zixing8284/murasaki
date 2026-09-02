@@ -1,11 +1,6 @@
 import type { ThemeId } from '@murasaki-io/react98'
-import { Select, TabPanel, themeIds, themeLabels } from '@murasaki-io/react98'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabPanel, themeIds, themeLabels } from '@murasaki-io/react98'
 import { ThemePreview } from './theme-preview'
-
-const themeOptions = themeIds.map(id => ({
-  label: themeLabels[id],
-  value: id,
-}))
 
 interface ThemeTabProps {
   selectedTheme: ThemeId
@@ -26,13 +21,19 @@ export function ThemeTab({ selectedTheme, onSelectedThemeChange, currentGradient
           Selected Theme:
         </label>
         <Select
-          id="theme-select"
           name="theme"
-          className="w-full"
-          options={themeOptions}
           value={selectedTheme}
-          onValueChange={value => onSelectedThemeChange(value)}
-        />
+          onValueChange={value => onSelectedThemeChange(value as ThemeId)}
+        >
+          <SelectTrigger id="theme-select" className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {themeIds.map(id => (
+              <SelectItem key={id} value={id}>{themeLabels[id]}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-1">

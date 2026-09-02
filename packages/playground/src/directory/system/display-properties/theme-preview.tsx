@@ -1,13 +1,13 @@
 import type { ThemeId } from '@murasaki-io/react98'
 import {
   Button,
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
   WindowFrame,
   WindowMaximizeButton,
   WindowMinimizeButton,
-  WindowProvider,
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki-io/react98'
@@ -39,7 +39,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
       </div>
 
       {/* Inactive Window — with content area + scrollbar */}
-      <WindowProvider active={false} positioning="absolute" maximizable={false}>
+      <Window active={false} positioning="absolute" maximizable={false}>
         <WindowFrame className="top-3 left-13 w-68 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Inactive Window</WindowTitle>
@@ -55,10 +55,10 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
             </div>
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
 
       {/* Active Window — overlaps Inactive, offset down-right */}
-      <WindowProvider active positioning="absolute" maximizable={false}>
+      <Window active positioning="absolute" maximizable={false}>
         <WindowFrame className="top-9 left-14 w-68 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Active Window</WindowTitle>
@@ -85,10 +85,10 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
             </div>
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
 
       {/* Message Box — overlaps Active Window content area */}
-      <WindowProvider active positioning="absolute" maximizable={false}>
+      <Window active positioning="absolute" maximizable={false}>
         <WindowFrame className="top-26 left-18 w-52 min-w-0! min-h-0!">
           <WindowTitleBar>
             <WindowTitle>Message Box</WindowTitle>
@@ -102,7 +102,7 @@ export function ThemePreview({ themeId, gradientTitlebar = true }: ThemePreviewP
             <Button>Close message</Button>
           </WindowContent>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
 
       <PreviewTaskbar />
     </div>

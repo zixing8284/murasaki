@@ -4,6 +4,7 @@ import {
   Button,
   MenuItem,
   MenuSeparator,
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -14,7 +15,6 @@ import {
   WindowMenuBarMenu,
   WindowMenuBarTrigger,
   WindowMinimizeButton,
-  WindowProvider,
   WindowStatusBar,
   WindowStatusBarField,
   WindowTitle,
@@ -27,7 +27,7 @@ export function WindowMenuDemo(): React.ReactElement {
 
   return (
     <div className="relative h-64 w-[384px]">
-      <WindowProvider positioning="absolute" maximizable={false}>
+      <Window positioning="absolute" maximizable={false}>
         <WindowFrame className="inset-0 min-h-0">
           <WindowTitleBar>
             <WindowTitle>Write.exe</WindowTitle>
@@ -77,7 +77,7 @@ export function WindowMenuDemo(): React.ReactElement {
             <WindowStatusBarField>{status}</WindowStatusBarField>
           </WindowStatusBar>
         </WindowFrame>
-      </WindowProvider>
+      </Window>
     </div>
   )
 }

@@ -1,18 +1,46 @@
 import { MenuBasicDemo } from './menu/menu-basic'
+import { MenuCheckableDemo } from './menu/menu-checkable'
 import { MenuSubmenuDemo } from './menu/menu-submenu'
 import { MenuScrollArrowsDemo } from './menu/menu-scroll-arrows'
 import { MenuEdgeTestDemo } from './menu/menu-edge-test'
 
 # Menu
 
-`Menu` renders a raised Windows 98 command menu. Use `MenuItem` for actions and `MenuSeparator` for grouped commands. For nested commands, wrap a trigger and content pair in `MenuSub` to get a side-expanding submenu.
+`Menu` renders a raised Windows 98 command menu. Compose it from `MenuItem` actions, `MenuCheckboxItem` toggles, `MenuRadioGroup` / `MenuRadioItem` single-selects, `MenuLabel` headings, `MenuShortcut` accelerator hints, `MenuSeparator` dividers, and `MenuSub` side-expanding submenus. These same items are what `ContextMenu` and the window `WindowMenuBar` render, so their behavior is shared across every menu surface.
+
+## Composition
+
+Use the following composition to build a Menu:
+
+```
+Menu
+├── MenuItem
+│   └── MenuShortcut
+├── MenuCheckboxItem
+├── MenuSeparator
+├── MenuLabel
+├── MenuRadioGroup
+│   ├── MenuRadioItem
+│   └── MenuRadioItem
+├── MenuSeparator
+└── MenuSub
+    ├── MenuSubTrigger
+    └── MenuSubContent
+        ├── MenuItem
+        └── MenuItem
+```
 
 ## Props
 
 | Export | Key props | Description |
 |--------|-----------|-------------|
-| `Menu` | HTML `menu` props | Root command list with `role="menu"`. |
+| `Menu` | `maxHeight`, HTML `menu` props | Root command list with `role="menu"`. |
 | `MenuItem` | `icon`, `disabled`, `selected`, `reserveIconSpace` | Interactive or disabled menu row. |
+| `MenuCheckboxItem` | `checked`, `onCheckedChange`, `disabled` | Toggle row with a check indicator (`role="menuitemcheckbox"`). |
+| `MenuRadioGroup` | `value`, `onValueChange` | Single-selection wrapper for `MenuRadioItem`s. |
+| `MenuRadioItem` | `value`, `disabled` | Selectable row with a bullet indicator (`role="menuitemradio"`). |
+| `MenuLabel` | HTML `li` props | Non-interactive group heading. |
+| `MenuShortcut` | HTML `span` props | Right-aligned accelerator hint placed inside an item. |
 | `MenuSeparator` | HTML `li` props | Horizontal divider between command groups. |
 | `MenuSub` | `open`, `onOpenChange`, `hoverOpenDelay`, `hoverCloseDelay` | Owns submenu open state and hover timers. |
 | `MenuSubTrigger` | `icon`, `disabled`, `reserveIconSpace` | Menu row that opens a submenu, with a built-in right-side chevron. |
@@ -22,6 +50,10 @@ import { MenuEdgeTestDemo } from './menu/menu-edge-test'
 
 <ComponentExample name="menu-basic" title="Command menu">
   <MenuBasicDemo />
+</ComponentExample>
+
+<ComponentExample name="menu-checkable" title="Icons, checkboxes, radios, and shortcuts">
+  <MenuCheckableDemo />
 </ComponentExample>
 
 <ComponentExample name="menu-submenu" title="Submenus">
@@ -36,14 +68,18 @@ import { MenuEdgeTestDemo } from './menu/menu-edge-test'
   <MenuEdgeTestDemo />
 </ComponentExample>
 
+## Icons
+
+`MenuItem` renders `icon` in a fixed 16px gutter that constrains oversized images (`max-width`/`max-height` + `object-contain`), so pixel-art icons stay centered and aligned with the label instead of clipping. Use `reserveIconSpace` on sibling items so their text lines up with iconned rows.
+
 ## ARIA
 
-Menu uses `role="menu"`; each item uses `role="menuitem"`, and disabled items expose `aria-disabled`. `MenuSubTrigger` adds `aria-haspopup="menu"` and toggles `aria-expanded` as the submenu opens. Enabled menu items are focusable and skip disabled rows during roving navigation.
+Menu uses `role="menu"`. Items use `role="menuitem"`, `role="menuitemcheckbox"`, or `role="menuitemradio"`; toggles and radios expose `aria-checked`, and disabled items expose `aria-disabled`. `MenuSubTrigger` adds `aria-haspopup="menu"` and toggles `aria-expanded`. All enabled item roles participate in roving focus and typeahead.
 
 ## Keyboard
 
-ArrowUp and ArrowDown move focus between enabled menu items and wrap at the ends. Home and End move to the first and last enabled item. Typing printable characters moves focus to the next enabled item whose text starts with the typed buffer. Enter and Space activate the focused menu item. On a `MenuSubTrigger`, ArrowRight (or Enter / Space) opens the submenu and focuses the first enabled item; inside `MenuSubContent`, ArrowLeft closes the submenu and returns focus to the trigger. Escape dismisses the innermost open submenu.
+ArrowUp and ArrowDown move focus between enabled items (including checkbox and radio items) and wrap at the ends. Home and End move to the first and last enabled item. Typing printable characters moves focus to the next enabled item whose text starts with the typed buffer. Enter and Space activate the focused item — toggling a `MenuCheckboxItem`, selecting a `MenuRadioItem`, or invoking a `MenuItem`. On a `MenuSubTrigger`, ArrowRight (or Enter / Space) opens the submenu; inside `MenuSubContent`, ArrowLeft closes it. Escape dismisses the innermost open submenu.
 
 ## SSR
 
-Keep `selected`, `disabled`, and icon content stable between server and client so focusable menu items hydrate with the same order and labels. `MenuSubContent` portals to `document.body` on mount, so it renders client-side only.
+Keep `selected`, `checked`, `disabled`, and icon content stable between server and client so focusable items hydrate with the same order and labels. `MenuSubContent` portals on mount, so it renders client-side only.

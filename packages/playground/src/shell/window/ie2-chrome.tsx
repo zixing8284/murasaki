@@ -4,6 +4,8 @@ import {
   MenuItem,
   MenuSeparator,
   Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   WindowMenuBar,
   WindowMenuBarContent,
   WindowMenuBarMenu,
@@ -157,19 +159,22 @@ function ToolbarButton({
   ].filter(Boolean).join(' ')
 
   return (
-    <Tooltip text={label} side="bottom">
-      <button
-        type="button"
-        aria-label={label}
-        disabled={disabled}
-        title={label}
-        className="size-8 shrink-0 border-none bg-(--button-face) shadow-(--shadow-raised) flex items-center justify-center p-0 text-(--button-text) active:not-disabled:shadow-(--shadow-sunken) disabled:text-(--gray-text) disabled:[text-shadow:1px_1px_0_var(--button-hilight)] focus:outline-dotted focus:outline-1 focus:outline-(--button-text) focus:-outline-offset-3"
-        onClick={onClick}
-      >
-        <span className={iconClassName}>
-          {children}
-        </span>
-      </button>
+    <Tooltip>
+      <TooltipTrigger>
+        <button
+          type="button"
+          aria-label={label}
+          disabled={disabled}
+          title={label}
+          className="size-8 shrink-0 border-none bg-(--button-face) shadow-(--shadow-raised) flex items-center justify-center p-0 text-(--button-text) active:not-disabled:shadow-(--shadow-sunken) disabled:text-(--gray-text) disabled:[text-shadow:1px_1px_0_var(--button-hilight)] focus:outline-dotted focus:outline-1 focus:outline-(--button-text) focus:-outline-offset-3"
+          onClick={onClick}
+        >
+          <span className={iconClassName}>
+            {children}
+          </span>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">{label}</TooltipContent>
     </Tooltip>
   )
 }
@@ -421,7 +426,7 @@ export function Ie2Chrome({
               <MenuItem reserveIconSpace disabled>Toolbars</MenuItem>
               <MenuItem reserveIconSpace disabled>Status Bar</MenuItem>
               <MenuSeparator />
-              <MenuItem icon={<img src={assetPath('/icons/refresh-20.png')} alt="" className="size-4 object-contain pixelated" draggable={false} />} onClick={handleRefresh}>Refresh</MenuItem>
+              <MenuItem icon={<img src={assetPath('/icons/refresh-20.png')} alt="" className="pixelated" draggable={false} />} onClick={handleRefresh}>Refresh</MenuItem>
               <MenuItem reserveIconSpace disabled>Source</MenuItem>
               <MenuItem reserveIconSpace disabled>Full Screen</MenuItem>
             </WindowMenuBarContent>

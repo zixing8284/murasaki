@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Tooltip } from '@murasaki-io/react98'
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@murasaki-io/react98'
 
 const TOOLTIPS = [
   {
@@ -44,8 +44,11 @@ export function TooltipEdgeTestDemo(): React.ReactElement {
     >
       {TOOLTIPS.map(tooltip => (
         <div key={tooltip.id} style={tooltip.style}>
-          <Tooltip text={tooltip.text} side={tooltip.side} delay={100}>
-            <Button>{tooltip.label}</Button>
+          <Tooltip delay={100}>
+            <TooltipTrigger>
+              <Button>{tooltip.label}</Button>
+            </TooltipTrigger>
+            <TooltipContent side={tooltip.side}>{tooltip.text}</TooltipContent>
           </Tooltip>
         </div>
       ))}

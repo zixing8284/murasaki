@@ -5,6 +5,19 @@ import { TreeViewCustomIconDemo } from './tree-view/tree-view-custom-icon'
 
 `TreeView` renders nested expandable lists with Windows 98 branch markers and roving keyboard focus.
 
+## Composition
+
+Use the following composition to build a TreeView:
+
+```
+TreeView
+├── TreeViewItem
+└── TreeViewItem
+    ├── TreeViewItem (leaf)
+    └── TreeViewItem
+        └── TreeViewItem (leaf)
+```
+
 ## Props
 
 | Export | Key props | Description |

@@ -4,6 +4,20 @@ import { TaskbarBasicDemo } from './taskbar/taskbar-basic'
 
 `Taskbar` builds the Windows 98 shell footer and exposes quick launch, dividers, notification area, and clock primitives.
 
+## Composition
+
+Use the following composition to build a Taskbar:
+
+```
+Taskbar
+├── TaskbarQuickLaunch
+├── TaskbarDivider
+├── (custom task buttons …)
+├── TaskbarDivider
+└── TaskbarNotificationArea
+    └── TaskbarSystemClock
+```
+
 ## Props
 
 | Export | Key props | Description |

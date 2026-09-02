@@ -1,18 +1,9 @@
 import type { ThemeId } from '@murasaki-io/react98'
-import type { ThemeSchemeSelection } from './use-theme-colors'
-import { FieldPanel, Select, themeIds, themeLabels } from '@murasaki-io/react98'
+import { FieldPanel, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, themeIds, themeLabels } from '@murasaki-io/react98'
 import { ColorControls } from './color-controls'
 import { FileControls } from './file-controls'
 import { DesignerPreview } from './theme-preview'
 import { useThemeColors } from './use-theme-colors'
-
-const schemeOptions = [
-  { label: 'Custom', value: 'custom' as const },
-  ...themeIds.map(id => ({
-    label: themeLabels[id],
-    value: id,
-  })),
-]
 
 export function ThemeDesigner(): React.ReactElement {
   const state = useThemeColors()
@@ -23,17 +14,24 @@ export function ThemeDesigner(): React.ReactElement {
         <label className="text-(--button-text)" htmlFor="classic-theme-scheme">
           Scheme:
         </label>
-        <Select<ThemeSchemeSelection>
-          id="classic-theme-scheme"
+        <Select
           name="classic-theme-scheme"
-          className="w-48"
-          options={schemeOptions}
           value={state.currentSchemeId}
           onValueChange={(value) => {
             if (value !== 'custom')
               state.loadBuiltInScheme(value as ThemeId)
           }}
-        />
+        >
+          <SelectTrigger id="classic-theme-scheme" className="w-48">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="custom">Custom</SelectItem>
+            {themeIds.map(id => (
+              <SelectItem key={id} value={id}>{themeLabels[id]}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex gap-2 flex-1 min-h-0">

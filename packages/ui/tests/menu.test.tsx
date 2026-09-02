@@ -2,7 +2,7 @@ import * as React from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { Menu, MenuItem, MenuSeparator, MenuSub, MenuSubContent, MenuSubTrigger } from '../src'
+import { Menu, MenuCheckboxItem, MenuItem, MenuLabel, MenuRadioGroup, MenuRadioItem, MenuSeparator, MenuShortcut, MenuSub, MenuSubContent, MenuSubTrigger } from '../src'
 
 const MANY_ITEMS = Array.from({ length: 36 }, (_, index) => `Item ${index + 1}`)
 
@@ -330,5 +330,73 @@ describe('menu submenu', () => {
       expect(submenu.querySelector('[data-menu-scroll="down"]')).not.toBeNull()
     })
     expect(submenu.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight + 0.5)
+  })
+})
+
+describe('menu checkbox / radio / shortcut / label', () => {
+  it('renders a checkbox item and toggles it', async () => {
+    function Fixture(): React.ReactElement {
+      const [checked, setChecked] = React.useState(false)
+      return (
+        <Menu>
+          <MenuCheckboxItem checked={checked} onCheckedChange={setChecked}>
+            Word Wrap
+            <MenuShortcut>Ctrl+W</MenuShortcut>
+          </MenuCheckboxItem>
+        </Menu>
+      )
+    }
+    const screen = await render(<Fixture />)
+    const item = screen.getByRole('menuitemcheckbox', { name: /Word Wrap/ })
+    await expect.element(item).toHaveAttribute('aria-checked', 'false')
+    await item.click()
+    await expect.element(item).toHaveAttribute('aria-checked', 'true')
+  })
+
+  it('selects a single radio item within a group', async () => {
+    function Fixture(): React.ReactElement {
+      const [value, setValue] = React.useState('list')
+      return (
+        <Menu>
+          <MenuLabel>View as</MenuLabel>
+          <MenuRadioGroup value={value} onValueChange={setValue}>
+            <MenuRadioItem value="list">List</MenuRadioItem>
+            <MenuRadioItem value="details">Details</MenuRadioItem>
+          </MenuRadioGroup>
+        </Menu>
+      )
+    }
+    const screen = await render(<Fixture />)
+    const list = screen.getByRole('menuitemradio', { name: 'List' })
+    const details = screen.getByRole('menuitemradio', { name: 'Details' })
+    await expect.element(list).toHaveAttribute('aria-checked', 'true')
+    await expect.element(details).toHaveAttribute('aria-checked', 'false')
+
+    await details.click()
+    await expect.element(details).toHaveAttribute('aria-checked', 'true')
+    await expect.element(list).toHaveAttribute('aria-checked', 'false')
+  })
+
+  it('includes checkbox and radio items in roving focus', async () => {
+    const screen = await render(
+      <Menu>
+        <MenuItem>Plain</MenuItem>
+        <MenuCheckboxItem checked>Checked</MenuCheckboxItem>
+        <MenuRadioGroup value="a">
+          <MenuRadioItem value="a">Radio A</MenuRadioItem>
+        </MenuRadioGroup>
+      </Menu>,
+    )
+    screen.getByRole('menuitem', { name: 'Plain' }).element().focus()
+    await userEvent.keyboard('{ArrowDown}')
+    await vi.waitFor(() => {
+      const focused = document.activeElement as HTMLElement
+      expect(focused?.getAttribute('role')).toBe('menuitemcheckbox')
+    })
+    await userEvent.keyboard('{ArrowDown}')
+    await vi.waitFor(() => {
+      const focused = document.activeElement as HTMLElement
+      expect(focused?.getAttribute('role')).toBe('menuitemradio')
+    })
   })
 })

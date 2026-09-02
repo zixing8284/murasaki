@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils'
 
 const REPEAT_INTERVAL_MS = 60
 const SCROLL_EDGE_TOLERANCE_PX = 2
-const MENU_ROW_SELECTOR = '[role="menuitem"], [role="separator"]'
+const MENU_ROW_SELECTOR = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="separator"]'
 
 interface UseMenuOverflowResult {
   canScrollUp: boolean

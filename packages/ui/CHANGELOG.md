@@ -1,5 +1,72 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- Add checkbox, radio, shortcut, and label items to the shared Menu primitives.
+
+  `Menu` (also rendered by `ContextMenu` and the window `WindowMenuBar`) gains:
+
+  - `MenuCheckboxItem` (`checked` / `onCheckedChange`) with a check indicator.
+  - `MenuRadioGroup` + `MenuRadioItem` (`value` / `onValueChange`) with a bullet indicator.
+  - `MenuLabel` for non-interactive group headings.
+  - `MenuShortcut` for right-aligned accelerator hints.
+
+  The new item roles (`menuitemcheckbox` / `menuitemradio`) participate in roving
+  focus, typeahead, and close-on-select. `MenuItem`'s icon slot is now a fixed
+  16px gutter that constrains oversized images so pixel-art icons stay centered
+  and aligned instead of clipping.
+
+- Rebuild `Select` as a shadcn/ui-style compound component.
+
+  `Select` is now a headless root composed of `SelectTrigger`, `SelectValue`,
+  `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, and
+  `SelectSeparator`, replacing the previous `options`-array API. Values are
+  plain strings and `onValueChange` receives `(value: string)`.
+
+  Breaking changes:
+
+  - The `options`, `label`, `labelClassName`, `triggerClassName`, `width`,
+    `menuMaxHeight`, `formatDisplay`, `onOpen`, and `onClose` props are removed.
+    Compose options as `SelectItem` children, set width via `className` on
+    `SelectTrigger`, use `maxHeight` on `SelectContent`, and use `onOpenChange`.
+  - `SelectOption` and the `Select<T>` generic value type are removed; item
+    values are strings.
+
+  `SelectNative` is unchanged.
+
+- Rebuild `Tooltip` as a compound component.
+
+  `Tooltip` is now a headless root composed of `TooltipTrigger` and
+  `TooltipContent`, replacing the previous `text`/`side` prop API.
+
+  Breaking changes:
+
+  - The `text`, `side`, and `className` props on `Tooltip` are removed. Put the
+    popup content as `TooltipContent` children, set placement via `side` on
+    `TooltipContent`, and wrap the target in `TooltipTrigger`.
+  - `delay` stays on `Tooltip`, which also gains `open` / `defaultOpen` /
+    `onOpenChange`.
+
+- Make `Window` the compound root and remove the convenience component.
+
+  `Window` is now the context-provider root of the Window compound (previously
+  `WindowProvider`). Compose it with `WindowFrame` and the other slots exactly as
+  before.
+
+  Breaking changes:
+
+  - `WindowProvider` is renamed to `Window`. Replace `<WindowProvider>` with
+    `<Window>`; the props (`active`, `minimized`, `defaultMaximized`,
+    `positioning`, `maximizable`) are unchanged. `WindowProviderProps` is now
+    `WindowProps`.
+  - The previous ready-made `Window` convenience component (with `title`, `icon`,
+    `defaultPosition`, `defaultSize`, `onClose`, ... props) is removed. Assemble a
+    window from the slots and wire `useDraggable` / `useResizable` yourself — see
+    the Window docs "Build a complete window" example.
+  - `WindowPosition` and `WindowSize` types are removed.
+
 ## 0.5.0
 
 ### Minor Changes

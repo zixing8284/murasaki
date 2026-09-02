@@ -39,11 +39,28 @@ export { LayerProvider } from './components/layer/layer-provider'
 export type { LayerProviderProps } from './components/layer/layer-provider'
 
 // Menu
-export { Menu, MenuItem, MenuSeparator, MenuSub, MenuSubContent, MenuSubTrigger } from './components/menu/menu'
+export {
+  Menu,
+  MenuCheckboxItem,
+  MenuItem,
+  MenuLabel,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+  MenuShortcut,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
+} from './components/menu/menu'
 export type {
+  MenuCheckboxItemProps,
   MenuItemProps,
+  MenuLabelProps,
   MenuProps,
+  MenuRadioGroupProps,
+  MenuRadioItemProps,
   MenuSeparatorProps,
+  MenuShortcutProps,
   MenuSubContentProps,
   MenuSubProps,
   MenuSubTriggerProps,
@@ -66,8 +83,29 @@ export { ScrollArea, ScrollAreaLegacy } from './components/scroll-area/scroll-ar
 export type { ScrollAreaProps } from './components/scroll-area/scroll-area'
 
 // Select
-export { Select, SelectNative } from './components/select/select'
-export type { SelectNativeProps, SelectOption, SelectProps } from './components/select/select'
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectNative,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from './components/select/select'
+export type {
+  SelectContentProps,
+  SelectGroupProps,
+  SelectItemProps,
+  SelectLabelProps,
+  SelectNativeProps,
+  SelectProps,
+  SelectSeparatorProps,
+  SelectTriggerProps,
+  SelectValueProps,
+} from './components/select/select'
+export type { SelectContextValue } from './components/select/select-context'
 
 // Slider
 export { Slider } from './components/slider/slider'
@@ -122,8 +160,9 @@ export { themeIds, themeLabels, ThemeProvider, useTheme } from './components/the
 export type { ThemeContextValue, ThemeId, ThemeProviderProps } from './components/theme-provider/theme-provider'
 
 // Tooltip
-export { Tooltip } from './components/tooltip/tooltip'
-export type { TooltipProps } from './components/tooltip/tooltip'
+export { Tooltip, TooltipContent, TooltipTrigger } from './components/tooltip/tooltip'
+export type { TooltipContentProps, TooltipProps, TooltipTriggerProps } from './components/tooltip/tooltip'
+export type { TooltipContextValue } from './components/tooltip/tooltip-context'
 // TreeView
 export { TreeView, TreeViewItem } from './components/tree-view/tree-view'
 export type {
@@ -131,16 +170,9 @@ export type {
   TreeViewProps,
 } from './components/tree-view/tree-view'
 
-// Window convenience component
-export { Window } from './components/window/window'
-export type {
-  WindowPosition,
-  WindowProps,
-  WindowSize,
-} from './components/window/window'
-
-// Window compound components
+// Window (root + compound parts)
 export {
+  Window,
   WindowButtons,
   WindowCloseButton,
   WindowContent,
@@ -155,7 +187,6 @@ export {
   WindowMinimizeButton,
   WindowOverlay,
   WindowPortal,
-  WindowProvider,
   WindowResizeGrip,
   WindowStatusBar,
   WindowStatusBarField,
@@ -177,7 +208,7 @@ export type {
   WindowMinimizeButtonProps,
   WindowOverlayProps,
   WindowPortalProps,
-  WindowProviderProps,
+  WindowProps,
   WindowResizeGripProps,
   WindowStatusBarFieldProps,
   WindowStatusBarProps,

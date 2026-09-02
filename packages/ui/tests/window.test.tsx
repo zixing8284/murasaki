@@ -11,7 +11,6 @@ import {
   WindowMenuBar,
   WindowMenuBarItem,
   WindowMinimizeButton,
-  WindowProvider,
   WindowStatusBar,
   WindowStatusBarField,
   WindowTitle,
@@ -19,9 +18,9 @@ import {
 } from '../src'
 
 // Helper: minimal complete window for integration tests
-function SimpleWindow(props: Omit<React.ComponentProps<typeof WindowProvider>, 'children'>): React.ReactElement {
+function SimpleWindow(props: Omit<React.ComponentProps<typeof Window>, 'children'>): React.ReactElement {
   return (
-    <WindowProvider {...props}>
+    <Window {...props}>
       <WindowFrame data-testid="frame">
         <WindowTitleBar data-testid="titlebar">
           <WindowTitle>Test Window</WindowTitle>
@@ -35,7 +34,7 @@ function SimpleWindow(props: Omit<React.ComponentProps<typeof WindowProvider>, '
           <p>Window body</p>
         </WindowContent>
       </WindowFrame>
-    </WindowProvider>
+    </Window>
   )
 }
 
@@ -60,30 +59,30 @@ function WindowMaximizedConsumer(): React.ReactElement {
   return <span data-testid="maximized">{String(state.maximized)}</span>
 }
 
-describe('window-provider', () => {
+describe('window (root)', () => {
   it('renders children', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <div>child</div>
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByText('child')).toBeInTheDocument()
   })
 
   it('provides context to child components', async () => {
     const screen = await render(
-      <WindowProvider active>
+      <Window active>
         <WindowActiveConsumer />
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByTestId('active')).toHaveTextContent('true')
   })
 
   it('provides default state values', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowStateConsumer />
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByTestId('active')).toHaveTextContent('true')
     await expect.element(screen.getByTestId('maximized')).toHaveTextContent('false')
@@ -94,9 +93,9 @@ describe('window-provider', () => {
 describe('window-frame', () => {
   it('renders with absolute positioning by default', async () => {
     const screen = await render(
-      <WindowProvider positioning="absolute">
+      <Window positioning="absolute">
         <WindowFrame data-testid="frame" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('frame').element().className
     expect(classes).toContain('absolute')
@@ -104,9 +103,9 @@ describe('window-frame', () => {
 
   it('renders with fixed positioning', async () => {
     const screen = await render(
-      <WindowProvider positioning="fixed">
+      <Window positioning="fixed">
         <WindowFrame data-testid="frame" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('frame').element().className
     expect(classes).toContain('fixed')
@@ -114,9 +113,9 @@ describe('window-frame', () => {
 
   it('is visually hidden when minimized', async () => {
     const screen = await render(
-      <WindowProvider minimized>
+      <Window minimized>
         <WindowFrame data-testid="frame" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('frame').element().className
     expect(classes).toContain('invisible')
@@ -124,9 +123,9 @@ describe('window-frame', () => {
 
   it('applies maximized styles when maximized', async () => {
     const screen = await render(
-      <WindowProvider defaultMaximized positioning="absolute">
+      <Window defaultMaximized positioning="absolute">
         <WindowFrame data-testid="frame" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('frame').element().className
     expect(classes).toContain('inset-0!')
@@ -134,9 +133,9 @@ describe('window-frame', () => {
 
   it('forwards custom className', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowFrame data-testid="frame" className="my-class" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('frame').element().className
     expect(classes).toContain('my-class')
@@ -146,20 +145,20 @@ describe('window-frame', () => {
 describe('window-title-bar', () => {
   it('renders children', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowTitleBar>
           <span>My Title</span>
         </WindowTitleBar>
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByText('My Title')).toBeInTheDocument()
   })
 
   it('applies active styles when window is active', async () => {
     const screen = await render(
-      <WindowProvider active>
+      <Window active>
         <WindowTitleBar data-testid="titlebar" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('titlebar').element().className
     expect(classes).toContain('from-(--active-title)')
@@ -167,9 +166,9 @@ describe('window-title-bar', () => {
 
   it('applies inactive styles when window is not active', async () => {
     const screen = await render(
-      <WindowProvider active={false}>
+      <Window active={false}>
         <WindowTitleBar data-testid="titlebar" />
-      </WindowProvider>,
+      </Window>,
     )
     const classes = screen.getByTestId('titlebar').element().className
     expect(classes).toContain('from-(--inactive-title)')
@@ -179,37 +178,37 @@ describe('window-title-bar', () => {
 describe('window-buttons', () => {
   it('renders WindowCloseButton with aria-label', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowCloseButton />
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
   })
 
   it('renders WindowMinimizeButton with aria-label', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowMinimizeButton />
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByRole('button', { name: 'Minimize' })).toBeInTheDocument()
   })
 
   it('renders WindowMaximizeButton with aria-label', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowMaximizeButton />
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByRole('button', { name: 'Maximize' })).toBeInTheDocument()
   })
 
   it('maximize button toggles maximized state', async () => {
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowMaximizeButton />
         <WindowMaximizedConsumer />
-      </WindowProvider>,
+      </Window>,
     )
 
     await expect.element(screen.getByTestId('maximized')).toHaveTextContent('false')
@@ -221,9 +220,9 @@ describe('window-buttons', () => {
 
   it('maximize button is disabled when maximizable is false', async () => {
     const screen = await render(
-      <WindowProvider maximizable={false}>
+      <Window maximizable={false}>
         <WindowMaximizeButton />
-      </WindowProvider>,
+      </Window>,
     )
     await expect.element(screen.getByRole('button', { name: 'Maximize' })).toBeDisabled()
   })
@@ -231,9 +230,9 @@ describe('window-buttons', () => {
   it('close button calls onClick', async () => {
     const handleClick = vi.fn()
     const screen = await render(
-      <WindowProvider>
+      <Window>
         <WindowCloseButton onClick={handleClick} />
-      </WindowProvider>,
+      </Window>,
     )
     await screen.getByRole('button', { name: 'Close' }).click()
     expect(handleClick).toHaveBeenCalledOnce()
@@ -329,72 +328,5 @@ describe('window integration', () => {
 
     // Button should now say Restore
     await expect.element(screen.getByRole('button', { name: 'Restore' })).toBeInTheDocument()
-  })
-})
-
-describe('window (convenience)', () => {
-  it('renders title and content', async () => {
-    const screen = await render(
-      <Window title="My Document">
-        <p>Hello from 1998!</p>
-      </Window>,
-    )
-    await expect.element(screen.getByText('My Document')).toBeInTheDocument()
-    await expect.element(screen.getByText('Hello from 1998!')).toBeInTheDocument()
-    await expect.element(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
-    await expect.element(screen.getByRole('button', { name: 'Minimize' })).toBeInTheDocument()
-    await expect.element(screen.getByRole('button', { name: 'Maximize' })).toBeInTheDocument()
-  })
-
-  it('applies defaultPosition and defaultSize as inline styles', async () => {
-    const screen = await render(
-      <Window
-        data-testid="frame"
-        title="Doc"
-        defaultPosition={{ x: 80, y: 60 }}
-        defaultSize={{ width: 320, height: 240 }}
-      >
-        body
-      </Window>,
-    )
-    const frame = screen.getByTestId('frame').element() as HTMLElement
-    expect(frame.style.left).toBe('80px')
-    expect(frame.style.top).toBe('60px')
-    expect(frame.style.width).toBe('320px')
-    expect(frame.style.height).toBe('240px')
-  })
-
-  it('fires onClose and onMinimize', async () => {
-    const handleClose = vi.fn()
-    const handleMinimize = vi.fn()
-    const screen = await render(
-      <Window title="Doc" onClose={handleClose} onMinimize={handleMinimize}>
-        body
-      </Window>,
-    )
-    await screen.getByRole('button', { name: 'Close' }).click()
-    await screen.getByRole('button', { name: 'Minimize' }).click()
-    expect(handleClose).toHaveBeenCalledOnce()
-    expect(handleMinimize).toHaveBeenCalledOnce()
-  })
-
-  it('omits minimize/close buttons when disabled', async () => {
-    const screen = await render(
-      <Window title="Doc" minimizable={false} closable={false}>
-        body
-      </Window>,
-    )
-    expect(screen.container.querySelector('button[aria-label="Minimize"]')).toBeNull()
-    expect(screen.container.querySelector('button[aria-label="Close"]')).toBeNull()
-    await expect.element(screen.getByRole('button', { name: 'Maximize' })).toBeInTheDocument()
-  })
-
-  it('omits the resize grip when resizable is false', async () => {
-    const screen = await render(
-      <Window title="Doc" resizable={false}>
-        body
-      </Window>,
-    )
-    expect(screen.container.querySelector('[data-resize-handle]')).toBeNull()
   })
 })

@@ -7,5 +7,9 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "@murasaki-io/react98-playground",
+    "@murasaki-io/react98-docs",
+    "@murasaki-io/react98-next-fixture"
+  ]
 }

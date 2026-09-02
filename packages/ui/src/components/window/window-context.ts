@@ -29,7 +29,7 @@ export const WindowContext = createContext<WindowContextValue | null>(null)
 export function useWindowContext(): WindowContextValue {
   const context = use(WindowContext)
   if (!context) {
-    throw new Error('Window compound components must be used within WindowProvider')
+    throw new Error('Window compound components must be used within <Window>')
   }
   return context
 }

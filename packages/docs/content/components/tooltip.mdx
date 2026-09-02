@@ -3,17 +3,42 @@ import { TooltipEdgeTestDemo } from './tooltip/tooltip-edge-test'
 
 # Tooltip
 
-`Tooltip` shows a Windows 98 info popup for hover and focus targets.
+`Tooltip` shows a Windows 98 info popup for hover and focus targets. Compose a `TooltipTrigger` around the target with a `TooltipContent` for the popup.
+
+## Composition
+
+Use the following composition to build a Tooltip:
+
+```
+Tooltip
+├── TooltipTrigger
+└── TooltipContent
+```
 
 ## Props
 
+### `Tooltip`
+
+The root. Owns visibility state; renders no element of its own.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `text` | `string` | required | Tooltip text. |
-| `delay` | `number` | `400` | Delay before showing in milliseconds. |
+| `delay` | `number` | `400` | Delay before showing on hover/focus, in milliseconds. |
+| `open` | `boolean` | - | Visible state (controlled). |
+| `defaultOpen` | `boolean` | `false` | Initial visible state (uncontrolled). |
+| `onOpenChange` | `(open: boolean) => void` | - | Called when the tooltip shows or hides. |
+
+### `TooltipTrigger`
+
+Wraps the hover/focus target in an `inline-flex` span and anchors the popup. Accepts native `span` props.
+
+### `TooltipContent`
+
+The portalled popup. Accepts native `span` props plus:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
 | `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Preferred placement, with viewport flipping. |
-| `className` | `string` | - | Popup classes. |
-| `children` | `ReactNode` | required | Trigger content. |
 
 ## Examples
 
@@ -32,7 +57,7 @@ import { TooltipEdgeTestDemo } from './tooltip/tooltip-edge-test'
 
 ## ARIA
 
-Tooltip adds `aria-describedby` while visible and renders the popup with `role="tooltip"`.
+The trigger gains `aria-describedby` while the tooltip is visible, pointing at the `role="tooltip"` popup.
 
 ## Keyboard
 

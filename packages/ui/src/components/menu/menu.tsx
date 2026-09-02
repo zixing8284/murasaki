@@ -8,6 +8,7 @@ import { useDismissable } from '../../primitives/use-dismissable'
 import { useLayer } from '../../primitives/use-layer'
 import { useRovingFocus } from '../../primitives/use-roving-focus'
 import { useTypeahead } from '../../primitives/use-typeahead'
+import { MenuRadioGroupContext, useMenuRadioGroupContext } from './menu-radio-context'
 import { MenuScrollArrow, useMenuOverflow } from './menu-scroll'
 import { MenuSubContext, useMenuSubContext } from './menu-sub-context'
 
@@ -44,7 +45,7 @@ export interface MenuProps extends React.ComponentProps<'menu'> {
   maxHeight?: number | undefined
 }
 
-const MENU_ITEM_SELECTOR = '[role="menuitem"]'
+const MENU_ITEM_SELECTOR = '[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"]'
 
 function getEnabledMenuItems(menu: HTMLElement): HTMLElement[] {
   return Array.from(menu.querySelectorAll<HTMLElement>(MENU_ITEM_SELECTOR))
@@ -241,6 +242,34 @@ const menuItemVariants = cva(
   },
 )
 
+// Shared 16px indicator gutter for icons, checks, and radio bullets. Consumer
+// images are constrained to the slot so oversized icons never clip or push the
+// label out of alignment (see ADR 0008).
+const MENU_INDICATOR_SLOT = 'flex size-[16px] shrink-0 items-center justify-center [&>img]:max-w-full [&>img]:max-h-full [&>img]:object-contain'
+
+function MenuCheckIcon(): React.ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 7 7" width="7" height="7" shapeRendering="crispEdges" fill="currentColor">
+      <rect x="0" y="3" width="1" height="2" />
+      <rect x="1" y="4" width="1" height="2" />
+      <rect x="2" y="5" width="1" height="2" />
+      <rect x="3" y="4" width="1" height="2" />
+      <rect x="4" y="3" width="1" height="2" />
+      <rect x="5" y="2" width="1" height="2" />
+      <rect x="6" y="1" width="1" height="2" />
+    </svg>
+  )
+}
+
+function MenuBulletIcon(): React.ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 4 4" width="4" height="4" shapeRendering="crispEdges" fill="currentColor">
+      <rect x="1" y="0" width="2" height="4" />
+      <rect x="0" y="1" width="4" height="2" />
+    </svg>
+  )
+}
+
 export interface MenuItemProps extends React.ComponentProps<'li'> {
   icon?: React.ReactNode
   disabled?: boolean
@@ -303,8 +332,8 @@ export function MenuItem({
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
-      {showIconSlot && <span className="size-4 shrink-0 flex items-center justify-center">{icon}</span>}
-      <span className="flex-1">{children}</span>
+      {showIconSlot && <span className={MENU_INDICATOR_SLOT}>{icon}</span>}
+      {children}
     </li>
   )
 }
@@ -330,6 +359,194 @@ export function MenuSeparator({ className, ref, ...props }: MenuSeparatorProps):
       className={cn(menuSeparatorVariants(), className)}
       {...props}
     />
+  )
+}
+
+// ─── MenuLabel ───────────────────────────────────────────────────
+
+const menuLabelVariants = cva([
+  'px-[6px]',
+  'py-[4px]',
+  'm-[1px_0]',
+  'text-(--gray-text)',
+  'select-none',
+  'list-none',
+])
+
+export interface MenuLabelProps extends React.ComponentProps<'li'> {}
+
+/** A non-interactive heading for a group of menu items. */
+export function MenuLabel({ className, ref, ...props }: MenuLabelProps): React.ReactElement {
+  return (
+    <li ref={ref} role="presentation" className={cn(menuLabelVariants(), className)} {...props} />
+  )
+}
+
+// ─── MenuShortcut ──────────────────────────────────────────────
+
+export interface MenuShortcutProps extends React.ComponentProps<'span'> {}
+
+/** Right-aligned accelerator hint (e.g. `Ctrl+S`) placed inside a menu item. */
+export function MenuShortcut({ className, ...props }: MenuShortcutProps): React.ReactElement {
+  return <span className={cn('ml-auto pl-5', className)} {...props} />
+}
+
+// ─── MenuCheckboxItem ──────────────────────────────────────────
+
+export interface MenuCheckboxItemProps extends Omit<React.ComponentProps<'li'>, 'onChange'> {
+  /** Whether the item is checked. */
+  checked?: boolean
+  /** Called with the next checked value when toggled. */
+  onCheckedChange?: (checked: boolean) => void
+  disabled?: boolean
+}
+
+/** A menu item with a check indicator. Toggles `checked` on activation. */
+export function MenuCheckboxItem({
+  className,
+  checked = false,
+  onCheckedChange,
+  disabled = false,
+  onClick,
+  onKeyDown,
+  tabIndex,
+  children,
+  ref,
+  ...props
+}: MenuCheckboxItemProps): React.ReactElement {
+  const handleClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+    if (disabled) {
+      event.preventDefault()
+      return
+    }
+    onClick?.(event)
+    if (!event.defaultPrevented)
+      onCheckedChange?.(!checked)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>): void => {
+    onKeyDown?.(event)
+    if (event.defaultPrevented)
+      return
+    if (event.key !== 'Enter' && event.key !== ' ')
+      return
+    event.preventDefault()
+    if (!disabled)
+      event.currentTarget.click()
+  }
+
+  return (
+    <li
+      ref={ref}
+      role="menuitemcheckbox"
+      aria-checked={checked}
+      aria-disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
+      data-checked={checked || undefined}
+      className={cn(menuItemVariants({ disabled }), className)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      {...props}
+    >
+      <span className={MENU_INDICATOR_SLOT}>{checked ? <MenuCheckIcon /> : null}</span>
+      {children}
+    </li>
+  )
+}
+
+// ─── MenuRadioGroup ───────────────────────────────────────────
+
+export interface MenuRadioGroupProps extends React.ComponentProps<'div'> {
+  /** The value of the currently selected item. */
+  value?: string
+  /** Called with the next value when the selection changes. */
+  onValueChange?: (value: string) => void
+}
+
+/** Groups `MenuRadioItem`s into a single-selection set. */
+export function MenuRadioGroup({
+  className,
+  value,
+  onValueChange,
+  children,
+  ref,
+  ...props
+}: MenuRadioGroupProps): React.ReactElement {
+  const context = {
+    value,
+    onValueChange: (next: string): void => onValueChange?.(next),
+  }
+  return (
+    <MenuRadioGroupContext value={context}>
+      <div ref={ref} role="group" className={cn('contents', className)} {...props}>
+        {children}
+      </div>
+    </MenuRadioGroupContext>
+  )
+}
+
+// ─── MenuRadioItem ────────────────────────────────────────────
+
+export interface MenuRadioItemProps extends React.ComponentProps<'li'> {
+  /** The value this item selects within its `MenuRadioGroup`. */
+  value: string
+  disabled?: boolean
+}
+
+/** A menu item with a radio indicator. Selects its `value` on activation. */
+export function MenuRadioItem({
+  className,
+  value,
+  disabled = false,
+  onClick,
+  onKeyDown,
+  tabIndex,
+  children,
+  ref,
+  ...props
+}: MenuRadioItemProps): React.ReactElement {
+  const group = useMenuRadioGroupContext()
+  const checked = group?.value === value
+
+  const handleClick = (event: React.MouseEvent<HTMLLIElement>): void => {
+    if (disabled) {
+      event.preventDefault()
+      return
+    }
+    onClick?.(event)
+    if (!event.defaultPrevented)
+      group?.onValueChange(value)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>): void => {
+    onKeyDown?.(event)
+    if (event.defaultPrevented)
+      return
+    if (event.key !== 'Enter' && event.key !== ' ')
+      return
+    event.preventDefault()
+    if (!disabled)
+      event.currentTarget.click()
+  }
+
+  return (
+    <li
+      ref={ref}
+      role="menuitemradio"
+      aria-checked={checked}
+      aria-disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
+      data-checked={checked || undefined}
+      className={cn(menuItemVariants({ disabled }), className)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      {...props}
+    >
+      <span className={MENU_INDICATOR_SLOT}>{checked ? <MenuBulletIcon /> : null}</span>
+      {children}
+    </li>
   )
 }
 
@@ -584,7 +801,7 @@ export function MenuSubTrigger({
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
-      {showIconSlot && <span className="size-4 shrink-0 flex items-center justify-center">{icon}</span>}
+      {showIconSlot && <span className={MENU_INDICATOR_SLOT}>{icon}</span>}
       <span className="flex-1">{children}</span>
       <MenuSubChevron className={cn('shrink-0', chevronClass)} />
     </li>
@@ -656,7 +873,7 @@ export function MenuSubContent({
     if (!menu)
       return
     const first = menu.querySelector<HTMLElement>(
-      '[role="menuitem"]:not([aria-disabled="true"])',
+      '[role="menuitem"]:not([aria-disabled="true"]),[role="menuitemcheckbox"]:not([aria-disabled="true"]),[role="menuitemradio"]:not([aria-disabled="true"])',
     )
     first?.focus()
   }, [sub.open])

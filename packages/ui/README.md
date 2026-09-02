@@ -3,7 +3,7 @@
 > Windows 98 UI components for React — pixel-perfect nostalgia meets modern tooling.
 
 [![npm](https://img.shields.io/npm/v/@murasaki-io/react98)](https://www.npmjs.com/package/@murasaki-io/react98)
-[![license](https://img.shields.io/npm/l/@murasaki-io/react98)](./LICENSE)
+[![license](https://img.shields.io/npm/l/@murasaki-io/react98)](https://github.com/zixing8284/murasaki/blob/main/packages/ui/LICENSE)
 
 ---
 
@@ -85,200 +85,16 @@ export default function App() {
 
 ---
 
-## Components
+## Documentation
 
-All 22 components ship with full keyboard navigation and ARIA semantics.
+Component reference, live examples, and guides live on the documentation site. It is the source of truth for API details and usage — this README only covers setup.
 
-| Component | Description |
-|---|---|
-| `Button` | Raised push button with active/disabled states |
-| `Checkbox` | Classic checkbox with label |
-| `OptionButton` | Radio-style option button |
-| `TextBox` | Single-line text input |
-| `NumberBox` | Numeric input with spin controls |
-| `Select` | Dropdown select (custom + native variants) |
-| `Slider` | Horizontal/vertical range slider |
-| `ProgressIndicator` | Progress bar |
-| `Tabs` | Tabbed panel container |
-| `Menu` | Menubar with nested submenus |
-| `ContextMenu` | Right-click context menu |
-| `Tooltip` | Hover tooltip |
-| `ScrollArea` | Scrollable container with Win98 scrollbars |
-| `Table` | Data table in a sunken frame |
-| `TreeView` | Collapsible tree list |
-| `FieldPanel` | Labeled field group |
-| `GroupBox` | Named box for grouping controls |
-| `Divider` | Horizontal or vertical separator |
-| `Window` | Ready-to-use draggable & resizable window shell (title + content) |
-| `Taskbar` | Desktop taskbar with quick-launch |
-| `ThemeProvider` | Theme context root |
-| `LayerProvider` | Scoped floating layer portal |
+**[→ Documentation & live demo](https://zixing8284.github.io/murasaki)**
 
-The `Window` suite is actually a small family: `Window` is the convenience shell, while `WindowProvider`, `WindowFrame`, `WindowTitleBar`, `WindowContent`, `WindowMenuBar*`, `WindowStatusBar`, `WindowResizeGrip`, and `WindowPortal` are the composable primitives you can use for full control. See [Windows and floating layers](#windows-and-floating-layers) below.
-
----
-
-## Themes
-
-Switch themes at runtime — no page reload needed:
-
-```tsx
-<ThemeProvider defaultTheme="slate">
-  {/* your app */}
-</ThemeProvider>
-```
-
-| Group | Themes |
-|---|---|
-| Windows classics | `windows-98` *(default)*, `windows-95`, `windows-standard` |
-| Hand-tuned | `rainy-day`, `rose`, `slate`, `spruce`, `desert` |
-| Community ports | `brick`, `eggplant`, `lilac`, `maple`, `marine`, `plum`, `pumpkin`, `red-white-and-blue`, `storm`, `teal`, `wheat` |
-
-Each theme is also available as a standalone CSS file for lean bundles:
-
-```css
-@import '@murasaki-io/react98/themes/marine.css';
-```
-
----
-
-## Controlled & uncontrolled
-
-Every stateful component supports both patterns. Pass an initial value to let the component manage its own state, or wire it up to yours:
-
-```tsx
-{/* Uncontrolled */}
-<Checkbox defaultChecked>Remember me</Checkbox>
-
-{/* Controlled — React setters drop right in */}
-<Checkbox checked={agreed} onCheckedChange={setAgreed}>
-  I agree to the terms
-</Checkbox>
-
-<TextBox value={query} onValueChange={setQuery} placeholder="Search…" />
-
-<Slider value={volume} onValueChange={setVolume} min={0} max={100} />
-```
-
----
-
-## Windows and floating layers
-
-Build a full desktop shell with a draggable, resizable window:
-
-```tsx
-import { Window, LayerProvider } from '@murasaki-io/react98'
-
-function Desktop() {
-  return (
-    <div className="relative isolate overflow-hidden w-screen h-screen">
-      <LayerProvider>
-        <Window
-          title="My Document"
-          defaultPosition={{ x: 80, y: 60 }}
-          defaultSize={{ width: 480, height: 320 }}
-          onClose={() => {/* remove window */}}
-        >
-          <p>Hello from 1998!</p>
-        </Window>
-      </LayerProvider>
-    </div>
-  )
-}
-```
-
-`Window` wires up drag (via the title bar) and resize (via the bottom-right grip) for you. It accepts `defaultPosition` / `defaultSize` / `draggable` / `resizable` (both on by default) plus `active`, `minimized`, `defaultMaximized`, `minimizable`, `maximizable`, `closable`, `positioning`, `container`, and `onClose` / `onMinimize`.
-
-Wrap your desktop surface in `LayerProvider` so menus, tooltips, and window portals render inside your shell instead of leaking to `document.body`. Without it, floating layers (submenus, context menus, tooltips, default window portals) fall back to `document.body`, which breaks `overflow: hidden` / `isolation` shells and z-index isolation.
-
-### Build a complete window from primitives
-
-For menu bars, status bars, custom chrome, or portals into a window manager, compose the primitives directly:
-
-```tsx
-import {
-  WindowProvider,
-  WindowFrame,
-  WindowTitleBar,
-  WindowTitle,
-  WindowButtons,
-  WindowMinimizeButton,
-  WindowMaximizeButton,
-  WindowCloseButton,
-  WindowMenuBar,
-  WindowMenuBarMenu,
-  WindowMenuBarTrigger,
-  WindowMenuBarContent,
-  WindowContent,
-  WindowStatusBar,
-  WindowStatusBarField,
-  WindowResizeGrip,
-  useDraggable,
-  useResizable,
-  MenuItem,
-} from '@murasaki-io/react98'
-
-function MyWindow() {
-  const { setTargetRef: setDragTarget, setDragRef, dragging } = useDraggable<HTMLDivElement, HTMLDivElement>()
-  const { setTargetRef: setResizeTarget, setResizeRef, resizing } = useResizable<HTMLDivElement, HTMLDivElement>({ minWidth: 320, minHeight: 200 })
-
-  const setFrameRef = (el: HTMLDivElement | null) => {
-    setDragTarget(el)
-    setResizeTarget(el)
-  }
-
-  return (
-    <WindowProvider positioning="absolute">
-      <WindowFrame ref={setFrameRef} style={{ left: 80, top: 60, width: 480, height: 320 }}>
-        <WindowTitleBar ref={setDragRef}>
-          <WindowTitle>Notepad 98</WindowTitle>
-          <WindowButtons>
-            <WindowMinimizeButton />
-            <WindowMaximizeButton />
-            <WindowCloseButton />
-          </WindowButtons>
-        </WindowTitleBar>
-        <WindowMenuBar>
-          <WindowMenuBarMenu value="file">
-            <WindowMenuBarTrigger>File</WindowMenuBarTrigger>
-            <WindowMenuBarContent>
-              <MenuItem reserveIconSpace>New</MenuItem>
-              <MenuItem reserveIconSpace>Open…</MenuItem>
-            </WindowMenuBarContent>
-          </WindowMenuBarMenu>
-        </WindowMenuBar>
-        <WindowContent className="p-2">Your app content</WindowContent>
-        <WindowStatusBar>
-          <WindowStatusBarField>Ready</WindowStatusBarField>
-        </WindowStatusBar>
-        <WindowResizeGrip ref={setResizeRef} />
-      </WindowFrame>
-    </WindowProvider>
-  )
-}
-```
-
-The mental model behind these pieces:
-
-- `left` / `top` (and `width` / `height`) are **static inline styles** you set once for the initial layout.
-- Dragging adds a `translate()` **transform** on top of the base position (`useDraggable`), and re-clamps to the container/viewport.
-- Resizing **overwrites the inline `width` / `height`** (`useResizable`).
-- `WindowResizeGrip` is the visual grip; wire it to `setResizeRef`. `useDraggable`'s mousedown ignores clicks on `button` / `a` / `input` elements so the title-bar buttons still work.
-
----
-
-## Hooks
-
-Two hooks are available for custom drag and resize interactions:
-
-```tsx
-import { useDraggable, useResizable } from '@murasaki-io/react98'
-```
-
-- `useDraggable` moves a target element via CSS `translate()` when a handle is dragged. Attach `setTargetRef` to the movable element and `setDragRef` to the drag handle.
-- `useResizable` resizes a target element by writing inline `width` / `height` when a handle is dragged. Attach `setTargetRef` to the element and `setResizeRef` to the resize handle.
-
-Both accept a `container` boundary element (defaults to the viewport) and `draggable` / `resizable` toggles.
+- **Components** — each component's props, examples, accessibility notes, and keyboard behavior. Components are composable and follow a consistent shadcn/ui-style API (e.g. `Select` → `SelectTrigger` / `SelectContent` / `SelectItem`; `Window` → `WindowFrame` / `WindowTitleBar` / `WindowContent`).
+- **Guides** — end-to-end walkthroughs, including building a full desktop shell with draggable, resizable windows and a taskbar.
+- **Hooks** — `useDraggable` and `useResizable` for custom drag and resize interactions.
+- **Theming** — switch between the 19 built-in color schemes at runtime, or import a single theme's CSS for lean bundles.
 
 ---
 
@@ -291,7 +107,7 @@ Both accept a `container` boundary element (defaults to the viewport) and `dragg
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md) for version history and breaking changes.
+See the [changelog](https://github.com/zixing8284/murasaki/blob/main/packages/ui/CHANGELOG.md) for version history and breaking changes.
 
 ---
 

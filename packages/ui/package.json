@@ -1,7 +1,7 @@
 {
   "name": "@murasaki-io/react98",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A Windows 98-themed React UI component library published as @murasaki-io/react98",
   "author": "sasasa10 <zixing8284@gmail.com>",
   "license": "MIT",

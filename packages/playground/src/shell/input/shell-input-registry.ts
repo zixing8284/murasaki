@@ -23,6 +23,7 @@ export interface ShellInputSurface {
   id: string
   element: HTMLElement | null
   priority: number
+  zIndex?: () => number
   enabled?: () => boolean
   contains?: (point: ShellInputPoint) => boolean
   onStart: (point: ShellInputPoint) => ShellInputSession | null

@@ -271,6 +271,7 @@ export function useShellWindowInteraction({
       id: `window:${windowId}:resize`,
       element: frameElement,
       priority: 3000,
+      zIndex: () => Number.parseInt(frameElement.style.zIndex, 10) || 0,
       enabled: () => resizable,
       contains: point => pointInElement(point, resizeHandleRef.current),
       onStart: beginResize,
@@ -284,6 +285,7 @@ export function useShellWindowInteraction({
       id: `window:${windowId}:drag`,
       element: frameElement,
       priority: 2000,
+      zIndex: () => Number.parseInt(frameElement.style.zIndex, 10) || 0,
       enabled: () => draggable,
       contains(point) {
         return pointInElement(point, dragHandleRef.current) && !isRawPointOnInteractive(point)

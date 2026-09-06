@@ -90,7 +90,7 @@ export function ShellInputProvider({
 
     const getSurfaces = (): ShellInputSurface[] => Array.from(surfacesRef.current.values())
       .filter(surface => surface.element && (surface.enabled?.() ?? true))
-      .sort((a, b) => b.priority - a.priority || (b.zIndex?.() ?? 0) - (a.zIndex?.() ?? 0))
+      .sort((a, b) => b.priority - a.priority)
 
     const finishActive = (point: ShellInputPoint): void => {
       const active = activeRef.current

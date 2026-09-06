@@ -47,6 +47,17 @@ function pointInElement(point: ShellInputPoint, element: HTMLElement | null): bo
   return pointInRect(point.clientX, point.clientY, element.getBoundingClientRect())
 }
 
+// True only when `frame` is the visually top-most window at the point, using
+// real hit-testing instead of bounding-rect containment. This is what keeps a
+// gesture from piercing through the front window into an overlapped background
+// window whose handle happens to sit under the same coordinates.
+function frameIsTopmostAtPoint(point: ShellInputPoint, frame: HTMLElement | null): boolean {
+  if (!frame)
+    return false
+  const topElement = document.elementFromPoint(point.clientX, point.clientY)
+  return topElement != null && frame.contains(topElement)
+}
+
 export function useShellWindowInteraction({
   windowId,
   container = null,
@@ -271,9 +282,8 @@ export function useShellWindowInteraction({
       id: `window:${windowId}:resize`,
       element: frameElement,
       priority: 3000,
-      zIndex: () => Number.parseInt(frameElement.style.zIndex, 10) || 0,
       enabled: () => resizable,
-      contains: point => pointInElement(point, resizeHandleRef.current),
+      contains: point => pointInElement(point, resizeHandleRef.current) && frameIsTopmostAtPoint(point, frameElement),
       onStart: beginResize,
     }
   }, [beginResize, frameElement, resizable, windowId])
@@ -285,10 +295,11 @@ export function useShellWindowInteraction({
       id: `window:${windowId}:drag`,
       element: frameElement,
       priority: 2000,
-      zIndex: () => Number.parseInt(frameElement.style.zIndex, 10) || 0,
       enabled: () => draggable,
       contains(point) {
-        return pointInElement(point, dragHandleRef.current) && !isRawPointOnInteractive(point)
+        return pointInElement(point, dragHandleRef.current)
+          && frameIsTopmostAtPoint(point, frameElement)
+          && !isRawPointOnInteractive(point)
       },
       onStart: beginDrag,
     }

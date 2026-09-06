@@ -10,3 +10,4 @@ packages/playground/public/programs/docs/*
 *.md.live.ts
 *.log
 .DS_Store
+.vercel

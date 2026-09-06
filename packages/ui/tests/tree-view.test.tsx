@@ -93,13 +93,15 @@ describe('treeView', () => {
     const alpha = getItem('Alpha')
     const bravo = getItem('Bravo')
 
-    expect(getDisclosure(alpha).textContent).toBe('-')
-    expect(getDisclosure(bravo).textContent).toBe('+')
+    // Expanded branches show the crisp "minus" glyph (a single bar); collapsed
+    // branches show the "plus" glyph (a bar plus a vertical stroke).
+    expect(getDisclosure(alpha).querySelectorAll('rect')).toHaveLength(1)
+    expect(getDisclosure(bravo).querySelectorAll('rect')).toHaveLength(2)
 
     bravo.focus()
     await userEvent.keyboard('{ArrowRight}')
 
-    expect(getDisclosure(bravo).textContent).toBe('-')
+    expect(getDisclosure(bravo).querySelectorAll('rect')).toHaveLength(1)
   })
 
   it('arrowRight on an expanded branch focuses the first child', async () => {

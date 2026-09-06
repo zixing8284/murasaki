@@ -242,10 +242,11 @@ const menuItemVariants = cva(
   },
 )
 
-// Shared 16px indicator gutter for icons, checks, and radio bullets. Consumer
-// images are constrained to the slot so oversized icons never clip or push the
-// label out of alignment (see ADR 0008).
-const MENU_INDICATOR_SLOT = 'flex size-[16px] shrink-0 items-center justify-center [&>img]:max-w-full [&>img]:max-h-full [&>img]:object-contain'
+// Shared 16px indicator gutter used by the check and radio bullets. Text-only
+// items opt into the same gutter via `reserveIconSpace` so their labels stay
+// aligned with checkable siblings. Consumer icons are composed as children and
+// are never forced to a fixed size (shadcn-style composition).
+const MENU_INDICATOR_SLOT = 'flex size-[16px] shrink-0 items-center justify-center'
 
 function MenuCheckIcon(): React.ReactElement {
   return (
@@ -271,20 +272,18 @@ function MenuBulletIcon(): React.ReactElement {
 }
 
 export interface MenuItemProps extends React.ComponentProps<'li'> {
-  icon?: React.ReactNode
   disabled?: boolean
   selected?: boolean
   /**
-   * When true, always reserve space for the icon column even when `icon`
-   * is `null` / `undefined`. Useful in menus where some items have icons
-   * (e.g. a check glyph) and others don't, so the text stays aligned.
+   * When true, reserve the leading indicator gutter even though this item has
+   * no icon or check. Use it so plain rows stay aligned with checkable or
+   * icon-bearing siblings in the same menu. Compose icons as children.
    */
   reserveIconSpace?: boolean
 }
 
 export function MenuItem({
   className,
-  icon,
   disabled = false,
   onClick,
   onKeyDown,
@@ -295,8 +294,6 @@ export function MenuItem({
   ref,
   ...props
 }: MenuItemProps): React.ReactElement {
-  const showIconSlot = icon != null || reserveIconSpace
-
   const handleItemClick = (event: React.MouseEvent<HTMLLIElement>): void => {
     if (disabled) {
       event.preventDefault()
@@ -332,7 +329,7 @@ export function MenuItem({
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
-      {showIconSlot && <span className={MENU_INDICATOR_SLOT}>{icon}</span>}
+      {reserveIconSpace && <span aria-hidden="true" className={MENU_INDICATOR_SLOT} />}
       {children}
     </li>
   )
@@ -690,19 +687,17 @@ function MenuSubChevron({ className }: { className?: string }): React.ReactEleme
 }
 
 export interface MenuSubTriggerProps extends Omit<React.ComponentProps<'li'>, 'onChange'> {
-  icon?: React.ReactNode
   disabled?: boolean
   /**
-   * When true, always reserve space for the icon column even when `icon` is
-   * `null` / `undefined`. Useful so submenu trigger labels stay aligned with
-   * sibling `<MenuItem>` rows that have icons.
+   * When true, reserve the leading indicator gutter even though this trigger
+   * has no icon, so its label stays aligned with checkable or icon-bearing
+   * siblings. Compose icons as children.
    */
   reserveIconSpace?: boolean
 }
 
 export function MenuSubTrigger({
   className,
-  icon,
   disabled = false,
   reserveIconSpace = false,
   tabIndex,
@@ -724,8 +719,6 @@ export function MenuSubTrigger({
     else if (ref)
       ref.current = node
   }
-
-  const showIconSlot = icon != null || reserveIconSpace
 
   const handleSubTriggerClick = (event: React.MouseEvent<HTMLLIElement>): void => {
     onClick?.(event)
@@ -801,9 +794,9 @@ export function MenuSubTrigger({
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}
       {...props}
     >
-      {showIconSlot && <span className={MENU_INDICATOR_SLOT}>{icon}</span>}
-      <span className="flex-1">{children}</span>
-      <MenuSubChevron className={cn('shrink-0', chevronClass)} />
+      {reserveIconSpace && <span aria-hidden="true" className={MENU_INDICATOR_SLOT} />}
+      {children}
+      <MenuSubChevron className={cn('ml-auto shrink-0', chevronClass)} />
     </li>
   )
 }

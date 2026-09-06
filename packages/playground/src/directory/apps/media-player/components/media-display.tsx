@@ -9,28 +9,33 @@ interface MediaDisplayProps {
   hasVideo: boolean
   forceAspectRatio: boolean
   mediaRefCallback: (element: HTMLVideoElement | null) => void
-  onVideoClick: () => void
-  onVideoDoubleClick: () => void
+  onTogglePlay: () => void
+  onToggleFullscreen: () => void
 }
 
 export function MediaDisplay({
   hasVideo,
   forceAspectRatio,
   mediaRefCallback,
-  onVideoClick,
-  onVideoDoubleClick,
+  onTogglePlay,
+  onToggleFullscreen,
 }: MediaDisplayProps): ReactElement {
   return (
     <div
       role="button"
       tabIndex={0}
+      aria-label="Play or pause"
       className="relative flex-1 min-h-20 bg-black shadow-(--shadow-sunken) flex items-center justify-center min-w-0 overflow-hidden"
-      onClick={onVideoClick}
-      onDoubleClick={onVideoDoubleClick}
+      onClick={onTogglePlay}
+      onDoubleClick={onToggleFullscreen}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        // Space is toggled play/pause by the window-level shortcut hook so it
+        // works regardless of where focus sits inside the window; handle only
+        // Enter here to activate the focused video button without swallowing
+        // Space (which would suppress the global play/pause shortcut).
+        if (e.key === 'Enter') {
           e.preventDefault()
-          onVideoClick()
+          onTogglePlay()
         }
       }}
     >

@@ -7,6 +7,7 @@ export default {
   'select': 'Select',
   'field-panel': 'FieldPanel',
   'group-box': 'GroupBox',
+  'label': 'Label',
   'layer-provider': 'LayerProvider',
   'menu': 'Menu',
   'number-box': 'NumberBox',

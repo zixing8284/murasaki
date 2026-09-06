@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
-import { IE_TOOLBAR_ICONS } from '../../lib/playground-assets'
+import { EXPLORER_TOOLBAR_ICONS, IE_TOOLBAR_ICONS } from '../../lib/playground-assets'
 import { useIframeWindow } from '../iframe/use-iframe-window'
 import { InactiveClickGuard } from './inactive-click-guard'
 import { RndWindow } from './rnd-window'
@@ -144,7 +144,14 @@ function ToolbarGrip(): ReactElement {
 }
 
 function ToolbarImageIcon({ src }: { src: string }): ReactElement {
-  return <img src={assetPath(src)} alt="" className="size-5 object-contain pixelated" draggable={false} />
+  return (
+    <img
+      src={assetPath(src)}
+      alt=""
+      className="size-5 object-contain pixelated"
+      draggable={false}
+    />
+  )
 }
 
 function ToolbarButton({
@@ -426,7 +433,10 @@ export function Ie2Chrome({
               <MenuItem reserveIconSpace disabled>Toolbars</MenuItem>
               <MenuItem reserveIconSpace disabled>Status Bar</MenuItem>
               <MenuSeparator />
-              <MenuItem icon={<img src={assetPath('/icons/refresh-20.png')} alt="" className="pixelated" draggable={false} />} onClick={handleRefresh}>Refresh</MenuItem>
+              <MenuItem onClick={handleRefresh}>
+                <img src={assetPath('/icons/refresh-20.png')} alt="" className="size-4 pixelated" draggable={false} />
+                Refresh
+              </MenuItem>
               <MenuItem reserveIconSpace disabled>Source</MenuItem>
               <MenuItem reserveIconSpace disabled>Full Screen</MenuItem>
             </WindowMenuBarContent>
@@ -465,10 +475,10 @@ export function Ie2Chrome({
         <div className="flex items-center gap-0 bg-(--button-face) px-0.5 py-1 min-w-0">
           <ToolbarGrip />
           <ToolbarButton label="Back" disabled>
-            <span aria-hidden className="font-[Marlett] text-sm leading-none">3</span>
+            <ToolbarImageIcon src={EXPLORER_TOOLBAR_ICONS.back} />
           </ToolbarButton>
           <ToolbarButton label="Forward" disabled>
-            <span aria-hidden className="font-[Marlett] text-sm leading-none">4</span>
+            <ToolbarImageIcon src={EXPLORER_TOOLBAR_ICONS.forward} />
           </ToolbarButton>
           <ToolbarSeparator />
           <ToolbarButton label="Stop" disabled>
@@ -507,7 +517,7 @@ export function Ie2Chrome({
         <div className="flex items-center gap-1 bg-(--button-face) p-1 min-w-0">
           <span className="shrink-0 text-(--button-text)"><MenuLabel menu="Address" /></span>
           <div className="flex h-5.5 min-w-0 flex-1 items-center gap-1 overflow-hidden bg-(--window) pl-2 pr-1 shadow-(--shadow-border-field)">
-            <ToolbarImageIcon src={ICONS.html} />
+            <img src={assetPath(ICONS.html)} alt="" className="size-4 object-contain pixelated" draggable={false} />
             <input
               aria-label="Address"
               className="min-w-0 flex-1 truncate border-none bg-transparent p-0 text-(--window-text) outline-none read-only:bg-transparent"

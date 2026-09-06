@@ -1,0 +1,40 @@
+import { LabelBasicDemo } from './label/label-basic'
+
+# Label
+
+`Label` is a themed `<label>` primitive. It applies the Windows 98 pixel-font
+color and non-selectable text, plus a `disabled` visual state, and otherwise
+renders a plain label element. Compose it next to any control and connect the
+two with `htmlFor` / `id`.
+
+Field components such as `TextBox`, `NumberBox`, and `SelectNative` render this
+same primitive internally for their built-in `label` prop, so a standalone
+`Label` stays visually consistent with them.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `disabled` | `boolean` | `false` | Applies the grayed-out disabled text style. |
+| `htmlFor` | `string` | - | Associates the label with a control by its `id`. |
+| `className` | `string` | - | Adds custom classes to the label. |
+| `children` | `ReactNode` | - | Label content. |
+
+Any other native `<label>` attributes are forwarded.
+
+## Examples
+
+<ComponentExample name="label-basic" title="Labelled fields">
+  <LabelBasicDemo />
+</ComponentExample>
+
+## ARIA
+
+`Label` renders a native `<label>` element. Point it at a control with `htmlFor`
+matching the control's `id` so assistive technology and click-to-focus behavior
+work natively.
+
+## SSR
+
+`Label` is a client component through the package root and renders identical
+markup on the server and client.

@@ -10,6 +10,9 @@ import {
   Menu,
   MenuItem,
   MenuSeparator,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
 } from '@murasaki-io/react98'
 import { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
@@ -396,9 +399,33 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       </ContextMenuTrigger>
       <ContextMenuContent>
         <Menu>
-          <MenuItem reserveIconSpace onClick={handleRefresh}>Refresh</MenuItem>
+          <MenuSub>
+            <MenuSubTrigger>New</MenuSubTrigger>
+            <MenuSubContent>
+              <MenuItem disabled>Folder</MenuItem>
+              <MenuItem disabled>Shortcut</MenuItem>
+              <MenuSeparator />
+              <MenuItem onClick={() => open(APP_ID.NOTEPAD)}>Text Document</MenuItem>
+            </MenuSubContent>
+          </MenuSub>
           <MenuSeparator />
-          <MenuItem reserveIconSpace onClick={handleImportClick}>Import files…</MenuItem>
+          <MenuSub>
+            <MenuSubTrigger>Arrange Icons</MenuSubTrigger>
+            <MenuSubContent>
+              <MenuItem disabled>by Name</MenuItem>
+              <MenuItem disabled>by Type</MenuItem>
+              <MenuItem disabled>by Size</MenuItem>
+              <MenuItem disabled>by Date</MenuItem>
+            </MenuSubContent>
+          </MenuSub>
+          <MenuItem disabled>Line Up Icons</MenuItem>
+          <MenuItem onClick={handleRefresh}>Refresh</MenuItem>
+          <MenuSeparator />
+          <MenuItem disabled>Paste</MenuItem>
+          <MenuItem disabled>Paste Shortcut</MenuItem>
+          <MenuSeparator />
+          <MenuItem onClick={handleImportClick}>Import Files…</MenuItem>
+          <MenuItem onClick={() => open(APP_ID.DISPLAY_PROPERTIES)}>Properties</MenuItem>
         </Menu>
       </ContextMenuContent>
     </ContextMenu>

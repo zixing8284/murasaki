@@ -5,6 +5,7 @@ import * as React from 'react'
 
 import { cn } from '../../lib/utils'
 
+import { Label } from '../label/label'
 import { ButtonDownIcon } from './select-icons'
 
 const selectVariants = cva([
@@ -105,12 +106,12 @@ export function SelectNative({
   if (label) {
     return (
       <>
-        <label
+        <Label
           className={cn(labelVariants(), labelClassName)}
           htmlFor={selectId}
         >
           {label}
-        </label>
+        </Label>
         {selectElement}
       </>
     )

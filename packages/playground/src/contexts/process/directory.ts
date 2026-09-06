@@ -161,6 +161,32 @@ const directory = {
     defaultPosition: { top: '5%', left: '5%' },
     window: { type: 'none' },
   },
+  mydocuments: {
+    name: 'My Documents',
+    Component: lazy(() =>
+      import('../../directory/apps/my-documents/my-documents').then(m => ({ default: m.MyDocuments })),
+    ),
+    defaultTitle: 'My Documents',
+    icon: { sm: '/icons/folder-my-docs-16.png', lg: '/icons/folder-my-docs-32.png' },
+    singleton: true,
+    showOnDesktop: true,
+    defaultSize: { width: 640, height: 460 },
+    defaultPosition: { top: '10%', left: '15%' },
+    window: { contentClassName: 'p-0' },
+  },
+  taskbarproperties: {
+    name: 'Taskbar Properties',
+    Component: lazy(() =>
+      import('../../directory/system/taskbar-properties/taskbar-properties').then(m => ({ default: m.TaskbarProperties })),
+    ),
+    defaultTitle: 'Taskbar Properties',
+    icon: { sm: '/icons/taskbar-16.png', lg: '/icons/taskbar-32.png' },
+    singleton: true,
+    ephemeral: true,
+    defaultSize: { width: 360, height: 428 },
+    defaultPosition: { top: '12%', left: '30%' },
+    window: { disableMaximize: true, disableMinimize: true, disableResize: true, contentClassName: 'p-2' },
+  },
 } satisfies Record<string, ProcessDirectoryEntry>
 
 export type AppId = keyof typeof directory
@@ -187,6 +213,8 @@ export const APP_ID = {
   OUTLOOK_EXPRESS: 'outlookexpress',
   WEBAMP: 'webamp',
   INTERNET_EXPLORER: 'internetexplorer',
+  MY_DOCUMENTS: 'mydocuments',
+  TASKBAR_PROPERTIES: 'taskbarproperties',
 } as const satisfies Record<string, AppId>
 
 export function getStartupAppIds(): AppId[] {

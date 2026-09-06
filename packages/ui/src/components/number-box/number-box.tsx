@@ -4,6 +4,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '../../lib/utils'
+import { Label } from '../label/label'
 
 const wrapperVariants = cva(['inline-flex'], {
   defaultVariants: {
@@ -16,12 +17,6 @@ const wrapperVariants = cva(['inline-flex'], {
     },
   },
 })
-
-const labelVariants = cva([
-  'text-(--button-text)',
-  'select-none',
-  'whitespace-nowrap',
-])
 
 const inputWrapperVariants = cva([
   'inline-flex',
@@ -337,15 +332,13 @@ export function NumberBox({
         wrapperVariants({ className: wrapperClassName, labelPosition }),
       )}
     >
-      <label
-        className={cn(
-          labelVariants(),
-          (disabled ?? readOnly) && 'text-(--gray-text)',
-        )}
+      <Label
+        className="whitespace-nowrap"
+        disabled={(disabled ?? readOnly) || undefined}
         htmlFor={inputId}
       >
         {labelContent}
-      </label>
+      </Label>
       {inputElement}
     </div>
   )

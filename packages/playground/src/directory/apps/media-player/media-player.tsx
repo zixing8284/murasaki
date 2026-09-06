@@ -12,7 +12,6 @@ import { MediaPlayerMenuBar } from './components/media-player-menu-bar'
 import { MediaPlayerStatusBar } from './components/media-player-status-bar'
 import { PlaylistPanel } from './components/playlist-panel'
 import { useMediaPlayerKeyboardShortcuts } from './hooks/use-media-player-keyboard-shortcuts'
-import { useVideoFullscreenToggle } from './hooks/use-video-fullscreen-toggle'
 import { useMediaPlayer } from './use-media-player'
 
 const SEEK_STEP_SECONDS = 5
@@ -55,8 +54,6 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
   const toggleForceAspectRatio = (): void => {
     setForceAspectRatio(previousValue => !previousValue)
   }
-
-  const { handleVideoClick, handleVideoDoubleClick } = useVideoFullscreenToggle(toggleMediaFullscreen)
 
   useEffect(() => {
     title(windowId, currentTitle)
@@ -129,8 +126,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
           hasVideo={player.hasVideo}
           forceAspectRatio={forceAspectRatio}
           mediaRefCallback={player.mediaRefCallback}
-          onVideoClick={handleVideoClick}
-          onVideoDoubleClick={handleVideoDoubleClick}
+          onTogglePlay={togglePlay}
+          onToggleFullscreen={toggleMediaFullscreen}
         />
 
         <MediaPlayerControls

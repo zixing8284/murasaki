@@ -4,6 +4,7 @@ import { DesktopFilesProvider } from './contexts/desktop-files/provider'
 import { DesktopLayoutProvider } from './contexts/desktop-layout/provider'
 import { ProcessProvider } from './contexts/process/provider'
 import { SystemCursorProvider } from './contexts/system-cursor'
+import { TaskbarSettingsProvider } from './contexts/taskbar-settings'
 import { PLAYGROUND_STORAGE_KEYS } from './lib/persistence/schema'
 import { Shell } from './shell/shell'
 
@@ -15,7 +16,9 @@ export function App(): React.ReactElement {
           <ProcessProvider>
             <CursorSchemeProvider>
               <SystemCursorProvider>
-                <Shell />
+                <TaskbarSettingsProvider>
+                  <Shell />
+                </TaskbarSettingsProvider>
               </SystemCursorProvider>
             </CursorSchemeProvider>
           </ProcessProvider>

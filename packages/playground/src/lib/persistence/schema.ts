@@ -24,6 +24,7 @@ export const PLAYGROUND_STORAGE_KEYS = {
   screenScale: 'murasaki-screen-scale',
   cursorScheme: 'murasaki-cursor-scheme',
   taskbarQuickLaunchVisibleCount: 'murasaki.playground.taskbar.quick-launch.visible-count.v1',
+  taskbarSmallStartIcons: 'murasaki.playground.taskbar.small-start-icons.v1',
   themeDesignerDraft: 'murasaki.playground.theme-designer.draft.v1',
   webampSkinMuseumLastSuccess: 'webamp:skin-museum:last-success:v1',
   webampPosition: 'webamp:position:v1',
@@ -46,6 +47,7 @@ export const PLAYGROUND_LOCAL_STORAGE_KEYS = [
   PLAYGROUND_STORAGE_KEYS.screenScale,
   PLAYGROUND_STORAGE_KEYS.cursorScheme,
   PLAYGROUND_STORAGE_KEYS.taskbarQuickLaunchVisibleCount,
+  PLAYGROUND_STORAGE_KEYS.taskbarSmallStartIcons,
   PLAYGROUND_STORAGE_KEYS.themeDesignerDraft,
   PLAYGROUND_STORAGE_KEYS.webampSkinMuseumLastSuccess,
 ] as const

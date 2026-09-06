@@ -44,14 +44,14 @@ export const START_MENU_ICONS = {
   calculator: '/icons/calculator-16.png',
   paint: '/icons/paint-16.png',
   internetExplorer: '/icons/internet-explorer-16.png',
-  welcome: '/icons/my-computer-32.png',
+  welcome: '/icons/my-computer-16.png',
   mediaPlayer: '/icons/media-player-16.png',
   webamp: '/icons/webamp-16.png',
   themeDesigner: '/icons/themes-16.png',
   // settings submenu
   controlPanel: '/icons/control-panel-16.png',
   printers: '/icons/printer-16.png',
-  taskbar: '/icons/taskbar-32.png',
+  taskbar: '/icons/windows-button-16.png',
   mouse: '/icons/mouse-16.png',
   // find submenu
   findFiles: '/icons/search-file-16.png',
@@ -104,6 +104,24 @@ export const IE_TOOLBAR_ICONS = {
 export const PREVIEW_TASKBAR_LOGO = '/icons/windows-logo-16.png'
 export const THEME_PREVIEW_RECYCLE_BIN = '/icons/recycle-bin-32.png'
 export const MEDIA_PLAYER_EMPTY_BACKGROUND = '/icons/media/mediaplayer-bg.png'
+
+/** Static Windows 98 Taskbar Properties preview image (271×128). */
+export const TASKBAR_SETTINGS_PREVIEW = '/icons/taskbar-settings.png'
+
+/** Windows 98 Explorer toolbar glyphs (20×20). */
+export const EXPLORER_TOOLBAR_ICONS = {
+  back: '/icons/explorer/back.png',
+  backDisabled: '/icons/explorer/back-disabled.png',
+  forward: '/icons/explorer/forward.png',
+  forwardDisabled: '/icons/explorer/forward-disabled.png',
+  up: '/icons/explorer/up.png',
+  cut: '/icons/explorer/cut.png',
+  copy: '/icons/explorer/copy.png',
+  paste: '/icons/explorer/paste.png',
+  properties: '/icons/explorer/properties.png',
+  views: '/icons/explorer/views.png',
+  folders: '/icons/explorer/folders.png',
+} as const
 
 // ---------------------------------------------------------------------------
 // System cursors

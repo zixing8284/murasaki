@@ -6,7 +6,7 @@ import favoritesData from './ie-favorites.json'
 
 const ICON = {
   folderClosed: '/icons/folder-closed-16.png',
-  folderOpen: '/icons/folder-my-docs-32.png',
+  folderOpen: '/icons/folder-open-16.png',
   html: '/icons/html-file-16.png',
 }
 

@@ -34,6 +34,10 @@ export type { FieldPanelProps } from './components/field-panel/field-panel'
 export { GroupBox } from './components/group-box/group-box'
 export type { GroupBoxProps } from './components/group-box/group-box'
 
+// Label
+export { Label } from './components/label/label'
+export type { LabelProps } from './components/label/label'
+
 // Layer
 export { LayerProvider } from './components/layer/layer-provider'
 export type { LayerProviderProps } from './components/layer/layer-provider'

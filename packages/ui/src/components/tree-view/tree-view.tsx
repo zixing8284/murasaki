@@ -74,7 +74,28 @@ const treeViewDisclosureStyles = cva([
   'border-(--button-shadow)',
   'bg-(--window)',
   'text-(--window-text)',
+  'leading-none',
+  'overflow-hidden',
 ])
+
+/** Centered crisp `+` glyph shown on a collapsed branch. */
+function TreeExpandGlyph(): React.ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 7 7" width="7" height="7" shapeRendering="crispEdges" fill="currentColor">
+      <rect x="0" y="3" width="7" height="1" />
+      <rect x="3" y="0" width="1" height="7" />
+    </svg>
+  )
+}
+
+/** Centered crisp `-` glyph shown on an expanded branch. */
+function TreeCollapseGlyph(): React.ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 7 7" width="7" height="7" shapeRendering="crispEdges" fill="currentColor">
+      <rect x="0" y="3" width="7" height="1" />
+    </svg>
+  )
+}
 
 interface TreeViewItemProps {
   /** The label to display for this item */
@@ -95,9 +116,9 @@ interface TreeViewItemProps {
   preventCollapse?: boolean
   /** Whether this item is disabled */
   disabled?: boolean
-  /** Icon to show when the branch is collapsed (replaces the default '+') */
+  /** Icon to show when the branch is collapsed (replaces the default `+` glyph) */
   expandIcon?: React.ReactNode
-  /** Icon to show when the branch is expanded (replaces the default '-') */
+  /** Icon to show when the branch is expanded (replaces the default `-` glyph) */
   collapseIcon?: React.ReactNode
   /** Additional CSS classes */
   className?: string
@@ -172,7 +193,7 @@ export function TreeViewItem({
                   data-tree-view-disclosure=""
                   className={treeViewDisclosureStyles()}
                 >
-                  {expanded ? (collapseIcon ?? '-') : (expandIcon ?? '+')}
+                  {expanded ? (collapseIcon ?? <TreeCollapseGlyph />) : (expandIcon ?? <TreeExpandGlyph />)}
                 </span>
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>

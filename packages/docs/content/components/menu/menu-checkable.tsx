@@ -20,7 +20,8 @@ export function MenuCheckableDemo(): React.ReactElement {
 
   return (
     <Menu className="w-56">
-      <MenuItem icon={<FileIcon />}>
+      <MenuItem>
+        <FileIcon />
         New
         <MenuShortcut>Ctrl+N</MenuShortcut>
       </MenuItem>

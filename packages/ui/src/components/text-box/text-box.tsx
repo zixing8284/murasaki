@@ -5,6 +5,7 @@ import * as React from 'react'
 
 import { cn } from '../../lib/utils'
 import { useScrollbar } from '../../primitives/scrollbar/use-scrollbar'
+import { Label } from '../label/label'
 
 // Valid input types for TextBox
 type TextBoxInputType
@@ -27,12 +28,6 @@ const textBoxWrapperVariants = cva(['flex'], {
     },
   },
 })
-
-const labelVariants = cva([
-  'text-(--button-text)',
-  'select-none',
-  'whitespace-nowrap',
-])
 
 // Shared base styles for both input and textarea
 const baseFieldStyles = [
@@ -177,15 +172,13 @@ export function TextBox({
         textBoxWrapperVariants({ className: wrapperClassName, labelPosition }),
       )}
     >
-      <label
-        className={cn(
-          labelVariants(),
-          (disabled ?? readOnly) && 'text-(--gray-text)',
-        )}
+      <Label
+        className="whitespace-nowrap"
+        disabled={(disabled ?? readOnly) || undefined}
         htmlFor={inputId}
       >
         {labelContent}
-      </label>
+      </Label>
       {fieldElement}
     </div>
   )

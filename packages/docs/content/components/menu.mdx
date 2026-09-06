@@ -30,12 +30,14 @@ Menu
         └── MenuItem
 ```
 
+Icons are composed as children — render your own element (`<img>`, `<svg>`, …) as the first child of a `MenuItem` or `MenuSubTrigger` and size it however you like. Use `reserveIconSpace` on plain rows so their labels stay aligned with icon-bearing or checkable siblings.
+
 ## Props
 
 | Export | Key props | Description |
 |--------|-----------|-------------|
 | `Menu` | `maxHeight`, HTML `menu` props | Root command list with `role="menu"`. |
-| `MenuItem` | `icon`, `disabled`, `selected`, `reserveIconSpace` | Interactive or disabled menu row. |
+| `MenuItem` | `disabled`, `selected`, `reserveIconSpace` | Interactive or disabled menu row. Compose an icon by rendering it as the first child. |
 | `MenuCheckboxItem` | `checked`, `onCheckedChange`, `disabled` | Toggle row with a check indicator (`role="menuitemcheckbox"`). |
 | `MenuRadioGroup` | `value`, `onValueChange` | Single-selection wrapper for `MenuRadioItem`s. |
 | `MenuRadioItem` | `value`, `disabled` | Selectable row with a bullet indicator (`role="menuitemradio"`). |
@@ -43,7 +45,7 @@ Menu
 | `MenuShortcut` | HTML `span` props | Right-aligned accelerator hint placed inside an item. |
 | `MenuSeparator` | HTML `li` props | Horizontal divider between command groups. |
 | `MenuSub` | `open`, `onOpenChange`, `hoverOpenDelay`, `hoverCloseDelay` | Owns submenu open state and hover timers. |
-| `MenuSubTrigger` | `icon`, `disabled`, `reserveIconSpace` | Menu row that opens a submenu, with a built-in right-side chevron. |
+| `MenuSubTrigger` | `disabled`, `reserveIconSpace` | Menu row that opens a submenu, with a built-in right-side chevron. Compose an icon by rendering it as the first child. |
 | `MenuSubContent` | `sideOffset`, plus `Menu` props | Portal-rendered submenu positioned to the right of the trigger, flipping to the left at the viewport edge. |
 
 ## Examples

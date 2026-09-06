@@ -100,6 +100,12 @@ export function DesktopIcon({
             zIndex,
           }}
           data-file-id={id}
+          onContextMenu={() => {
+            // Right-clicking an unselected icon selects it (Windows behavior),
+            // so the context menu acts on a visibly-active target.
+            if (!selected)
+              onSelect(id, false, false)
+          }}
           onClick={(event) => {
             event.stopPropagation()
             if (suppressClickRef.current) {
@@ -135,10 +141,14 @@ export function DesktopIcon({
       </ContextMenuTrigger>
       <ContextMenuContent>
         <Menu>
-          <MenuItem onClick={onOpen}>Open</MenuItem>
+          <MenuItem onClick={onOpen} className="font-bold">Open</MenuItem>
           <MenuSeparator />
-          <MenuItem disabled>Rename</MenuItem>
+          <MenuItem disabled>Cut</MenuItem>
+          <MenuItem disabled>Copy</MenuItem>
+          <MenuSeparator />
+          <MenuItem disabled>Create Shortcut</MenuItem>
           <MenuItem disabled>Delete</MenuItem>
+          <MenuItem disabled>Rename</MenuItem>
           <MenuSeparator />
           <MenuItem disabled>Properties</MenuItem>
         </Menu>

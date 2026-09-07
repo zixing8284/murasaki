@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@murasaki-io/react98": "workspace:*",
+    "@vercel/analytics": "catalog:",
     "next": "catalog:libs",
     "nextra": "catalog:",
     "nextra-theme-docs": "catalog:",

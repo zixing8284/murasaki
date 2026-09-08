@@ -37,13 +37,28 @@ const buttonVariants = cva(
       primary: {
         true: ['shadow-(--shadow-raised-primary)'],
       },
+      flat: {
+        true: [
+          // Flat toolbar button: no border/fill at rest, embossing appears only
+          // on interaction — raised on hover, sunken while pressed. Matches the
+          // classic Windows flat toolbar (Back/Forward/Cut/Copy…) look.
+          'bg-transparent',
+          'shadow-none',
+          'not-disabled:hover:shadow-(--shadow-raised)',
+        ],
+      },
       iconOnly: {
         true: [
           // Drop the 75px minimum width and the horizontal padding so a plain
-          // icon button stays square instead of stretching into a pill.
+          // icon button stays square instead of stretching into a pill, and
+          // center the icon (an inline <img>/<svg> would otherwise sit on the
+          // text baseline, off-center).
           'min-w-0',
           'p-0',
           'size-[23px]',
+          'inline-flex',
+          'items-center',
+          'justify-center',
           // The base styles paint label text through a transparent color +
           // text-shadow trick. SVG icons with `fill="currentColor"` inherit the
           // transparent color, so restore the real color and drop the shadow
@@ -64,12 +79,13 @@ export function Button({
   className,
   active,
   primary,
+  flat,
   iconOnly,
   type = 'button',
   ...props
 }: ButtonProps): React.ReactElement {
   return (
-    <button type={type} className={cn(buttonVariants({ active, primary, iconOnly, className }))} data-active={active || undefined} {...props}>
+    <button type={type} className={cn(buttonVariants({ active, primary, flat, iconOnly, className }))} data-active={active || undefined} {...props}>
       {children}
     </button>
   )

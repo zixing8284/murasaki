@@ -17,6 +17,8 @@ export interface FsFile {
   kind: string
   /** Size in bytes. */
   size: number
+  /** Last-modified date shown in the Details view. */
+  modified?: string
   /** App launched on open, when the type is supported. */
   openApp?: AppId
 }
@@ -26,6 +28,10 @@ export interface FsFolder {
   name: string
   /** Optional custom 16px icon (defaults to a closed folder). */
   icon?: string
+  /** Hide this folder from the Folders tree (still listed in the content pane). */
+  hideInTree?: boolean
+  /** Last-modified date shown in the Details view. */
+  modified?: string
   children: FsNode[]
 }
 
@@ -121,6 +127,15 @@ const myComputer: FsFolder = {
   ],
 }
 
+const networkNeighborhood: FsFolder = {
+  type: 'folder',
+  name: 'Network Neighborhood',
+  icon: FS_ICONS.network,
+  children: [
+    { type: 'folder', name: 'Entire Network', icon: FS_ICONS.network, children: [] },
+  ],
+}
+
 /** Root shown at the top of the folder tree. */
 export const DESKTOP_ROOT: FsFolder = {
   type: 'folder',
@@ -128,8 +143,8 @@ export const DESKTOP_ROOT: FsFolder = {
   icon: FS_ICONS.desktop,
   children: [
     myComputer,
-    { type: 'folder', name: 'Network Neighborhood', icon: FS_ICONS.network, children: [] },
-    { type: 'folder', name: 'Recycle Bin', icon: FS_ICONS.recycleBin, children: [] },
+    networkNeighborhood,
+    { type: 'folder', name: 'Recycle Bin', icon: FS_ICONS.recycleBin, hideInTree: true, children: [] },
   ],
 }
 
@@ -138,6 +153,19 @@ export const DEFAULT_PATH: readonly string[] = ['Desktop', 'My Computer', '(C:)'
 
 export function isFolder(node: FsNode): node is FsFolder {
   return node.type === 'folder'
+}
+
+/** Fallback last-modified date for nodes that don't declare one. */
+export const DEFAULT_MODIFIED = '12/31/99'
+
+/** Type label shown in the Details view ("File Folder" or the file's kind). */
+export function nodeKind(node: FsNode): string {
+  return isFolder(node) ? 'File Folder' : node.kind
+}
+
+/** Last-modified date shown in the Details view. */
+export function nodeModified(node: FsNode): string {
+  return node.modified ?? DEFAULT_MODIFIED
 }
 
 /** Resolve a path (array of node names from the root) to its folder, or null. */

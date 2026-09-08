@@ -97,6 +97,10 @@ function TreeCollapseGlyph(): React.ReactElement {
   )
 }
 
+// Nested branch list: one level of indentation plus the dotted "elbow"
+// connectors (a vertical dotted spine with a horizontal stub into each child).
+const treeGroupClassName = 'list-none pl-4 ml-4 border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[\'\'] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)'
+
 interface TreeViewItemProps {
   /** The label to display for this item */
   label: React.ReactNode
@@ -114,6 +118,12 @@ interface TreeViewItemProps {
   selected?: boolean
   /** When true and the item is expanded, clicking will not collapse it */
   preventCollapse?: boolean
+  /**
+   * Render a branch with no expand/collapse control: its children are always
+   * shown and the leading disclosure box is omitted. Use for a namespace root
+   * (e.g. Desktop) whose own children carry the toggles instead.
+   */
+  hideToggle?: boolean
   /** Whether this item is disabled */
   disabled?: boolean
   /** Icon to show when the branch is collapsed (replaces the default `+` glyph) */
@@ -135,6 +145,7 @@ export function TreeViewItem({
   onExpandedChange,
   selected = false,
   preventCollapse = false,
+  hideToggle = false,
   disabled = false,
   expandIcon,
   collapseIcon,
@@ -145,6 +156,39 @@ export function TreeViewItem({
   const isControlled = expandedProp !== undefined
   const [internalExpanded, setInternalExpanded] = React.useState(defaultExpanded)
   const expanded = isControlled ? expandedProp : internalExpanded
+
+  // Toggle-less branch (namespace root): always show children, no disclosure.
+  if (hasChildren && hideToggle) {
+    return (
+      <li className={cn('list-none', className)}>
+        <div
+          role="treeitem"
+          aria-expanded
+          aria-disabled={disabled || undefined}
+          data-selected={selected || undefined}
+          data-disabled={disabled || undefined}
+          tabIndex={disabled || !onClick ? -1 : 0}
+          className={cn(treeViewItemStyles({ variant: 'leaf', disabled, selected, interactive: Boolean(onClick) }))}
+          onClick={() => {
+            if (!disabled)
+              onClick?.()
+          }}
+          onKeyDown={(e) => {
+            if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault()
+              onClick()
+            }
+          }}
+        >
+          {icon && <span className="shrink-0">{icon}</span>}
+          <span className="leading-none">{label}</span>
+        </div>
+        <ul role="group" className={treeGroupClassName}>
+          {children}
+        </ul>
+      </li>
+    )
+  }
 
   return (
     <li className={cn('list-none', className)}>
@@ -198,7 +242,7 @@ export function TreeViewItem({
                 {icon && <span className="shrink-0">{icon}</span>}
                 <span className="leading-none">{label}</span>
               </summary>
-              <ul role="group" className="list-none pl-4 ml-4 border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[''] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)">
+              <ul role="group" className={treeGroupClassName}>
                 {children}
               </ul>
             </details>

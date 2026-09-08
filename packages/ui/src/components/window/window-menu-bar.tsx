@@ -224,6 +224,9 @@ const menuBarItemVariants = cva(
     'border-none',
     'px-1.5',
     'py-0.5',
+    // Tight line-height so the trigger hugs the 11px label instead of the
+    // default 1.5 leading, which would inflate the bar's apparent padding.
+    'leading-none',
     'text-(--menu-text)',
     'enabled:hover:bg-(--menu-hilight)',
     'enabled:hover:text-(--hilight-text)',

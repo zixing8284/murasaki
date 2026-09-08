@@ -1,14 +1,20 @@
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import type { ProcessComponentProps } from '../../../contexts/process/types'
 import type { FileGridView } from './file-grid'
-import type { FsFile } from './filesystem'
+import type { FsFile, FsNode } from './filesystem'
 import {
+  Button,
+  ContextMenu,
+  ContextMenuContent,
+  Menu,
   MenuCheckboxItem,
   MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
   MenuSeparator,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
   ScrollArea,
+  useContextMenu,
   WindowMenuBar,
   WindowMenuBarContent,
   WindowMenuBarMenu,
@@ -28,41 +34,79 @@ import {
   formatAddress,
   formatSize,
   FS_ICONS,
+  isFolder,
   resolveFolder,
 } from './filesystem'
 import { FolderTree } from './folder-tree'
 
 const ICONS = EXPLORER_TOOLBAR_ICONS
 
+// Order the Views toolbar button and Ctrl+cycling step through.
+const VIEW_CYCLE: readonly FileGridView[] = ['large', 'small', 'list', 'details']
+
+// Windows 98 embossed splitter grip: two 1px dotted columns (highlight offset a
+// pixel up-and-left of the shadow), matching the classic folder-pane divider.
+const SPLITTER_GRIP_STYLE = {
+  backgroundImage:
+    'linear-gradient(to bottom, var(--button-hilight) 1px, transparent 1px), linear-gradient(to bottom, var(--button-shadow) 1px, transparent 1px)',
+  backgroundSize: '1px 4px, 1px 4px',
+  backgroundPosition: '0 0, 1px 1px',
+  backgroundRepeat: 'repeat-y, repeat-y',
+} as const
+
 interface NavState {
   history: string[][]
   index: number
 }
 
-function ToolbarButton({ label, icon, disabled, pressed, onClick }: {
+/** Renders a label with a single underlined accelerator character. */
+function withAccel(label: string, index: number): ReactNode {
+  // One wrapping span so the label stays a single flex item — otherwise the
+  // menu row's `gap` would open a space around the underlined letter.
+  return (
+    <span>
+      {label.slice(0, index)}
+      <span className="underline">{label.charAt(index)}</span>
+      {label.slice(index + 1)}
+    </span>
+  )
+}
+
+function ToolbarButton({ label, icon, disabled, pressed, showText, onClick }: {
   label: string
   icon: string
   disabled?: boolean
   pressed?: boolean
+  showText?: boolean
   onClick?: () => void
 }): ReactElement {
+  // A pressed toggle stays sunken (`active`); everything else is a flat button
+  // that raises on hover and sinks while held. The icon switches between a
+  // grayscale idle state and full colour on hover via a CSS filter — no second
+  // asset to preload.
+  const iconState = disabled
+    ? 'opacity-50 grayscale'
+    : pressed
+      ? ''
+      : 'grayscale group-hover:grayscale-0 group-active:grayscale-0'
   return (
-    <button
-      type="button"
+    <Button
+      {...(pressed ? { active: true } : { flat: true })}
+      iconOnly={!showText}
       aria-label={label}
       title={label}
       disabled={disabled}
       onClick={onClick}
-      data-pressed={pressed || undefined}
-      className="flex size-6 shrink-0 items-center justify-center border-none bg-transparent p-0 focus:outline-none not-disabled:hover:shadow-(--shadow-raised) not-disabled:active:shadow-(--shadow-sunken) data-pressed:shadow-(--shadow-sunken)"
+      className={`group shrink-0${showText ? ' flex h-auto min-w-0 flex-col items-center justify-center gap-0.5 px-2 py-0.5' : ''}`}
     >
-      <img src={assetPath(icon)} alt="" className="size-5 pixelated" draggable={false} />
-    </button>
+      <img src={assetPath(icon)} alt="" className={`size-5 shrink-0 pixelated ${iconState}`} draggable={false} />
+      {showText && <span className="leading-none">{label}</span>}
+    </Button>
   )
 }
 
 function ToolbarSeparator(): ReactElement {
-  return <div className="mx-0.5 h-5 self-center border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
+  return <div className="mx-0.5 my-0.5 w-0 self-stretch border-l border-l-(--button-shadow) border-r border-r-(--button-hilight)" />
 }
 
 function CloseGlyph(): ReactElement {
@@ -97,6 +141,32 @@ function AddressDropdown(): ReactElement {
   )
 }
 
+interface FolderContentProps {
+  children: ReactNode
+  onContextTarget: (name: string | null) => void
+}
+
+/**
+ * Content pane wrapper that opens the shared context menu at the pointer,
+ * reporting whether an item (`[data-fs-name]`) or blank space was clicked.
+ */
+function FolderContent({ children, onContextTarget }: FolderContentProps): ReactElement {
+  const { openAt } = useContextMenu()
+  const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>): void => {
+    const el = (event.target as HTMLElement).closest('[data-fs-name]')
+    onContextTarget(el?.getAttribute('data-fs-name') ?? null)
+    event.preventDefault()
+    openAt(event.clientX, event.clientY)
+  }
+  return (
+    <ScrollArea className="min-h-0 min-w-0 flex-1 bg-(--window)">
+      <div className="min-h-full min-w-full" onContextMenu={handleContextMenu}>
+        {children}
+      </div>
+    </ScrollArea>
+  )
+}
+
 export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
   const { close, open, title } = useProcessActions()
   const [nav, setNav] = useState<NavState>({ history: [[...DEFAULT_PATH]], index: 0 })
@@ -104,6 +174,15 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
   const [showTree, setShowTree] = useState(true)
   const [treeWidth, setTreeWidth] = useState(180)
   const [view, setView] = useState<FileGridView>('large')
+  // Toolbars submenu toggles (View ▸ Toolbars / Status Bar).
+  const [showStandardButtons, setShowStandardButtons] = useState(true)
+  const [showAddressBar, setShowAddressBar] = useState(true)
+  const [showToolbarText, setShowToolbarText] = useState(true)
+  const [showStatusBar, setShowStatusBar] = useState(true)
+  // The item under the last right-click (null ⇒ blank area), and the pane
+  // element the context menu is clamped to.
+  const [contextName, setContextName] = useState<string | null>(null)
+  const [contentEl, setContentEl] = useState<HTMLDivElement | null>(null)
 
   const path = nav.history[nav.index]
   const folder = useMemo(() => resolveFolder(path), [path])
@@ -143,6 +222,22 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
       open(file.openApp)
   }
 
+  const openNode = (node: FsNode): void => {
+    if (isFolder(node))
+      navigate([...path, node.name])
+    else
+      openFile(node)
+  }
+
+  const cycleView = (): void => {
+    setView(current => VIEW_CYCLE[(VIEW_CYCLE.indexOf(current) + 1) % VIEW_CYCLE.length])
+  }
+
+  // The node the context menu acts on (null ⇒ blank-area menu).
+  const contextNode: FsNode | null = contextName
+    ? folder?.children.find(child => child.name === contextName) ?? null
+    : null
+
   const startSplitDrag = (event: React.PointerEvent<HTMLDivElement>): void => {
     event.preventDefault()
     const startX = event.clientX
@@ -162,7 +257,7 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
   const totalSize = folder ? folderSize(folder) : 0
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-(--surface) text-(--window-text)">
+    <div ref={setContentEl} className="flex h-full min-h-0 flex-col bg-(--surface) text-(--window-text)">
       <InactiveClickGuard windowId={windowId}>
         <WindowMenuBar>
           <WindowMenuBarMenu value="file">
@@ -171,10 +266,10 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               ile
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuItem disabled>New</MenuItem>
-              <MenuItem disabled>Open</MenuItem>
+              <MenuItem disabled>{withAccel('New', 0)}</MenuItem>
+              <MenuItem disabled>{withAccel('Open', 0)}</MenuItem>
               <MenuSeparator />
-              <MenuItem onClick={() => close(windowId)}>Close</MenuItem>
+              <MenuItem onClick={() => close(windowId)}>{withAccel('Close', 0)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="edit">
@@ -183,11 +278,11 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               dit
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuItem disabled>Cut</MenuItem>
-              <MenuItem disabled>Copy</MenuItem>
-              <MenuItem disabled>Paste</MenuItem>
+              <MenuItem disabled>{withAccel('Cut', 2)}</MenuItem>
+              <MenuItem disabled>{withAccel('Copy', 0)}</MenuItem>
+              <MenuItem disabled>{withAccel('Paste', 0)}</MenuItem>
               <MenuSeparator />
-              <MenuItem disabled>Select All</MenuItem>
+              <MenuItem disabled>{withAccel('Select All', 7)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="view">
@@ -196,12 +291,25 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               iew
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuCheckboxItem checked={showTree} onCheckedChange={setShowTree}>Folder List</MenuCheckboxItem>
+              <MenuSub>
+                <MenuSubTrigger>{withAccel('Toolbars', 0)}</MenuSubTrigger>
+                <MenuSubContent>
+                  <MenuCheckboxItem checked={showStandardButtons} onCheckedChange={setShowStandardButtons}>{withAccel('Standard Buttons', 9)}</MenuCheckboxItem>
+                  <MenuCheckboxItem checked={showAddressBar} onCheckedChange={setShowAddressBar}>{withAccel('Address Bar', 0)}</MenuCheckboxItem>
+                  <MenuCheckboxItem checked={showToolbarText} onCheckedChange={setShowToolbarText}>{withAccel('Show Text', 5)}</MenuCheckboxItem>
+                </MenuSubContent>
+              </MenuSub>
+              <MenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>{withAccel('Status Bar', 7)}</MenuCheckboxItem>
               <MenuSeparator />
-              <MenuRadioGroup value={view} onValueChange={value => setView(value as FileGridView)}>
-                <MenuRadioItem value="large">Large Icons</MenuRadioItem>
-                <MenuRadioItem value="list">List</MenuRadioItem>
-              </MenuRadioGroup>
+              <MenuCheckboxItem checked={view === 'large'} onCheckedChange={() => setView('large')}>{withAccel('Large Icons', 0)}</MenuCheckboxItem>
+              <MenuCheckboxItem checked={view === 'small'} onCheckedChange={() => setView('small')}>{withAccel('Small Icons', 0)}</MenuCheckboxItem>
+              <MenuCheckboxItem checked={view === 'list'} onCheckedChange={() => setView('list')}>{withAccel('List', 1)}</MenuCheckboxItem>
+              <MenuCheckboxItem checked={view === 'details'} onCheckedChange={() => setView('details')}>{withAccel('Details', 0)}</MenuCheckboxItem>
+              <MenuSeparator />
+              <MenuCheckboxItem checked={showTree} onCheckedChange={setShowTree}>{withAccel('Folders', 0)}</MenuCheckboxItem>
+              <MenuItem onClick={() => setSelectedName(null)}>{withAccel('Refresh', 0)}</MenuItem>
+              <MenuSeparator />
+              <MenuItem disabled>{withAccel('Folder Options...', 7)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="help">
@@ -210,58 +318,63 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               elp
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuItem disabled>About Windows 98</MenuItem>
+              <MenuItem disabled>{withAccel('About Windows 98', 0)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
         </WindowMenuBar>
       </InactiveClickGuard>
 
-      {/* Toolbar */}
-      <div className="flex items-center gap-0.5 border-b border-(--button-shadow) bg-(--button-face) px-1 py-0.5">
-        <ToolbarButton label="Back" icon={canBack ? ICONS.back : ICONS.backDisabled} disabled={!canBack} onClick={back} />
-        <ToolbarButton label="Forward" icon={canForward ? ICONS.forward : ICONS.forwardDisabled} disabled={!canForward} onClick={forward} />
-        <ToolbarButton label="Up One Level" icon={ICONS.up} disabled={!canUp} onClick={up} />
-        <ToolbarSeparator />
-        <ToolbarButton label="Cut" icon={ICONS.cut} disabled />
-        <ToolbarButton label="Copy" icon={ICONS.copy} disabled />
-        <ToolbarButton label="Paste" icon={ICONS.paste} disabled />
-        <ToolbarSeparator />
-        <ToolbarButton label="Properties" icon={ICONS.properties} disabled />
-        <ToolbarSeparator />
-        <ToolbarButton label="Views" icon={ICONS.views} onClick={() => setView(v => (v === 'large' ? 'list' : 'large'))} />
-        <ToolbarButton label="Folders" icon={ICONS.folders} pressed={showTree} onClick={() => setShowTree(v => !v)} />
-      </div>
+      {/* Toolbar (Standard Buttons) */}
+      {showStandardButtons && (
+        <div className="flex items-stretch gap-0.5 border-b border-(--button-shadow) bg-(--button-face) px-1 py-0.5">
+          <ToolbarButton label="Back" icon={canBack ? ICONS.back : ICONS.backDisabled} disabled={!canBack} showText={showToolbarText} onClick={back} />
+          <ToolbarButton label="Forward" icon={canForward ? ICONS.forward : ICONS.forwardDisabled} disabled={!canForward} showText={showToolbarText} onClick={forward} />
+          <ToolbarButton label="Up" icon={ICONS.up} disabled={!canUp} showText={showToolbarText} onClick={up} />
+          <ToolbarSeparator />
+          <ToolbarButton label="Cut" icon={ICONS.cut} disabled showText={showToolbarText} />
+          <ToolbarButton label="Copy" icon={ICONS.copy} disabled showText={showToolbarText} />
+          <ToolbarButton label="Paste" icon={ICONS.paste} disabled showText={showToolbarText} />
+          <ToolbarSeparator />
+          <ToolbarButton label="Properties" icon={ICONS.properties} disabled showText={showToolbarText} />
+          <ToolbarSeparator />
+          <ToolbarButton label="Views" icon={ICONS.views} showText={showToolbarText} onClick={cycleView} />
+          <ToolbarButton label="Folders" icon={ICONS.folders} pressed={showTree} showText={showToolbarText} onClick={() => setShowTree(v => !v)} />
+        </div>
+      )}
 
       {/* Address bar */}
-      <div className="flex items-center gap-2 border-b border-(--button-shadow) bg-(--button-face) px-2 py-0.5">
-        <span className="shrink-0 text-(--button-text)">Address</span>
-        <div className="flex min-w-0 flex-1 items-center gap-1 bg-(--window) py-0.5 pl-1 shadow-(--shadow-border-field)">
-          <img
-            src={assetPath(folder?.icon ?? FS_ICONS.folder)}
-            alt=""
-            className="size-4 pixelated shrink-0"
-            draggable={false}
-          />
-          <span className="flex-1 truncate text-(--window-text)">{formatAddress(path)}</span>
-          <AddressDropdown />
+      {showAddressBar && (
+        <div className="flex items-center gap-2 border-b border-(--button-shadow) bg-(--button-face) px-2 py-0.5">
+          <span className="shrink-0 text-(--button-text)">Address</span>
+          <div className="flex min-w-0 flex-1 items-center gap-1 bg-(--window) py-0.5 pl-1 shadow-(--shadow-border-field)">
+            <img
+              src={assetPath(folder?.icon ?? FS_ICONS.folder)}
+              alt=""
+              className="size-4 pixelated shrink-0"
+              draggable={false}
+            />
+            <span className="flex-1 truncate text-(--window-text)">{formatAddress(path)}</span>
+            <AddressDropdown />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Split view (shared sunken frame) */}
       <div className="m-0.5 flex min-h-0 flex-1 bg-(--window) shadow-(--shadow-border-field)">
         {showTree && (
           <>
             <div className="flex min-h-0 flex-col" style={{ width: treeWidth }}>
-              <div className="flex items-center justify-between gap-1 py-0.5 pl-1 pr-0.5">
+              <div className="flex items-center justify-between gap-1 border-b border-(--button-shadow) px-1 py-0.5">
                 <span className="text-(--button-text)">Folders</span>
-                <button
-                  type="button"
+                <Button
+                  flat
+                  iconOnly
                   aria-label="Close folder list"
                   onClick={() => setShowTree(false)}
-                  className="flex size-4 items-center justify-center bg-(--button-face) text-(--button-text) shadow-(--shadow-raised) active:shadow-(--shadow-sunken) focus:outline-none"
+                  className="size-4 min-h-0"
                 >
                   <CloseGlyph />
-                </button>
+                </Button>
               </div>
               <ScrollArea className="min-h-0 flex-1">
                 <FolderTree currentPath={path} onNavigate={navigate} />
@@ -271,41 +384,122 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               role="separator"
               aria-orientation="vertical"
               onPointerDown={startSplitDrag}
-              className="w-1 shrink-0 cursor-ew-resize bg-(--button-face)"
-            />
+              className="relative w-2 shrink-0 cursor-ew-resize border-l border-l-(--button-shadow) border-r-2 border-r-(--window-frame) bg-(--button-face) shadow-[inset_1px_0_0_var(--button-hilight)]"
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-0.75 h-7.5 w-0.5 -translate-y-1/2"
+                style={SPLITTER_GRIP_STYLE}
+              />
+            </div>
           </>
         )}
-        <ScrollArea className="min-h-0 min-w-0 flex-1 bg-(--window)">
-          {folder
-            ? (
-                <FileGrid
-                  folder={folder}
-                  view={view}
-                  selectedName={selectedName}
-                  onSelect={setSelectedName}
-                  onOpenFolder={name => navigate([...path, name])}
-                  onOpenFile={openFile}
-                />
-              )
-            : null}
-        </ScrollArea>
+        <ContextMenu container={contentEl}>
+          <FolderContent onContextTarget={setContextName}>
+            {folder
+              ? (
+                  <FileGrid
+                    folder={folder}
+                    view={view}
+                    selectedName={selectedName}
+                    onSelect={setSelectedName}
+                    onOpenFolder={name => navigate([...path, name])}
+                    onOpenFile={openFile}
+                  />
+                )
+              : null}
+          </FolderContent>
+          <ContextMenuContent>
+            <Menu>
+              {contextNode
+                ? (
+                    <>
+                      <MenuItem className="font-bold" onClick={() => contextNode && openNode(contextNode)}>{withAccel('Open', 0)}</MenuItem>
+                      {isFolder(contextNode)
+                        ? <MenuItem onClick={() => contextNode && openNode(contextNode)}>{withAccel('Explore', 0)}</MenuItem>
+                        : <MenuItem disabled>{withAccel('Explore', 0)}</MenuItem>}
+                      <MenuSeparator />
+                      <MenuSub>
+                        <MenuSubTrigger>{withAccel('Send To', 5)}</MenuSubTrigger>
+                        <MenuSubContent>
+                          <MenuItem disabled>3½ Floppy (A:)</MenuItem>
+                          <MenuItem disabled>My Documents</MenuItem>
+                        </MenuSubContent>
+                      </MenuSub>
+                      <MenuSeparator />
+                      <MenuItem disabled>{withAccel('Cut', 2)}</MenuItem>
+                      <MenuItem disabled>{withAccel('Copy', 0)}</MenuItem>
+                      <MenuSeparator />
+                      <MenuItem disabled>{withAccel('Delete', 0)}</MenuItem>
+                      <MenuItem disabled>{withAccel('Rename', 3)}</MenuItem>
+                      <MenuSeparator />
+                      <MenuItem disabled>{withAccel('Create Shortcut', 7)}</MenuItem>
+                      <MenuSeparator />
+                      <MenuItem disabled>{withAccel('Properties', 1)}</MenuItem>
+                    </>
+                  )
+                : (
+                    <>
+                      <MenuSub>
+                        <MenuSubTrigger>{withAccel('New', 0)}</MenuSubTrigger>
+                        <MenuSubContent>
+                          <MenuItem disabled>Folder</MenuItem>
+                          <MenuItem disabled>Shortcut</MenuItem>
+                          <MenuSeparator />
+                          <MenuItem disabled>Text Document</MenuItem>
+                        </MenuSubContent>
+                      </MenuSub>
+                      <MenuSeparator />
+                      <MenuItem disabled={!canBack} onClick={back}>{withAccel('Back', 0)}</MenuItem>
+                      <MenuItem disabled={!canForward} onClick={forward}>{withAccel('Forward', 0)}</MenuItem>
+                      <MenuItem onClick={() => setSelectedName(null)}>{withAccel('Refresh', 0)}</MenuItem>
+                      <MenuSeparator />
+                      <MenuSub>
+                        <MenuSubTrigger>{withAccel('View', 0)}</MenuSubTrigger>
+                        <MenuSubContent>
+                          <MenuCheckboxItem checked={view === 'large'} onCheckedChange={() => setView('large')}>Large Icons</MenuCheckboxItem>
+                          <MenuCheckboxItem checked={view === 'small'} onCheckedChange={() => setView('small')}>Small Icons</MenuCheckboxItem>
+                          <MenuCheckboxItem checked={view === 'list'} onCheckedChange={() => setView('list')}>List</MenuCheckboxItem>
+                          <MenuCheckboxItem checked={view === 'details'} onCheckedChange={() => setView('details')}>Details</MenuCheckboxItem>
+                        </MenuSubContent>
+                      </MenuSub>
+                      <MenuSub>
+                        <MenuSubTrigger>{withAccel('Arrange Icons', 0)}</MenuSubTrigger>
+                        <MenuSubContent>
+                          <MenuItem disabled>by Name</MenuItem>
+                          <MenuItem disabled>by Type</MenuItem>
+                          <MenuItem disabled>by Size</MenuItem>
+                        </MenuSubContent>
+                      </MenuSub>
+                      <MenuSeparator />
+                      <MenuItem disabled>{withAccel('Paste', 0)}</MenuItem>
+                      <MenuItem disabled>{withAccel('Paste Shortcut', 6)}</MenuItem>
+                      <MenuSeparator />
+                      <MenuItem disabled>{withAccel('Properties', 1)}</MenuItem>
+                    </>
+                  )}
+            </Menu>
+          </ContextMenuContent>
+        </ContextMenu>
       </div>
 
       {/* Status bar */}
-      <WindowStatusBar className="px-0.5 py-0.5">
-        <WindowStatusBarField grow>
-          {objectCount}
-          {' '}
-          object(s)
-        </WindowStatusBarField>
-        <WindowStatusBarField grow={false} className="w-24">
-          {totalSize > 0 ? formatSize(totalSize) : ''}
-        </WindowStatusBarField>
-        <WindowStatusBarField grow={false} className="flex w-32 items-center gap-1">
-          <img src={assetPath(FS_ICONS.myComputer)} alt="" className="size-4 pixelated shrink-0" draggable={false} />
-          <span className="truncate">My Computer</span>
-        </WindowStatusBarField>
-      </WindowStatusBar>
+      {showStatusBar && (
+        <WindowStatusBar className="px-0.5 py-0.5">
+          <WindowStatusBarField grow>
+            {objectCount}
+            {' '}
+            object(s)
+          </WindowStatusBarField>
+          <WindowStatusBarField grow={false} className="w-24">
+            {totalSize > 0 ? formatSize(totalSize) : ''}
+          </WindowStatusBarField>
+          <WindowStatusBarField grow={false} className="flex w-32 items-center gap-1">
+            <img src={assetPath(FS_ICONS.myComputer)} alt="" className="size-4 pixelated shrink-0" draggable={false} />
+            <span className="truncate">My Computer</span>
+          </WindowStatusBarField>
+        </WindowStatusBar>
+      )}
     </div>
   )
 }

@@ -14,10 +14,12 @@ interface FolderTreeNodeProps {
   path: string[]
   currentPath: readonly string[]
   onNavigate: (path: string[]) => void
+  /** Render as a toggle-less namespace root (Desktop): children always shown. */
+  root?: boolean
 }
 
-function FolderTreeNode({ folder, path, currentPath, onNavigate }: FolderTreeNodeProps): ReactElement {
-  const subFolders = folder.children.filter(isFolder)
+function FolderTreeNode({ folder, path, currentPath, onNavigate, root = false }: FolderTreeNodeProps): ReactElement {
+  const subFolders = folder.children.filter(child => isFolder(child) && !child.hideInTree)
   const pathKey = path.join('\u0000')
   const currentKey = currentPath.join('\u0000')
   const selected = pathKey === currentKey
@@ -31,8 +33,34 @@ function FolderTreeNode({ folder, path, currentPath, onNavigate }: FolderTreeNod
 
   // Generic folders flip to an open-folder icon while expanded; folders with a
   // dedicated icon (drives, My Computer, My Documents…) keep their own.
-  const iconSrc = folder.icon ?? (expanded ? FS_ICONS.folderOpen : FS_ICONS.folder)
+  const iconSrc = folder.icon ?? ((root || expanded) ? FS_ICONS.folderOpen : FS_ICONS.folder)
   const icon = <TreeIcon src={iconSrc} />
+
+  const childNodes = subFolders.map(child => (
+    <FolderTreeNode
+      key={child.name}
+      folder={child}
+      path={[...path, child.name]}
+      currentPath={currentPath}
+      onNavigate={onNavigate}
+    />
+  ))
+
+  // Namespace root (Desktop): no expand/collapse of its own; children — the
+  // real expandable branches — always show.
+  if (root) {
+    return (
+      <TreeViewItem
+        label={folder.name}
+        icon={icon}
+        selected={selected}
+        hideToggle
+        onClick={() => onNavigate(path)}
+      >
+        {childNodes}
+      </TreeViewItem>
+    )
+  }
 
   if (subFolders.length === 0) {
     return (
@@ -54,15 +82,7 @@ function FolderTreeNode({ folder, path, currentPath, onNavigate }: FolderTreeNod
       onExpandedChange={setOverride}
       onClick={() => onNavigate(path)}
     >
-      {subFolders.map(child => (
-        <FolderTreeNode
-          key={child.name}
-          folder={child}
-          path={[...path, child.name]}
-          currentPath={currentPath}
-          onNavigate={onNavigate}
-        />
-      ))}
+      {childNodes}
     </TreeViewItem>
   )
 }
@@ -80,6 +100,7 @@ export function FolderTree({ currentPath, onNavigate }: FolderTreeProps): ReactE
         path={[DESKTOP_ROOT.name]}
         currentPath={currentPath}
         onNavigate={onNavigate}
+        root
       />
     </TreeView>
   )

@@ -137,13 +137,14 @@ function CloseGlyph(): ReactElement {
 interface FolderContentProps {
   children: ReactNode
   onContextTarget: (name: string | null) => void
+  onDeselect: () => void
 }
 
 /**
  * Content pane wrapper that opens the shared context menu at the pointer,
  * reporting whether an item (`[data-fs-name]`) or blank space was clicked.
  */
-function FolderContent({ children, onContextTarget }: FolderContentProps): ReactElement {
+function FolderContent({ children, onContextTarget, onDeselect }: FolderContentProps): ReactElement {
   const { openAt } = useContextMenu()
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>): void => {
     const el = (event.target as HTMLElement).closest('[data-fs-name]')
@@ -151,9 +152,13 @@ function FolderContent({ children, onContextTarget }: FolderContentProps): React
     event.preventDefault()
     openAt(event.clientX, event.clientY)
   }
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
+    if (!(event.target as HTMLElement).closest('[data-fs-name]'))
+      onDeselect()
+  }
   return (
     <ScrollArea className="min-h-0 min-w-0 flex-1 bg-(--window)">
-      <div className="min-h-full min-w-full" onContextMenu={handleContextMenu}>
+      <div className="min-h-full min-w-full" onContextMenu={handleContextMenu} onClick={handleClick}>
         {children}
       </div>
     </ScrollArea>
@@ -419,7 +424,7 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
           </>
         )}
         <ContextMenu container={contentEl}>
-          <FolderContent onContextTarget={setContextName}>
+          <FolderContent onContextTarget={setContextName} onDeselect={() => setSelectedName(null)}>
             {folder
               ? (
                   <FileGrid

@@ -148,10 +148,6 @@ export function FileGrid({ folder, view, selectedName, onSelect, onOpenFolder, o
     return (
       <div
         className="min-w-full"
-        onClick={(event) => {
-          if (event.target === event.currentTarget)
-            onSelect(null)
-        }}
       >
         <div style={DETAILS_COLUMNS} className="sticky top-0 z-1 grid h-4.75">
           <DetailsHeaderCell label="Name" sorted />
@@ -184,10 +180,6 @@ export function FileGrid({ folder, view, selectedName, onSelect, onOpenFolder, o
   return (
     <div
       className={`bg-(--window) ${containerClass}`}
-      onClick={(event) => {
-        if (event.target === event.currentTarget)
-          onSelect(null)
-      }}
     >
       {folder.children.map(node => (
         <IconItem

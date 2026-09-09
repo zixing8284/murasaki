@@ -8,6 +8,7 @@ This repo uses a single-context layout:
 
 - `CONTEXT.md` at the repo root for project language.
 - `docs/adr/` at the repo root for architectural decision records.
+- `docs/design/` for Windows 98 design guidelines organized by component (see `docs/design/README.md`).
 
 ## Before exploring, read these
 

@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactElement } from 'react'
 import type { FsFile, FsFolder, FsNode } from './filesystem'
+import { IconTile } from '../../../components/icon-tile'
 import { assetPath } from '../../../lib/asset-path'
 import { formatSize, FS_ICONS, isFolder, nodeKind, nodeModified } from './filesystem'
 
@@ -29,11 +30,9 @@ function IconItem({ node, view, selected, onSelect, onOpen }: IconItemProps): Re
       type="button"
       data-fs-name={node.name}
       data-selected={selected || undefined}
-      className={
-        large
-          ? 'group flex w-18 flex-col items-center gap-0.5 p-1 text-center outline-none'
-          : 'group flex w-40 items-center gap-1 px-1 py-0.5 text-left outline-none'
-      }
+      // Only the icon + label inside IconTile are pointer targets; clicking the
+      // padding falls through to the pane and deselects (shared desktop rule).
+      className={`pointer-events-none text-(--window-text) outline-none ${large ? 'w-18' : 'w-40 px-1 py-0.5'}`}
       onClick={onSelect}
       onDoubleClick={onOpen}
       onKeyDown={(event) => {
@@ -43,21 +42,19 @@ function IconItem({ node, view, selected, onSelect, onOpen }: IconItemProps): Re
         }
       }}
     >
-      <img
-        src={assetPath(large ? largeIcon(nodeIcon(node)) : nodeIcon(node))}
-        alt=""
-        className={`${large ? 'size-8' : 'size-4'} shrink-0 pixelated`}
-        draggable={false}
+      <IconTile
+        icon={(
+          <img
+            src={assetPath(large ? largeIcon(nodeIcon(node)) : nodeIcon(node))}
+            alt=""
+            className={`${large ? 'size-8' : 'size-4'} shrink-0 pixelated`}
+            draggable={false}
+          />
+        )}
+        label={node.name}
+        selected={selected}
+        variant={large ? 'tile' : 'row'}
       />
-      <span
-        className={`max-w-full px-0.5 leading-tight ${large ? 'wrap-break-word' : 'truncate'} ${
-          selected
-            ? 'bg-(--hilight) text-(--hilight-text)'
-            : 'text-(--window-text)'
-        }`}
-      >
-        {node.name}
-      </span>
     </button>
   )
 }

@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuSeparator,
 } from '@murasaki-io/react98'
+import { IconTile } from '../../components/icon-tile'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
 import { useDesktopIconDrag } from './use-desktop-icon-drag'
 
@@ -62,29 +63,6 @@ export function DesktopIcon({
 
   const dragging = dragOffset !== null
   const zIndex = dragging ? 2 : selected ? 1 : undefined
-  // Two-line label budget at 72px width / 11px font. Selected state shows the
-  // full label (multi-line expand). Unselected state truncates the displayed
-  // text with an ellipsis character so overflow never relies on CSS hiding.
-  const LABEL_MAX_CHARS = 20
-  const displayLabel = selected || label.length <= LABEL_MAX_CHARS
-    ? label
-    : `${label.slice(0, LABEL_MAX_CHARS - 1).trimEnd()}…`
-  const content = (
-    <>
-      <div className={selected ? 'brightness-50 sepia hue-rotate-180 saturate-200' : ''}>{icon}</div>
-      <span
-        className={
-          selected
-            ? 'max-w-18 text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-break-word bg-(--hilight) text-(--hilight-text) outline-dotted outline-1 outline-(--hilight-text)'
-            : 'max-w-18 text-[11px] text-center leading-[1.2] px-0.5 py-0.5 my-px pointer-events-none wrap-break-word text-(--desktop-text)'
-        }
-        style={selected ? undefined : { backgroundColor: 'var(--desktop-icon-label-bg, transparent)' }}
-        title={label}
-      >
-        {displayLabel}
-      </span>
-    </>
-  )
 
   return (
     <ContextMenu container={menuContainer}>
@@ -93,7 +71,7 @@ export function DesktopIcon({
           ref={setIconRef}
           role="button"
           tabIndex={0}
-          className="relative cursor-pointer select-none touch-none"
+          className="relative cursor-pointer select-none touch-none pointer-events-none text-(--desktop-text)"
           style={{
             ...(col !== undefined && { gridColumnStart: col }),
             ...(row !== undefined && { gridRowStart: row }),
@@ -121,20 +99,16 @@ export function DesktopIcon({
             }
           }}
         >
-          <div
-            className={`flex flex-col items-center gap-0.5 ${dragging ? 'opacity-40 pointer-events-none' : ''}`}
-          >
-            {content}
-          </div>
+          <IconTile icon={icon} label={label} selected={selected} className={dragging ? 'opacity-40' : undefined} />
           {dragging && dragOffset && (
             <div
-              className="absolute inset-0 flex flex-col items-center gap-0.5 pointer-events-none"
+              className="absolute inset-0 pointer-events-none"
               style={{
                 transform: `translate(${dragOffset.dx}px, ${dragOffset.dy}px)`,
                 zIndex: 10,
               }}
             >
-              {content}
+              <IconTile icon={icon} label={label} selected={selected} />
             </div>
           )}
         </div>

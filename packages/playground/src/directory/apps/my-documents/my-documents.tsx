@@ -16,6 +16,10 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   ScrollArea,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
   useContextMenu,
   WindowMenuBar,
   WindowMenuBarContent,
@@ -127,19 +131,6 @@ function CloseGlyph(): ReactElement {
       <rect x="1" y="4" width="1" height="1" />
       <rect x="0" y="5" width="1" height="1" />
     </svg>
-  )
-}
-
-function AddressDropdown(): ReactElement {
-  return (
-    <div aria-hidden="true" className="flex size-5 shrink-0 items-center justify-center bg-(--button-face) shadow-(--shadow-raised)">
-      <svg width="7" height="4" viewBox="0 0 7 4" fill="currentColor" shapeRendering="crispEdges">
-        <rect x="0" y="0" width="7" height="1" />
-        <rect x="1" y="1" width="5" height="1" />
-        <rect x="2" y="2" width="3" height="1" />
-        <rect x="3" y="3" width="1" height="1" />
-      </svg>
-    </div>
   )
 }
 
@@ -257,6 +248,9 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
 
   const objectCount = folder?.children.length ?? 0
   const totalSize = folder ? folderSize(folder) : 0
+  // Address dropdown lists the current location's ancestry (Win98 shows the
+  // namespace here); selecting a crumb navigates to it.
+  const addressCrumbs = path.map((_, index) => path.slice(0, index + 1))
 
   return (
     <div ref={setContentEl} className="flex h-full min-h-0 flex-col bg-(--surface) text-(--window-text)">
@@ -350,15 +344,41 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
       {showAddressBar && (
         <div className="flex items-center gap-2 border-b border-(--button-shadow) bg-(--button-face) px-2 py-0.5">
           <span className="shrink-0 text-(--button-text)">Address</span>
-          <div className="flex min-w-0 flex-1 items-center gap-1 bg-(--window) py-0.5 pl-1 shadow-(--shadow-border-field)">
-            <img
-              src={assetPath(folder?.icon ?? FS_ICONS.folder)}
-              alt=""
-              className="size-4 pixelated shrink-0"
-              draggable={false}
-            />
-            <span className="flex-1 truncate text-(--window-text)">{formatAddress(path)}</span>
-            <AddressDropdown />
+          <div className="flex min-w-0 flex-1">
+            <Select
+              value={String(path.length - 1)}
+              onValueChange={(value) => {
+                const depth = Number(value)
+                const target = addressCrumbs[depth]
+                if (target && depth !== path.length - 1)
+                  navigate(target)
+              }}
+            >
+              <SelectTrigger className="gap-1">
+                <img
+                  src={assetPath(folder?.icon ?? FS_ICONS.folder)}
+                  alt=""
+                  className="size-4 pixelated shrink-0"
+                  draggable={false}
+                />
+                <span className="min-w-0 flex-1 truncate text-left">{formatAddress(path)}</span>
+              </SelectTrigger>
+              <SelectContent>
+                {addressCrumbs.map((crumb, depth) => (
+                  <SelectItem key={crumb.join('/')} value={String(depth)} textValue={formatAddress(crumb)}>
+                    <span className="flex min-w-0 items-center gap-1" style={{ paddingLeft: depth * 12 }}>
+                      <img
+                        src={assetPath(resolveFolder(crumb)?.icon ?? FS_ICONS.folder)}
+                        alt=""
+                        className="size-4 pixelated shrink-0"
+                        draggable={false}
+                      />
+                      <span className="truncate">{crumb[crumb.length - 1]}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       )}

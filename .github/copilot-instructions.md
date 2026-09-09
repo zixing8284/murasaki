@@ -84,6 +84,8 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 ## Playground Architecture
 
 - The playground is the library's reference implementation. Build UI from `@murasaki-io/react98` components (`TextBox`, `NumberBox`, `Select`, `Button`, `Checkbox`, …) rather than raw native form controls or bespoke field styling, so it exercises and showcases the real component surface. Native elements are acceptable only for behavior the library does not model (hidden `type="file"` / `type="color"` pickers) or composite host chrome with no component equivalent.
+- The Explorer address bar is a `Select` (editable combobox), not a bespoke field with a hand-rolled dropdown glyph. See `docs/design/fields-and-inputs.md`.
+- Desktop and Explorer content-pane icons share `IconTile`: the interactive wrapper is `pointer-events-none` so only the icon and label are pointer targets — clicks beside the glyph fall through and deselect. Long labels truncate; the selected tile shows the full label. See `docs/design/icons.md`.
 - Cursor responsibilities are split: `packages/ui` owns semantic cursor tokens and component-level cursor behavior, while `packages/playground` owns concrete cursor assets, cursor scheme switching, preload/persistence, and the Mouse Properties demo.
 - Window/process state is managed from `packages/playground/src/contexts/process/`.
 - App metadata is registered in `packages/playground/src/contexts/process/directory.ts`.

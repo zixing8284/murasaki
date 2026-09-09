@@ -40,6 +40,7 @@ export type FsNode = FsFile | FsFolder
 export const FS_ICONS = {
   folder: '/icons/folder-closed-16.png',
   folderOpen: '/icons/folder-open-16.png',
+  downloads: '/icons/downloads-folder-16.png',
   myDocuments: '/icons/folder-my-docs-16.png',
   myComputer: '/icons/my-computer-16.png',
   desktop: '/icons/desktop-16.png',
@@ -104,7 +105,7 @@ const driveC: FsFolder = {
   name: '(C:)',
   icon: FS_ICONS.hardDrive,
   children: [
-    { type: 'folder', name: 'Downloads', children: [] },
+    { type: 'folder', name: 'Downloads', icon: FS_ICONS.downloads, children: [] },
     { type: 'folder', name: 'Program Files', children: [] },
     { type: 'folder', name: 'Windows', children: [] },
     { type: 'folder', name: 'dos', children: [] },

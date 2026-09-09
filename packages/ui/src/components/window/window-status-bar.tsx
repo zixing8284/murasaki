@@ -4,13 +4,18 @@ import { cva } from 'class-variance-authority'
 
 import { cn } from '../../lib/utils'
 
+// Canonical Win98 status bar: fixed to the window's bottom edge, flush to the
+// left/right frame so the resize grip lands in the bottom-right corner, with a
+// consistent top gap. Consumers should not re-pad the bar per window.
 const statusBarVariants = cva([
   'flex',
+  'shrink-0',
   'gap-px',
+  'pt-1',
 ])
 
 const statusBarFieldVariants = cva([
-  'shadow-(--shadow-sunken-outer)',
+  'shadow-(--shadow-status-field)',
   'py-0.5',
   'px-1.5',
 ], {

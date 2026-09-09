@@ -9,6 +9,8 @@ import {
   Menu,
   MenuCheckboxItem,
   MenuItem,
+  MenuRadioGroup,
+  MenuRadioItem,
   MenuSeparator,
   MenuSub,
   MenuSubContent,
@@ -266,10 +268,10 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               ile
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuItem disabled>{withAccel('New', 0)}</MenuItem>
-              <MenuItem disabled>{withAccel('Open', 0)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('New', 0)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('Open', 0)}</MenuItem>
               <MenuSeparator />
-              <MenuItem onClick={() => close(windowId)}>{withAccel('Close', 0)}</MenuItem>
+              <MenuItem reserveIconSpace onClick={() => close(windowId)}>{withAccel('Close', 0)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="edit">
@@ -278,11 +280,11 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               dit
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuItem disabled>{withAccel('Cut', 2)}</MenuItem>
-              <MenuItem disabled>{withAccel('Copy', 0)}</MenuItem>
-              <MenuItem disabled>{withAccel('Paste', 0)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('Cut', 2)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('Copy', 0)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('Paste', 0)}</MenuItem>
               <MenuSeparator />
-              <MenuItem disabled>{withAccel('Select All', 7)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('Select All', 7)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="view">
@@ -292,7 +294,7 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
               <MenuSub>
-                <MenuSubTrigger>{withAccel('Toolbars', 0)}</MenuSubTrigger>
+                <MenuSubTrigger reserveIconSpace>{withAccel('Toolbars', 0)}</MenuSubTrigger>
                 <MenuSubContent>
                   <MenuCheckboxItem checked={showStandardButtons} onCheckedChange={setShowStandardButtons}>{withAccel('Standard Buttons', 9)}</MenuCheckboxItem>
                   <MenuCheckboxItem checked={showAddressBar} onCheckedChange={setShowAddressBar}>{withAccel('Address Bar', 0)}</MenuCheckboxItem>
@@ -301,15 +303,17 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               </MenuSub>
               <MenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>{withAccel('Status Bar', 7)}</MenuCheckboxItem>
               <MenuSeparator />
-              <MenuCheckboxItem checked={view === 'large'} onCheckedChange={() => setView('large')}>{withAccel('Large Icons', 0)}</MenuCheckboxItem>
-              <MenuCheckboxItem checked={view === 'small'} onCheckedChange={() => setView('small')}>{withAccel('Small Icons', 0)}</MenuCheckboxItem>
-              <MenuCheckboxItem checked={view === 'list'} onCheckedChange={() => setView('list')}>{withAccel('List', 1)}</MenuCheckboxItem>
-              <MenuCheckboxItem checked={view === 'details'} onCheckedChange={() => setView('details')}>{withAccel('Details', 0)}</MenuCheckboxItem>
+              <MenuRadioGroup value={view} onValueChange={value => setView(value as FileGridView)}>
+                <MenuRadioItem value="large">{withAccel('Large Icons', 0)}</MenuRadioItem>
+                <MenuRadioItem value="small">{withAccel('Small Icons', 0)}</MenuRadioItem>
+                <MenuRadioItem value="list">{withAccel('List', 1)}</MenuRadioItem>
+                <MenuRadioItem value="details">{withAccel('Details', 0)}</MenuRadioItem>
+              </MenuRadioGroup>
               <MenuSeparator />
               <MenuCheckboxItem checked={showTree} onCheckedChange={setShowTree}>{withAccel('Folders', 0)}</MenuCheckboxItem>
-              <MenuItem onClick={() => setSelectedName(null)}>{withAccel('Refresh', 0)}</MenuItem>
+              <MenuItem reserveIconSpace onClick={() => setSelectedName(null)}>{withAccel('Refresh', 0)}</MenuItem>
               <MenuSeparator />
-              <MenuItem disabled>{withAccel('Folder Options...', 7)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('Folder Options...', 7)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
           <WindowMenuBarMenu value="help">
@@ -318,7 +322,7 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               elp
             </WindowMenuBarTrigger>
             <WindowMenuBarContent>
-              <MenuItem disabled>{withAccel('About Windows 98', 0)}</MenuItem>
+              <MenuItem reserveIconSpace disabled>{withAccel('About Windows 98', 0)}</MenuItem>
             </WindowMenuBarContent>
           </WindowMenuBarMenu>
         </WindowMenuBar>
@@ -414,68 +418,70 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
               {contextNode
                 ? (
                     <>
-                      <MenuItem className="font-bold" onClick={() => contextNode && openNode(contextNode)}>{withAccel('Open', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace className="font-bold" onClick={() => contextNode && openNode(contextNode)}>{withAccel('Open', 0)}</MenuItem>
                       {isFolder(contextNode)
-                        ? <MenuItem onClick={() => contextNode && openNode(contextNode)}>{withAccel('Explore', 0)}</MenuItem>
-                        : <MenuItem disabled>{withAccel('Explore', 0)}</MenuItem>}
+                        ? <MenuItem reserveIconSpace onClick={() => contextNode && openNode(contextNode)}>{withAccel('Explore', 0)}</MenuItem>
+                        : <MenuItem reserveIconSpace disabled>{withAccel('Explore', 0)}</MenuItem>}
                       <MenuSeparator />
                       <MenuSub>
-                        <MenuSubTrigger>{withAccel('Send To', 5)}</MenuSubTrigger>
+                        <MenuSubTrigger reserveIconSpace>{withAccel('Send To', 5)}</MenuSubTrigger>
                         <MenuSubContent>
-                          <MenuItem disabled>3½ Floppy (A:)</MenuItem>
-                          <MenuItem disabled>My Documents</MenuItem>
+                          <MenuItem reserveIconSpace disabled>3½ Floppy (A:)</MenuItem>
+                          <MenuItem reserveIconSpace disabled>My Documents</MenuItem>
                         </MenuSubContent>
                       </MenuSub>
                       <MenuSeparator />
-                      <MenuItem disabled>{withAccel('Cut', 2)}</MenuItem>
-                      <MenuItem disabled>{withAccel('Copy', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Cut', 2)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Copy', 0)}</MenuItem>
                       <MenuSeparator />
-                      <MenuItem disabled>{withAccel('Delete', 0)}</MenuItem>
-                      <MenuItem disabled>{withAccel('Rename', 3)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Delete', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Rename', 3)}</MenuItem>
                       <MenuSeparator />
-                      <MenuItem disabled>{withAccel('Create Shortcut', 7)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Create Shortcut', 7)}</MenuItem>
                       <MenuSeparator />
-                      <MenuItem disabled>{withAccel('Properties', 1)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Properties', 1)}</MenuItem>
                     </>
                   )
                 : (
                     <>
                       <MenuSub>
-                        <MenuSubTrigger>{withAccel('New', 0)}</MenuSubTrigger>
+                        <MenuSubTrigger reserveIconSpace>{withAccel('New', 0)}</MenuSubTrigger>
                         <MenuSubContent>
-                          <MenuItem disabled>Folder</MenuItem>
-                          <MenuItem disabled>Shortcut</MenuItem>
+                          <MenuItem reserveIconSpace disabled>Folder</MenuItem>
+                          <MenuItem reserveIconSpace disabled>Shortcut</MenuItem>
                           <MenuSeparator />
-                          <MenuItem disabled>Text Document</MenuItem>
+                          <MenuItem reserveIconSpace disabled>Text Document</MenuItem>
                         </MenuSubContent>
                       </MenuSub>
                       <MenuSeparator />
-                      <MenuItem disabled={!canBack} onClick={back}>{withAccel('Back', 0)}</MenuItem>
-                      <MenuItem disabled={!canForward} onClick={forward}>{withAccel('Forward', 0)}</MenuItem>
-                      <MenuItem onClick={() => setSelectedName(null)}>{withAccel('Refresh', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled={!canBack} onClick={back}>{withAccel('Back', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled={!canForward} onClick={forward}>{withAccel('Forward', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace onClick={() => setSelectedName(null)}>{withAccel('Refresh', 0)}</MenuItem>
                       <MenuSeparator />
                       <MenuSub>
-                        <MenuSubTrigger>{withAccel('View', 0)}</MenuSubTrigger>
+                        <MenuSubTrigger reserveIconSpace>{withAccel('View', 0)}</MenuSubTrigger>
                         <MenuSubContent>
-                          <MenuCheckboxItem checked={view === 'large'} onCheckedChange={() => setView('large')}>Large Icons</MenuCheckboxItem>
-                          <MenuCheckboxItem checked={view === 'small'} onCheckedChange={() => setView('small')}>Small Icons</MenuCheckboxItem>
-                          <MenuCheckboxItem checked={view === 'list'} onCheckedChange={() => setView('list')}>List</MenuCheckboxItem>
-                          <MenuCheckboxItem checked={view === 'details'} onCheckedChange={() => setView('details')}>Details</MenuCheckboxItem>
+                          <MenuRadioGroup value={view} onValueChange={value => setView(value as FileGridView)}>
+                            <MenuRadioItem value="large">Large Icons</MenuRadioItem>
+                            <MenuRadioItem value="small">Small Icons</MenuRadioItem>
+                            <MenuRadioItem value="list">List</MenuRadioItem>
+                            <MenuRadioItem value="details">Details</MenuRadioItem>
+                          </MenuRadioGroup>
                         </MenuSubContent>
                       </MenuSub>
                       <MenuSub>
-                        <MenuSubTrigger>{withAccel('Arrange Icons', 0)}</MenuSubTrigger>
+                        <MenuSubTrigger reserveIconSpace>{withAccel('Arrange Icons', 0)}</MenuSubTrigger>
                         <MenuSubContent>
-                          <MenuItem disabled>by Name</MenuItem>
-                          <MenuItem disabled>by Type</MenuItem>
-                          <MenuItem disabled>by Size</MenuItem>
+                          <MenuItem reserveIconSpace disabled>by Name</MenuItem>
+                          <MenuItem reserveIconSpace disabled>by Type</MenuItem>
+                          <MenuItem reserveIconSpace disabled>by Size</MenuItem>
                         </MenuSubContent>
                       </MenuSub>
                       <MenuSeparator />
-                      <MenuItem disabled>{withAccel('Paste', 0)}</MenuItem>
-                      <MenuItem disabled>{withAccel('Paste Shortcut', 6)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Paste', 0)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Paste Shortcut', 6)}</MenuItem>
                       <MenuSeparator />
-                      <MenuItem disabled>{withAccel('Properties', 1)}</MenuItem>
+                      <MenuItem reserveIconSpace disabled>{withAccel('Properties', 1)}</MenuItem>
                     </>
                   )}
             </Menu>
@@ -485,7 +491,7 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
 
       {/* Status bar */}
       {showStatusBar && (
-        <WindowStatusBar className="px-0.5 py-0.5">
+        <WindowStatusBar>
           <WindowStatusBarField grow>
             {objectCount}
             {' '}

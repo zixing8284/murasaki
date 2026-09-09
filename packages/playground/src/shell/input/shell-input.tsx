@@ -38,6 +38,27 @@ function pointInElement(point: ShellInputPoint, element: HTMLElement): boolean {
     && point.clientY <= rect.bottom
 }
 
+/**
+ * Authoritative occlusion test: a surface only owns a point when its element is
+ * the visually topmost target there. `elementFromPoint` respects z-order,
+ * portals, and `pointer-events`, unlike bounding-rect containment.
+ *
+ * This is the default hit test for every surface. Bounding-rect containment
+ * alone let an occluded surface (e.g. a desktop icon whose rect extends beneath
+ * a window) wrongly claim a gesture — the root cause of click "pass-through"
+ * bugs. Any surface registered without a custom `contains` is occlusion-safe by
+ * construction; surfaces that override `contains` (window drag/resize, desktop
+ * lasso) must apply their own equivalent topmost check.
+ */
+function elementIsTopmostAtPoint(point: ShellInputPoint, element: HTMLElement): boolean {
+  const top = document.elementFromPoint(point.clientX, point.clientY)
+  return top != null && element.contains(top)
+}
+
+function defaultContains(point: ShellInputPoint, element: HTMLElement): boolean {
+  return pointInElement(point, element) && elementIsTopmostAtPoint(point, element)
+}
+
 export function ShellInputProvider({
   children,
   rootElement,
@@ -120,7 +141,7 @@ export function ShellInputProvider({
         const element = surface.element
         if (!element)
           continue
-        const contains = surface.contains ? surface.contains(point) : pointInElement(point, element)
+        const contains = surface.contains ? surface.contains(point) : defaultContains(point, element)
         if (!contains)
           continue
 

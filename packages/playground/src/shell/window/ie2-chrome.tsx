@@ -402,7 +402,7 @@ export function Ie2Chrome({
       onResizeChange={handleInteractionChange}
     >
       <InactiveClickGuard windowId={windowId} className="shrink-0">
-        <WindowMenuBar className="h-5">
+        <WindowMenuBar>
           <WindowMenuBarMenu value="file">
             <WindowMenuBarTrigger><MenuLabel menu="File" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-44">
@@ -567,7 +567,7 @@ export function Ie2Chrome({
         </div>
       </div>
 
-      <WindowStatusBar className="shrink-0 pt-1">
+      <WindowStatusBar>
         <WindowStatusBarField className="flex min-w-0 items-center gap-1">
           <img
             src={assetPath(ICONS.html)}

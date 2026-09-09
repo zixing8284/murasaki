@@ -84,7 +84,7 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
   return (
     <div className="relative flex h-full flex-col">
       <InactiveClickGuard windowId={windowId} className="shrink-0">
-        <WindowMenuBar className="h-5">
+        <WindowMenuBar>
           <WindowMenuBarMenu value="file">
             <WindowMenuBarTrigger><MenuLabel menu="File" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-36">
@@ -146,7 +146,7 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
         <Button className="px-4" onClick={handleSend}>Send</Button>
       </div>
 
-      <WindowStatusBar className="shrink-0 pt-1">
+      <WindowStatusBar>
         <WindowStatusBarField className="truncate">
           {subject ? `Subject: ${subject}` : 'Ready'}
         </WindowStatusBarField>

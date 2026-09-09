@@ -115,6 +115,12 @@ html,
     inset 2px 2px var(--button-shadow);
   --shadow-sunken: var(--shadow-sunken-outer), var(--shadow-sunken-inner);
 
+  /* Etched sunken edge for status-bar panels: soft gray top-left + white
+     bottom-right (Win98 BDR_SUNKENOUTER), not the harsher black of a sunken
+     button. */
+  --shadow-status-field: inset 1px 1px var(--button-shadow),
+    inset -1px -1px var(--button-hilight);
+
   --shadow-raised-primary: inset -2px -2px var(--window-frame),
     inset 1px 1px var(--window-frame),
     inset 2px 2px var(--button-hilight),

@@ -9,6 +9,11 @@ function nodeIcon(node: FsNode): string {
   return isFolder(node) ? node.icon ?? FS_ICONS.folder : node.icon
 }
 
+/** Swap a 16px icon path for its 32px sibling (flat `{name}-{size}.png`). */
+function largeIcon(path: string): string {
+  return path.replace(/-16\.png$/, '-32.png')
+}
+
 interface IconItemProps {
   node: FsNode
   view: 'large' | 'small' | 'list'
@@ -39,7 +44,7 @@ function IconItem({ node, view, selected, onSelect, onOpen }: IconItemProps): Re
       }}
     >
       <img
-        src={assetPath(nodeIcon(node))}
+        src={assetPath(large ? largeIcon(nodeIcon(node)) : nodeIcon(node))}
         alt=""
         className={`${large ? 'size-8' : 'size-4'} shrink-0 pixelated`}
         draggable={false}

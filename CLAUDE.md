@@ -70,6 +70,8 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - Prefer CSS-variable-backed Tailwind values over hardcoded colors so components remain themeable.
 - Do not import private helpers across component directories. If a primitive is needed by more than one component, promote it to `packages/ui/src/primitives/` and keep it internal.
 - For complex pixel-precise graphics, prefer inline SVG components that use theme variables.
+- Window chrome metrics are library-owned, not per-window. `WindowMenuBar` (20px, triggers stretch to fill it) and `WindowStatusBar` (baked `shrink-0`/gap/`pt-1`, flush to frame edges so the `WindowResizeGrip` lands in its bottom-right corner) must not be re-sized or re-padded by consumers. Status bar panels use the etched `--shadow-status-field` bevel. See ADR 0012.
+- Within one dropdown menu, every row reserves the shared leading indicator gutter: checkable rows fill it, plain rows and submenu triggers opt in with `reserveIconSpace`, so labels stay aligned. Use `MenuRadioGroup`/`MenuRadioItem` (bullet) for mutually exclusive choices and `MenuCheckboxItem` (check) for independent toggles. See ADR 0012.
 
 ## Theme And Styling
 

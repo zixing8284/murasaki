@@ -17,9 +17,9 @@ import {
 // ─── WindowMenuBar ────────────────────────────────────────────────────────────
 
 const menuBarVariants = cva([
-  'h-4',
+  'h-5',
   'flex',
-  'items-center',
+  'items-stretch',
   'gap-0',
   'px-px',
   'bg-(--menu-bar)',
@@ -220,12 +220,13 @@ export function WindowMenuBarMenu({
 
 const menuBarItemVariants = cva(
   [
+    'flex',
+    'items-center',
     'bg-transparent',
     'border-none',
     'px-1.5',
-    'py-0.5',
-    // Tight line-height so the trigger hugs the 11px label instead of the
-    // default 1.5 leading, which would inflate the bar's apparent padding.
+    // Fill the bar height (items-stretch) so the hover/open highlight covers
+    // the full bar like Win98, and keep the label on one 11px line.
     'leading-none',
     'text-(--menu-text)',
     'enabled:hover:bg-(--menu-hilight)',

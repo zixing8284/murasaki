@@ -56,7 +56,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
   return (
     <div className="relative flex h-full flex-col">
       <InactiveClickGuard windowId={windowId} className="shrink-0">
-        <WindowMenuBar className="h-5">
+        <WindowMenuBar>
           <WindowMenuBarMenu value="help">
             <WindowMenuBarTrigger><MenuLabel menu="Help" /></WindowMenuBarTrigger>
             <WindowMenuBarContent className="w-48">
@@ -180,7 +180,7 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
         </section>
       </ScrollArea>
 
-      <WindowStatusBar className="shrink-0 pt-1">
+      <WindowStatusBar>
         <WindowStatusBarField className="truncate">
           Welcome to Murasaki
         </WindowStatusBarField>

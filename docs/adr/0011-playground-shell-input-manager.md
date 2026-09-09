@@ -37,6 +37,20 @@ The implementation shape is root event delegation plus a shell input registry:
 
 Migration should be one architectural slice staged internally: build the shared manager and gesture core first, then migrate the core shell interactions together so the committed result has a single owner rather than a temporary mix of old and new ownership.
 
+### Surface hit-testing invariant
+
+A registered surface may only claim a gesture at a point where its element is the **visually topmost target** at that point. The manager enforces this as the default hit test (`elementFromPoint` containment, which respects z-order, portals, and `pointer-events`); bounding-rect containment alone is never sufficient.
+
+This invariant is mandatory because the manager listens in the capture phase, before React's synthetic bubbling. A surface that claims a point calls `stopPropagation`, so a wrong claim both performs the wrong action and prevents the correct target from ever seeing the event.
+
+Rules for every surface:
+
+- Do not rely on bounding-rect containment alone. A rect can extend beneath an occluding window; matching it would let a covered surface (e.g. a desktop icon under a window) steal clicks — the "click pass-through" class of bug.
+- Surfaces with no custom `contains` are occlusion-safe automatically via the default test.
+- Surfaces that override `contains` (window drag/resize, desktop lasso) **must** include an equivalent topmost check (`elementFromPoint`), not just geometry.
+- Do not "fix" pass-through by adding a global content catch-all that swallows every in-window click; let unclaimed points fall through to React so normal window activation and control handlers still run.
+
+
 ## Consequences
 
 - Touch behavior must be fixed at the owning shell interaction layer, not by adding per-component special cases.

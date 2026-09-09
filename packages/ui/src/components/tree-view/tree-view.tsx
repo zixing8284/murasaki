@@ -9,7 +9,7 @@ const treeViewItemStyles = cva(
   [
     'flex',
     'items-center',
-    'gap-1',
+    'gap-0.5',
     'p-0.5',
     'cursor-pointer',
     'select-none',
@@ -99,7 +99,16 @@ function TreeCollapseGlyph(): React.ReactElement {
 
 // Nested branch list: one level of indentation plus the dotted "elbow"
 // connectors (a vertical dotted spine with a horizontal stub into each child).
-const treeGroupClassName = 'list-none pl-4 ml-4 border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[\'\'] [&>li]:before:block [&>li]:before:absolute [&>li]:before:-left-4 [&>li]:before:top-2.75 [&>li]:before:w-3 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)'
+// The stub reaches almost to the child glyph so the dotted line reads as
+// touching it (Win98 tree spacing).
+const treeGroupBase = 'list-none border-l border-dotted border-(--button-shadow) [&>li]:relative [&>li]:before:content-[\'\'] [&>li]:before:block [&>li]:before:absolute [&>li]:before:top-2.75 [&>li]:before:border-b [&>li]:before:border-dotted [&>li]:before:border-(--button-shadow)'
+
+const treeGroupClassName = `${treeGroupBase} pl-4 ml-2 [&>li]:before:-left-4 [&>li]:before:w-4`
+
+// Top-level group under a toggle-less namespace root (Desktop): pull the
+// children left so their disclosure box sits beneath the root icon, while the
+// dotted spine still drops from under that icon to connect them.
+const treeRootGroupClassName = `${treeGroupBase} pl-1 ml-0.5 [&>li]:before:-left-1 [&>li]:before:w-1`
 
 interface TreeViewItemProps {
   /** The label to display for this item */
@@ -183,7 +192,7 @@ export function TreeViewItem({
           {icon && <span className="shrink-0">{icon}</span>}
           <span className="leading-none">{label}</span>
         </div>
-        <ul role="group" className={treeGroupClassName}>
+        <ul role="group" className={treeRootGroupClassName}>
           {children}
         </ul>
       </li>

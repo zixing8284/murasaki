@@ -64,7 +64,7 @@ export const START_MENU_ICONS = {
 // ---------------------------------------------------------------------------
 
 export const TASKBAR_QUICK_LAUNCH_ICONS = [
-  '/icons/desktop-16.png',
+  '/icons/show-desktop-16.png',
   '/icons/outlook-express-16.png',
   '/icons/internet-explorer-16.png',
   '/icons/my-computer-16.png',

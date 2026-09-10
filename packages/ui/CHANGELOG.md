@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.2
+
+### Patch Changes
+
+- 9f064f8: Fix context-menu submenu behavior so clicking a submenu trigger keeps the menu open and opens the nested submenu instead of closing the parent menu.
+
 ## 0.8.1
 
 ### Patch Changes

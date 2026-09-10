@@ -8,6 +8,9 @@ import {
   ContextMenuTrigger,
   Menu,
   MenuItem,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
   useContextMenu,
 } from '../src'
 
@@ -263,6 +266,38 @@ describe('context-menu', () => {
     await screen.getByRole('menuitem', { name: 'Open' }).click()
     expect(onOpen).toHaveBeenCalledOnce()
     await expect.poll(() => document.querySelector('[data-testid="menu-content"]')).toBeNull()
+  })
+
+  it('keeps the context menu open when a submenu trigger is clicked', async () => {
+    const screen = await render(
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <button type="button">target</button>
+        </ContextMenuTrigger>
+        <ContextMenuContent data-testid="menu-content">
+          <Menu>
+            <MenuSub>
+              <MenuSubTrigger>More</MenuSubTrigger>
+              <MenuSubContent>
+                <MenuItem>Nested</MenuItem>
+              </MenuSubContent>
+            </MenuSub>
+          </Menu>
+        </ContextMenuContent>
+      </ContextMenu>,
+    )
+
+    screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
+      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+    )
+    await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
+
+    const trigger = screen.getByRole('menuitem', { name: 'More' }).element() as HTMLElement
+    await trigger.click()
+
+    await expect.element(screen.getByRole('menuitem', { name: 'Nested' })).toBeInTheDocument()
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+    expect(document.querySelector('[data-testid="menu-content"]')).not.toBeNull()
   })
 
   it('fires item onClick and closes on keyboard activation', async () => {

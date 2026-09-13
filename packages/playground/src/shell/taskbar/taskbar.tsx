@@ -8,23 +8,16 @@ import {
   Taskbar as TaskbarRoot,
   TaskbarSystemClock,
 } from '@murasaki-io/react98'
-import { APP_ID } from '../../contexts/process/directory'
+import { getQuickLaunchApps } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { useQuickLaunchCount } from '../../hooks/use-quick-launch-count'
 import { assetPath } from '../../lib/asset-path'
-import { TASKBAR_QUICK_LAUNCH_ICONS } from '../../lib/playground-assets'
+import { ICON } from '../../lib/icons'
 import { DisplayPropertiesIcon } from './notification-area/display-properties-icon'
 import { NetworkIcon } from './notification-area/network-icon'
 import { SwUpdateBalloon } from './notification-area/sw-update-balloon'
 import { VolumeIcon } from './notification-area/volume-icon'
 import { RunningTasks } from './running-tasks/running-tasks'
-
-const QUICK_LAUNCH_LABELS = [
-  { alt: 'Show Desktop', title: 'Show Desktop' },
-  { alt: 'Email Me', title: 'Outlook Express' },
-  { alt: 'Internet', title: 'Internet Explorer' },
-  { alt: 'Welcome', title: 'Welcome!' },
-]
 
 interface TaskbarProps {
   startButtonRef: RefObject<HTMLButtonElement | null>
@@ -37,26 +30,22 @@ export function Taskbar({ startButtonRef, showStartMenu, onStartMenuToggle, onSh
   const [quickLaunchVisibleCount, setQuickLaunchVisibleCount] = useQuickLaunchCount()
   const { open } = useProcessActions()
 
-  const handleOpenOutlookExpress = (): void => {
-    open(APP_ID.OUTLOOK_EXPRESS)
-  }
-
-  const handleOpenInternetExplorer = (): void => {
-    open(APP_ID.INTERNET_EXPLORER)
-  }
-
-  const handleOpenWelcome = (): void => {
-    open(APP_ID.WELCOME)
-  }
-
-  const quickLaunchIcons: TaskbarQuickLaunchIcon[] = TASKBAR_QUICK_LAUNCH_ICONS.map((path, index) => ({
-    src: assetPath(path),
-    ...QUICK_LAUNCH_LABELS[index],
-    ...(index === 0 ? { onClick: onShowDesktop } : {}),
-    ...(index === 1 ? { onClick: handleOpenOutlookExpress } : {}),
-    ...(index === 2 ? { onClick: handleOpenInternetExplorer } : {}),
-    ...(index === 3 ? { onClick: handleOpenWelcome } : {}),
-  }))
+  // "Show Desktop" is a shell action, not an app; the rest of the strip is
+  // derived from apps that declare a `quickLaunch` placement in the registry.
+  const quickLaunchIcons: TaskbarQuickLaunchIcon[] = [
+    {
+      src: assetPath(ICON.showDesktop.sm),
+      alt: 'Show Desktop',
+      title: 'Show Desktop',
+      onClick: onShowDesktop,
+    },
+    ...getQuickLaunchApps().map(app => ({
+      src: assetPath(app.icon.sm),
+      alt: app.alt,
+      title: app.title,
+      onClick: () => open(app.appId),
+    })),
+  ]
 
   return (
     <TaskbarRoot className="mt-auto">

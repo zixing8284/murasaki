@@ -25,50 +25,8 @@ export const DESKTOP_WALLPAPER_IMAGE = '/wallpaper/animspace.gif'
 export const DESKTOP_MEDIA_ICON = '/icons/folder-my-docs-32.png'
 
 // ---------------------------------------------------------------------------
-// Start menu icons
-// ---------------------------------------------------------------------------
-
-export const START_MENU_ICONS = {
-  windowsUpdate: '/icons/windows-update-16.png',
-  programs: '/icons/program-group-16.png',
-  documents: '/icons/folder-my-docs-16.png',
-  settings: '/icons/settings-16.png',
-  find: '/icons/search-file-16.png',
-  help: '/icons/help-16.png',
-  run: '/icons/console-prompt-16.png',
-  logOff: '/icons/log-off-16.png',
-  shutDown: '/icons/shut-down-16.png',
-  // programs submenu
-  accessories: '/icons/program-group-16.png',
-  notepad: '/icons/notepad-16.png',
-  calculator: '/icons/calculator-16.png',
-  paint: '/icons/paint-16.png',
-  internetExplorer: '/icons/internet-explorer-16.png',
-  welcome: '/icons/my-computer-16.png',
-  mediaPlayer: '/icons/media-player-16.png',
-  webamp: '/icons/webamp-16.png',
-  themeDesigner: '/icons/themes-16.png',
-  // settings submenu
-  controlPanel: '/icons/control-panel-16.png',
-  printers: '/icons/printer-16.png',
-  taskbar: '/icons/windows-button-16.png',
-  mouse: '/icons/mouse-16.png',
-  // find submenu
-  findFiles: '/icons/search-file-16.png',
-  findComputer: '/icons/search-computer-16.png',
-  findWeb: '/icons/search-web-16.png',
-} as const
-
-// ---------------------------------------------------------------------------
 // Taskbar
 // ---------------------------------------------------------------------------
-
-export const TASKBAR_QUICK_LAUNCH_ICONS = [
-  '/icons/show-desktop-16.png',
-  '/icons/outlook-express-16.png',
-  '/icons/internet-explorer-16.png',
-  '/icons/my-computer-16.png',
-] as const
 
 export const NETWORK_ONLINE_ICONS = [
   '/icons/network-partial-on-off-16.png',

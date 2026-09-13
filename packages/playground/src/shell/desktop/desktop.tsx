@@ -1,6 +1,5 @@
 import type { ChangeEvent, CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import type { GridLayout, GridPosition } from '../../contexts/desktop-layout/storage'
-import type { AppId } from '../../contexts/process/directory'
 import type { ShellInputPoint, ShellInputSession, ShellInputSurface } from '../input/shell-input-registry'
 import type { DesktopDragPreview } from './use-desktop-icon-drag'
 import {
@@ -18,7 +17,7 @@ import { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'rea
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
-import appDirectory, { APP_ID } from '../../contexts/process/directory'
+import { APP_ID, getDesktopApps } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
@@ -125,17 +124,12 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     }
   }
 
-  const apps: IconEntry[] = Object.entries(appDirectory).reduce<IconEntry[]>((acc, [appId, entry]) => {
-    if (entry.showOnDesktop) {
-      acc.push({
-        id: `app:${appId}`,
-        label: entry.name,
-        icon: <AppIcon appId={appId} size="lg" />,
-        onOpen: () => open(appId as AppId),
-      })
-    }
-    return acc
-  }, [])
+  const apps: IconEntry[] = getDesktopApps().map(app => ({
+    id: `app:${app.appId}`,
+    label: app.label,
+    icon: <AppIcon appId={app.appId} size="lg" />,
+    onOpen: () => open(app.appId),
+  }))
 
   const files: IconEntry[] = items.map(item => ({
     id: item.id,

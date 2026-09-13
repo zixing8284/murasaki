@@ -320,18 +320,51 @@ export function useShellWindowInteraction({
       if (targetRect.width === 0 && targetRect.height === 0)
         return
 
-      const boundsTop = container ? container.getBoundingClientRect().top : 0
-      if (targetRect.top >= boundsTop)
+      // Re-clamp the window fully inside its bounds. This mirrors the drag
+      // clamp so a window that was flush against the right/bottom edge is
+      // pulled back into view when the usable desktop shrinks — e.g. when the
+      // CRT monitor frame is enabled and the desktop area loses width.
+      const screenFromLocal = getScreenFromLocalMatrix(target)
+      const localFromScreen = screenFromLocal.inverse()
+      const screenOffset = applyLinear(screenFromLocal, transformRef.current.offsetX, transformRef.current.offsetY)
+      const offsetX = screenOffset.x
+      const offsetY = screenOffset.y
+      const { height, left, top, width } = targetRect
+
+      let minLeft: number
+      let maxLeft: number
+      let minTop: number
+      let maxTop: number
+      if (container) {
+        const containerRect = container.getBoundingClientRect()
+        minLeft = containerRect.left - left + offsetX
+        maxLeft = containerRect.right - left - width + offsetX
+        minTop = containerRect.top - top + offsetY
+        maxTop = containerRect.bottom - top - height + offsetY
+      }
+      else {
+        const { clientHeight, clientWidth } = document.documentElement
+        minLeft = -left + offsetX
+        minTop = -top + offsetY
+        maxLeft = clientWidth - left - width + offsetX
+        maxTop = clientHeight - top - height + offsetY
+      }
+
+      // A window larger than its bounds pins to the top-left so its title bar
+      // and left edge stay reachable.
+      if (maxLeft < minLeft)
+        maxLeft = minLeft
+      if (maxTop < minTop)
+        maxTop = minTop
+
+      const clampedX = Math.min(Math.max(offsetX, minLeft), maxLeft)
+      const clampedY = Math.min(Math.max(offsetY, minTop), maxTop)
+      if (clampedX === offsetX && clampedY === offsetY)
         return
 
-      const screenDeltaY = boundsTop - targetRect.top
-      const localFromScreen = getScreenFromLocalMatrix(target).inverse()
-      const localDelta = applyLinear(localFromScreen, 0, screenDeltaY)
-      transformRef.current = {
-        offsetX: transformRef.current.offsetX + localDelta.x,
-        offsetY: transformRef.current.offsetY + localDelta.y,
-      }
-      target.style.transform = `translate(${transformRef.current.offsetX.toString()}px, ${transformRef.current.offsetY.toString()}px)`
+      const local = applyLinear(localFromScreen, clampedX, clampedY)
+      transformRef.current = { offsetX: local.x, offsetY: local.y }
+      target.style.transform = `translate(${local.x.toString()}px, ${local.y.toString()}px)`
     }
 
     if (container) {

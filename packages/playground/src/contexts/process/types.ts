@@ -48,6 +48,29 @@ export interface ProcessNoWindowConfig {
 
 export type ProcessWindowConfig = ProcessDefaultWindowConfig | ProcessIframeWindowConfig | ProcessNoWindowConfig
 
+/** Start-menu folders an app's shortcut can be installed into. */
+export type StartMenuFolder = 'programs' | 'accessories' | 'documents' | 'settings'
+
+/** Where and how an app installs a Start-menu shortcut. */
+export interface StartMenuPlacement {
+  /** Which Start-menu folder the shortcut lives in. */
+  folder: StartMenuFolder
+  /** Ascending sort order within the folder. */
+  order?: number
+  /** Override row label (defaults to the app name). */
+  label?: string
+}
+
+/** Where and how an app installs a Quick Launch button. */
+export interface QuickLaunchPlacement {
+  /** Ascending sort order along the Quick Launch strip. */
+  order?: number
+  /** Button title / tooltip (defaults to the app name). */
+  title?: string
+  /** Accessible label (defaults to the title). */
+  alt?: string
+}
+
 export interface ProcessDirectoryEntry {
   /** App display name (for desktop icons, start menu, etc.) */
   name: string
@@ -63,6 +86,10 @@ export interface ProcessDirectoryEntry {
   showOnDesktop?: boolean
   /** Show shortcut overlay arrow on the icon */
   shortcut?: boolean
+  /** Install a Start-menu shortcut for this app (folder + placement). */
+  startMenu?: StartMenuPlacement
+  /** Install a Quick Launch button for this app. */
+  quickLaunch?: QuickLaunchPlacement
   /** Open automatically once the desktop finishes booting */
   autoOpenOnStartup?: boolean
   /** Ephemeral windows participate in z-index / focus but are hidden from taskbar */

@@ -1,5 +1,5 @@
-export { APP_ID, default as appDirectory, DEFAULT_ICON, getStartupAppIds } from './directory'
-export type { AppId } from './directory'
+export { APP_ID, default as appDirectory, DEFAULT_ICON, getDesktopApps, getQuickLaunchApps, getStartMenuApps, getStartupAppIds } from './directory'
+export type { AppId, DesktopAppItem, QuickLaunchAppItem, StartMenuAppItem } from './directory'
 export { useProcess, useProcessActions, useProcesses, useProcessList } from './hooks'
 export { ProcessProvider } from './provider'
-export type { AppIcon, Process, ProcessComponentProps, ProcessContextActions, ProcessDirectoryEntry, Processes, ProcessWindowConfig, ProcessWindowPosition } from './types'
+export type { AppIcon, Process, ProcessComponentProps, ProcessContextActions, ProcessDirectoryEntry, Processes, ProcessWindowConfig, ProcessWindowPosition, QuickLaunchPlacement, StartMenuFolder, StartMenuPlacement } from './types'

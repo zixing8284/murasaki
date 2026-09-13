@@ -1,5 +1,6 @@
 import type { AppId } from '../../../contexts/process/directory'
 import { APP_ID } from '../../../contexts/process/directory'
+import { ICON } from '../../../lib/icons'
 
 /**
  * A tiny in-memory virtual filesystem powering the My Documents / Explorer
@@ -38,24 +39,24 @@ export interface FsFolder {
 export type FsNode = FsFile | FsFolder
 
 export const FS_ICONS = {
-  folder: '/icons/folder-closed-16.png',
-  folderOpen: '/icons/folder-open-16.png',
-  downloads: '/icons/downloads-folder-16.png',
-  myDocuments: '/icons/folder-my-docs-16.png',
-  myComputer: '/icons/my-computer-16.png',
-  desktop: '/icons/desktop-16.png',
-  hardDrive: '/icons/hard-drive-16.png',
-  floppy: '/icons/floppy-drive-16.png',
-  cdDrive: '/icons/cd-drive-16.png',
-  network: '/icons/network-neighborhood-16.png',
-  controlPanel: '/icons/control-panel-16.png',
-  printers: '/icons/printer-16.png',
-  recycleBin: '/icons/recycle-bin-16.png',
-  textFile: '/icons/text-file-16.png',
-  document: '/icons/document-file-16.png',
-  audio: '/icons/audio-file-16.png',
-  midi: '/icons/midi-file-16.png',
-  image: '/icons/image-file-16.png',
+  folder: ICON.folderClosed.sm,
+  folderOpen: ICON.folderOpen.sm,
+  downloads: ICON.downloadsFolder.sm,
+  myDocuments: ICON.folderMyDocs.sm,
+  myComputer: ICON.myComputer.sm,
+  desktop: ICON.desktop.sm,
+  hardDrive: ICON.hardDrive.sm,
+  floppy: ICON.floppyDrive.sm,
+  cdDrive: ICON.cdDrive.sm,
+  network: ICON.networkNeighborhood.sm,
+  controlPanel: ICON.controlPanel.sm,
+  printers: ICON.printer.sm,
+  recycleBin: ICON.recycleBin.sm,
+  textFile: ICON.textFile.sm,
+  document: ICON.documentFile.sm,
+  audio: ICON.audioFile.sm,
+  midi: ICON.midiFile.sm,
+  image: ICON.imageFile.sm,
 } as const
 
 function textFile(name: string, size: number): FsFile {

@@ -8,11 +8,11 @@ import {
   MenuSubTrigger,
 } from '@murasaki-io/react98'
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { APP_ID } from '../../contexts/process/directory'
+import { getStartMenuApps } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { useTaskbarSettings } from '../../contexts/taskbar-settings'
 import { assetPath } from '../../lib/asset-path'
-import { START_MENU_ICONS } from '../../lib/playground-assets'
+import { ICON as ICONS } from '../../lib/icons'
 
 interface StartMenuProps {
   onClose: () => void
@@ -44,7 +44,37 @@ function StartIcon({ src, large = false }: StartIconProps): React.ReactElement {
   )
 }
 
-const ICON = START_MENU_ICONS
+/**
+ * Icons for the Start menu's decorative "not installed" rows (stock Windows 98
+ * entries kept for flavor). Real, launchable rows draw their icon straight from
+ * the app registry via `getStartMenuApps`, so they never appear here.
+ */
+const ICON = {
+  windowsUpdate: ICONS.windowsUpdate.sm,
+  programs: ICONS.programGroup.sm,
+  documents: ICONS.folderMyDocs.sm,
+  settings: ICONS.settings.sm,
+  find: ICONS.searchFile.sm,
+  help: ICONS.help.sm,
+  run: ICONS.consolePrompt.sm,
+  logOff: ICONS.logOff.sm,
+  shutDown: ICONS.shutDown.sm,
+  accessories: ICONS.programGroup.sm,
+  notepad: ICONS.notepad.sm,
+  calculator: ICONS.calculator.sm,
+  paint: ICONS.paint.sm,
+  printers: ICONS.printer.sm,
+  findFiles: ICONS.searchFile.sm,
+  findComputer: ICONS.searchComputer.sm,
+  findWeb: ICONS.searchWeb.sm,
+} as const
+
+// Real, launchable rows are derived from the app registry — installing an app
+// (declaring a `startMenu` placement) makes it appear here automatically.
+const PROGRAMS = getStartMenuApps('programs')
+const ACCESSORIES = getStartMenuApps('accessories')
+const DOCUMENTS = getStartMenuApps('documents')
+const SETTINGS = getStartMenuApps('settings')
 
 export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): React.ReactElement {
   const { open } = useProcessActions()
@@ -133,10 +163,12 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                     Accessories
                   </MenuSubTrigger>
                   <MenuSubContent boundaryRef={screenRef}>
-                    <MenuItem onClick={() => launch(APP_ID.NOTEPAD)}>
-                      <StartIcon src={ICON.notepad} />
-                      Notepad
-                    </MenuItem>
+                    {ACCESSORIES.map(app => (
+                      <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                        <StartIcon src={app.icon.sm} />
+                        {app.label}
+                      </MenuItem>
+                    ))}
                     <MenuItem disabled>
                       <StartIcon src={ICON.calculator} />
                       Calculator
@@ -269,26 +301,12 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                   </MenuSubContent>
                 </MenuSub>
                 <MenuSeparator />
-                <MenuItem onClick={() => launch(APP_ID.INTERNET_EXPLORER)}>
-                  <StartIcon src={ICON.internetExplorer} />
-                  Internet Explorer
-                </MenuItem>
-                <MenuItem onClick={() => launch(APP_ID.WELCOME)}>
-                  <StartIcon src={ICON.welcome} />
-                  Welcome!
-                </MenuItem>
-                <MenuItem onClick={() => launch(APP_ID.MEDIA_PLAYER)}>
-                  <StartIcon src={ICON.mediaPlayer} />
-                  Media Player
-                </MenuItem>
-                <MenuItem onClick={() => launch(APP_ID.WEBAMP)}>
-                  <StartIcon src={ICON.webamp} />
-                  Webamp
-                </MenuItem>
-                <MenuItem onClick={() => launch(APP_ID.THEME_DESIGNER)}>
-                  <StartIcon src={ICON.themeDesigner} />
-                  Theme Designer
-                </MenuItem>
+                {PROGRAMS.map(app => (
+                  <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                    <StartIcon src={app.icon.sm} />
+                    {app.label}
+                  </MenuItem>
+                ))}
               </MenuSubContent>
             </MenuSub>
             <MenuSub>
@@ -297,10 +315,12 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 Documents
               </MenuSubTrigger>
               <MenuSubContent boundaryRef={screenRef}>
-                <MenuItem onClick={() => launch(APP_ID.MY_DOCUMENTS)}>
-                  <StartIcon src={ICON.documents} />
-                  My Documents
-                </MenuItem>
+                {DOCUMENTS.map(app => (
+                  <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                    <StartIcon src={app.icon.sm} />
+                    {app.label}
+                  </MenuItem>
+                ))}
               </MenuSubContent>
             </MenuSub>
             <MenuSub>
@@ -309,21 +329,15 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 Settings
               </MenuSubTrigger>
               <MenuSubContent boundaryRef={screenRef}>
-                <MenuItem onClick={() => launch(APP_ID.SETTINGS)}>
-                  <StartIcon src={ICON.controlPanel} />
-                  Control Panel
-                </MenuItem>
-                <MenuItem onClick={() => launch(APP_ID.MOUSE_PROPERTIES)}>
-                  <StartIcon src={ICON.mouse} />
-                  Mouse…
-                </MenuItem>
+                {SETTINGS.map(app => (
+                  <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                    <StartIcon src={app.icon.sm} />
+                    {app.label}
+                  </MenuItem>
+                ))}
                 <MenuItem disabled>
                   <StartIcon src={ICON.printers} />
                   Printers
-                </MenuItem>
-                <MenuItem onClick={() => launch(APP_ID.TASKBAR_PROPERTIES)}>
-                  <StartIcon src={ICON.taskbar} />
-                  Taskbar…
                 </MenuItem>
               </MenuSubContent>
             </MenuSub>

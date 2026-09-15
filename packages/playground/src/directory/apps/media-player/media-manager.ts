@@ -161,13 +161,12 @@ export class MediaManager {
 
     on('seeking', () => {
       this.isSeeking = true
-      this.updateState({ loading: true })
     })
 
     on('seeked', () => {
       this.pendingSeekTime = null
       this.isSeeking = false
-      this.updateState({ loading: false, currentTime: el.currentTime })
+      this.updateState({ currentTime: el.currentTime })
     })
 
     on('timeupdate', () => {

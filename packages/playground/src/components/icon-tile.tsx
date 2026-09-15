@@ -37,11 +37,13 @@ export interface IconTileProps {
    * `row` = icon beside a single-line truncated label (Small Icons, List).
    */
   variant?: 'tile' | 'row'
+  /** Replaces the label text (e.g. an inline rename input). */
+  labelSlot?: ReactNode
   /** Extra classes on the tile container (e.g. drag opacity). */
   className?: string
 }
 
-export function IconTile({ icon, label, selected, variant = 'tile', className }: IconTileProps): React.ReactElement {
+export function IconTile({ icon, label, selected, variant = 'tile', labelSlot, className }: IconTileProps): React.ReactElement {
   const tile = variant === 'tile'
   const container = tile
     ? 'flex w-full flex-col items-center gap-0.5'
@@ -58,12 +60,18 @@ export function IconTile({ icon, label, selected, variant = 'tile', className }:
       <span className={`pointer-events-auto shrink-0${selected ? ` ${SELECTED_ICON_FILTER}` : ''}`}>
         {icon}
       </span>
-      <span
-        className={`pointer-events-auto my-px px-0.5 py-px ${labelLayout} ${labelState}`}
-        title={label}
-      >
-        {truncateLabel(label, selected)}
-      </span>
+      {labelSlot
+        ? (
+            <span className="pointer-events-auto my-px flex min-w-0 max-w-full">{labelSlot}</span>
+          )
+        : (
+            <span
+              className={`pointer-events-auto my-px px-0.5 py-px ${labelLayout} ${labelState}`}
+              title={label}
+            >
+              {truncateLabel(label, selected)}
+            </span>
+          )}
     </div>
   )
 }

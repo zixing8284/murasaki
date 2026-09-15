@@ -2,6 +2,7 @@ import { ThemeProvider } from '@murasaki-io/react98'
 import { CursorSchemeProvider } from './contexts/cursor-scheme'
 import { DesktopFilesProvider } from './contexts/desktop-files/provider'
 import { DesktopLayoutProvider } from './contexts/desktop-layout/provider'
+import { FileSystemProvider } from './contexts/file-system'
 import { ProcessProvider } from './contexts/process/provider'
 import { SystemCursorProvider } from './contexts/system-cursor'
 import { TaskbarSettingsProvider } from './contexts/taskbar-settings'
@@ -13,15 +14,17 @@ export function App(): React.ReactElement {
     <ThemeProvider storageKey={PLAYGROUND_STORAGE_KEYS.theme}>
       <DesktopFilesProvider>
         <DesktopLayoutProvider>
-          <ProcessProvider>
-            <CursorSchemeProvider>
-              <SystemCursorProvider>
-                <TaskbarSettingsProvider>
-                  <Shell />
-                </TaskbarSettingsProvider>
-              </SystemCursorProvider>
-            </CursorSchemeProvider>
-          </ProcessProvider>
+          <FileSystemProvider>
+            <ProcessProvider>
+              <CursorSchemeProvider>
+                <SystemCursorProvider>
+                  <TaskbarSettingsProvider>
+                    <Shell />
+                  </TaskbarSettingsProvider>
+                </SystemCursorProvider>
+              </CursorSchemeProvider>
+            </ProcessProvider>
+          </FileSystemProvider>
         </DesktopLayoutProvider>
       </DesktopFilesProvider>
     </ThemeProvider>

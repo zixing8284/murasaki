@@ -3,6 +3,7 @@ import type {
   ProcessContextActions,
   ProcessContextState,
   ProcessContextValue,
+  ProcessLaunch,
 } from './types'
 import { use } from 'react'
 import { ProcessActionsContext, ProcessStateContext } from './context'
@@ -58,6 +59,15 @@ export function useProcessActions(): ProcessContextActions {
     throw new Error('useProcessActions must be used within a <ProcessProvider>')
   }
   return ctx
+}
+
+/**
+ * Get the pending file-open request for a process, or null. A window component
+ * reads this to load (or reload) the file it was launched with.
+ */
+export function useProcessLaunch(id: string): ProcessLaunch | null {
+  const { processes } = useProcessState()
+  return processes[id]?.launch ?? null
 }
 
 /**

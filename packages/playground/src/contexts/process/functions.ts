@@ -27,6 +27,11 @@ function generatePid(appId: string): string {
   return `${appId}__${pidCounter++}`
 }
 
+let launchCounter = 0
+function nextLaunchNonce(): number {
+  return ++launchCounter
+}
+
 /**
  * Pick the top-most non-minimized PID from the stack.
  * Returns null if none qualifies.
@@ -175,13 +180,26 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
 
     // Singleton: PID = appId; Non-singleton: generate unique PID
     const pid = entry.singleton !== false ? appId : generatePid(appId)
+    const launch = overrides?.launch
+      ? { nonce: nextLaunchNonce(), path: overrides.launch.path }
+      : undefined
 
     setState((prev) => {
-      // If singleton and already running, activate it
+      // If singleton and already running, activate it (and reload the file when
+      // a new launch was requested).
       if (entry.singleton !== false && prev.processes[pid]) {
+        const running = prev.processes[pid]
         return {
           ...prev,
-          processes: { ...prev.processes, [pid]: { ...prev.processes[pid], minimized: false } },
+          processes: {
+            ...prev.processes,
+            [pid]: {
+              ...running,
+              minimized: false,
+              ...(overrides?.title ? { title: overrides.title } : {}),
+              ...(launch ? { launch } : {}),
+            },
+          },
           stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
           foregroundId: pid,
         }
@@ -200,6 +218,9 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
       }
       if (entry.ephemeral) {
         process.icon = entry.icon
+      }
+      if (launch) {
+        process.launch = launch
       }
       return {
         ...prev,

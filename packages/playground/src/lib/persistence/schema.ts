@@ -2,10 +2,12 @@ export const PLAYGROUND_CACHE_PREFIX = 'murasaki-playground-'
 
 export const PLAYGROUND_INDEXED_DB = {
   name: 'murasaki-playground',
-  version: 3,
+  version: 4,
   stores: {
     desktopMediaFiles: 'desktop-media-files',
     wallpaperImages: 'wallpaper-images',
+    fileSystemNodes: 'file-system-nodes',
+    fileSystemBlobs: 'file-system-blobs',
   },
 } as const
 

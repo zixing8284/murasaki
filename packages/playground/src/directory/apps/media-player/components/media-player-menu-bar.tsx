@@ -18,6 +18,17 @@ interface MediaPlayerMenuBarProps {
   onOpenFile: () => void
 }
 
+/** Single-span label with one underlined accelerator (no inter-letter gap). */
+function Accel({ text, index = 0 }: { text: string, index?: number }): ReactElement {
+  return (
+    <span>
+      {text.slice(0, index)}
+      <span className="underline">{text.charAt(index)}</span>
+      {text.slice(index + 1)}
+    </span>
+  )
+}
+
 export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarProps): ReactElement {
   const { close } = useProcessActions()
 
@@ -28,27 +39,22 @@ export function MediaPlayerMenuBar({ windowId, onOpenFile }: MediaPlayerMenuBarP
       <WindowMenuBar>
         <WindowMenuBarMenu value="file">
           <WindowMenuBarTrigger>
-            <span className="underline">F</span>
-            ile
+            <Accel text="File" />
           </WindowMenuBarTrigger>
           <WindowMenuBarContent>
             <MenuItem onClick={onOpenFile}>
-              <span className="underline">O</span>
-              pen…
+              <Accel text="Open…" />
             </MenuItem>
             <MenuSeparator />
             <MenuItem onClick={() => close(windowId)}>
-              E
-              <span className="underline">x</span>
-              it
+              <Accel text="Exit" index={1} />
             </MenuItem>
           </WindowMenuBarContent>
         </WindowMenuBarMenu>
 
         {otherMenus.map(menu => (
           <WindowMenuBarItem key={menu} disabled>
-            <span className="underline">{menu[0]}</span>
-            {menu.slice(1)}
+            <Accel text={menu} />
           </WindowMenuBarItem>
         ))}
       </WindowMenuBar>

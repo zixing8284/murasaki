@@ -86,7 +86,7 @@ export function Settings({ windowId }: ProcessComponentProps): React.ReactElemen
               <CacheIcon />
               <div className="min-w-0 flex-1 space-y-1 text-(--button-text)">
                 <p>Clear all browser cache and application data.</p>
-                <p>This will remove stored preferences and reload the OS.</p>
+                <p>This removes stored preferences, your documents and files, and reloads the OS.</p>
                 <p className="font-bold">Warning: This process cannot be undone.</p>
                 {confirming && <p className="pt-1 font-bold">Click Confirm to clear stored data.</p>}
                 {status && <p className="pt-1 text-(--button-text)">{status}</p>}

@@ -57,7 +57,7 @@ const directory = {
     startMenu: { folder: 'accessories', order: 10 },
     defaultSize: { width: 400, height: 300 },
     defaultPosition: { top: '15%', left: '20%' },
-    window: { contentClassName: 'p-1' },
+    window: { contentClassName: 'p-0' },
   },
   displayproperties: {
     name: 'Display Properties',
@@ -189,6 +189,31 @@ const directory = {
     defaultPosition: { top: '10%', left: '15%' },
     window: { contentClassName: 'p-0' },
   },
+  imageviewer: {
+    name: 'Image Viewer',
+    Component: lazy(() =>
+      import('../../directory/apps/image-viewer/image-viewer').then(m => ({ default: m.ImageViewer })),
+    ),
+    defaultTitle: 'Image Viewer',
+    icon: ICON.imageFile,
+    singleton: false,
+    startMenu: { folder: 'accessories', order: 20 },
+    defaultSize: { width: 560, height: 460 },
+    defaultPosition: { top: '10%', left: '18%' },
+    window: { contentClassName: 'p-0' },
+  },
+  pdfviewer: {
+    name: 'PDF Viewer',
+    Component: lazy(() =>
+      import('../../directory/apps/pdf-viewer/pdf-viewer').then(m => ({ default: m.PdfViewer })),
+    ),
+    defaultTitle: 'PDF Viewer',
+    icon: ICON.documentFile,
+    singleton: false,
+    defaultSize: { width: 640, height: 720 },
+    defaultPosition: { top: '5%', left: '20%' },
+    window: { contentClassName: 'p-0' },
+  },
   taskbarproperties: {
     name: 'Taskbar Properties',
     Component: lazy(() =>
@@ -230,6 +255,8 @@ export const APP_ID = {
   WEBAMP: 'webamp',
   INTERNET_EXPLORER: 'internetexplorer',
   MY_DOCUMENTS: 'mydocuments',
+  IMAGE_VIEWER: 'imageviewer',
+  PDF_VIEWER: 'pdfviewer',
   TASKBAR_PROPERTIES: 'taskbarproperties',
 } as const satisfies Record<string, AppId>
 

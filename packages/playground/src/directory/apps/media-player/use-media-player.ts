@@ -3,7 +3,6 @@ import type { MediaState, Track } from './media-manager'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { formatTime } from './format-time'
 import { MediaManager } from './media-manager'
-import { DEFAULT_REMOTE_PLAYLIST } from './remote-tracks'
 
 export type { Track } from './media-manager'
 
@@ -46,8 +45,6 @@ function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
 }
 
 let nextLocalId = 1
-
-const DEFAULT_PLAYLIST: Track[] = DEFAULT_REMOTE_PLAYLIST
 
 interface PlayerState {
   playlist: Track[]
@@ -96,6 +93,7 @@ export interface UseMediaPlayerResult {
   toggleMute: () => void
   loadLocalFile: (file: File, options?: { replacePlaylist?: boolean }) => void
   addLocalFile: (file: File) => void
+  loadUrlTrack: (input: { title: string, url: string, type: 'audio' | 'video', artist?: string }) => void
   clearLocalImportError: () => void
   openFilePicker: () => void
   getMediaElement: () => HTMLMediaElement | null
@@ -180,11 +178,11 @@ export function useMediaPlayer(): UseMediaPlayerResult {
   const [mediaState, setMediaState] = useState<MediaState | null>(null)
   const [localImportError, setLocalImportError] = useState<LocalImportError | null>(null)
   const [model, setModel] = useState<PlayerState>(() => ({
-    playlist: DEFAULT_PLAYLIST,
+    playlist: [],
     currentIndex: -1,
     shuffle: false,
     repeat: 'off',
-    playOrderIndices: Array.from({ length: DEFAULT_PLAYLIST.length }, (_, i) => i),
+    playOrderIndices: [],
   }))
   const managerRef = useRef<MediaManager | null>(null)
   const mediaRef = useRef<HTMLVideoElement | null>(null)
@@ -438,6 +436,28 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     loadLocalFile(file)
   }
 
+  /** Replace the playlist with a single streaming URL track and play it. */
+  const loadUrlTrack = (input: { title: string, url: string, type: 'audio' | 'video', artist?: string }): void => {
+    for (const url of objectUrlsRef.current) {
+      URL.revokeObjectURL(url)
+    }
+    objectUrlsRef.current.clear()
+    const track: Track = {
+      id: `stream-${nextLocalId++}`,
+      title: input.title,
+      url: input.url,
+      type: input.type,
+      artist: input.artist,
+    }
+    setModel(prev => ({
+      ...prev,
+      playlist: [track],
+      currentIndex: 0,
+      playOrderIndices: [0],
+    }))
+    managerRef.current?.loadAndPlay(track)
+  }
+
   const clearLocalImportError = (): void => {
     setLocalImportError(null)
   }
@@ -545,6 +565,7 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     toggleMute,
     loadLocalFile,
     addLocalFile,
+    loadUrlTrack,
     clearLocalImportError,
     openFilePicker,
 

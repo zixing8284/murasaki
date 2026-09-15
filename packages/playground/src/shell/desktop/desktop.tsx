@@ -17,9 +17,11 @@ import { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'rea
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
+import { RECYCLE_BIN_PATH, useFolderChildren } from '../../contexts/file-system'
 import { APP_ID, getDesktopApps } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
+import { ICON } from '../../lib/icons'
 import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
 import { AppIcon } from '../app-icon'
 import { useShellInputSurface } from '../input/shell-input-registry'
@@ -91,6 +93,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
   const [refreshing, setRefreshing] = useState(false)
   const { open } = useProcessActions()
   const { items, requestOpenInMediaPlayer, importFiles, refresh } = useDesktopFiles()
+  const { children: recycleBinChildren } = useFolderChildren(RECYCLE_BIN_PATH)
   const { positions, gridRef } = useDesktopLayout()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
@@ -141,7 +144,21 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     },
   }))
 
-  const iconEntries: IconEntry[] = [...apps, ...files]
+  const recycleBin: IconEntry = {
+    id: 'recycle-bin',
+    label: 'Recycle Bin',
+    icon: (
+      <img
+        src={assetPath(recycleBinChildren.length > 0 ? ICON.recycleBinFull.lg : ICON.recycleBin.lg)}
+        alt=""
+        className="size-8 pixelated shrink-0"
+        draggable={false}
+      />
+    ),
+    onOpen: () => open(APP_ID.MY_DOCUMENTS, { launch: { path: RECYCLE_BIN_PATH } }),
+  }
+
+  const iconEntries: IconEntry[] = [...apps, recycleBin, ...files]
 
   // Only explicitly-placed (dragged) icons get grid positions; default icons
   // are CSS auto-placed via grid-auto-flow so they wrap responsively.

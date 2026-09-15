@@ -126,10 +126,23 @@ export interface Process {
   Component?: ComponentType<ProcessComponentProps>
   /** Icon for ephemeral windows (not looked up from directory) */
   icon?: AppIcon
+  /** Pending file-open request carried to the window component */
+  launch?: ProcessLaunch
 }
 
 /** Dictionary of running processes keyed by PID */
 export type Processes = Record<string, Process>
+
+/**
+ * A request for a process to open (or reload) a specific file. The `nonce`
+ * changes on every launch so a singleton window that is already running can
+ * react to a fresh open of a different file.
+ */
+export interface ProcessLaunch {
+  nonce: number
+  /** Canonical virtual file-system path of the file to open. */
+  path: string
+}
 
 // ---------------------------------------------------------------------------
 // Context value — everything exposed by ProcessProvider
@@ -147,8 +160,8 @@ export interface ProcessContextState {
 }
 
 export interface ProcessContextActions {
-  /** Open a process by appId. Overrides let you customise the title. */
-  open: (appId: AppId, overrides?: { title?: string }) => void
+  /** Open a process by appId. Overrides let you customise the title or open a file. */
+  open: (appId: AppId, overrides?: { title?: string, launch?: { path: string } }) => void
   /** Close (terminate) a process */
   close: (id: string) => void
   /** Activate a process — bring to front & un-minimize */

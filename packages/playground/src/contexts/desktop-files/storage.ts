@@ -1,4 +1,5 @@
 import { PLAYGROUND_INDEXED_DB } from '../../lib/persistence'
+import { openPlaygroundDatabase } from '../../lib/persistence/database'
 
 export type DesktopMediaKind = 'audio' | 'video'
 
@@ -16,34 +17,13 @@ interface StoredDesktopMediaFile extends DesktopMediaFileEntry {
   blob: Blob
 }
 
-const DATABASE_NAME = PLAYGROUND_INDEXED_DB.name
-const DATABASE_VERSION = PLAYGROUND_INDEXED_DB.version
 const STORE_NAME = PLAYGROUND_INDEXED_DB.stores.desktopMediaFiles
-const ALL_STORE_NAMES = Object.values(PLAYGROUND_INDEXED_DB.stores)
-
-function openDatabase(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION)
-
-    request.onupgradeneeded = () => {
-      const database = request.result
-      for (const storeName of ALL_STORE_NAMES) {
-        if (!database.objectStoreNames.contains(storeName)) {
-          database.createObjectStore(storeName, { keyPath: 'id' })
-        }
-      }
-    }
-
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error ?? new Error('Failed to open desktop media database'))
-  })
-}
 
 function withStore<T>(
   mode: IDBTransactionMode,
   run: (store: IDBObjectStore) => IDBRequest<T>,
 ): Promise<T> {
-  return openDatabase().then(database => new Promise((resolve, reject) => {
+  return openPlaygroundDatabase().then(database => new Promise((resolve, reject) => {
     const transaction = database.transaction(STORE_NAME, mode)
     const store = transaction.objectStore(STORE_NAME)
     const request = run(store)

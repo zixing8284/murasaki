@@ -89,11 +89,13 @@ export const ICON = {
   cdDrive: px16('cd-drive'),
   networkNeighborhood: px16('network-neighborhood'),
   recycleBin: px16x32('recycle-bin'),
+  recycleBinFull: px16x32('recycle-bin-full'),
   textFile: px16('text-file'),
-  documentFile: px16('document-file'),
-  audioFile: px16('audio-file'),
+  documentFile: px16x32('document-file'),
+  audioFile: px16x32('audio-file'),
   midiFile: px16('midi-file'),
-  imageFile: px16('image-file'),
+  imageFile: px16x32('image-file'),
+  htmlFile: px16('html-file'),
 } satisfies Record<string, IconAsset>
 
 export type IconName = keyof typeof ICON

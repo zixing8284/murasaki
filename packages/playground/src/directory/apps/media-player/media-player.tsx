@@ -2,7 +2,8 @@ import type { ReactElement } from 'react'
 import type { ProcessComponentProps } from '../../../contexts/process/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../../contexts/desktop-files/hooks'
-import { useProcess, useProcessActions } from '../../../contexts/process/hooks'
+import { getFile as getVfsFile, getNode as getVfsNode } from '../../../contexts/file-system'
+import { useProcess, useProcessActions, useProcessLaunch } from '../../../contexts/process/hooks'
 import { useFullscreen } from '../../../hooks/use-fullscreen'
 import { LocalMediaFileInput } from './components/local-media-file-input'
 import { MediaDisplay } from './components/media-display'
@@ -23,6 +24,7 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
   const processInfo = useProcess(windowId)
   const isActiveWindow = processInfo?.isActive ?? false
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
+  const processLaunch = useProcessLaunch(windowId)
   const [showPlaylist, setShowPlaylist] = useState(true)
   const [forceAspectRatio, setForceAspectRatio] = useState(false)
   const windowRootRef = useRef<HTMLDivElement>(null)
@@ -101,6 +103,47 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
       active = false
     }
   }, [clearLaunchRequest, getFile, launchRequest, loadLocalFile])
+
+  // Keep the latest loaders in refs so the launch effect below can depend only
+  // on the launch identity — otherwise an unstable callback identity would
+  // re-run the effect on every render and reload the file in a loop.
+  const loadLocalFileRef = useRef(player.loadLocalFile)
+  const loadUrlTrackRef = useRef(player.loadUrlTrack)
+  useEffect(() => {
+    loadLocalFileRef.current = player.loadLocalFile
+    loadUrlTrackRef.current = player.loadUrlTrack
+  })
+
+  // Load a file opened from the Explorer (virtual file system) on each fresh
+  // launch of the singleton window.
+  useEffect(() => {
+    const path = processLaunch?.path
+    if (!path)
+      return
+
+    let active = true
+    void (async () => {
+      const node = await getVfsNode(path)
+      if (!active || !node)
+        return
+      const isVideo = node.mimeType?.startsWith('video/') ?? /\.(?:mp4|webm|ogv|mov|mkv|avi|m4v)$/i.test(node.name)
+      if (node.streamUrl) {
+        loadUrlTrackRef.current({
+          title: node.name.replace(/\.[^.]+$/, ''),
+          url: node.streamUrl,
+          type: isVideo ? 'video' : 'audio',
+        })
+        return
+      }
+      const file = await getVfsFile(path)
+      if (active && file)
+        loadLocalFileRef.current(file, { replacePlaylist: true })
+    })()
+
+    return () => {
+      active = false
+    }
+  }, [processLaunch?.nonce, processLaunch?.path])
 
   return (
     <div

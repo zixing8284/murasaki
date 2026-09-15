@@ -79,6 +79,7 @@ export const EXPLORER_TOOLBAR_ICONS = {
   properties: '/icons/explorer/properties.png',
   views: '/icons/explorer/views.png',
   folders: '/icons/explorer/folders.png',
+  search: '/icons/search-file-16.png',
 } as const
 
 // ---------------------------------------------------------------------------

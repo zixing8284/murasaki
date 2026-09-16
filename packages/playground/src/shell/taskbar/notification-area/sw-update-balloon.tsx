@@ -1,6 +1,7 @@
 import { Button } from '@murasaki-io/react98'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useScreenBoundary } from '../../../contexts/screen-boundary'
 
 function handleRefresh(): void {
   window.location.reload()
@@ -15,26 +16,84 @@ function handleRefresh(): void {
  *
  */
 export function SwUpdateBalloon(): React.ReactElement {
+  const screenBoundary = useScreenBoundary()
+  const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<{ bottom: number, right: number } | null>(null)
   const anchorRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    const handler = (): void => {
-      const anchor = anchorRef.current
-      if (!anchor)
-        return
-
-      const rect = anchor.getBoundingClientRect()
-      setPosition({
-        bottom: window.innerHeight - rect.top + 8,
-        right: window.innerWidth - rect.right,
-      })
-    }
+    const handler = (): void => setOpen(true)
     window.addEventListener('sw-update', handler)
     return () => window.removeEventListener('sw-update', handler)
   }, [])
 
+  useLayoutEffect(() => {
+    if (!open)
+      return
+
+    const anchor = anchorRef.current
+    if (!anchor)
+      return
+
+    let frameId: number | null = null
+
+    const compute = (): void => {
+      const nextAnchor = anchorRef.current
+      if (!nextAnchor)
+        return
+
+      const rect = nextAnchor.getBoundingClientRect()
+      setPosition((prev) => {
+        const next = {
+          bottom: window.innerHeight - rect.top + 8,
+          right: window.innerWidth - rect.right,
+        }
+        if (
+          prev
+          && Math.abs(prev.bottom - next.bottom) < 0.5
+          && Math.abs(prev.right - next.right) < 0.5
+        ) {
+          return prev
+        }
+        return next
+      })
+    }
+
+    const scheduleCompute = (): void => {
+      if (frameId !== null)
+        return
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null
+        compute()
+      })
+    }
+
+    const boundaryElement = screenBoundary?.current ?? null
+    const observer = typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(scheduleCompute)
+
+    observer?.observe(anchor)
+    if (boundaryElement)
+      observer?.observe(boundaryElement)
+
+    window.addEventListener('resize', scheduleCompute)
+    window.addEventListener('scroll', scheduleCompute, true)
+
+    // Initial position for the first render after opening.
+    scheduleCompute()
+
+    return () => {
+      if (frameId !== null)
+        window.cancelAnimationFrame(frameId)
+      observer?.disconnect()
+      window.removeEventListener('resize', scheduleCompute)
+      window.removeEventListener('scroll', scheduleCompute, true)
+    }
+  }, [open, screenBoundary])
+
   const handleDismiss = (): void => {
+    setOpen(false)
     setPosition(null)
   }
 
@@ -43,7 +102,7 @@ export function SwUpdateBalloon(): React.ReactElement {
       {/* Invisible anchor to measure position */}
       <span ref={anchorRef} className="absolute right-0 top-0 size-0 pointer-events-none" />
 
-      {position && createPortal(
+      {open && position && createPortal(
         <div
           className="fixed w-65 z-9999"
           style={{ bottom: position.bottom, right: position.right }}

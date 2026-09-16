@@ -60,7 +60,7 @@ export const ICON = {
   outlookExpress: px16('outlook-express'),
   webamp: px16x32('webamp'),
   folderMyDocs: px16x32('folder-my-docs'),
-  taskbar: px16x32('taskbar'),
+  taskbar: px16('taskbar'),
 
   // --- Start menu decorative rows ------------------------------------------
   windowsUpdate: px16('windows-update'),

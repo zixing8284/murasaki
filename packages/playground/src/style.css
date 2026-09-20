@@ -44,6 +44,7 @@
   --animate-now-playing-bar: now-playing-bar 0.8s ease-in-out infinite;
   --animate-startup-loading-bar: startup-loading-bar 1.4s steps(15) infinite;
   --animate-ie-loading: ie-loading 1.9s cubic-bezier(0.2, 0.95, 0.35, 1) forwards;
+  --animate-app-launch-marquee: app-launch-marquee 1.1s linear infinite;
 
   @keyframes ie-loading {
     0% { width: 0%; }
@@ -72,6 +73,16 @@
 
     to {
       background-position: 413px 0;
+    }
+  }
+
+  @keyframes app-launch-marquee {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(300%);
     }
   }
 

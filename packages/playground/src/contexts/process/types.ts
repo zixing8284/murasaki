@@ -76,6 +76,13 @@ export interface ProcessDirectoryEntry {
   name: string
   /** React component rendered inside framework-owned window chrome */
   Component?: ComponentType<ProcessComponentProps>
+  /**
+   * Loader for this app's lazy chunk. System apps declare it (via `lazyApp`)
+   * so the shell can warm the chunk in the background after boot — the window
+   * then opens instantly instead of showing an in-window loading state.
+   * External apps (iframes, remote bundles) omit this and keep a launch splash.
+   */
+  preload?: () => Promise<unknown>
   /** Default window title */
   defaultTitle: string
   /** Icon paths for small (16px) and large (32px) sizes */

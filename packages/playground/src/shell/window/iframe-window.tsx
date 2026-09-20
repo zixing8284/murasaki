@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react'
+import type { AppId } from '../../contexts/process/directory'
 import { useRef } from 'react'
+import appDirectory from '../../contexts/process/directory'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { useSystemBusy } from '../../contexts/system-cursor'
 import { assetPath } from '../../lib/asset-path'
 import { useIframeWindow } from '../iframe/use-iframe-window'
+import { AppLaunchSplash } from './app-launch-splash'
 import { RndWindow } from './rnd-window'
 
 interface IframeWindowProps {
@@ -63,6 +66,8 @@ export function IframeWindow({
   if (!win)
     return null
 
+  const entry = appDirectory[win.process.appId as AppId]
+
   return (
     <RndWindow
       windowId={windowId}
@@ -103,8 +108,11 @@ export function IframeWindow({
         }}
       >
         {!iframeLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-(--button-face)">
-            <span className="text-xs text-(--window-text)">Loading…</span>
+          <div className="absolute inset-0">
+            <AppLaunchSplash
+              name={entry?.name ?? win.process.title}
+              iconSrc={entry ? assetPath(entry.icon.lg) : undefined}
+            />
           </div>
         )}
         <iframe

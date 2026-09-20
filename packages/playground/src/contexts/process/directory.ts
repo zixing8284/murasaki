@@ -1,8 +1,20 @@
-import type { AppIcon, ProcessDirectoryEntry, StartMenuFolder } from './types'
+import type { ComponentType } from 'react'
+import type { AppIcon, ProcessComponentProps, ProcessDirectoryEntry, StartMenuFolder } from './types'
 import { lazy } from 'react'
 import { ICON } from '../../lib/icons'
 
 export const DEFAULT_ICON: AppIcon = ICON.programManager
+
+/**
+ * Declare a lazily-loaded system app. Returns the `lazy` component used to
+ * render the window plus the raw `preload` loader the shell warms in the
+ * background after boot, so the window opens instantly instead of showing an
+ * in-window loading state. External apps (iframes, remote bundles) omit this.
+ */
+type AppModuleLoader = () => Promise<{ default: ComponentType<ProcessComponentProps> }>
+function lazyApp(load: AppModuleLoader): { Component: ComponentType<ProcessComponentProps>, preload: AppModuleLoader } {
+  return { Component: lazy(load), preload: load }
+}
 
 /**
  * Unified app directory — the "installer manifest" for every launchable window.
@@ -21,7 +33,7 @@ export const DEFAULT_ICON: AppIcon = ICON.programManager
 const directory = {
   welcome: {
     name: 'Welcome!',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/welcome').then(m => ({ default: m.Welcome })),
     ),
     defaultTitle: 'Welcome!',
@@ -47,7 +59,7 @@ const directory = {
   },
   notepad: {
     name: 'Notepad',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/notepad').then(m => ({ default: m.Notepad })),
     ),
     defaultTitle: 'Untitled - Notepad',
@@ -61,7 +73,7 @@ const directory = {
   },
   displayproperties: {
     name: 'Display Properties',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/system/display-properties/display-properties').then(m => ({ default: m.DisplayProperties })),
     ),
     defaultTitle: 'Display Properties',
@@ -74,7 +86,7 @@ const directory = {
   },
   settings: {
     name: 'Settings',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/system/settings/settings').then(m => ({ default: m.Settings })),
     ),
     defaultTitle: 'Settings',
@@ -87,7 +99,7 @@ const directory = {
   },
   mouseproperties: {
     name: 'Mouse Properties',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/system/mouse-properties/mouse-properties').then(m => ({ default: m.MouseProperties })),
     ),
     defaultTitle: 'Mouse Properties',
@@ -110,7 +122,7 @@ const directory = {
   },
   themedesigner: {
     name: 'Theme Designer',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/theme-designer/theme-designer').then(m => ({ default: m.ThemeDesigner })),
     ),
     defaultTitle: 'Windows Classic Theme Designer',
@@ -124,7 +136,7 @@ const directory = {
   },
   mediaplayer: {
     name: 'Media Player',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/media-player/media-player').then(m => ({ default: m.MediaPlayer })),
     ),
     defaultTitle: 'Media Player',
@@ -137,7 +149,7 @@ const directory = {
   },
   outlookexpress: {
     name: 'Outlook Express',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/outlook-express').then(m => ({ default: m.OutlookExpress })),
     ),
     defaultTitle: 'Untitled - Outlook Express',
@@ -163,7 +175,7 @@ const directory = {
   },
   internetexplorer: {
     name: 'Internet Explorer',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/internet-explorer/internet-explorer').then(m => ({ default: m.InternetExplorer })),
     ),
     defaultTitle: 'Microsoft Internet Explorer',
@@ -177,7 +189,7 @@ const directory = {
   },
   mydocuments: {
     name: 'My Documents',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/my-documents/my-documents').then(m => ({ default: m.MyDocuments })),
     ),
     defaultTitle: 'My Documents',
@@ -191,7 +203,7 @@ const directory = {
   },
   imageviewer: {
     name: 'Image Viewer',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/image-viewer/image-viewer').then(m => ({ default: m.ImageViewer })),
     ),
     defaultTitle: 'Image Viewer',
@@ -204,7 +216,7 @@ const directory = {
   },
   pdfviewer: {
     name: 'PDF Viewer',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/apps/pdf-viewer/pdf-viewer').then(m => ({ default: m.PdfViewer })),
     ),
     defaultTitle: 'PDF Viewer',
@@ -216,7 +228,7 @@ const directory = {
   },
   taskbarproperties: {
     name: 'Taskbar Properties',
-    Component: lazy(() =>
+    ...lazyApp(() =>
       import('../../directory/system/taskbar-properties/taskbar-properties').then(m => ({ default: m.TaskbarProperties })),
     ),
     defaultTitle: 'Taskbar Properties',
@@ -272,6 +284,36 @@ export function getStartupAppIds(): AppId[] {
 // ---------------------------------------------------------------------------
 
 const entries = Object.entries(directory) as [AppId, ProcessDirectoryEntry][]
+
+/**
+ * Loaders for every system app's lazy chunk. The shell warms these in the
+ * background once the desktop is up so system windows open instantly.
+ */
+export function getSystemAppChunkLoaders(): Array<() => Promise<unknown>> {
+  return entries
+    .filter(([, entry]) => entry.preload != null)
+    .map(([, entry]) => entry.preload as () => Promise<unknown>)
+}
+
+const warmedAppChunks = new Set<string>()
+
+/**
+ * Warm a single app's lazy chunk on user intent (hovering / focusing a
+ * launcher), so the window opens instantly if the user then clicks. Deduped so
+ * repeated hovers don't refetch; a failure clears the flag so a later hover can
+ * retry. Apps without a `preload` loader (iframes, remote bundles) are no-ops.
+ */
+export function preloadApp(appId: AppId | (string & {})): void {
+  if (warmedAppChunks.has(appId))
+    return
+  const load = directory[appId as AppId]?.preload
+  if (!load)
+    return
+  warmedAppChunks.add(appId)
+  void load().catch(() => {
+    warmedAppChunks.delete(appId)
+  })
+}
 
 export interface DesktopAppItem {
   appId: AppId

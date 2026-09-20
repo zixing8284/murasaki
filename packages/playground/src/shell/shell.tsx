@@ -29,6 +29,7 @@ import { ShaderGlass } from './shader-glass'
 import { StartMenu } from './start-menu/start-menu'
 import { StartupScreen } from './startup/startup-screen'
 import { useStartupPreload } from './startup/use-startup-preload'
+import { useWarmSystemAppChunks } from './startup/warm-app-chunks'
 import { Taskbar } from './taskbar/taskbar'
 import { WindowRenderer } from './window/renderer'
 
@@ -110,6 +111,10 @@ export function Shell(): React.ReactElement {
 
   const preload = useStartupPreload()
   const isBooted = preload.ready && !desktopFilesLoading
+
+  // Warm system apps' lazy chunks in the background so their windows open
+  // instantly once the desktop is up (external/iframe apps keep a launch splash).
+  useWarmSystemAppChunks(isBooted)
 
   // Set container ref to store on mount
   const setContainerRef = (el: HTMLDivElement | null): void => {

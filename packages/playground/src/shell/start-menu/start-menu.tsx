@@ -8,7 +8,7 @@ import {
   MenuSubTrigger,
 } from '@murasaki-io/react98'
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { getStartMenuApps } from '../../contexts/process/directory'
+import { getStartMenuApps, preloadApp } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { useTaskbarSettings } from '../../contexts/taskbar-settings'
 import { assetPath } from '../../lib/asset-path'
@@ -164,7 +164,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                   </MenuSubTrigger>
                   <MenuSubContent boundaryRef={screenRef}>
                     {ACCESSORIES.map(app => (
-                      <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                      <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
                         <StartIcon src={app.icon.sm} />
                         {app.label}
                       </MenuItem>
@@ -302,7 +302,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 </MenuSub>
                 <MenuSeparator />
                 {PROGRAMS.map(app => (
-                  <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                  <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
                     <StartIcon src={app.icon.sm} />
                     {app.label}
                   </MenuItem>
@@ -316,7 +316,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
               </MenuSubTrigger>
               <MenuSubContent boundaryRef={screenRef}>
                 {DOCUMENTS.map(app => (
-                  <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                  <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
                     <StartIcon src={app.icon.sm} />
                     {app.label}
                   </MenuItem>
@@ -330,7 +330,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
               </MenuSubTrigger>
               <MenuSubContent boundaryRef={screenRef}>
                 {SETTINGS.map(app => (
-                  <MenuItem key={app.appId} onClick={() => launch(app.appId)}>
+                  <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
                     <StartIcon src={app.icon.sm} />
                     {app.label}
                   </MenuItem>

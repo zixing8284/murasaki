@@ -18,7 +18,7 @@ import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
 import { RECYCLE_BIN_PATH, useFolderChildren } from '../../contexts/file-system'
-import { APP_ID, getDesktopApps } from '../../contexts/process/directory'
+import { APP_ID, getDesktopApps, preloadApp } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { ICON } from '../../lib/icons'
@@ -39,6 +39,7 @@ interface IconEntry {
   label: string
   icon: ReactNode
   onOpen: () => void
+  onPreload?: () => void
 }
 
 interface SelectionRect {
@@ -132,6 +133,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     label: app.label,
     icon: <AppIcon appId={app.appId} size="lg" />,
     onOpen: () => open(app.appId),
+    onPreload: () => preloadApp(app.appId),
   }))
 
   const files: IconEntry[] = items.map(item => ({
@@ -378,6 +380,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
                 onSelect={handleIconSelect}
                 onDragPreviewChange={setDragPreview}
                 onOpen={entry.onOpen}
+                onPreload={entry.onPreload}
                 isCellOccupied={isRenderedCellOccupied}
                 menuContainer={desktopEl}
               />

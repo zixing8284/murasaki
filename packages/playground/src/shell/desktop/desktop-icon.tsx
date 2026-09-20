@@ -26,6 +26,7 @@ interface DesktopIconProps {
   onSelect: (id: string, additive: boolean, preserveSelectedGroup: boolean) => void
   onDragPreviewChange: (preview: DesktopDragPreview | null) => void
   onOpen: () => void
+  onPreload?: () => void
   isCellOccupied: DesktopCellOccupancyChecker
   menuContainer?: HTMLElement | null
 }
@@ -43,6 +44,7 @@ export function DesktopIcon({
   onSelect,
   onDragPreviewChange,
   onOpen,
+  onPreload,
   isCellOccupied,
   menuContainer = null,
 }: DesktopIconProps): ReactElement {
@@ -78,6 +80,8 @@ export function DesktopIcon({
             zIndex,
           }}
           data-file-id={id}
+          onPointerEnter={onPreload}
+          onFocus={onPreload}
           onContextMenu={() => {
             // Right-clicking an unselected icon selects it (Windows behavior),
             // so the context menu acts on a visibly-active target.

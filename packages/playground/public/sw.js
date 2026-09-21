@@ -6,14 +6,16 @@
  * Cache strategy:
  * - `<base>/playground-assets.json` — network-first; the manifest version
  *   pins the asset cache name.
- * - `<base>/icons/`, `<base>/wallpaper/`, `<base>/assets/` — cache-first into a
- *   versioned cache keyed by the manifest version. Old versions are
- *   pruned on activate.
+ * - App shell (`shell` tier: hashed JS/CSS + `index.html`) — precached on
+ *   install into the versioned cache so the desktop cold-boots offline.
+ * - `<base>/icons/`, `<base>/wallpaper/`, `<base>/cursor/`, `<base>/assets/` —
+ *   cache-first into a versioned cache keyed by the manifest version. Old
+ *   versions are pruned on activate.
  * - `<base>/programs/` — HTML network-first, everything else
  *   stale-while-revalidate. Lets docs/JSPaint/Webamp launch instantly on
  *   repeat visits without serving a stale shell.
- * - Page navigations are not intercepted; the browser stays network-first
- *   on the app shell.
+ * - Page navigations are network-first with an offline fallback to the
+ *   precached `index.html`, so installed / offline launches still boot.
  *
  * Message API:
  * - `{ type: 'MURASAKI_CACHE_WARM', groups: ['critical', 'warm'] }`
@@ -32,13 +34,14 @@ const CACHE_PROGRESS_MESSAGE = 'MURASAKI_CACHE_PROGRESS'
 const ASSETS_PREFIX = new URL('assets/', self.registration.scope).pathname
 const ICONS_PREFIX = new URL('icons/', self.registration.scope).pathname
 const WALLPAPER_PREFIX = new URL('wallpaper/', self.registration.scope).pathname
+const CURSOR_PREFIX = new URL('cursor/', self.registration.scope).pathname
 const PROGRAMS_PREFIX = new URL('programs/', self.registration.scope).pathname
 const MANIFEST_URL = new URL(MANIFEST_PATH, self.registration.scope).toString()
 let assetManifestPromise
 
 self.addEventListener('install', (event) => {
   self.skipWaiting()
-  event.waitUntil(precacheManifestGroups(['critical']))
+  event.waitUntil(precacheManifestGroups(['shell', 'critical']))
 })
 
 self.addEventListener('activate', (event) => {
@@ -60,10 +63,16 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (event.request.mode === 'navigate') {
+    event.respondWith(navigationHandler(event.request))
     return
   }
 
-  if (url.pathname.startsWith(ICONS_PREFIX) || url.pathname.startsWith(WALLPAPER_PREFIX) || url.pathname.startsWith(ASSETS_PREFIX)) {
+  if (
+    url.pathname.startsWith(ICONS_PREFIX)
+    || url.pathname.startsWith(WALLPAPER_PREFIX)
+    || url.pathname.startsWith(CURSOR_PREFIX)
+    || url.pathname.startsWith(ASSETS_PREFIX)
+  ) {
     event.respondWith(getAssetCacheName().then(cacheName => cacheFirst(event.request, cacheName)))
     return
   }
@@ -187,6 +196,22 @@ async function networkFirst(request, cacheName) {
     const cached = await cache.match(request)
     if (cached) {
       return cached
+    }
+    throw error
+  }
+}
+
+// Navigations stay network-first for freshness, then fall back to the
+// precached app shell so installed / offline launches still boot.
+async function navigationHandler(request) {
+  try {
+    return await fetch(request)
+  }
+  catch (error) {
+    const cache = await caches.open(await getAssetCacheName())
+    const cachedShell = await cache.match(scopedUrl('/index.html'))
+    if (cachedShell) {
+      return cachedShell
     }
     throw error
   }

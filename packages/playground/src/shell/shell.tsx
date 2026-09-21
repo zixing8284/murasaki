@@ -19,9 +19,9 @@ import { SCREEN_SIZE_PRESETS, useScreenSize } from '../hooks/use-screen-size'
 import { useShaderGlass } from '../hooks/use-shader-glass'
 import { useWallpaper } from '../hooks/use-wallpaper'
 import { assetPath } from '../lib/asset-path'
+import { ensureCached } from '../lib/asset-provisioner'
 import { isCustomWallpaperId } from '../lib/wallpaper-storage'
 import { getWallpaperEntry } from '../lib/wallpapers'
-import { warmServiceWorkerCache } from '../sw-register'
 import { CrtOverlay } from './crt-overlay'
 import { Desktop } from './desktop/desktop'
 import { ShellInputProvider } from './input/shell-input'
@@ -133,7 +133,7 @@ export function Shell(): React.ReactElement {
     if (!isBooted)
       return
     getStartupAppIds().forEach(appId => open(appId))
-    warmServiceWorkerCache(['critical', 'warm'])
+    ensureCached(['critical', 'warm'])
   }, [isBooted, open])
 
   const handleDesktopClick = (): void => {

@@ -98,19 +98,6 @@ export const SYSTEM_CURSORS = [
   '/cursor/nwse-resize.cur',
 ] as const
 
-/**
- * Larger / lower-priority images. Warmed in the background after the
- * desktop is interactive so first paint isn't blocked.
- */
-export const WARM_IMAGE_ASSETS = [
-  MEDIA_PLAYER_EMPTY_BACKGROUND,
-  '/icons/cursor-12x21.png',
-  '/icons/paint-file-16.png',
-  '/icons/network-16.png',
-  '/icons/smiley-16.png',
-  '/wallpaper/water.gif',
-] as const
-
 /** De-duplicate while preserving insertion order. */
 export function uniquePaths(paths: readonly (string | undefined | null)[]): string[] {
   const seen = new Set<string>()

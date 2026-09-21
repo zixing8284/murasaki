@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { assetPath } from '../../lib/asset-path'
-import { ASSET_MANIFEST_PUBLIC_PATH, uniquePaths } from '../../lib/playground-assets'
-import { getCriticalAssetPaths, getWarmAssetPaths } from './startup-assets'
+import { fetchAssetManifest, preloadImages, tierPaths } from '../../lib/asset-provisioner'
+import { isImageAsset } from '../../lib/asset-tiers'
+import { uniquePaths } from '../../lib/playground-assets'
 
 /** Concurrent image preloads for the blocking critical group. */
 const CRITICAL_CONCURRENCY = 8
@@ -24,15 +24,6 @@ export interface StartupPreloadState {
   errors: string[]
 }
 
-interface AssetManifest {
-  version: string
-  groups: {
-    critical?: string[]
-    warm?: string[]
-    programs?: string[]
-  }
-}
-
 const INITIAL_STATE: StartupPreloadState = {
   phase: 'manifest',
   ready: false,
@@ -46,89 +37,12 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => window.setTimeout(resolve, ms))
 }
 
-async function fetchManifest(signal: AbortSignal): Promise<AssetManifest | null> {
-  try {
-    const response = await fetch(assetPath(ASSET_MANIFEST_PUBLIC_PATH), { cache: 'no-cache', signal })
-    return response.ok ? (await response.json()) as AssetManifest : null
-  }
-  catch {
-    return null
-  }
-}
-
-function preloadImage(path: string, signal: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (signal.aborted) {
-      resolve()
-      return
-    }
-
-    const image = new Image()
-    const settle = (error?: Error): void => {
-      image.onload = null
-      image.onerror = null
-      error ? reject(error) : resolve()
-    }
-
-    image.decoding = 'async'
-    image.onload = () => image.decode().catch(() => undefined).then(() => settle())
-    image.onerror = () => settle(new Error(`Unable to preload ${path}`))
-    signal.addEventListener('abort', () => {
-      image.src = ''
-      settle()
-    }, { once: true })
-    image.src = assetPath(path)
-  })
-}
-
-interface PreloadOptions {
-  signal: AbortSignal
-  concurrency: number
-  onComplete?: (path: string, error?: Error) => void
-}
-
-async function preloadAll(paths: readonly string[], options: PreloadOptions): Promise<void> {
-  let cursor = 0
-  const workers = Math.min(options.concurrency, paths.length)
-
-  await Promise.all(Array.from({ length: workers }, async () => {
-    while (!options.signal.aborted) {
-      const index = cursor
-      cursor += 1
-      const path = paths[index]
-      if (path == null)
-        return
-
-      try {
-        await preloadImage(path, options.signal)
-        options.onComplete?.(path)
-      }
-      catch (err) {
-        options.onComplete?.(path, err instanceof Error ? err : new Error(`Unable to preload ${path}`))
-      }
-    }
-  }))
-}
-
-function criticalFrom(manifest: AssetManifest | null): string[] {
-  const fromManifest = manifest?.groups.critical ?? []
-  if (fromManifest.length > 0) {
-    return uniquePaths([...fromManifest, ...getCriticalAssetPaths()])
-  }
-  return getCriticalAssetPaths()
-}
-
-function warmFrom(manifest: AssetManifest | null, critical: readonly string[]): string[] {
-  const fromManifest = manifest?.groups.warm ?? []
-  const seen = new Set(critical)
-  const candidates = fromManifest.length > 0 ? uniquePaths(fromManifest) : getWarmAssetPaths()
-  return candidates.filter(path => !seen.has(path))
-}
-
 /**
- * Drives the playground startup splash: fetch manifest → preload critical
- * icons/images with bounded concurrency → mark ready → continue warm
- * preload in the background. Individual asset failures are non-fatal.
+ * Drives the playground startup splash: fetch manifest → preload the critical
+ * image tier with bounded concurrency → mark ready → continue warming the
+ * warm tier in the background. Offline caching of every tier is delegated to
+ * the service worker via the provisioner; individual asset failures here are
+ * non-fatal.
  */
 export function useStartupPreload(): StartupPreloadState {
   const [state, setState] = useState<StartupPreloadState>(INITIAL_STATE)
@@ -138,9 +52,12 @@ export function useStartupPreload(): StartupPreloadState {
     const controller = new AbortController()
 
     void (async () => {
-      const manifest = await fetchManifest(controller.signal)
-      const critical = criticalFrom(manifest)
-      const warm = warmFrom(manifest, critical)
+      const manifest = await fetchAssetManifest(controller.signal)
+      // Only images gate first paint; cursors and other non-image critical
+      // assets are cached for offline by the service worker, not decoded here.
+      const critical = uniquePaths(tierPaths(manifest, 'critical')).filter(isImageAsset)
+      const seen = new Set(critical)
+      const warm = uniquePaths(tierPaths(manifest, 'warm')).filter(path => isImageAsset(path) && !seen.has(path))
       const start = performance.now()
       let loaded = 0
 
@@ -155,7 +72,7 @@ export function useStartupPreload(): StartupPreloadState {
         currentAsset: critical[0] ?? null,
       }))
 
-      const criticalRun = preloadAll(critical, {
+      const criticalRun = preloadImages(critical, {
         signal: controller.signal,
         concurrency: CRITICAL_CONCURRENCY,
         onComplete: (path, error) => {
@@ -185,7 +102,7 @@ export function useStartupPreload(): StartupPreloadState {
         if (!mounted || controller.signal.aborted || warm.length === 0)
           return
         setState(prev => ({ ...prev, phase: 'warm' }))
-        await preloadAll(warm, {
+        await preloadImages(warm, {
           signal: controller.signal,
           concurrency: WARM_CONCURRENCY,
         })

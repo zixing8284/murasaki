@@ -1,4 +1,5 @@
-import type { Connect, Plugin } from 'vite'
+import type { Connect, HtmlTagDescriptor, Plugin } from 'vite'
+import type { AssetTier } from './src/lib/asset-tiers'
 import { createHash } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, posix, relative, resolve, sep } from 'node:path'
@@ -8,6 +9,7 @@ import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { classifyAsset, MANIFEST_SCAN_ROOTS } from './src/lib/asset-tiers'
 
 // Subpath prefix used by GitHub Pages (e.g. `/murasaki`). Local dev/build
 // stays at `/` unless `DEPLOY_BASE_PATH` is set. Always normalize to a
@@ -23,6 +25,14 @@ const embeddedDocsRoot = resolve(playgroundRoot, 'public/programs/docs')
 const publicRoot = resolve(playgroundRoot, 'public')
 const manifestPublicPath = '/playground-assets.json'
 const manifestRequestPath = `${base.replace(/\/$/, '')}${manifestPublicPath}`
+const webManifestPublicPath = '/manifest.webmanifest'
+const webManifestRequestPath = `${base.replace(/\/$/, '')}${webManifestPublicPath}`
+
+// PWA / installability metadata. Icon `src` and injected `href` values are
+// relative so they resolve against Vite's `base` on subpath deployments.
+const THEME_COLOR = '#008080'
+const APP_NAME = 'murasaki\'s Windows 98 Desktop'
+const APP_SHORT_NAME = 'murasaki 98'
 
 export default defineConfig({
   root: '.',
@@ -120,42 +130,36 @@ function isInsideEmbeddedDocsRoot(filePath: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Playground asset manifest
+// Playground asset manifest + PWA web app manifest
 //
-// Scans `public/icons` and `public/wallpaper` for static images, hashes each
-// file, and emits a versioned `playground-assets.json` at build time —
-// also served by the dev/preview middleware so dev runs exercise the
-// same fetch path. The startup preloader and service worker both read
-// this manifest to drive icon caching.
+// Scans the public dirs in `MANIFEST_SCAN_ROOTS`, hashes each file, and
+// classifies it into a tier via the single `asset-tiers` policy. At build
+// time the hashed app-shell outputs (JS/CSS/HTML) are added as the `shell`
+// tier so the service worker can precache them for offline boot. The
+// manifest is also served by the dev/preview middleware so dev runs
+// exercise the same fetch path; the startup provisioner and service worker
+// both read it.
+//
+// The same plugin emits the PWA `manifest.webmanifest` and injects its
+// `<link rel="manifest">` / theme-color / apple-touch-icon tags into the
+// HTML shell, all resolved relative to Vite's `base`.
 // ---------------------------------------------------------------------------
 
 interface ManifestAsset {
   path: string
   size: number
   hash: string
-  group: 'critical' | 'warm' | 'programs'
+  group: AssetTier
 }
 
 interface PlaygroundAssetsManifest {
   version: string
   assets: ManifestAsset[]
-  groups: {
-    critical: string[]
-    warm: string[]
-    programs: string[]
-  }
+  groups: Record<AssetTier, string[]>
 }
 
-const MANIFEST_SCAN_ROOTS = ['icons', 'wallpaper'] as const
-const WARM_PATH_PREFIXES = ['/wallpaper/'] as const
-// Paths under `WARM_PATH_PREFIXES` that should still be critical because
-// they are visible immediately after boot (e.g. the desktop wallpaper).
-const CRITICAL_OVERRIDES = new Set<string>(['/wallpaper/SoapBubbles.bmp'])
-
 function playgroundAssetManifestPlugin(): Plugin {
-  let cachedManifest: { json: string, etag: string } | null = null
-
-  const buildManifest = (): PlaygroundAssetsManifest => {
+  const buildBaseManifest = (): PlaygroundAssetsManifest => {
     const assets: ManifestAsset[] = []
 
     for (const root of MANIFEST_SCAN_ROOTS) {
@@ -167,73 +171,136 @@ function playgroundAssetManifestPlugin(): Plugin {
         const buffer = readFileSync(file)
         const hash = createHash('sha1').update(buffer).digest('hex').slice(0, 16)
         const relPath = `/${relative(publicRoot, file).split(sep).join(posix.sep)}`
-        assets.push({
-          path: relPath,
-          size: stat.size,
-          hash,
-          group: classifyAsset(relPath),
-        })
+        assets.push({ path: relPath, size: stat.size, hash, group: classifyAsset(relPath, stat.size) })
       })
     }
 
     assets.sort((a, b) => a.path.localeCompare(b.path))
-    const version = createHash('sha1')
-      .update(assets.map(a => `${a.path}:${a.hash}`).join('\n'))
+
+    return {
+      version: '',
+      assets,
+      groups: {
+        shell: [],
+        critical: assets.filter(a => a.group === 'critical').map(a => a.path),
+        warm: assets.filter(a => a.group === 'warm').map(a => a.path),
+        programs: assets.filter(a => a.group === 'programs').map(a => a.path),
+      },
+    }
+  }
+
+  // Finalize with the app-shell tier and a version that folds in the shell
+  // filenames — so a code-only change (new hashed JS/CSS) invalidates the
+  // runtime cache even when no image changed.
+  const finalize = (manifest: PlaygroundAssetsManifest, shell: string[]): string => {
+    manifest.groups.shell = shell
+    manifest.version = createHash('sha1')
+      .update([...manifest.assets.map(a => `${a.path}:${a.hash}`), ...shell].join('\n'))
       .digest('hex')
       .slice(0, 16)
-
-    const groups = {
-      critical: assets.filter(a => a.group === 'critical').map(a => a.path),
-      warm: assets.filter(a => a.group === 'warm').map(a => a.path),
-      programs: assets.filter(a => a.group === 'programs').map(a => a.path),
-    }
-
-    return { version, assets, groups }
+    return JSON.stringify(manifest, null, 2)
   }
 
-  const getCached = (): { json: string, etag: string } => {
-    if (cachedManifest)
-      return cachedManifest
-    const manifest = buildManifest()
-    const json = JSON.stringify(manifest, null, 2)
-    const etag = `"${manifest.version}"`
-    cachedManifest = { json, etag }
-    return cachedManifest
-  }
-
-  const handler: Connect.NextHandleFunction = (request, response, next) => {
+  const assetManifestHandler: Connect.NextHandleFunction = (request, response, next) => {
     if (request.url == null)
       return next()
     const [requestPath] = request.url.split('?')
     if (requestPath !== manifestRequestPath)
       return next()
-    cachedManifest = null // always refresh in dev so newly-added files appear
-    const { json, etag } = getCached()
+    // Dev has no build outputs, so the shell tier is empty here.
     response.statusCode = 200
     response.setHeader('Content-Type', 'application/json; charset=utf-8')
     response.setHeader('Cache-Control', 'no-cache')
-    response.setHeader('ETag', etag)
-    response.end(json)
+    response.end(finalize(buildBaseManifest(), []))
+  }
+
+  const webManifestHandler: Connect.NextHandleFunction = (request, response, next) => {
+    if (request.url == null)
+      return next()
+    const [requestPath] = request.url.split('?')
+    if (requestPath !== webManifestRequestPath)
+      return next()
+    response.statusCode = 200
+    response.setHeader('Content-Type', 'application/manifest+json; charset=utf-8')
+    response.setHeader('Cache-Control', 'no-cache')
+    response.end(JSON.stringify(buildWebManifest(), null, 2))
+  }
+
+  // Only needed in dev, where there are no built files to serve. In preview /
+  // production the emitted `playground-assets.json` (with its `shell` tier)
+  // and `manifest.webmanifest` are served statically, so the middleware must
+  // not shadow them with a dev-shaped, shell-less manifest.
+  const attachDevMiddleware = (server: { middlewares: Connect.Server }): void => {
+    server.middlewares.use(assetManifestHandler)
+    server.middlewares.use(webManifestHandler)
   }
 
   return {
     name: 'murasaki-playground-asset-manifest',
     configureServer(server) {
-      server.middlewares.use(handler)
+      attachDevMiddleware(server)
     },
-    configurePreviewServer(server) {
-      server.middlewares.use(handler)
+    transformIndexHtml() {
+      return webManifestHtmlTags()
     },
-    generateBundle() {
-      cachedManifest = null
-      const { json } = getCached()
+    generateBundle(_options, bundle) {
+      const shell = collectShellAssets(bundle)
       this.emitFile({
         type: 'asset',
         fileName: manifestPublicPath.replace(/^\//, ''),
-        source: json,
+        source: finalize(buildBaseManifest(), shell),
+      })
+      this.emitFile({
+        type: 'asset',
+        fileName: webManifestPublicPath.replace(/^\//, ''),
+        source: JSON.stringify(buildWebManifest(), null, 2),
       })
     },
   }
+}
+
+// App-shell tier: the hashed JS/CSS and HTML entry points that must be
+// precached for an offline cold boot. Public assets (icons, wallpaper, …)
+// are copied outside the bundle and handled by their own tiers, so they
+// never appear here. `index.html` is added explicitly because Vite emits it
+// after this hook runs, so it is not yet in the bundle.
+function collectShellAssets(bundle: Record<string, unknown>): string[] {
+  const shell = new Set<string>(['/index.html'])
+  for (const fileName of Object.keys(bundle)) {
+    if (/\.(?:js|css)$/.test(fileName) || fileName.endsWith('.html')) {
+      shell.add(`/${fileName}`)
+    }
+  }
+  return [...shell].sort((a, b) => a.localeCompare(b))
+}
+
+function buildWebManifest(): Record<string, unknown> {
+  return {
+    name: APP_NAME,
+    short_name: APP_SHORT_NAME,
+    description: 'A Windows 98 desktop built with @murasaki-io/react98.',
+    start_url: './',
+    scope: './',
+    display: 'standalone',
+    background_color: THEME_COLOR,
+    theme_color: THEME_COLOR,
+    icons: [
+      { src: 'icons/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: 'icons/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: 'icons/pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+    ],
+  }
+}
+
+function webManifestHtmlTags(): HtmlTagDescriptor[] {
+  return [
+    { tag: 'link', attrs: { rel: 'manifest', href: 'manifest.webmanifest' }, injectTo: 'head' },
+    { tag: 'meta', attrs: { name: 'theme-color', content: THEME_COLOR }, injectTo: 'head' },
+    { tag: 'link', attrs: { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon-180.png' }, injectTo: 'head' },
+    { tag: 'meta', attrs: { name: 'apple-mobile-web-app-capable', content: 'yes' }, injectTo: 'head' },
+    { tag: 'meta', attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }, injectTo: 'head' },
+    { tag: 'meta', attrs: { name: 'apple-mobile-web-app-title', content: APP_SHORT_NAME }, injectTo: 'head' },
+  ]
 }
 
 function walkFiles(dir: string, onFile: (filePath: string) => void): void {
@@ -249,19 +316,4 @@ function walkFiles(dir: string, onFile: (filePath: string) => void): void {
       onFile(child)
     }
   }
-}
-
-function classifyAsset(publicPath: string): 'critical' | 'warm' | 'programs' {
-  if (publicPath.startsWith('/programs/')) {
-    return 'programs'
-  }
-  if (CRITICAL_OVERRIDES.has(publicPath)) {
-    return 'critical'
-  }
-  for (const prefix of WARM_PATH_PREFIXES) {
-    if (publicPath.startsWith(prefix)) {
-      return 'warm'
-    }
-  }
-  return 'critical'
 }

@@ -108,10 +108,8 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
   // on the launch identity — otherwise an unstable callback identity would
   // re-run the effect on every render and reload the file in a loop.
   const loadLocalFileRef = useRef(player.loadLocalFile)
-  const loadUrlTrackRef = useRef(player.loadUrlTrack)
   useEffect(() => {
     loadLocalFileRef.current = player.loadLocalFile
-    loadUrlTrackRef.current = player.loadUrlTrack
   })
 
   // Load a file opened from the Explorer (virtual file system) on each fresh
@@ -126,15 +124,6 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
       const node = await getVfsNode(path)
       if (!active || !node)
         return
-      const isVideo = node.mimeType?.startsWith('video/') ?? /\.(?:mp4|webm|ogv|mov|mkv|avi|m4v)$/i.test(node.name)
-      if (node.streamUrl) {
-        loadUrlTrackRef.current({
-          title: node.name.replace(/\.[^.]+$/, ''),
-          url: node.streamUrl,
-          type: isVideo ? 'video' : 'audio',
-        })
-        return
-      }
       const file = await getVfsFile(path)
       if (active && file)
         loadLocalFileRef.current(file, { replacePlaylist: true })

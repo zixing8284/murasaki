@@ -18,7 +18,6 @@ interface SeedFile {
   /** Overrides for the association-derived kind/icon/openApp. */
   mimeType?: string
   assetUrl?: string
-  streamUrl?: string
   textContent?: string
 }
 
@@ -34,12 +33,6 @@ interface SeedFolder {
 type SeedNode = SeedFile | SeedFolder
 
 const SEED_TIME = Date.UTC(1999, 11, 31, 12, 0, 0)
-
-// Remote sample tracks (streamed, not downloaded) preserved from the demo.
-const SAMPLE_TRACK_BASE = 'https://s2jglcbck31odyaw.public.blob.vercel-storage.com/tracks'
-function sampleTrackUrl(filename: string): string {
-  return `${SAMPLE_TRACK_BASE}/${encodeURIComponent(filename)}`
-}
 
 const README_TEXT = [
   'Welcome to My Documents.',
@@ -93,8 +86,6 @@ const tree: SeedFolder = {
                   name: 'Media',
                   children: [
                     { type: 'file', name: 'intro.wav', size: 220400 },
-                    { type: 'file', name: '五月はベリルの風をつれて.mp3', size: 4325376, mimeType: 'audio/mpeg', streamUrl: sampleTrackUrl('みとせのりこ - 五月はベリルの风をつれて.mp3') },
-                    { type: 'file', name: 'Eyes On Me.mp3', size: 4876288, mimeType: 'audio/mpeg', streamUrl: sampleTrackUrl('王菲 - Eyes On Me.mp3') },
                   ],
                 },
                 { type: 'file', name: '1999.mp3', size: 1242972, mimeType: 'audio/mpeg', assetUrl: '/sample/1999.mp3' },
@@ -164,7 +155,6 @@ function flatten(node: SeedNode, parentPath: string, out: VfsNode[]): void {
     mimeType: node.mimeType,
     openApp: association.openApp,
     assetUrl: node.assetUrl,
-    streamUrl: node.streamUrl,
     textContent: node.textContent,
     hasBlob: false,
   })

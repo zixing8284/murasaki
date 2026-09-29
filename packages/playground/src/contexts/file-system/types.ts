@@ -36,8 +36,6 @@ export interface VfsNode {
   hasBlob?: boolean
   /** Seeded demo file backed by a public asset instead of a blob. */
   assetUrl?: string
-  /** Seeded media file streamed from a remote URL (not downloaded). */
-  streamUrl?: string
   /** Seeded demo text file whose contents are inlined here. */
   textContent?: string
   /** Seeded system chrome (drives, Control Panel …) — protected from edits. */

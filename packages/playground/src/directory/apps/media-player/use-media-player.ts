@@ -31,7 +31,7 @@ function releaseManager(): void {
 const VIDEO_EXTENSIONS = /\.(?:mp4|webm|ogv|mov|avi|mkv)$/i
 const ACCEPTED_MEDIA_TYPES = 'audio/*,video/*'
 
-function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
+function detectTrackType(file?: File): 'audio' | 'video' {
   if (file) {
     if (file.type.startsWith('video/'))
       return 'video'
@@ -39,8 +39,6 @@ function detectTrackType(file?: File, url?: string): 'audio' | 'video' {
       return 'audio'
     return VIDEO_EXTENSIONS.test(file.name) ? 'video' : 'audio'
   }
-  if (url && VIDEO_EXTENSIONS.test(url))
-    return 'video'
   return 'audio'
 }
 
@@ -93,7 +91,6 @@ export interface UseMediaPlayerResult {
   toggleMute: () => void
   loadLocalFile: (file: File, options?: { replacePlaylist?: boolean }) => void
   addLocalFile: (file: File) => void
-  loadUrlTrack: (input: { title: string, url: string, type: 'audio' | 'video', artist?: string }) => void
   clearLocalImportError: () => void
   openFilePicker: () => void
   getMediaElement: () => HTMLMediaElement | null
@@ -436,28 +433,6 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     loadLocalFile(file)
   }
 
-  /** Replace the playlist with a single streaming URL track and play it. */
-  const loadUrlTrack = (input: { title: string, url: string, type: 'audio' | 'video', artist?: string }): void => {
-    for (const url of objectUrlsRef.current) {
-      URL.revokeObjectURL(url)
-    }
-    objectUrlsRef.current.clear()
-    const track: Track = {
-      id: `stream-${nextLocalId++}`,
-      title: input.title,
-      url: input.url,
-      type: input.type,
-      artist: input.artist,
-    }
-    setModel(prev => ({
-      ...prev,
-      playlist: [track],
-      currentIndex: 0,
-      playOrderIndices: [0],
-    }))
-    managerRef.current?.loadAndPlay(track)
-  }
-
   const clearLocalImportError = (): void => {
     setLocalImportError(null)
   }
@@ -565,7 +540,6 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     toggleMute,
     loadLocalFile,
     addLocalFile,
-    loadUrlTrack,
     clearLocalImportError,
     openFilePicker,
 

@@ -20,11 +20,7 @@ const treeViewItemStyles = cva(
   {
     variants: {
       variant: {
-        summary: [
-          'list-none',
-          '[&::-webkit-details-marker]:content-none',
-          '[&::marker]:content-none',
-        ],
+        branch: [],
         leaf: [],
       },
       disabled: {
@@ -121,12 +117,10 @@ interface TreeViewItemProps {
   defaultExpanded?: boolean
   /** Controlled expanded state. When provided, overrides internal state. */
   expanded?: boolean
-  /** Callback fired when the user attempts to toggle expand/collapse (controlled mode). */
+  /** Callback fired when the user toggles expand/collapse (controlled mode). */
   onExpandedChange?: (expanded: boolean) => void
   /** Whether this item is currently selected (shows highlight) */
   selected?: boolean
-  /** When true and the item is expanded, clicking will not collapse it */
-  preventCollapse?: boolean
   /**
    * Render a branch with no expand/collapse control: its children are always
    * shown and the leading disclosure box is omitted. Use for a namespace root
@@ -153,7 +147,6 @@ export function TreeViewItem({
   expanded: expandedProp,
   onExpandedChange,
   selected = false,
-  preventCollapse = false,
   hideToggle = false,
   disabled = false,
   expandIcon,
@@ -165,6 +158,20 @@ export function TreeViewItem({
   const isControlled = expandedProp !== undefined
   const [internalExpanded, setInternalExpanded] = React.useState(defaultExpanded)
   const expanded = isControlled ? expandedProp : internalExpanded
+
+  const setExpanded = (next: boolean): void => {
+    if (disabled)
+      return
+    if (isControlled)
+      onExpandedChange?.(next)
+    else
+      setInternalExpanded(next)
+  }
+
+  const activate = (): void => {
+    if (!disabled)
+      onClick?.()
+  }
 
   // Toggle-less branch (namespace root): always show children, no disclosure.
   if (hasChildren && hideToggle) {
@@ -178,10 +185,7 @@ export function TreeViewItem({
           data-disabled={disabled || undefined}
           tabIndex={disabled || !onClick ? -1 : 0}
           className={cn(treeViewItemStyles({ variant: 'leaf', disabled, selected, interactive: Boolean(onClick) }))}
-          onClick={() => {
-            if (!disabled)
-              onClick?.()
-          }}
+          onClick={activate}
           onKeyDown={(e) => {
             if (onClick && (e.key === 'Enter' || e.key === ' ')) {
               e.preventDefault()
@@ -199,95 +203,87 @@ export function TreeViewItem({
     )
   }
 
+  if (hasChildren) {
+    // Windows Explorer tree semantics: the disclosure box is the only
+    // single-click expand/collapse target. The row itself selects/activates on
+    // single click and toggles only on double click, so clicking the icon or
+    // label never expands or collapses the branch.
+    return (
+      <li className={cn('list-none', className)}>
+        <div
+          role="treeitem"
+          aria-expanded={expanded}
+          aria-disabled={disabled || undefined}
+          data-expanded={expanded || undefined}
+          data-selected={selected || undefined}
+          data-disabled={disabled || undefined}
+          tabIndex={disabled ? -1 : 0}
+          className={cn(treeViewItemStyles({ variant: 'branch', disabled, selected }))}
+          onClick={activate}
+          onDoubleClick={() => setExpanded(!expanded)}
+          onKeyDown={(e) => {
+            if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault()
+              onClick()
+            }
+          }}
+        >
+          <span
+            aria-hidden="true"
+            data-tree-view-disclosure=""
+            className={treeViewDisclosureStyles()}
+            onClick={(e) => {
+              e.stopPropagation()
+              setExpanded(!expanded)
+            }}
+            onDoubleClick={e => e.stopPropagation()}
+          >
+            {expanded ? (collapseIcon ?? <TreeCollapseGlyph />) : (expandIcon ?? <TreeExpandGlyph />)}
+          </span>
+          {icon && <span className="shrink-0">{icon}</span>}
+          <span className="leading-none">{label}</span>
+        </div>
+        {expanded && (
+          <ul role="group" className={treeGroupClassName}>
+            {children}
+          </ul>
+        )}
+      </li>
+    )
+  }
+
   return (
     <li className={cn('list-none', className)}>
-      {hasChildren
-        ? (
-            <details
-              open={expanded}
-              onToggle={(e) => {
-                if (disabled) {
-                  e.preventDefault()
-                }
-                else if (isControlled) {
-                  onExpandedChange?.(e.currentTarget.open)
-                }
-                else {
-                  setInternalExpanded(e.currentTarget.open)
-                }
-              }}
-            >
-              <summary
-                role="treeitem"
-                aria-expanded={expanded}
-                aria-disabled={disabled || undefined}
-                data-expanded={expanded || undefined}
-                data-selected={selected || undefined}
-                data-disabled={disabled || undefined}
-                tabIndex={disabled ? -1 : 0}
-                className={cn(
-                  treeViewItemStyles({
-                    variant: 'summary',
-                    disabled,
-                    selected,
-                  }),
-                )}
-                onClick={(e) => {
-                  if (preventCollapse && expanded) {
-                    e.preventDefault()
-                  }
-                  if (!disabled) {
-                    onClick?.()
-                  }
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  data-tree-view-disclosure=""
-                  className={treeViewDisclosureStyles()}
-                >
-                  {expanded ? (collapseIcon ?? <TreeCollapseGlyph />) : (expandIcon ?? <TreeExpandGlyph />)}
-                </span>
-                {icon && <span className="shrink-0">{icon}</span>}
-                <span className="leading-none">{label}</span>
-              </summary>
-              <ul role="group" className={treeGroupClassName}>
-                {children}
-              </ul>
-            </details>
-          )
-        : (
-            <div
-              role="treeitem"
-              aria-disabled={disabled || undefined}
-              data-selected={selected || undefined}
-              data-disabled={disabled || undefined}
-              tabIndex={disabled || !onClick ? -1 : 0}
-              className={cn(
-                treeViewItemStyles({
-                  variant: 'leaf',
-                  disabled,
-                  selected,
-                  interactive: Boolean(onClick),
-                }),
-              )}
-              onClick={(e) => {
-                if (disabled)
-                  return
-                e.stopPropagation()
-                onClick?.()
-              }}
-              onKeyDown={(e) => {
-                if (onClick && (e.key === 'Enter' || e.key === ' ')) {
-                  e.preventDefault()
-                  onClick()
-                }
-              }}
-            >
-              {icon && <span className="shrink-0">{icon}</span>}
-              <span className="leading-none">{label}</span>
-            </div>
-          )}
+      <div
+        role="treeitem"
+        aria-disabled={disabled || undefined}
+        data-selected={selected || undefined}
+        data-disabled={disabled || undefined}
+        tabIndex={disabled || !onClick ? -1 : 0}
+        className={cn(
+          treeViewItemStyles({
+            variant: 'leaf',
+            disabled,
+            selected,
+            interactive: Boolean(onClick),
+          }),
+        )}
+        onClick={(e) => {
+          if (disabled)
+            return
+          e.stopPropagation()
+          onClick?.()
+        }}
+        onKeyDown={(e) => {
+          if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault()
+            onClick()
+          }
+        }}
+      >
+        {icon && <span className="shrink-0">{icon}</span>}
+        <span className="leading-none">{label}</span>
+      </div>
     </li>
   )
 }
@@ -299,20 +295,23 @@ interface TreeViewProps {
   className?: string
 }
 
-// Skip treeitems inside collapsed branches. A <summary>'s own <details>
-// does not count, because the summary itself is visible even when its
-// children are collapsed.
-function filterItem(el: HTMLElement): boolean {
-  let cursor: HTMLElement | null
-    = el.tagName === 'SUMMARY'
-      ? el.parentElement?.parentElement ?? null
-      : el.parentElement
-  while (cursor) {
-    if (cursor.tagName === 'DETAILS' && !(cursor as HTMLDetailsElement).open)
-      return false
-    cursor = cursor.parentElement
-  }
-  return true
+// Collapsed branches unmount their children, so every `[role="treeitem"]` in the
+// DOM is visible and no roving-focus filtering is required.
+
+// The first child treeitem of an expanded branch row (the group `<ul>` is the
+// row's next sibling inside the shared `<li>`).
+function firstChildTreeItem(row: HTMLElement): HTMLElement | null {
+  return row.parentElement?.querySelector<HTMLElement>(
+    ':scope > ul[role="group"] > li > [role="treeitem"]',
+  ) ?? null
+}
+
+// The parent branch row of a nested treeitem, or `null` at the top level.
+function parentTreeItem(row: HTMLElement): HTMLElement | null {
+  const group = row.parentElement?.parentElement
+  if (!group || group.getAttribute('role') !== 'group')
+    return null
+  return group.parentElement?.querySelector<HTMLElement>(':scope > [role="treeitem"]') ?? null
 }
 
 function TreeView({
@@ -327,14 +326,15 @@ function TreeView({
     itemSelector: '[role="treeitem"]',
     orientation: 'vertical',
     loop: false,
-    filterItem,
   })
 
   // ARIA TreeView pattern for the horizontal axis:
-  //   ArrowRight on a collapsed parent expands it; on an expanded parent moves
+  //   ArrowRight on a collapsed branch expands it; on an expanded branch moves
   //   focus to the first child treeitem.
-  //   ArrowLeft on an expanded parent collapses it; on a leaf or collapsed
-  //   parent moves focus to its parent treeitem.
+  //   ArrowLeft on an expanded branch collapses it; on a leaf or collapsed
+  //   branch moves focus to its parent treeitem.
+  // Expand/collapse reuses each row's own disclosure control so the keyboard
+  // and pointer paths share one toggle implementation.
   const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>): void => {
     if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft')
       return
@@ -346,43 +346,33 @@ function TreeView({
     if (!ref.current?.contains(active))
       return
 
-    const isSummary = active.tagName === 'SUMMARY'
-    const details = isSummary ? (active.parentElement as HTMLDetailsElement | null) : null
+    const disclosure = active.querySelector<HTMLElement>(':scope > [data-tree-view-disclosure]')
+    const isExpanded = active.getAttribute('aria-expanded') === 'true'
 
     if (event.key === 'ArrowRight') {
-      if (details && !details.open) {
+      if (disclosure && !isExpanded) {
         event.preventDefault()
-        details.open = true
-        details.dispatchEvent(new Event('toggle'))
+        disclosure.click()
         return
       }
-      if (details && details.open) {
-        const child = details.querySelector<HTMLElement>(':scope > ul [role="treeitem"]')
-        if (child) {
-          event.preventDefault()
-          child.focus()
-        }
+      const child = firstChildTreeItem(active)
+      if (child) {
+        event.preventDefault()
+        child.focus()
       }
       return
     }
 
     // ArrowLeft
-    if (details && details.open) {
+    if (disclosure && isExpanded) {
       event.preventDefault()
-      details.open = false
-      details.dispatchEvent(new Event('toggle'))
+      disclosure.click()
       return
     }
-    // Leaf, or summary of a collapsed branch: jump to the summary of the
-    // enclosing details. For a leaf that is `closest('details')`; for a
-    // collapsed summary it is the parent of its own details.
-    const enclosingDetails = isSummary
-      ? active.closest('details')?.parentElement?.closest('details')
-      : active.closest('details')
-    const parentSummary = enclosingDetails?.querySelector<HTMLElement>(':scope > summary[role="treeitem"]')
-    if (parentSummary) {
+    const parent = parentTreeItem(active)
+    if (parent) {
       event.preventDefault()
-      parentSummary.focus()
+      parent.focus()
     }
   }
 

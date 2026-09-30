@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
 import { TreeView, TreeViewItem } from '../src'
@@ -126,5 +126,49 @@ describe('treeView', () => {
     child.focus()
     await userEvent.keyboard('{ArrowLeft}')
     expect(document.activeElement).toBe(getItem('Alpha'))
+  })
+
+  // === Pointer interaction (Windows Explorer semantics) ===
+
+  it('toggles a branch when its disclosure box is clicked', async () => {
+    await renderTree()
+    const bravo = getItem('Bravo')
+    expect(bravo.getAttribute('aria-expanded')).toBe('false')
+    await userEvent.click(getDisclosure(bravo))
+    expect(bravo.getAttribute('aria-expanded')).toBe('true')
+    await userEvent.click(getDisclosure(bravo))
+    expect(bravo.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('activates but does not toggle a branch when its row is single-clicked', async () => {
+    const onClick = vi.fn()
+    await render(
+      <TreeView>
+        <TreeViewItem label="Root" onClick={onClick}>
+          <TreeViewItem label="Child" />
+        </TreeViewItem>
+      </TreeView>,
+    )
+    const root = getItem('Root')
+    expect(root.getAttribute('aria-expanded')).toBe('false')
+    await userEvent.click(root)
+    expect(onClick).toHaveBeenCalledTimes(1)
+    expect(root.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('does not collapse an expanded branch on a single row click', async () => {
+    await renderTree()
+    const alpha = getItem('Alpha')
+    expect(alpha.getAttribute('aria-expanded')).toBe('true')
+    await userEvent.click(alpha)
+    expect(alpha.getAttribute('aria-expanded')).toBe('true')
+  })
+
+  it('toggles a branch when its row is double-clicked', async () => {
+    await renderTree()
+    const bravo = getItem('Bravo')
+    expect(bravo.getAttribute('aria-expanded')).toBe('false')
+    await userEvent.dblClick(bravo)
+    expect(bravo.getAttribute('aria-expanded')).toBe('true')
   })
 })

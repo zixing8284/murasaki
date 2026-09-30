@@ -59,6 +59,7 @@ function FolderItem({ entry, onNavigate }: { entry: FavoritesFolder, onNavigate:
       label={entry.name}
       expanded={expanded}
       onExpandedChange={setExpanded}
+      onClick={() => setExpanded(!expanded)}
       icon={<FolderIcon open={expanded} />}
     >
       {entry.children.map((child, i) => (

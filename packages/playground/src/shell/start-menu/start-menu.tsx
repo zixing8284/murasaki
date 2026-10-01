@@ -1,4 +1,5 @@
 import type { RefObject } from 'react'
+import type { IconAsset } from '../../lib/icons'
 import {
   Menu,
   MenuItem,
@@ -28,7 +29,8 @@ interface StartMenuProps {
 }
 
 interface StartIconProps {
-  src: string
+  /** Icon asset carrying both the 16px and 32px art. */
+  src: IconAsset
   /** Render at the large (32px) top-level size. Submenu rows stay 16px. */
   large?: boolean
 }
@@ -36,7 +38,7 @@ interface StartIconProps {
 function StartIcon({ src, large = false }: StartIconProps): React.ReactElement {
   return (
     <img
-      src={assetPath(src)}
+      src={assetPath(large ? src.lg : src.sm)}
       alt=""
       className={`${large ? 'size-8' : 'size-4'} pixelated`}
       draggable={false}
@@ -50,23 +52,23 @@ function StartIcon({ src, large = false }: StartIconProps): React.ReactElement {
  * the app registry via `getStartMenuApps`, so they never appear here.
  */
 const ICON = {
-  windowsUpdate: ICONS.windowsUpdate.sm,
-  programs: ICONS.programGroup.sm,
-  documents: ICONS.folderMyDocs.sm,
-  settings: ICONS.settings.sm,
-  find: ICONS.searchFile.sm,
-  help: ICONS.help.sm,
-  run: ICONS.consolePrompt.sm,
-  logOff: ICONS.logOff.sm,
-  shutDown: ICONS.shutDown.sm,
-  accessories: ICONS.programGroup.sm,
-  notepad: ICONS.notepad.sm,
-  calculator: ICONS.calculator.sm,
-  paint: ICONS.paint.sm,
-  printers: ICONS.printer.sm,
-  findFiles: ICONS.searchFile.sm,
-  findComputer: ICONS.searchComputer.sm,
-  findWeb: ICONS.searchWeb.sm,
+  windowsUpdate: ICONS.windowsUpdate,
+  programs: ICONS.programGroup,
+  documents: ICONS.folderMyDocs,
+  settings: ICONS.settings,
+  find: ICONS.searchFile,
+  help: ICONS.help,
+  run: ICONS.consolePrompt,
+  logOff: ICONS.logOff,
+  shutDown: ICONS.shutDown,
+  accessories: ICONS.programGroup,
+  notepad: ICONS.notepad,
+  calculator: ICONS.calculator,
+  paint: ICONS.paint,
+  printers: ICONS.printer,
+  findFiles: ICONS.searchFile,
+  findComputer: ICONS.searchComputer,
+  findWeb: ICONS.searchWeb,
 } as const
 
 // Real, launchable rows are derived from the app registry — installing an app
@@ -165,7 +167,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                   <MenuSubContent boundaryRef={screenRef}>
                     {ACCESSORIES.map(app => (
                       <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
-                        <StartIcon src={app.icon.sm} />
+                        <StartIcon src={app.icon} />
                         {app.label}
                       </MenuItem>
                     ))}
@@ -303,7 +305,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
                 <MenuSeparator />
                 {PROGRAMS.map(app => (
                   <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
-                    <StartIcon src={app.icon.sm} />
+                    <StartIcon src={app.icon} />
                     {app.label}
                   </MenuItem>
                 ))}
@@ -317,7 +319,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
               <MenuSubContent boundaryRef={screenRef}>
                 {DOCUMENTS.map(app => (
                   <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
-                    <StartIcon src={app.icon.sm} />
+                    <StartIcon src={app.icon} />
                     {app.label}
                   </MenuItem>
                 ))}
@@ -331,7 +333,7 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
               <MenuSubContent boundaryRef={screenRef}>
                 {SETTINGS.map(app => (
                   <MenuItem key={app.appId} onClick={() => launch(app.appId)} onPointerEnter={() => preloadApp(app.appId)}>
-                    <StartIcon src={app.icon.sm} />
+                    <StartIcon src={app.icon} />
                     {app.label}
                   </MenuItem>
                 ))}

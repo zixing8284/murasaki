@@ -69,6 +69,9 @@ export interface UseMediaPlayerResult {
   formattedCurrentTime: string
   formattedDuration: string
   hasVideo: boolean
+  videoWidth: number
+  videoHeight: number
+  playbackRate: number
   volume: number
   muted: boolean
   playlist: Track[]
@@ -89,6 +92,7 @@ export interface UseMediaPlayerResult {
   setRepeat: (mode: 'off' | 'one' | 'all') => void
   setVolume: (level: number) => void
   toggleMute: () => void
+  setPlaybackRate: (rate: number) => void
   loadLocalFile: (file: File, options?: { replacePlaylist?: boolean }) => void
   addLocalFile: (file: File) => void
   clearLocalImportError: () => void
@@ -492,6 +496,10 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     manager.setMuted(!state.muted)
   }
 
+  const setPlaybackRate = (rate: number): void => {
+    managerRef.current?.setPlaybackRate(rate)
+  }
+
   const progress = mediaState && mediaState.duration > 0
     ? (mediaState.currentTime / mediaState.duration) * 100
     : 0
@@ -512,6 +520,9 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     formattedCurrentTime: formatTime(mediaState?.currentTime ?? 0),
     formattedDuration: formatTime(mediaState?.duration ?? 0),
     hasVideo,
+    videoWidth: mediaState?.videoWidth ?? 0,
+    videoHeight: mediaState?.videoHeight ?? 0,
+    playbackRate: mediaState?.playbackRate ?? 1,
     volume: mediaState?.volume ?? 100,
     muted: mediaState?.muted ?? false,
 
@@ -538,6 +549,7 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     setRepeat,
     setVolume,
     toggleMute,
+    setPlaybackRate,
     loadLocalFile,
     addLocalFile,
     clearLocalImportError,

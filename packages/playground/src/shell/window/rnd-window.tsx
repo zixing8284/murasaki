@@ -17,6 +17,10 @@ interface RndWindowProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Size the frame to wrap `contentSize` instead of `defaultSize`. */
+  autoSize?: boolean
+  /** Reported content dimensions used when `autoSize` is set. */
+  contentSize?: { width: number, height: number } | null
   /** Show the working cursor over this window while it is loading */
   loadingCursor?: boolean
   /** Called when dragging starts/stops — use to disable iframe pointer-events during drag */
@@ -34,6 +38,8 @@ export function RndWindow({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  autoSize = false,
+  contentSize = null,
   loadingCursor = false,
   onDragChange,
   onResizeChange,
@@ -130,6 +136,8 @@ export function RndWindow({
       disableResize={disableResize}
       defaultSize={defaultSize}
       defaultPosition={resolvedDefaultPosition}
+      autoSize={autoSize}
+      contentSize={contentSize}
       isInteracting={dragging || resizing}
       loadingCursor={loadingCursor}
       frameRef={setFrame}

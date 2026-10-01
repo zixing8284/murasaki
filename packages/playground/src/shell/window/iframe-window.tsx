@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { AppId } from '../../contexts/process/directory'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import appDirectory from '../../contexts/process/directory'
 import { useProcess, useProcessActions } from '../../contexts/process/hooks'
 import { useSystemBusy } from '../../contexts/system-cursor'
@@ -18,6 +18,8 @@ interface IframeWindowProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Size the window to the content dimensions the iframe reports (see ProcessBaseWindowConfig). */
+  autoSize?: boolean
 }
 
 /**
@@ -38,6 +40,7 @@ export function IframeWindow({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  autoSize = false,
 }: IframeWindowProps): React.ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
@@ -56,6 +59,23 @@ export function IframeWindow({
     iframeElementRef.current = el
     onIframeRef(el)
   }
+
+  // Content size reported by an auto-sizing iframe (e.g. an embedded game).
+  const [contentSize, setContentSize] = useState<{ width: number, height: number } | null>(null)
+  useEffect(() => {
+    if (!autoSize)
+      return
+    const onMessage = (event: MessageEvent): void => {
+      if (event.source !== iframeElementRef.current?.contentWindow)
+        return
+      const data = event.data as { type?: string, width?: number, height?: number }
+      if (data?.type === 'arcade:size' && typeof data.width === 'number' && typeof data.height === 'number') {
+        setContentSize({ width: Math.round(data.width), height: Math.round(data.height) })
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [autoSize])
 
   const handleInteractionChange = (active: boolean): void => {
     if (iframeElementRef.current) {
@@ -76,7 +96,9 @@ export function IframeWindow({
       titleIcon={titleIcon}
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
-      disableResize={disableResize}
+      disableResize={disableResize || autoSize}
+      autoSize={autoSize}
+      contentSize={contentSize}
       loadingCursor={isLoading}
       onDragChange={handleInteractionChange}
       onResizeChange={handleInteractionChange}

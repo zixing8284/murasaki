@@ -107,6 +107,7 @@ function renderProcessWindow(
         disableMaximize={windowConfig.disableMaximize}
         disableMinimize={windowConfig.disableMinimize}
         disableResize={windowConfig.disableResize}
+        autoSize={windowConfig.autoSize}
       />
     )
   }

@@ -17,6 +17,12 @@ export interface MediaState {
   volume: number
   muted: boolean
   hasVideo: boolean
+  /** Intrinsic video width in px (0 for audio or before metadata). */
+  videoWidth: number
+  /** Intrinsic video height in px (0 for audio or before metadata). */
+  videoHeight: number
+  /** Current playback speed multiplier (1 = normal). */
+  playbackRate: number
 }
 
 type StateChangeListener = (state: MediaState) => void
@@ -27,6 +33,7 @@ export class MediaManager {
   private pendingSeekTime: number | null = null
   private mediaElement: HTMLMediaElement | null = null
   private currentSrc = ''
+  private desiredPlaybackRate = 1
   private loadTimeoutId: number | null = null
   private listeners: Set<StateChangeListener> = new Set()
   private eventCleanup: (() => void) | null = null
@@ -40,6 +47,9 @@ export class MediaManager {
     volume: 100,
     muted: false,
     hasVideo: false,
+    videoWidth: 0,
+    videoHeight: 0,
+    playbackRate: 1,
   }
 
   onTrackEnded?: () => void
@@ -138,8 +148,27 @@ export class MediaManager {
     })
 
     on('loadedmetadata', () => {
-      const hasVideo = 'videoWidth' in el && (el as HTMLVideoElement).videoWidth > 0
-      this.updateState({ duration: el.duration || 0, hasVideo })
+      const videoEl = el as HTMLVideoElement
+      const videoWidth = 'videoWidth' in el ? videoEl.videoWidth : 0
+      const videoHeight = 'videoHeight' in el ? videoEl.videoHeight : 0
+      // A fresh media element resets playbackRate to 1 on source load; reapply.
+      el.playbackRate = this.desiredPlaybackRate
+      this.updateState({ duration: el.duration || 0, hasVideo: videoWidth > 0, videoWidth, videoHeight })
+    })
+
+    on('resize', () => {
+      const videoEl = el as HTMLVideoElement
+      if (!('videoWidth' in el))
+        return
+      this.updateState({
+        hasVideo: videoEl.videoWidth > 0,
+        videoWidth: videoEl.videoWidth,
+        videoHeight: videoEl.videoHeight,
+      })
+    })
+
+    on('ratechange', () => {
+      this.updateState({ playbackRate: el.playbackRate })
     })
 
     on('canplay', () => {
@@ -284,6 +313,13 @@ export class MediaManager {
     if (!this.mediaElement)
       return
     this.mediaElement.muted = muted
+  }
+
+  setPlaybackRate(rate: number): void {
+    this.desiredPlaybackRate = rate
+    if (this.mediaElement)
+      this.mediaElement.playbackRate = rate
+    this.updateState({ playbackRate: rate })
   }
 
   getMediaElement(): HTMLMediaElement | null {

@@ -4,6 +4,7 @@ import {
   Divider,
   MenuItem,
   MenuSeparator,
+  MenuShortcut,
   Slider,
   Tooltip,
   TooltipContent,
@@ -16,9 +17,9 @@ import {
 import { useCallback, useRef, useState } from 'react'
 import { useScreenBoundary } from '../../../../contexts/screen-boundary'
 import {
-  AspectRatioIcon,
   EjectIcon,
   FastForwardIcon,
+  FullscreenIcon,
   NextIcon,
   PauseIcon,
   PlayIcon,
@@ -29,6 +30,7 @@ import {
   RewindIcon,
   ShuffleIcon,
   StopIcon,
+  StretchIcon,
   VolumeHighIcon,
   VolumeLowIcon,
   VolumeMutedIcon,
@@ -63,11 +65,12 @@ interface MediaPlayerControlsProps {
   player: MediaPlayerControlsPlayer
   isMediaFullscreen: boolean
   showPlaylist: boolean
-  forceAspectRatio: boolean
+  stretchToFit: boolean
   onSeekBackward: () => void
   onSeekForward: () => void
   onTogglePlaylist: () => void
-  onToggleAspectRatio: () => void
+  onToggleStretch: () => void
+  onToggleFullscreen: () => void
 }
 
 const COMPACT_CONTROLS_WIDTH = 560
@@ -86,11 +89,12 @@ export function MediaPlayerControls({
   player,
   isMediaFullscreen,
   showPlaylist,
-  forceAspectRatio,
+  stretchToFit,
   onSeekBackward,
   onSeekForward,
   onTogglePlaylist,
-  onToggleAspectRatio,
+  onToggleStretch,
+  onToggleFullscreen,
 }: MediaPlayerControlsProps): ReactElement {
   const surfaceClassName = isMediaFullscreen ? 'bg-(--button-face)' : ''
   const hasCurrentTrack = player.currentTrack !== null
@@ -243,8 +247,12 @@ export function MediaPlayerControls({
                     <MenuItem disabled={isMediaFullscreen} onClick={onTogglePlaylist}>
                       {showPlaylist ? 'Hide Playlist' : 'Show Playlist'}
                     </MenuItem>
-                    <MenuItem onClick={onToggleAspectRatio}>
-                      {forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}
+                    <MenuItem onClick={onToggleStretch}>
+                      {stretchToFit ? 'Fit to Window' : 'Stretch to Fit'}
+                    </MenuItem>
+                    <MenuItem onClick={onToggleFullscreen}>
+                      {isMediaFullscreen ? 'Exit Full Screen' : 'Full Screen'}
+                      <MenuShortcut>F</MenuShortcut>
                     </MenuItem>
                     <MenuSeparator />
                     <MenuItem onClick={player.toggleShuffle}>{player.shuffle ? 'Disable Shuffle' : 'Enable Shuffle'}</MenuItem>
@@ -262,9 +270,15 @@ export function MediaPlayerControls({
                   </TransportButton>
                 </ControlTooltip>
 
-                <ControlTooltip label={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}>
-                  <TransportButton onClick={onToggleAspectRatio} active={forceAspectRatio} aria-label={forceAspectRatio ? 'Original Aspect Ratio' : 'Force 16:9'}>
-                    <AspectRatioIcon />
+                <ControlTooltip label={stretchToFit ? 'Fit to Window' : 'Stretch to Fit'}>
+                  <TransportButton onClick={onToggleStretch} active={stretchToFit} aria-label={stretchToFit ? 'Fit to Window' : 'Stretch to Fit'}>
+                    <StretchIcon />
+                  </TransportButton>
+                </ControlTooltip>
+
+                <ControlTooltip label={isMediaFullscreen ? 'Exit Full Screen' : 'Full Screen'}>
+                  <TransportButton onClick={onToggleFullscreen} active={isMediaFullscreen} aria-label={isMediaFullscreen ? 'Exit Full Screen' : 'Full Screen'}>
+                    <FullscreenIcon />
                   </TransportButton>
                 </ControlTooltip>
               </div>

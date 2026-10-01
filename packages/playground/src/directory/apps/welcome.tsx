@@ -13,8 +13,7 @@ import {
   WindowStatusBarField,
 } from '@murasaki-io/react98'
 import { useState } from 'react'
-import { assetPath } from '../../lib/asset-path'
-import { ICON } from '../../lib/icons'
+import { STARTUP_ARTWORK_DATA_URL } from '../../shell/startup/startup-artwork-data'
 import { InactiveClickGuard } from '../../shell/window/inactive-click-guard'
 import { DialogWindow } from '../shared/dialog-window'
 
@@ -23,9 +22,9 @@ function AboutDialog({ onClose }: { onClose: () => void }): ReactElement {
     <DialogWindow title="About Murasaki" onClose={onClose}>
       <div className="flex flex-col items-center gap-3 p-4 w-72">
         <img
-          src={assetPath(ICON.murasaki.lg)}
-          alt="Murasaki logo"
-          className="size-12 pixelated"
+          src={STARTUP_ARTWORK_DATA_URL}
+          alt="Murasaki"
+          className="size-12 object-cover shrink-0"
           draggable={false}
         />
         <div className="text-center">
@@ -69,9 +68,9 @@ export function Welcome({ windowId }: ProcessComponentProps): ReactElement {
       <ScrollArea className="flex-1 min-h-0 bg-(--window) p-4 text-(--window-text)">
         <div className="flex items-start gap-4 mb-4">
           <img
-            src={assetPath(ICON.murasaki.lg)}
-            alt="Murasaki logo"
-            className="size-16 pixelated shrink-0"
+            src={STARTUP_ARTWORK_DATA_URL}
+            alt="Murasaki"
+            className="size-16 object-cover shrink-0"
             draggable={false}
           />
           <div>

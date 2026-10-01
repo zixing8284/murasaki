@@ -36,6 +36,10 @@ interface UseMediaPlayerKeyboardShortcutsOptions {
   onTogglePlay: () => void
   onSeekBackward: () => void
   onSeekForward: () => void
+  onToggleMute: () => void
+  onVolumeUp: () => void
+  onVolumeDown: () => void
+  onToggleFullscreen: () => void
 }
 
 export function useMediaPlayerKeyboardShortcuts({
@@ -43,6 +47,10 @@ export function useMediaPlayerKeyboardShortcuts({
   onTogglePlay,
   onSeekBackward,
   onSeekForward,
+  onToggleMute,
+  onVolumeUp,
+  onVolumeDown,
+  onToggleFullscreen,
 }: UseMediaPlayerKeyboardShortcutsOptions): void {
   useEffect(() => {
     if (!enabled)
@@ -78,6 +86,34 @@ export function useMediaPlayerKeyboardShortcuts({
       if (event.key === 'ArrowRight') {
         event.preventDefault()
         onSeekForward()
+        return
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        onVolumeUp()
+        return
+      }
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        onVolumeDown()
+        return
+      }
+
+      if (event.key === 'm' || event.key === 'M') {
+        if (event.repeat)
+          return
+        event.preventDefault()
+        onToggleMute()
+        return
+      }
+
+      if (event.key === 'f' || event.key === 'F') {
+        if (event.repeat)
+          return
+        event.preventDefault()
+        onToggleFullscreen()
       }
     }
 
@@ -86,5 +122,5 @@ export function useMediaPlayerKeyboardShortcuts({
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [enabled, onSeekBackward, onSeekForward, onTogglePlay])
+  }, [enabled, onSeekBackward, onSeekForward, onTogglePlay, onToggleFullscreen, onToggleMute, onVolumeDown, onVolumeUp])
 }

@@ -1,0 +1,35 @@
+{
+  "note": "Local Entertainment Center catalog. Every title is an original game bundled with murasaki (MIT), compiled from tools/flash-games and played offline through the vendored Ruffle runtime.",
+  "games": [
+    {
+      "id": "catch",
+      "title": "Catch!",
+      "genre": "Arcade",
+      "controls": "Mouse",
+      "description": "Slide the paddle to catch the falling gems. Drop three and the game is over.",
+      "file": "catch.swf",
+      "width": 480,
+      "height": 360
+    },
+    {
+      "id": "pong",
+      "title": "Pong",
+      "genre": "Arcade",
+      "controls": "Mouse",
+      "description": "The classic paddle duel. Rally the ball past the computer's paddle to score.",
+      "file": "pong.swf",
+      "width": 480,
+      "height": 360
+    },
+    {
+      "id": "snake",
+      "title": "Snake",
+      "genre": "Classic",
+      "controls": "Arrow keys",
+      "description": "Eat the apples to grow longer, but don't run into the walls or your own tail.",
+      "file": "snake.swf",
+      "width": 480,
+      "height": 360
+    }
+  ]
+}

@@ -385,7 +385,7 @@ export interface MenuShortcutProps extends React.ComponentProps<'span'> {}
 
 /** Right-aligned accelerator hint (e.g. `Ctrl+S`) placed inside a menu item. */
 export function MenuShortcut({ className, ...props }: MenuShortcutProps): React.ReactElement {
-  return <span className={cn('ml-auto pl-5', className)} {...props} />
+  return <span className={cn('ml-auto pl-5 text-[10px] opacity-70', className)} {...props} />
 }
 
 // ─── MenuCheckboxItem ──────────────────────────────────────────

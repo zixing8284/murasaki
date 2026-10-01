@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react'
 import type { ProcessComponentProps } from '../../../contexts/process/types'
+import { useWindowContext } from '@murasaki-io/react98'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../../contexts/desktop-files/hooks'
 import { getFile as getVfsFile, getNode as getVfsNode } from '../../../contexts/file-system'
@@ -20,14 +21,16 @@ const SEEK_STEP_SECONDS = 5
 export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement | null {
   const player = useMediaPlayer()
   const { loadLocalFile, seek, togglePlay } = player
-  const { title } = useProcessActions()
+  const { title, toggleMaximize } = useProcessActions()
+  const windowCtx = useWindowContext()
   const processInfo = useProcess(windowId)
   const isActiveWindow = processInfo?.isActive ?? false
   const { launchRequest, clearLaunchRequest, getFile } = useDesktopFiles()
   const processLaunch = useProcessLaunch(windowId)
   const [showPlaylist, setShowPlaylist] = useState(true)
-  const [forceAspectRatio, setForceAspectRatio] = useState(false)
+  const [stretchToFit, setStretchToFit] = useState(false)
   const windowRootRef = useRef<HTMLDivElement>(null)
+  const videoAreaRef = useRef<HTMLDivElement>(null)
   const activeItemRef = useRef<HTMLDivElement>(null)
   const fullscreenContainerRef = useRef<HTMLDivElement>(null)
   const { isFullscreen: isMediaFullscreen, toggle: toggleMediaFullscreen } = useFullscreen(fullscreenContainerRef)
@@ -53,8 +56,47 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
     setShowPlaylist(previousValue => !previousValue)
   }
 
-  const toggleForceAspectRatio = (): void => {
-    setForceAspectRatio(previousValue => !previousValue)
+  const toggleStretchToFit = (): void => {
+    setStretchToFit(previousValue => !previousValue)
+  }
+
+  const handleToggleFullscreen = (): void => {
+    void toggleMediaFullscreen()
+  }
+
+  const nudgeVolume = (delta: number): void => {
+    player.setVolume(Math.max(0, Math.min(100, player.volume + delta)))
+  }
+
+  // Resize the window so the video picture renders at videoWidth * scale,
+  // keeping all surrounding chrome (menu bar, controls, status bar) constant.
+  const scaleToVideo = (scale: number): void => {
+    const area = videoAreaRef.current
+    const root = windowRootRef.current
+    const videoWidth = player.videoWidth
+    const videoHeight = player.videoHeight
+    if (!area || !root || videoWidth <= 0 || videoHeight <= 0)
+      return
+    const frame = root.closest<HTMLElement>('[data-window-frame]')
+    if (!frame)
+      return
+    if (windowCtx.state.maximized) {
+      windowCtx.actions.setMaximized(false)
+      toggleMaximize(windowId)
+    }
+    // The <video> carries p-1 padding, so the picture sits inside 8px of the area box.
+    const PICTURE_PADDING = 8
+    const desiredAreaWidth = Math.round(videoWidth * scale) + PICTURE_PADDING
+    const desiredAreaHeight = Math.round(videoHeight * scale) + PICTURE_PADDING
+    const chromeWidth = frame.offsetWidth - area.clientWidth
+    const chromeHeight = frame.offsetHeight - area.clientHeight
+    const containerEl = frame.offsetParent as HTMLElement | null
+    const maxWidth = containerEl ? containerEl.clientWidth - frame.offsetLeft : Number.POSITIVE_INFINITY
+    const maxHeight = containerEl ? containerEl.clientHeight - frame.offsetTop : Number.POSITIVE_INFINITY
+    const nextWidth = Math.max(320, Math.min(desiredAreaWidth + chromeWidth, maxWidth))
+    const nextHeight = Math.max(240, Math.min(desiredAreaHeight + chromeHeight, maxHeight))
+    frame.style.width = `${nextWidth}px`
+    frame.style.height = `${nextHeight}px`
   }
 
   useEffect(() => {
@@ -72,6 +114,10 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
     onTogglePlay: togglePlay,
     onSeekBackward: seekBackward,
     onSeekForward: seekForward,
+    onToggleMute: player.toggleMute,
+    onVolumeUp: () => nudgeVolume(5),
+    onVolumeDown: () => nudgeVolume(-5),
+    onToggleFullscreen: handleToggleFullscreen,
   })
 
   useEffect(() => {
@@ -147,7 +193,30 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
         onAddLocalFile={player.addLocalFile}
       />
 
-      <MediaPlayerMenuBar windowId={windowId} onOpenFile={player.openFilePicker} />
+      <MediaPlayerMenuBar
+        windowId={windowId}
+        onOpenFile={player.openFilePicker}
+        videoScalable={player.hasVideo && player.videoWidth > 0}
+        onScale={scaleToVideo}
+        onToggleFullscreen={handleToggleFullscreen}
+        isMediaFullscreen={isMediaFullscreen}
+        stretchToFit={stretchToFit}
+        onToggleStretch={toggleStretchToFit}
+        playbackRate={player.playbackRate}
+        onSetPlaybackRate={player.setPlaybackRate}
+        hasTrack={hasPlayableTrack}
+        isPlaying={player.isPlaying}
+        muted={player.muted}
+        onTogglePlay={togglePlay}
+        onStop={player.stop}
+        onPrevious={player.previous}
+        onNext={player.next}
+        onSeekBackward={seekBackward}
+        onSeekForward={seekForward}
+        onVolumeUp={() => nudgeVolume(5)}
+        onVolumeDown={() => nudgeVolume(-5)}
+        onToggleMute={player.toggleMute}
+      />
 
       <div
         ref={fullscreenContainerRef}
@@ -156,21 +225,23 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
       >
         <MediaDisplay
           hasVideo={player.hasVideo}
-          forceAspectRatio={forceAspectRatio}
+          stretchToFit={stretchToFit}
+          videoAreaRef={videoAreaRef}
           mediaRefCallback={player.mediaRefCallback}
           onTogglePlay={togglePlay}
-          onToggleFullscreen={toggleMediaFullscreen}
+          onToggleFullscreen={handleToggleFullscreen}
         />
 
         <MediaPlayerControls
           player={player}
           isMediaFullscreen={isMediaFullscreen}
           showPlaylist={showPlaylist}
-          forceAspectRatio={forceAspectRatio}
+          stretchToFit={stretchToFit}
           onSeekBackward={seekBackward}
           onSeekForward={seekForward}
           onTogglePlaylist={togglePlaylist}
-          onToggleAspectRatio={toggleForceAspectRatio}
+          onToggleStretch={toggleStretchToFit}
+          onToggleFullscreen={handleToggleFullscreen}
         />
 
         <PlaylistPanel

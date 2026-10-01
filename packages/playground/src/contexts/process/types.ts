@@ -30,6 +30,12 @@ export interface ProcessBaseWindowConfig {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /**
+   * Size the window to fit its content instead of a fixed `defaultSize`. The
+   * content reports its pixel size (e.g. an embedded game posts its dimensions)
+   * and the frame is sized to wrap it exactly. Implies a non-resizable window.
+   */
+  autoSize?: boolean
 }
 
 export interface ProcessDefaultWindowConfig extends ProcessBaseWindowConfig {

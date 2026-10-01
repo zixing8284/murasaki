@@ -190,6 +190,24 @@ export function PlaylistIcon(): ReactElement {
   )
 }
 
-export function AspectRatioIcon(): ReactElement {
-  return <span className="leading-none text-(--button-text)">16:9</span>
+export function StretchIcon(): ReactElement {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect x="1.5" y="3.5" width="11" height="7" stroke="var(--button-text)" strokeWidth="1.2" fill="none" />
+      <polygon points="4,7 6,5 6,9" fill="var(--button-text)" />
+      <polygon points="10,7 8,5 8,9" fill="var(--button-text)" />
+      <rect x="5.75" y="5" width="2.5" height="4" fill="var(--button-text)" />
+    </svg>
+  )
+}
+
+export function FullscreenIcon(): ReactElement {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M1 1 H5 V2.5 H2.5 V5 H1 Z" fill="var(--button-text)" />
+      <path d="M13 1 H9 V2.5 H11.5 V5 H13 Z" fill="var(--button-text)" />
+      <path d="M1 13 H5 V11.5 H2.5 V9 H1 Z" fill="var(--button-text)" />
+      <path d="M13 13 H9 V11.5 H11.5 V9 H13 Z" fill="var(--button-text)" />
+    </svg>
+  )
 }

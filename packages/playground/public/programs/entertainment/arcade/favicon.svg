@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Window outer border (Win2k raised) -->
+  <rect x="1" y="1" width="30" height="30" fill="#fff"/>
+  <rect x="2" y="2" width="29" height="29" fill="#404040"/>
+  <rect x="2" y="2" width="28" height="28" fill="#D4D0C8"/>
+  <rect x="3" y="3" width="27" height="27" fill="#808080"/>
+  <rect x="3" y="3" width="26" height="26" fill="#D4D0C8"/>
+  <!-- Title bar -->
+  <rect x="4" y="4" width="24" height="6" fill="#0A246A"/>
+  <!-- Title text dots -->
+  <rect x="6" y="6" width="8" height="2" fill="#fff" opacity="0.8"/>
+  <!-- Close button -->
+  <rect x="23" y="5" width="4" height="4" fill="#D4D0C8"/>
+  <line x1="24" y1="6" x2="26" y2="8" stroke="#000" stroke-width="0.8"/>
+  <line x1="26" y1="6" x2="24" y2="8" stroke="#000" stroke-width="0.8"/>
+  <!-- Client area -->
+  <rect x="4" y="11" width="24" height="17" fill="#fff"/>
+  <!-- Button (Win2k raised style) -->
+  <rect x="10" y="17" width="12" height="6" fill="#fff"/>
+  <rect x="10" y="17" width="12" height="6" fill="#D4D0C8"/>
+  <line x1="10" y1="17" x2="22" y2="17" stroke="#fff" stroke-width="1"/>
+  <line x1="10" y1="17" x2="10" y2="23" stroke="#fff" stroke-width="1"/>
+  <line x1="22" y1="17" x2="22" y2="23" stroke="#404040" stroke-width="1"/>
+  <line x1="10" y1="23" x2="22" y2="23" stroke="#404040" stroke-width="1"/>
+  <!-- Button text "OK" -->
+  <text x="16" y="22" text-anchor="middle" font-family="sans-serif" font-size="4" font-weight="bold" fill="#000">OK</text>
+</svg>

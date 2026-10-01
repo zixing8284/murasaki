@@ -13,6 +13,7 @@ import {
   WindowTitle,
   WindowTitleBar,
 } from '@murasaki-io/react98'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useProcess, useProcessActions, useProcesses } from '../../contexts/process/hooks'
 import { assetPath } from '../../lib/asset-path'
 import { AppIcon } from '../app-icon'
@@ -30,6 +31,10 @@ export interface BaseWindowProps {
   defaultSize?: { width?: number, height?: number }
   /** Default absolute window position — applied as inline style for initial placement */
   defaultPosition?: ProcessWindowPosition
+  /** Size the frame to wrap `contentSize` (plus chrome) instead of `defaultSize`. */
+  autoSize?: boolean
+  /** Reported content dimensions used when `autoSize` is set. */
+  contentSize?: { width: number, height: number } | null
   /** Whether the window is currently being dragged or resized */
   isInteracting?: boolean
   /** Show the working cursor over this window while it is loading */
@@ -61,6 +66,8 @@ export function BaseWindow({
   disableResize = false,
   defaultSize,
   defaultPosition,
+  autoSize = false,
+  contentSize = null,
   isInteracting = false,
   loadingCursor = false,
   frameRef,
@@ -72,10 +79,33 @@ export function BaseWindow({
   const { processes, container } = useProcesses()
   const portalContainer = processes[windowId]?.componentWindow ?? container
 
+  // Auto-size: measure the fixed chrome (title bar + borders) around the content
+  // once and size the frame to wrap the reported content dimensions exactly.
+  const contentRef = useRef<HTMLDivElement | null>(null)
+  const [autoDims, setAutoDims] = useState<{ width: number, height: number } | null>(null)
+  const contentWidth = contentSize?.width
+  const contentHeight = contentSize?.height
+  useLayoutEffect(() => {
+    if (!autoSize || contentWidth == null || contentHeight == null) {
+      setAutoDims(null)
+      return
+    }
+    const contentEl = contentRef.current
+    const frameEl = contentEl?.parentElement
+    if (!contentEl || !frameEl)
+      return
+    const chromeW = frameEl.offsetWidth - contentEl.offsetWidth
+    const chromeH = frameEl.offsetHeight - contentEl.offsetHeight
+    setAutoDims({ width: contentWidth + chromeW, height: contentHeight + chromeH })
+  }, [autoSize, contentWidth, contentHeight])
+
   if (!win)
     return null
 
   const { process: proc, isActive, zIndex } = win
+
+  const effectiveWidth = autoSize && autoDims ? autoDims.width : defaultSize?.width
+  const effectiveHeight = autoSize && autoDims ? autoDims.height : defaultSize?.height
 
   const defaultIcon = proc.icon
     ? <img src={assetPath(proc.icon.sm)} alt="" className="size-4 pixelated shrink-0" draggable={false} />
@@ -86,16 +116,17 @@ export function BaseWindow({
       <WindowPortal container={portalContainer}>
         <WindowFrame
           ref={frameRef}
+          data-window-frame=""
           data-system-cursor={loadingCursor ? 'working' : undefined}
-          className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''} ${className ?? ''}`}
+          className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
           style={{
             zIndex,
-            width: defaultSize?.width,
-            height: defaultSize?.height,
-            top: clampInitialPosition(defaultPosition?.top, defaultSize?.height),
+            width: effectiveWidth,
+            height: effectiveHeight,
+            top: clampInitialPosition(defaultPosition?.top, effectiveHeight),
             right: defaultPosition?.right,
             bottom: defaultPosition?.bottom,
-            left: clampInitialPosition(defaultPosition?.left, defaultSize?.width),
+            left: clampInitialPosition(defaultPosition?.left, effectiveWidth),
           }}
           onPointerDown={(e) => {
             e.stopPropagation()
@@ -116,7 +147,7 @@ export function BaseWindow({
               <WindowCloseButton onClick={() => actions.close(windowId)} />
             </WindowButtons>
           </WindowTitleBar>
-          <WindowContent className={contentClassName}>{children}</WindowContent>
+          <WindowContent ref={contentRef} className={contentClassName}>{children}</WindowContent>
           {!disableResize && <WindowResizeGrip ref={resizeRef} />}
         </WindowFrame>
       </WindowPortal>

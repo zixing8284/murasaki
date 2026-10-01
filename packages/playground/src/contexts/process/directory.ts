@@ -168,7 +168,7 @@ const directory = {
     singleton: true,
     defaultSize: { width: 190, height: 292 },
     defaultPosition: { top: '20%', left: '32%' },
-    window: { type: 'iframe', src: '/programs/entertainment/arcade/index.html?boot=winmine.exe', disableMaximize: true, autoSize: true },
+    window: { type: 'iframe', src: '/programs/entertainment/arcade/index.html?boot=winmine.exe', disableMaximize: true, autoSize: true, autoSizeMinContent: { width: 180, height: 300 } },
   },
   gamesolitaire: {
     name: 'Solitaire',

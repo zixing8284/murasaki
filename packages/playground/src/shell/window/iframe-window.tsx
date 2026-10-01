@@ -20,6 +20,8 @@ interface IframeWindowProps {
   disableResize?: boolean
   /** Size the window to the content dimensions the iframe reports (see ProcessBaseWindowConfig). */
   autoSize?: boolean
+  /** Minimum content box to reserve when auto-sizing, so emulated menus have room (see ProcessBaseWindowConfig). */
+  autoSizeMinContent?: { width?: number, height?: number }
 }
 
 /**
@@ -41,6 +43,7 @@ export function IframeWindow({
   disableMinimize = false,
   disableResize = false,
   autoSize = false,
+  autoSizeMinContent,
 }: IframeWindowProps): React.ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
@@ -62,6 +65,8 @@ export function IframeWindow({
 
   // Content size reported by an auto-sizing iframe (e.g. an embedded game).
   const [contentSize, setContentSize] = useState<{ width: number, height: number } | null>(null)
+  const minContentWidth = autoSizeMinContent?.width ?? 0
+  const minContentHeight = autoSizeMinContent?.height ?? 0
   useEffect(() => {
     if (!autoSize)
       return
@@ -70,12 +75,18 @@ export function IframeWindow({
         return
       const data = event.data as { type?: string, width?: number, height?: number }
       if (data?.type === 'arcade:size' && typeof data.width === 'number' && typeof data.height === 'number') {
-        setContentSize({ width: Math.round(data.width), height: Math.round(data.height) })
+        // Reserve menu headroom: the emulator paints its program at the
+        // top-left on a transparent desktop, so padding the reported size lets
+        // dropdowns fall into the extra space instead of clipping/flipping.
+        setContentSize({
+          width: Math.max(Math.round(data.width), minContentWidth),
+          height: Math.max(Math.round(data.height), minContentHeight),
+        })
       }
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [autoSize])
+  }, [autoSize, minContentWidth, minContentHeight])
 
   const handleInteractionChange = (active: boolean): void => {
     if (iframeElementRef.current) {
@@ -96,7 +107,7 @@ export function IframeWindow({
       titleIcon={titleIcon}
       disableMaximize={disableMaximize}
       disableMinimize={disableMinimize}
-      disableResize={disableResize || autoSize}
+      disableResize={disableResize}
       autoSize={autoSize}
       contentSize={contentSize}
       loadingCursor={isLoading}

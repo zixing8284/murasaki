@@ -57,6 +57,13 @@ export function RndWindow({
     () => (appId && entry?.singleton !== false) ? readWindowPosition(appId) : null,
   )
 
+  // Auto-fit windows start sized to their content, but once the user resizes
+  // they own the size. `fitSize` tracks the measured content box (used as the
+  // resize floor); `manualSize` latches the user's chosen size so later content
+  // reports stop snapping the frame back and menus can be revealed by growing.
+  const [fitSize, setFitSize] = useState<{ width: number, height: number } | null>(null)
+  const [manualSize, setManualSize] = useState<{ width: number, height: number } | null>(null)
+
   const frameRef = useRef<HTMLDivElement | null>(null)
 
   // Cascade non-singleton windows so they don't stack at the same position
@@ -101,6 +108,25 @@ export function RndWindow({
     [appId, entry, portalContainer, onDragChange],
   )
 
+  // Freeze the user's size when an auto-fit window is resized so subsequent
+  // content reports can't snap it back. Capturing on both edges of the gesture
+  // keeps the override in sync with the final dragged size.
+  const handleResizeChange = useCallback(
+    (isResizing: boolean) => {
+      if (autoSize) {
+        const frameEl = frameRef.current
+        if (frameEl)
+          setManualSize({ width: frameEl.offsetWidth, height: frameEl.offsetHeight })
+      }
+      onResizeChange?.(isResizing)
+    },
+    [autoSize, onResizeChange],
+  )
+
+  // Auto-fit windows may shrink to the game's own size but grow freely for menus.
+  const minWidth = (autoSize ? fitSize?.width : undefined) ?? defaultSize?.width
+  const minHeight = (autoSize ? fitSize?.height : undefined) ?? defaultSize?.height
+
   const {
     dragging,
     resizing,
@@ -114,10 +140,10 @@ export function RndWindow({
     resizable: !disableResize,
     onActivate: () => actions.activate(windowId),
     onDragChange: handleDragChange,
-    onResizeChange,
+    onResizeChange: handleResizeChange,
     clampPositionOnResize: true,
-    minWidth: defaultSize?.width,
-    minHeight: defaultSize?.height,
+    minWidth,
+    minHeight,
   })
 
   const setFrame = (el: HTMLDivElement | null): void => {
@@ -138,6 +164,8 @@ export function RndWindow({
       defaultPosition={resolvedDefaultPosition}
       autoSize={autoSize}
       contentSize={contentSize}
+      sizeOverride={manualSize}
+      onAutoFit={setFitSize}
       isInteracting={dragging || resizing}
       loadingCursor={loadingCursor}
       frameRef={setFrame}

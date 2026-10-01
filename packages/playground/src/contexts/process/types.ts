@@ -33,9 +33,18 @@ export interface ProcessBaseWindowConfig {
   /**
    * Size the window to fit its content instead of a fixed `defaultSize`. The
    * content reports its pixel size (e.g. an embedded game posts its dimensions)
-   * and the frame is sized to wrap it exactly. Implies a non-resizable window.
+   * and the frame is sized to wrap it exactly. The window stays resizable so
+   * users can grow it (e.g. to reveal an emulated program's menus).
    */
   autoSize?: boolean
+  /**
+   * Minimum content box to reserve when `autoSize` is set. Embedded emulators
+   * paint their program at the top-left on a transparent desktop; menus that
+   * drop below/right need room *inside the iframe* or they clip. Padding the
+   * auto-fit up to this floor gives short programs (e.g. Minesweeper) that room
+   * without leaking menus outside the window.
+   */
+  autoSizeMinContent?: { width?: number, height?: number }
 }
 
 export interface ProcessDefaultWindowConfig extends ProcessBaseWindowConfig {

@@ -35,6 +35,13 @@ export interface BaseWindowProps {
   autoSize?: boolean
   /** Reported content dimensions used when `autoSize` is set. */
   contentSize?: { width: number, height: number } | null
+  /**
+   * Fixed size that wins over auto-fit. Set once the user manually resizes an
+   * auto-sized window so later `contentSize` reports stop fighting their size.
+   */
+  sizeOverride?: { width: number, height: number } | null
+  /** Called with the measured auto-fit dimensions (content + chrome) when they change. */
+  onAutoFit?: (dims: { width: number, height: number }) => void
   /** Whether the window is currently being dragged or resized */
   isInteracting?: boolean
   /** Show the working cursor over this window while it is loading */
@@ -68,6 +75,8 @@ export function BaseWindow({
   defaultPosition,
   autoSize = false,
   contentSize = null,
+  sizeOverride = null,
+  onAutoFit,
   isInteracting = false,
   loadingCursor = false,
   frameRef,
@@ -96,16 +105,22 @@ export function BaseWindow({
       return
     const chromeW = frameEl.offsetWidth - contentEl.offsetWidth
     const chromeH = frameEl.offsetHeight - contentEl.offsetHeight
-    setAutoDims({ width: contentWidth + chromeW, height: contentHeight + chromeH })
-  }, [autoSize, contentWidth, contentHeight])
+    const dims = { width: contentWidth + chromeW, height: contentHeight + chromeH }
+    setAutoDims(dims)
+    onAutoFit?.(dims)
+  }, [autoSize, contentWidth, contentHeight, onAutoFit])
 
   if (!win)
     return null
 
   const { process: proc, isActive, zIndex } = win
 
-  const effectiveWidth = autoSize && autoDims ? autoDims.width : defaultSize?.width
-  const effectiveHeight = autoSize && autoDims ? autoDims.height : defaultSize?.height
+  const autoWidth = autoSize && autoDims ? autoDims.width : defaultSize?.width
+  const autoHeight = autoSize && autoDims ? autoDims.height : defaultSize?.height
+  // A user-chosen size (after manual resize) always wins over auto-fit so the
+  // window can be grown to reveal in-content menus and stays put afterwards.
+  const effectiveWidth = sizeOverride?.width ?? autoWidth
+  const effectiveHeight = sizeOverride?.height ?? autoHeight
 
   const defaultIcon = proc.icon
     ? <img src={assetPath(proc.icon.sm)} alt="" className="size-4 pixelated shrink-0" draggable={false} />

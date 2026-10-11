@@ -24,6 +24,7 @@ import { assetPath } from '../../lib/asset-path'
 import { ICON } from '../../lib/icons'
 import { DESKTOP_MEDIA_ICON as DESKTOP_MEDIA_ICON_PATH } from '../../lib/playground-assets'
 import { AppIcon } from '../app-icon'
+import { getScreenFromLocalMatrix, scaleMagnitude } from '../input/geometry'
 import { useShellInputSurface } from '../input/shell-input-registry'
 import { DesktopIcon } from './desktop-icon'
 
@@ -199,9 +200,13 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       return null
 
     const rect = desktop.getBoundingClientRect()
+    // The desktop is uniformly scaled by a `transform: scale()` ancestor. Divide
+    // client-space offsets by the scale so the returned point (and the marquee
+    // rendered from it) lives in the desktop's own logical pixels.
+    const scale = scaleMagnitude(getScreenFromLocalMatrix(desktop))
     return {
-      x: Math.max(0, Math.min(clientX - rect.left, rect.width)),
-      y: Math.max(0, Math.min(clientY - rect.top, rect.height)),
+      x: Math.max(0, Math.min((clientX - rect.left) / scale, rect.width / scale)),
+      y: Math.max(0, Math.min((clientY - rect.top) / scale, rect.height / scale)),
     }
   }, [])
 
@@ -211,6 +216,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
       return []
 
     const desktopBounds = desktop.getBoundingClientRect()
+    const scale = scaleMagnitude(getScreenFromLocalMatrix(desktop))
     const box = getSelectionBox(rect)
     const selectedIds: string[] = []
 
@@ -221,10 +227,10 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
 
       const iconBounds = iconEl.getBoundingClientRect()
       const iconRect = {
-        left: iconBounds.left - desktopBounds.left,
-        top: iconBounds.top - desktopBounds.top,
-        right: iconBounds.right - desktopBounds.left,
-        bottom: iconBounds.bottom - desktopBounds.top,
+        left: (iconBounds.left - desktopBounds.left) / scale,
+        top: (iconBounds.top - desktopBounds.top) / scale,
+        right: (iconBounds.right - desktopBounds.left) / scale,
+        bottom: (iconBounds.bottom - desktopBounds.top) / scale,
       }
 
       if (

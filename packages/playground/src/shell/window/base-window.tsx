@@ -133,7 +133,7 @@ export function BaseWindow({
           ref={frameRef}
           data-window-frame=""
           data-system-cursor={loadingCursor ? 'working' : undefined}
-          className={`${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
+          className={`max-w-full max-h-full ${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
           style={{
             zIndex,
             width: effectiveWidth,

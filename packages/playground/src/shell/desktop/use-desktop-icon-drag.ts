@@ -3,6 +3,7 @@ import type { DesktopLayoutContextValue, GridLayout } from '../../contexts/deskt
 import type { ShellInputPoint, ShellInputSession, ShellInputSurface } from '../input/shell-input-registry'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { calcGridDropDelta } from '../../contexts/desktop-layout'
+import { getScreenFromLocalMatrix, scaleMagnitude } from '../input/geometry'
 import { useShellInputSurface } from '../input/shell-input-registry'
 
 const DRAG_THRESHOLD = 3
@@ -151,6 +152,11 @@ export function useDesktopIconDrag({
     if (!iconEl)
       return null
 
+    // The desktop is uniformly scaled by a `transform: scale()` ancestor, so
+    // client-space pointer deltas must be divided by the scale to land in the
+    // desktop's own logical pixels (grid cells, drag-preview translate).
+    const scale = scaleMagnitude(getScreenFromLocalMatrix(iconEl))
+
     let resolvedCol = col
     let resolvedRow = row
     if (resolvedCol === undefined || resolvedRow === undefined) {
@@ -206,7 +212,7 @@ export function useDesktopIconDrag({
       if (clientX < gridRect.left || clientX > gridRect.right || clientY < gridRect.top || clientY > gridRect.bottom)
         return
 
-      const delta = calcGridDropDelta(grid, clientX - drag.startClientX, clientY - drag.startClientY)
+      const delta = calcGridDropDelta(grid, (clientX - drag.startClientX) / scale, (clientY - drag.startClientY) / scale)
       if (!delta)
         return
 
@@ -243,8 +249,8 @@ export function useDesktopIconDrag({
     return {
       captureIframes: true,
       onMove(nextPoint) {
-        const dx = nextPoint.clientX - drag.startClientX
-        const dy = nextPoint.clientY - drag.startClientY
+        const dx = (nextPoint.clientX - drag.startClientX) / scale
+        const dy = (nextPoint.clientY - drag.startClientY) / scale
 
         if (!drag.moved) {
           if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD)

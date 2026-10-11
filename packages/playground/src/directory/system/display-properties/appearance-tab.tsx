@@ -1,6 +1,7 @@
 import type { CrtTuningSettings } from '../../../hooks/use-crt-tuning'
-import { Button, Checkbox, Slider, TabPanel } from '@murasaki-io/react98'
+import { Button, Checkbox, Slider } from '@murasaki-io/react98'
 import { areCrtTuningSettingsEqual } from '../../../hooks/use-crt-tuning'
+import { ScrollableTabPanel } from './scrollable-tab-panel'
 
 const CRT_PRESETS = {
   soft: {
@@ -35,6 +36,8 @@ const CRT_PRESETS = {
 interface AppearanceTabProps {
   currentMonitorFrame: boolean
   onMonitorFrameChange: (value: boolean) => void
+  currentFillScreen: boolean
+  onFillScreenChange: (value: boolean) => void
   currentCrtEnabled: boolean
   onCrtEnabledChange: (value: boolean) => void
   currentCrtTuning: CrtTuningSettings
@@ -46,6 +49,8 @@ interface AppearanceTabProps {
 export function AppearanceTab({
   currentMonitorFrame,
   onMonitorFrameChange,
+  currentFillScreen,
+  onFillScreenChange,
   currentCrtEnabled,
   onCrtEnabledChange,
   currentCrtTuning,
@@ -59,12 +64,19 @@ export function AppearanceTab({
     : 'text-(--button-text)'
 
   return (
-    <TabPanel value="appearance" className="flex flex-col gap-3 p-3">
+    <ScrollableTabPanel value="appearance" className="gap-3">
       <Checkbox
         checked={currentMonitorFrame}
         onCheckedChange={onMonitorFrameChange}
       >
         Show CRT monitor frame
+      </Checkbox>
+
+      <Checkbox
+        checked={currentFillScreen}
+        onCheckedChange={onFillScreenChange}
+      >
+        Cover full screen (fill viewport)
       </Checkbox>
 
       <Checkbox
@@ -153,6 +165,6 @@ export function AppearanceTab({
       >
         Use gradient title bars
       </Checkbox>
-    </TabPanel>
+    </ScrollableTabPanel>
   )
 }

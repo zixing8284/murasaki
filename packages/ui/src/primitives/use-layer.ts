@@ -79,10 +79,90 @@ interface Boundary {
   height: number
 }
 
+/**
+ * Screen→local mapping for a `position: fixed` layer's containing block.
+ *
+ * A fixed layer normally resolves its offsets against the viewport, but when an
+ * ancestor establishes a containing block (most commonly a `transform: scale()`
+ * on a zoomed desktop) the offsets resolve against that ancestor's local,
+ * pre-transform frame instead. `scaleX`/`scaleY` and `originX`/`originY` let the
+ * hook convert viewport-space placement into that frame. The identity frame
+ * (scale 1, origin 0) corresponds to the plain viewport.
+ */
+interface FixedFrame {
+  scaleX: number
+  scaleY: number
+  originX: number
+  originY: number
+}
+
+const IDENTITY_FRAME: FixedFrame = { scaleX: 1, scaleY: 1, originX: 0, originY: 0 }
+
 function clamp(value: number, min: number, max: number): number {
   if (max < min)
     return min
   return Math.max(min, Math.min(value, max))
+}
+
+function samePosition(a: LayerPosition, b: LayerPosition): boolean {
+  return a.x === b.x
+    && a.y === b.y
+    && a.side === b.side
+    && a.availableHeight === b.availableHeight
+    && a.availableWidth === b.availableWidth
+}
+
+/**
+ * Finds the containing block a `position: fixed` layer will resolve against and
+ * returns the mapping from viewport coordinates into that block's local frame.
+ * Only axis-aligned scale/translate is inverted; rotated/skewed ancestors fall
+ * back to the viewport (identity) since this hook has no rotation-aware math.
+ */
+function getFixedFrame(layer: Element | null): FixedFrame {
+  if (!layer || typeof window === 'undefined')
+    return IDENTITY_FRAME
+
+  for (let node = layer.parentElement; node; node = node.parentElement) {
+    if (!(node instanceof HTMLElement))
+      continue
+    const style = window.getComputedStyle(node)
+    const establishesBlock
+      = (style.transform && style.transform !== 'none')
+        || (style.perspective && style.perspective !== 'none')
+        || (style.filter && style.filter !== 'none')
+        || style.willChange === 'transform'
+        || style.willChange === 'perspective'
+        || style.willChange === 'filter'
+    if (!establishesBlock)
+      continue
+
+    if (style.transform && style.transform !== 'none') {
+      const matrix = new DOMMatrix(style.transform)
+      // Rotation/skew is not invertible by the scale-only math below.
+      if (Math.abs(matrix.b) > 1e-3 || Math.abs(matrix.c) > 1e-3)
+        return IDENTITY_FRAME
+    }
+
+    const rect = node.getBoundingClientRect()
+    const { offsetWidth, offsetHeight } = node
+    if (offsetWidth <= 0 || offsetHeight <= 0)
+      return IDENTITY_FRAME
+    const scaleX = rect.width / offsetWidth
+    const scaleY = rect.height / offsetHeight
+    if (!Number.isFinite(scaleX) || !Number.isFinite(scaleY) || scaleX <= 0 || scaleY <= 0)
+      return IDENTITY_FRAME
+
+    const borderLeft = Number.parseFloat(style.borderLeftWidth) || 0
+    const borderTop = Number.parseFloat(style.borderTopWidth) || 0
+    return {
+      scaleX,
+      scaleY,
+      originX: rect.left + borderLeft * scaleX,
+      originY: rect.top + borderTop * scaleY,
+    }
+  }
+
+  return IDENTITY_FRAME
 }
 
 function getLayerSize(
@@ -330,10 +410,17 @@ export function useLayer({
       if (!anchorRect)
         return
       observeLayer()
-      const size = getLayerSize(layerRef, estimatedHeight, estimatedWidth)
+      const frame = getFixedFrame(layerRef?.current ?? null)
+      const localSize = getLayerSize(layerRef, estimatedHeight, estimatedWidth)
+      // Collision math runs in viewport space (anchor + boundary are screen
+      // rects), so scale the layer's own local size up to match before placing.
+      const size: LayerSize = {
+        height: localSize.height * frame.scaleY,
+        width: localSize.width * frame.scaleX,
+      }
       const boundary = getBoundary(boundaryRef)
       const resolvedSide = resolveSide({ anchorRect, boundary, collisionPadding, gap, side, size })
-      setPosition(getAlignedPosition({
+      const screenPosition = getAlignedPosition({
         align,
         anchorRect,
         boundary,
@@ -341,22 +428,40 @@ export function useLayer({
         gap,
         side: resolvedSide,
         size,
-      }))
+      })
+      // Map viewport placement back into the fixed containing block's local
+      // frame so the scaled desktop (or any transformed ancestor) lands it right.
+      const next: LayerPosition = {
+        x: (screenPosition.x - frame.originX) / frame.scaleX,
+        y: (screenPosition.y - frame.originY) / frame.scaleY,
+        side: screenPosition.side,
+        availableHeight: screenPosition.availableHeight / frame.scaleY,
+        availableWidth: screenPosition.availableWidth / frame.scaleX,
+      }
+      // Idempotent update: the open effect re-runs on every render (the anchor
+      // fn is a fresh closure each time) and the first compute runs synchronously
+      // in a layout effect, so bailing on unchanged values prevents a render loop.
+      setPosition((prev) => {
+        if (prev && samePosition(prev, next))
+          return prev
+        return next
+      })
       if (!computedRef.current) {
         computedRef.current = true
         setReady(true)
       }
     }
 
-    // Schedule the first compute outside the effect's synchronous body so
-    // React does not receive a layout-effect state update, then refine once
-    // more after intrinsic sizing has settled.
-    const frameIds: number[] = [
-      window.requestAnimationFrame(() => {
-        compute()
-        frameIds.push(window.requestAnimationFrame(compute))
-      }),
-    ]
+    // Resolve the first position synchronously, before the browser paints, so
+    // the layer lands at its final coordinates on the first visible frame.
+    // Deferring the first compute to rAF left a one-frame window where the layer
+    // sat at the consumer's raw-anchor fallback; under a transformed (scaled)
+    // ancestor that fallback is offset from the real anchor, and revealing the
+    // layer (compositor-driven `opacity`) while `left`/`top` jump on the main
+    // thread produced a visible flash/displacement. One more rAF pass refines
+    // the placement after intrinsic sizing settles.
+    compute()
+    const frameIds: number[] = [window.requestAnimationFrame(compute)]
 
     window.addEventListener('scroll', compute, true)
     window.addEventListener('resize', compute)

@@ -1,6 +1,6 @@
 import type { WallpaperImageEntry } from '../../../lib/wallpaper-storage'
 import type { WallpaperMode, WallpaperSettings } from '../../../lib/wallpapers'
-import { Button, FieldPanel, GroupBox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabPanel } from '@murasaki-io/react98'
+import { Button, FieldPanel, GroupBox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@murasaki-io/react98'
 import { useCallback, useEffect, useRef } from 'react'
 import { useCustomWallpaperUrl } from '../../../hooks/use-custom-wallpaper-url'
 import { assetPath } from '../../../lib/asset-path'
@@ -14,6 +14,7 @@ import {
   WALLPAPER_MODE_LABELS,
   WALLPAPERS,
 } from '../../../lib/wallpapers'
+import { ScrollableTabPanel } from './scrollable-tab-panel'
 import { WallpaperMonitor } from './wallpaper-monitor'
 
 const WALLPAPER_LIST_ICON = '/icons/paint-file-16.png'
@@ -121,7 +122,7 @@ export function WallpaperTab({
   }
 
   return (
-    <TabPanel value="wallpaper" className="flex flex-col gap-2 p-3">
+    <ScrollableTabPanel value="wallpaper" className="gap-2">
       <input
         ref={fileInputRef}
         type="file"
@@ -287,6 +288,6 @@ export function WallpaperTab({
           </div>
         </div>
       </GroupBox>
-    </TabPanel>
+    </ScrollableTabPanel>
   )
 }

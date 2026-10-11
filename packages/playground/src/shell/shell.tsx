@@ -7,10 +7,12 @@ import { isSupportedDesktopMediaFile } from '../contexts/desktop-files/storage'
 import { getStartupAppIds } from '../contexts/process/directory'
 import { useProcessActions } from '../contexts/process/hooks'
 import { ScreenBoundaryContext } from '../contexts/screen-boundary'
+import { useContainScale } from '../hooks/use-contain-scale'
 import { useCrtEffect } from '../hooks/use-crt-effect'
 import { useCrtTuning } from '../hooks/use-crt-tuning'
 import { useCustomWallpaperUrl } from '../hooks/use-custom-wallpaper-url'
 import { useDesktopBgColor } from '../hooks/use-desktop-bg-color'
+import { useFillScreen } from '../hooks/use-fill-screen'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../hooks/use-icon-label-bg-color'
 import { useMonitorFrame } from '../hooks/use-monitor-frame'
@@ -102,6 +104,18 @@ export function Shell(): React.ReactElement {
   const [desktopBgColor] = useDesktopBgColor()
   const [iconLabelBgColor] = useIconLabelBgColor()
   const [screenSize, setScreenSize] = useScreenSize()
+  const [fillScreen] = useFillScreen()
+
+  // Default (no-bezel) layout mirrors elternal.world: a fixed-resolution virtual
+  // desktop uniformly scaled to fit its container, centered and letterboxed.
+  // The scale is measured off the letterbox host (`screenFitRef`), which fills
+  // the padded desk area, so removing the padding (fill-screen) grows the scale.
+  const screenFitRef = useRef<HTMLDivElement>(null)
+  const { scale: screenScale, offsetX: screenOffsetX, offsetY: screenOffsetY } = useContainScale(
+    screenFitRef,
+    screenSize.width,
+    screenSize.height,
+  )
   const wallpaperEntry = getWallpaperEntry(wallpaperSettings.id)
   const customWallpaperUrl = useCustomWallpaperUrl(wallpaperSettings.id)
   const { importFiles, loading: desktopFilesLoading } = useDesktopFiles()
@@ -237,12 +251,21 @@ export function Shell(): React.ReactElement {
   // Structural classes/styles that switch between no-bezel and bezel modes without
   // changing the element type at each tree position. React updates props in-place so
   // WindowRenderer (and open windows such as DisplayProperties) never unmounts on toggle.
+  //
+  // No-bezel (default) is the elternal.world layout, with two sub-modes:
+  //   fit  : fixed-resolution screen letterboxed into the padded host via a
+  //          `translate(offset) scale()` transform pinned to the top-left (origin
+  //          0 0). Offset and scale come from one measurement so they update
+  //          atomically — no resize/zoom lurch (see use-contain-scale).
+  //   fill : "cover full screen" — the desktop *is* the viewport (no fixed
+  //          resolution, no transform), so coordinates are native (identity scale)
+  //          and browser zoom reflows the desktop instead of being fought by a refit.
   const alignmentWrapperClass = !monitorFrame
-    ? 'relative size-full'
+    ? 'relative size-full overflow-hidden'
     : (!glassActive ? 'contents' : 'flex items-center gap-3 max-h-full max-w-full')
 
   const bezelContainerClass = !monitorFrame
-    ? 'relative size-full overflow-hidden'
+    ? 'absolute top-0 left-0 overflow-hidden'
     : `relative isolate box-border min-h-0 min-w-0 overflow-hidden bg-(--button-face) p-[clamp(20px,3.5vw,40px)] shadow-[2px_2px_0_1px_var(--button-dk-shadow)]${!glassActive ? ' max-h-full max-w-full' : ''}`
 
   const bezelContainerStyle: CSSProperties | undefined = monitorFrame
@@ -255,7 +278,14 @@ export function Shell(): React.ReactElement {
         outline: '1px dotted var(--button-face)',
         outlineOffset: '-5px',
       }
-    : undefined
+    : fillScreen
+      ? { width: '100%', height: '100%' }
+      : {
+          width: screenSize.width,
+          height: screenSize.height,
+          transform: `translate(${screenOffsetX}px, ${screenOffsetY}px) scale(${String(screenScale)})`,
+          transformOrigin: '0 0',
+        }
 
   const screenSurroundClass = monitorFrame
     ? 'relative z-1 size-full overflow-hidden bg-gray-950 p-[clamp(2px,0.4vw,4px)] shadow-[inset_0_0_24px_rgb(0_0_0/0.85)]'
@@ -333,16 +363,19 @@ export function Shell(): React.ReactElement {
   )
 
   return (
-    <div className="flex h-screen w-full bg-[#20242c] p-[clamp(0.5rem,2.5vw,1.25rem)] select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden">
+    // Default: the desk padding letterboxes the fixed-resolution virtual screen.
+    // Appearance → "Cover full screen" switches to native fill (desktop = viewport,
+    // no fixed resolution, no scale) and drops the padding.
+    <div className={`flex h-screen w-full bg-[#20242c] ${fillScreen ? 'p-0' : 'p-[clamp(0.5rem,2.5vw,1.25rem)]'} select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden`}>
       {/*
         Alignment wrapper — className switches between modes but element type stays `div`,
         so React updates props in-place and never remounts the subtree below.
-          no bezel  : relative size-full (fills padded viewport)
+          no bezel  : letterbox host that centers the scaled fixed-resolution screen
           fit+single: `contents` (bezel participates in outer flex directly)
           fit+glass : flex row capped to viewport so both panels fit side-by-side
           numeric   : m-auto flex row inside the scrollable outer container
       */}
-      <div className={alignmentWrapperClass}>
+      <div ref={screenFitRef} className={alignmentWrapperClass}>
         {/* Bezel container — className/style change on toggle; always a `div` at position 0 */}
         <div className={bezelContainerClass} style={bezelContainerStyle}>
           {/* Screen surround — always the first child so WindowRenderer is never remounted */}

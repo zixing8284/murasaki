@@ -6,6 +6,7 @@ import { useProcessActions } from '../../../contexts/process/hooks'
 import { useCrtEffect } from '../../../hooks/use-crt-effect'
 import { areCrtTuningSettingsEqual, useCrtTuning } from '../../../hooks/use-crt-tuning'
 import { useDesktopBgColor } from '../../../hooks/use-desktop-bg-color'
+import { useFillScreen } from '../../../hooks/use-fill-screen'
 import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../../../hooks/use-icon-label-bg-color'
 import { useMonitorFrame } from '../../../hooks/use-monitor-frame'
@@ -22,6 +23,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const [currentCrtEnabled, setCrtEnabled] = useCrtEffect()
   const [currentCrtTuning, setCrtTuning] = useCrtTuning()
   const [currentMonitorFrame, setMonitorFrame] = useMonitorFrame()
+  const [currentFillScreen, setFillScreen] = useFillScreen()
   const [currentGradientEnabled, setGradientEnabled] = useGradientTitlebar()
   const [currentWallpaper, setWallpaper] = useWallpaper()
   const [currentDesktopBgColor, setDesktopBgColor] = useDesktopBgColor()
@@ -32,6 +34,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     committedCrtEnabled: currentCrtEnabled,
     committedCrtTuning: currentCrtTuning,
     committedMonitorFrame: currentMonitorFrame,
+    committedFillScreen: currentFillScreen,
     committedGradientEnabled: currentGradientEnabled,
     selectedWallpaper: currentWallpaper,
     selectedDesktopBgColor: currentDesktopBgColor,
@@ -60,6 +63,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     || currentCrtEnabled !== form.committedCrtEnabled
     || !areCrtTuningSettingsEqual(currentCrtTuning, form.committedCrtTuning)
     || currentMonitorFrame !== form.committedMonitorFrame
+    || currentFillScreen !== form.committedFillScreen
     || currentGradientEnabled !== form.committedGradientEnabled
     || !areWallpaperSettingsEqual(form.selectedWallpaper, form.committedWallpaper)
     || form.selectedDesktopBgColor !== form.committedDesktopBgColor
@@ -73,6 +77,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     dispatch({ type: 'SET_COMMITTED_CRT_ENABLED', value: currentCrtEnabled })
     dispatch({ type: 'SET_COMMITTED_CRT_TUNING', value: currentCrtTuning })
     dispatch({ type: 'SET_COMMITTED_MONITOR_FRAME', value: currentMonitorFrame })
+    dispatch({ type: 'SET_COMMITTED_FILL_SCREEN', value: currentFillScreen })
     dispatch({ type: 'SET_COMMITTED_GRADIENT_ENABLED', value: currentGradientEnabled })
     setWallpaper(form.selectedWallpaper)
     setDesktopBgColor(form.selectedDesktopBgColor)
@@ -97,6 +102,9 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
     }
     if (currentMonitorFrame !== form.committedMonitorFrame) {
       setMonitorFrame(form.committedMonitorFrame)
+    }
+    if (currentFillScreen !== form.committedFillScreen) {
+      setFillScreen(form.committedFillScreen)
     }
     if (currentGradientEnabled !== form.committedGradientEnabled) {
       setGradientEnabled(form.committedGradientEnabled)
@@ -136,8 +144,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <Tabs defaultValue="theme" className="w-full" keepMounted>
+    <div className="flex h-full min-h-0 flex-col gap-3">
+      <Tabs defaultValue="theme" className="min-h-0 w-full flex-1" keepMounted>
         <TabList>
           <Tab value="theme">Theme</Tab>
           <Tab value="wallpaper">Wallpaper</Tab>
@@ -166,6 +174,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         <AppearanceTab
           currentMonitorFrame={currentMonitorFrame}
           onMonitorFrameChange={setMonitorFrame}
+          currentFillScreen={currentFillScreen}
+          onFillScreenChange={setFillScreen}
           currentCrtEnabled={currentCrtEnabled}
           onCrtEnabledChange={setCrtEnabled}
           currentCrtTuning={currentCrtTuning}

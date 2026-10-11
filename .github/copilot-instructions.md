@@ -90,6 +90,7 @@ When changing docs only (no UI changes), run `pnpm docs:build`, `pnpm docs:embed
 - Window/process state is managed from `packages/playground/src/contexts/process/`.
 - App metadata is registered in `packages/playground/src/contexts/process/directory.ts`.
 - Window implementations live under `packages/playground/src/directory/`.
+- Windows never exceed the desktop work area (the playground `base-window` frame caps to it), and fixed dialogs pin their OK/Cancel/Apply command bar (fill-height `flex` layout, scrollable body, `shrink-0` footer) so buttons stay visible at every resolution. See ADR 0014.
 - The Component Docs playground app is an iframe wrapper around `/programs/docs/index.html`; it should not own a second docs runtime.
 - Playground reusable icons belong under `packages/playground/public/icons/` as flat `{name}-{size}.png` files. Use `packages/playground/public/wallpaper/` for wallpapers and backgrounds. For small symbolic UI assets, search `public/icons/` first.
 

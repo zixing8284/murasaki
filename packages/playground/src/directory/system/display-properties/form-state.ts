@@ -7,6 +7,7 @@ export interface FormState {
   committedCrtEnabled: boolean
   committedCrtTuning: { scanlineOpacity: number, jitterAmount: number, rollDuration: number, rollOpacity: number }
   committedMonitorFrame: boolean
+  committedFillScreen: boolean
   committedGradientEnabled: boolean
   selectedWallpaper: WallpaperSettings
   selectedDesktopBgColor: string
@@ -22,6 +23,7 @@ export type FormAction
     | { type: 'SET_COMMITTED_CRT_ENABLED', value: boolean }
     | { type: 'SET_COMMITTED_CRT_TUNING', value: FormState['committedCrtTuning'] }
     | { type: 'SET_COMMITTED_MONITOR_FRAME', value: boolean }
+    | { type: 'SET_COMMITTED_FILL_SCREEN', value: boolean }
     | { type: 'SET_COMMITTED_GRADIENT_ENABLED', value: boolean }
     | { type: 'SET_SELECTED_WALLPAPER', value: WallpaperSettings }
     | { type: 'SET_SELECTED_DESKTOP_BG_COLOR', value: string }
@@ -42,6 +44,8 @@ export function formReducer(state: FormState, action: FormAction): FormState {
       return { ...state, committedCrtTuning: action.value }
     case 'SET_COMMITTED_MONITOR_FRAME':
       return { ...state, committedMonitorFrame: action.value }
+    case 'SET_COMMITTED_FILL_SCREEN':
+      return { ...state, committedFillScreen: action.value }
     case 'SET_COMMITTED_GRADIENT_ENABLED':
       return { ...state, committedGradientEnabled: action.value }
     case 'SET_SELECTED_WALLPAPER':

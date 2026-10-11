@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+- 38c7962: **TreeView**: branches now follow Windows Explorer interaction. The `+` / `-`
+  disclosure box is the only single-click expand/collapse target; a single click
+  on the row selects/activates (`onClick`) without toggling, and a double click on
+  the row toggles expand/collapse. Clicking an already-expanded row no longer
+  collapses it.
+
+  The obsolete `preventCollapse` prop is removed — single-click no longer toggles
+  at all, so it has no purpose. Surfaces that want single-click to toggle (e.g. an
+  IE Favorites bar) can wire that through their own `onClick`. Collapsed branches
+  now unmount their children instead of hiding them.
+
+### Patch Changes
+
+- 16d98a6: **MenuShortcut**: accelerator hints now render one size smaller (`10px`) and
+  slightly dimmed (`opacity-70`) so they read as secondary to the item label while
+  staying legible on both normal and highlighted rows.
+
 ## 0.8.2
 
 ### Patch Changes

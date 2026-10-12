@@ -361,7 +361,7 @@ const warmedAppChunks = new Set<string>()
 export function preloadApp(appId: AppId | (string & {})): void {
   if (warmedAppChunks.has(appId))
     return
-  const load = directory[appId as AppId]?.preload
+  const load = (directory as Record<AppId, ProcessDirectoryEntry>)[appId as AppId]?.preload
   if (!load)
     return
   warmedAppChunks.add(appId)

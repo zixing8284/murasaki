@@ -73,6 +73,7 @@ export function DesktopIcon({
           ref={setIconRef}
           role="button"
           tabIndex={0}
+          aria-label={label}
           className="relative cursor-pointer select-none touch-none pointer-events-none text-(--desktop-text)"
           style={{
             ...(col !== undefined && { gridColumnStart: col }),

@@ -61,29 +61,6 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(value, max))
 }
 
-function readGridPosFromDOM(el: HTMLElement, gridEl: HTMLElement): { col: number, row: number } | null {
-  const cs = window.getComputedStyle(gridEl)
-  const cellW = Number.parseFloat(cs.getPropertyValue('grid-template-columns').split(' ')[0] ?? '')
-  const cellH = Number.parseFloat(cs.getPropertyValue('grid-template-rows').split(' ')[0] ?? '')
-  if (!(cellW > 0) || !(cellH > 0))
-    return null
-  const colGap = Number.parseFloat(cs.columnGap) || 0
-  const rowGap = Number.parseFloat(cs.rowGap) || 0
-  const paddingLeft = Number.parseFloat(cs.paddingLeft) || 0
-  const paddingTop = Number.parseFloat(cs.paddingTop) || 0
-
-  const gridRect = gridEl.getBoundingClientRect()
-  const elRect = el.getBoundingClientRect()
-  const relX = elRect.left + elRect.width / 2 - gridRect.left - paddingLeft
-  const relY = elRect.top + elRect.height / 2 - gridRect.top - paddingTop
-
-  const col = Math.round(relX / (cellW + colGap)) + 1
-  const row = Math.round(relY / (cellH + rowGap)) + 1
-  if (col < 1 || row < 1)
-    return null
-  return { col, row }
-}
-
 function buildDragItems(
   id: string,
   col: number,
@@ -145,11 +122,10 @@ export function useDesktopIconDrag({
   }
 
   const beginDrag = useCallback((point: ShellInputPoint): ShellInputSession | null => {
-    // Resolve grid position for this icon. Auto-placed icons (no stored position)
-    // have no explicit col/row, so compute the position from the DOM layout.
-    const grid = gridRef.current
     const iconEl = iconRef.current
-    if (!iconEl)
+    // The desktop layout assigns every icon an explicit grid cell, so a missing
+    // col/row means this icon isn't placed yet and can't be dragged.
+    if (!iconEl || col === undefined || row === undefined)
       return null
 
     // The desktop is uniformly scaled by a `transform: scale()` ancestor, so
@@ -157,39 +133,8 @@ export function useDesktopIconDrag({
     // desktop's own logical pixels (grid cells, drag-preview translate).
     const scale = scaleMagnitude(getScreenFromLocalMatrix(iconEl))
 
-    let resolvedCol = col
-    let resolvedRow = row
-    if (resolvedCol === undefined || resolvedRow === undefined) {
-      if (!grid)
-        return null
-      const pos = readGridPosFromDOM(iconEl, grid)
-      if (!pos)
-        return null
-      resolvedCol = pos.col
-      resolvedRow = pos.row
-    }
-
-    // For multi-drag: auto-placed selected icons also need resolved positions.
-    let resolvedPositions = positions
-    if (grid && selectedIds.length > 1) {
-      const unresolved = selectedIds.filter(sid => sid !== id && !positions[sid])
-      if (unresolved.length > 0) {
-        const extra: GridLayout = {}
-        grid.querySelectorAll<HTMLElement>('[data-file-id]').forEach((el) => {
-          const iconId = el.dataset.fileId
-          if (!iconId || !unresolved.includes(iconId))
-            return
-          const pos = readGridPosFromDOM(el, grid)
-          if (pos)
-            extra[iconId] = pos
-        })
-        if (Object.keys(extra).length > 0)
-          resolvedPositions = { ...positions, ...extra }
-      }
-    }
-
     const isSelected = selectedIds.includes(id)
-    const items = buildDragItems(id, resolvedCol, resolvedRow, resolvedPositions, selectedIds)
+    const items = buildDragItems(id, col, row, positions, selectedIds)
     onSelect(id, point.ctrlKey || point.metaKey, isSelected && selectedIds.length > 1)
 
     const drag: DragState = {
@@ -228,7 +173,7 @@ export function useDesktopIconDrag({
 
       const movingIds = drag.items.map(item => item.id)
       const targetCells = new Set<string>()
-      const nextPositions: GridLayout = {}
+      const moved: GridLayout = {}
 
       for (const item of drag.items) {
         const target = { col: item.col + dCol, row: item.row + dRow }
@@ -236,10 +181,14 @@ export function useDesktopIconDrag({
         if (targetCells.has(targetKey) || isCellOccupied(target.col, target.row, movingIds))
           return
         targetCells.add(targetKey)
-        nextPositions[item.id] = target
+        moved[item.id] = target
       }
 
-      setPositions(nextPositions)
+      // `positions` is the full resolved layout (every icon has a cell), so
+      // persisting it together with the moves pins the untouched icons in place.
+      // Vacated cells stay empty instead of triggering a reflow — the dragged
+      // icon moves and nothing else shifts, matching the classic desktop.
+      setPositions({ ...positions, ...moved })
     }
 
     const finish = (): void => {

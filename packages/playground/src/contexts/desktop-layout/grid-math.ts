@@ -1,4 +1,4 @@
-import type { GridPosition } from './storage'
+import type { GridLayout, GridPosition } from './storage'
 
 export interface GridDropDelta {
   dCol: number
@@ -74,4 +74,68 @@ export function calcGridDropDelta(
     cols: cols.length,
     rows: rows.length,
   }
+}
+
+/**
+ * Resolve a concrete, collision-free grid cell for *every* desktop icon.
+ *
+ * The desktop is a fully JS-managed grid: each icon is given an explicit cell so
+ * occupancy is always known and dragging one icon never reflows the others.
+ *
+ * - Icons with a valid, in-bounds, non-overlapping stored position keep it
+ *   (these are the ones the user has explicitly dragged). An out-of-bounds row
+ *   or a collision falls through to auto-placement so icons never stack.
+ * - The remaining icons are auto-placed column-first into the first free cell,
+ *   reproducing the classic Explorer "fill top-to-bottom, then next column"
+ *   arrangement. This runs only for icons the user has never dragged, so a
+ *   pristine desktop still arranges (and re-wraps on resize) responsively.
+ *
+ * `ids` must be in render order so auto-placement stays stable and deterministic.
+ */
+export function resolveDesktopLayout(
+  ids: readonly string[],
+  stored: GridLayout,
+  rows: number,
+): GridLayout {
+  const maxRow = Math.max(1, rows)
+  const result: GridLayout = {}
+  const occupied = new Set<string>()
+  const cellKey = (col: number, row: number): string => `${col}:${row}`
+
+  for (const id of ids) {
+    const pos = stored[id]
+    if (!pos || pos.col < 1 || pos.row < 1 || pos.row > maxRow)
+      continue
+    const key = cellKey(pos.col, pos.row)
+    if (occupied.has(key))
+      continue
+    occupied.add(key)
+    result[id] = { col: pos.col, row: pos.row }
+  }
+
+  let col = 1
+  let row = 1
+  const takeFreeCell = (): GridPosition => {
+    for (;;) {
+      if (row > maxRow) {
+        row = 1
+        col += 1
+      }
+      const key = cellKey(col, row)
+      if (!occupied.has(key)) {
+        occupied.add(key)
+        const cell = { col, row }
+        row += 1
+        return cell
+      }
+      row += 1
+    }
+  }
+
+  for (const id of ids) {
+    if (!result[id])
+      result[id] = takeFreeCell()
+  }
+
+  return result
 }

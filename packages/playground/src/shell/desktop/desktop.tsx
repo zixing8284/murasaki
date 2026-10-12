@@ -16,6 +16,7 @@ import {
 import { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useDesktopFiles } from '../../contexts/desktop-files/hooks'
 import { CELL_HEIGHT, CELL_WIDTH, COLUMN_GAP, DESKTOP_PADDING, ROW_GAP } from '../../contexts/desktop-layout/context'
+import { resolveDesktopLayout } from '../../contexts/desktop-layout/grid-math'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
 import { RECYCLE_BIN_PATH, useFolderChildren } from '../../contexts/file-system'
 import { APP_ID, getDesktopApps, preloadApp } from '../../contexts/process/directory'
@@ -163,30 +164,24 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
 
   const iconEntries: IconEntry[] = [...apps, recycleBin, ...files]
 
-  // Only explicitly-placed (dragged) icons get grid positions; default icons
-  // are CSS auto-placed via grid-auto-flow so they wrap responsively.
-  // Out-of-bounds stored positions fall back to CSS auto-placement so they
-  // never stack on top of each other (clamping would put two icons on one cell).
-  const renderedPositions: GridLayout = (() => {
-    const next: GridLayout = {}
-    iconEntries.forEach((entry) => {
-      const stored = positions[entry.id]
-      if (!stored)
-        return
-      if (gridRows > 0 && stored.row > gridRows)
-        return
-      next[entry.id] = stored
-    })
-    return next
-  })()
+  // Every icon is assigned a concrete, collision-free grid cell up front:
+  // dragged icons keep their stored position, the rest are auto-placed
+  // column-first. Because positions are fully known in JS, occupancy checks are
+  // exact and dragging one icon never reflows the others — a vacated cell simply
+  // stays empty, matching the classic Windows desktop.
+  const resolvedLayout: GridLayout = resolveDesktopLayout(
+    iconEntries.map(entry => entry.id),
+    positions,
+    gridRows,
+  )
 
-  const isRenderedCellOccupied = (
+  const isCellOccupied = (
     col: number,
     row: number,
     excludeIds?: string | readonly string[],
   ): boolean => {
     const excluded = new Set(typeof excludeIds === 'string' ? [excludeIds] : excludeIds ?? [])
-    return Object.entries(renderedPositions).some(
+    return Object.entries(resolvedLayout).some(
       ([id, pos]: [string, GridPosition]) => !excluded.has(id) && pos.col === col && pos.row === row,
     )
   }
@@ -370,7 +365,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
           style={gridStyle}
         >
           {!refreshing && iconEntries.map((entry) => {
-            const pos = renderedPositions[entry.id]
+            const pos = resolvedLayout[entry.id]
             return (
               <DesktopIcon
                 key={entry.id}
@@ -381,13 +376,13 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
                 row={pos?.row}
                 selected={selectedIconIdSet.has(entry.id)}
                 selectedIds={selectedIconIds}
-                positions={renderedPositions}
+                positions={resolvedLayout}
                 dragOffset={dragPreviewIdSet.has(entry.id) ? dragPreview?.offset ?? null : null}
                 onSelect={handleIconSelect}
                 onDragPreviewChange={setDragPreview}
                 onOpen={entry.onOpen}
                 onPreload={entry.onPreload}
-                isCellOccupied={isRenderedCellOccupied}
+                isCellOccupied={isCellOccupied}
                 menuContainer={desktopEl}
               />
             )

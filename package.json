@@ -21,8 +21,7 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "cd packages/ui && pnpm publish --no-git-checks --provenance --access public",
-    "skills:update": "pnpm dlx skills add vercel-labs/agent-skills",
-    "react-doctor": "pnpm dlx react-doctor@latest"
+    "skills:update": "pnpm dlx skills add vercel-labs/agent-skills"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:root",

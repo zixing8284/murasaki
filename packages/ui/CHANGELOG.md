@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.2
+
+### Patch Changes
+
+- d763d10: Improve Windows 98 scrollbar track texture rendering under scaled layouts by tuning the checker pattern implementation.
+
 ## 0.9.1
 
 ### Patch Changes

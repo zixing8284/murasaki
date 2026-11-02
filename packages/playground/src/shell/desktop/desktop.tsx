@@ -35,15 +35,8 @@ const gridStyle: CSSProperties = {
 }
 
 const selectionBoxStyle: CSSProperties = {
-  backgroundImage: [
-    'linear-gradient(90deg, #ffffff 1px, transparent 1px)',
-    'linear-gradient(90deg, #ffffff 1px, transparent 1px)',
-    'linear-gradient(0deg, #ffffff 1px, transparent 1px)',
-    'linear-gradient(0deg, #ffffff 1px, transparent 1px)',
-  ].join(', '),
-  backgroundPosition: '0 0, 0 calc(100% - 1px), 0 0, calc(100% - 1px) 0',
-  backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
-  backgroundSize: '2px 1px, 2px 1px, 1px 2px, 1px 2px',
+  border: '1px dotted #ffffff',
+  boxSizing: 'border-box',
 }
 
 export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {

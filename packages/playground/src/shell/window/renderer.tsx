@@ -6,8 +6,6 @@ import appDirectory from '../../contexts/process/directory'
 import { useProcesses } from '../../contexts/process/hooks'
 import { useSystemBusy } from '../../contexts/system-cursor'
 import { useIsMobile } from '../../hooks/use-is-mobile'
-import { assetPath } from '../../lib/asset-path'
-import { AppLaunchSplash } from './app-launch-splash'
 import { Ie2Chrome } from './ie2-chrome'
 import { IframeWindow } from './iframe-window'
 import { RndWindow } from './rnd-window'
@@ -17,16 +15,9 @@ import { RndWindow } from './rnd-window'
  * chunk is still resolving. Registers a desktop-level working cursor while
  * visible (unmounts when Suspense resolves, automatically unregistering).
  */
-function WindowLoadingPlaceholder({ name, iconSrc }: { name?: string, iconSrc?: string }): React.ReactElement {
+function WindowLoadingPlaceholder(): React.ReactElement {
   useSystemBusy(true, 'working')
-  if (name) {
-    return <AppLaunchSplash name={name} iconSrc={iconSrc} />
-  }
-  return (
-    <div className="size-full min-h-40 flex items-center justify-center">
-      <span className="text-xs text-(--gray-text)">Loading…</span>
-    </div>
-  )
+  return <></>
 }
 
 /**
@@ -49,12 +40,10 @@ interface SuspenseWindowProps {
   windowId: string
   Component: ComponentType<ProcessComponentProps> | undefined
   windowConfig: ProcessDefaultWindowConfig | undefined
-  name?: string
-  iconSrc?: string
   isMobile?: boolean
 }
 
-function SuspenseWindow({ windowId, Component, windowConfig, name, iconSrc, isMobile = false }: SuspenseWindowProps): React.ReactElement {
+function SuspenseWindow({ windowId, Component, windowConfig, isMobile = false }: SuspenseWindowProps): React.ReactElement {
   const [loaded, setLoaded] = useState(false)
 
   return (
@@ -68,11 +57,11 @@ function SuspenseWindow({ windowId, Component, windowConfig, name, iconSrc, isMo
       loadingCursor={!loaded}
       isMobile={isMobile}
     >
-      <Suspense fallback={<WindowLoadingPlaceholder name={name} iconSrc={iconSrc} />}>
+      <Suspense fallback={<WindowLoadingPlaceholder />}>
         <LoadDetector onLoaded={() => setLoaded(true)} />
         {Component
           ? <Component windowId={windowId} />
-          : <WindowLoadingPlaceholder name={name} iconSrc={iconSrc} />}
+          : null}
       </Suspense>
     </RndWindow>
   )
@@ -82,7 +71,6 @@ function renderProcessWindow(
   windowId: string,
   entry: ProcessDirectoryEntry | undefined,
   Component: ComponentType<ProcessComponentProps> | undefined,
-  splash: { name?: string, iconSrc?: string },
   isMobile = false,
 ): React.ReactElement | null {
   const windowConfig = entry?.window
@@ -132,8 +120,6 @@ function renderProcessWindow(
       windowId={windowId}
       Component={Component}
       windowConfig={windowConfig}
-      name={splash.name}
-      iconSrc={splash.iconSrc}
       isMobile={isMobile}
     />
   )
@@ -173,18 +159,13 @@ export function WindowRenderer(): React.ReactElement {
         // Ephemeral processes carry their own Component; regular ones use the directory
         const Component = proc.Component
           ?? entry?.Component
-        const icon = proc.icon ?? entry?.icon
-        const splash = {
-          name: entry?.name ?? proc.title,
-          iconSrc: icon ? assetPath(icon.lg) : undefined,
-        }
         // Key by stable PID so each window keeps its own fiber, DOM node and
         // imperative drag transform. Without a key React reconciles by list
         // index, so closing a window reuses a sibling's fiber and the surviving
         // window loses its dragged position.
         return (
           <Fragment key={pid}>
-            {renderProcessWindow(pid, entry, Component, splash, isMobile)}
+            {renderProcessWindow(pid, entry, Component, isMobile)}
           </Fragment>
         )
       })}

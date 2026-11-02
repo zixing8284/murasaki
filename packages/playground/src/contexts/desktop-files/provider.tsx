@@ -11,8 +11,6 @@ import {
   saveDesktopMediaFile,
 } from './storage'
 
-const getFile = (id: string): Promise<File | null> => getDesktopMediaFile(id)
-
 export function DesktopFilesProvider({ children }: { children: ReactNode }): React.ReactElement {
   const [items, setItems] = useState<DesktopMediaFileEntry[]>([])
   const [loading, setLoading] = useState(true)
@@ -96,6 +94,18 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
 
   const clearLaunchRequest = (): void => {
     setLaunchRequest(null)
+  }
+
+  const getFile = async (id: string): Promise<File | null> => {
+    const file = await getDesktopMediaFile(id)
+    if (file) {
+      return file
+    }
+
+    startTransition(() => {
+      setItems(prev => prev.filter(item => item.id !== id))
+    })
+    return null
   }
 
   const refresh = async (): Promise<void> => {

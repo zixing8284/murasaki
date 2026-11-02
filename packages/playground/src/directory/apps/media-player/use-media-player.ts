@@ -178,6 +178,7 @@ async function probeLocalMediaFile(file: File, trackType: 'audio' | 'video'): Pr
 export function useMediaPlayer(): UseMediaPlayerResult {
   const [mediaState, setMediaState] = useState<MediaState | null>(null)
   const [localImportError, setLocalImportError] = useState<LocalImportError | null>(null)
+  const [pendingTrackId, setPendingTrackId] = useState<string | null>(null)
   const [model, setModel] = useState<PlayerState>(() => ({
     playlist: [],
     currentIndex: -1,
@@ -379,9 +380,16 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     }
   }
 
-  /** Load a local file and optionally replace previous local selections. */
-  const loadLocalFileInternal = (file: File, options?: { replacePlaylist?: boolean }): void => {
-    const objectUrl = URL.createObjectURL(file)
+  const loadLocalFile = (file: File, options?: { replacePlaylist?: boolean }): void => {
+    const requestId = ++localImportSeqRef.current
+    setLocalImportError(null)
+    const type = detectTrackType(file)
+    const pendingTrack: Track = {
+      id: `local-${nextLocalId++}`,
+      title: file.name.replace(/\.[^.]+$/, ''),
+      url: '',
+      type,
+    }
 
     if (options?.replacePlaylist) {
       for (const url of objectUrlsRef.current) {
@@ -390,17 +398,9 @@ export function useMediaPlayer(): UseMediaPlayerResult {
       objectUrlsRef.current.clear()
     }
 
-    objectUrlsRef.current.add(objectUrl)
-    const type = detectTrackType(file)
-    const track: Track = {
-      id: `local-${nextLocalId++}`,
-      title: file.name.replace(/\.[^.]+$/, ''),
-      url: objectUrl,
-      type,
-    }
     setModel((prev) => {
       const basePlaylist = options?.replacePlaylist ? [] : prev.playlist
-      const newPlaylist = [...basePlaylist, track]
+      const newPlaylist = [...basePlaylist, pendingTrack]
       const newIndex = newPlaylist.length - 1
       return {
         ...prev,
@@ -409,26 +409,62 @@ export function useMediaPlayer(): UseMediaPlayerResult {
         playOrderIndices: Array.from({ length: newPlaylist.length }, (_, i) => i),
       }
     })
-    managerRef.current?.loadAndPlay(track)
-  }
-
-  const loadLocalFile = (file: File, options?: { replacePlaylist?: boolean }): void => {
-    const requestId = ++localImportSeqRef.current
-    setLocalImportError(null)
+    setPendingTrackId(pendingTrack.id)
 
     void (async () => {
-      const type = detectTrackType(file)
       const probeError = await probeLocalMediaFile(file, type)
 
-      if (requestId !== localImportSeqRef.current)
+      const removePendingTrack = (): void => {
+        setModel((prev) => {
+          const pendingIndex = prev.playlist.findIndex(track => track.id === pendingTrack.id)
+          if (pendingIndex === -1)
+            return prev
+          const nextPlaylist = prev.playlist.filter(track => track.id !== pendingTrack.id)
+          let nextCurrentIndex = prev.currentIndex
+          if (pendingIndex < prev.currentIndex) {
+            nextCurrentIndex = prev.currentIndex - 1
+          }
+          else if (pendingIndex === prev.currentIndex) {
+            nextCurrentIndex = nextPlaylist.length > 0
+              ? Math.min(pendingIndex, nextPlaylist.length - 1)
+              : -1
+          }
+          return {
+            ...prev,
+            playlist: nextPlaylist,
+            currentIndex: nextCurrentIndex,
+            playOrderIndices: Array.from({ length: nextPlaylist.length }, (_, i) => i),
+          }
+        })
+        setPendingTrackId(null)
+      }
+
+      if (requestId !== localImportSeqRef.current) {
+        removePendingTrack()
         return
+      }
 
       if (probeError) {
+        removePendingTrack()
         setLocalImportError({ fileName: file.name, message: probeError })
         return
       }
 
-      loadLocalFileInternal(file, options)
+      const objectUrl = URL.createObjectURL(file)
+      objectUrlsRef.current.add(objectUrl)
+      const track: Track = { ...pendingTrack, url: objectUrl }
+
+      setModel((prev) => {
+        const index = prev.playlist.findIndex(item => item.id === pendingTrack.id)
+        if (index === -1)
+          return prev
+        const nextPlaylist = [...prev.playlist]
+        nextPlaylist[index] = track
+        return { ...prev, playlist: nextPlaylist, currentIndex: index }
+      })
+
+      managerRef.current?.loadAndPlay(track)
+      setPendingTrackId(null)
     })()
   }
 
@@ -504,13 +540,16 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     ? (mediaState.currentTime / mediaState.duration) * 100
     : 0
 
-  const currentTrack = mediaState?.currentTrack ?? null
+  const pendingTrack = pendingTrackId
+    ? (model.playlist.find(track => track.id === pendingTrackId) ?? null)
+    : null
+  const currentTrack = mediaState?.currentTrack ?? pendingTrack
   const hasVideo = mediaState?.hasVideo ?? false
 
   return {
     // Media state
     isPlaying: mediaState?.isPlaying ?? false,
-    loading: mediaState?.loading ?? false,
+    loading: (mediaState?.loading ?? false) || pendingTrackId !== null,
     errorMessage: mediaState?.errorMessage ?? null,
     localImportError,
     currentTime: mediaState?.currentTime ?? 0,

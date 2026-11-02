@@ -37,6 +37,8 @@ interface Ie2ChromeProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Force the app into a mobile fullscreen shell instead of a desktop window. */
+  isMobile?: boolean
   /** Toggle handler for the Favorites toolbar button. When omitted the button is disabled. */
   onFavoritesClick?: () => void
   /** Renders a sidebar (e.g. Favorites) next to the page. Receives a `navigate` helper. */
@@ -258,6 +260,7 @@ export function Ie2Chrome({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  isMobile = false,
   onFavoritesClick,
   renderSidebar,
 }: Ie2ChromeProps): ReactElement | null {
@@ -395,11 +398,12 @@ export function Ie2Chrome({
       windowId={windowId}
       className={className}
       contentClassName={`p-0 flex flex-col ${contentClassName ?? ''}`}
-      disableMaximize={disableMaximize}
+      disableMaximize={disableMaximize || isMobile}
       disableMinimize={disableMinimize}
-      disableResize={disableResize}
+      disableResize={disableResize || isMobile}
       onDragChange={handleInteractionChange}
       onResizeChange={handleInteractionChange}
+      isMobile={isMobile}
     >
       <InactiveClickGuard windowId={windowId} className="shrink-0">
         <WindowMenuBar>

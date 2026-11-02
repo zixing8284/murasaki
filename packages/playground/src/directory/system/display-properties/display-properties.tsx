@@ -9,6 +9,7 @@ import { useDesktopBgColor } from '../../../hooks/use-desktop-bg-color'
 import { useFillScreen } from '../../../hooks/use-fill-screen'
 import { useGradientTitlebar } from '../../../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../../../hooks/use-icon-label-bg-color'
+import { useIsMobile } from '../../../hooks/use-is-mobile'
 import { useMonitorFrame } from '../../../hooks/use-monitor-frame'
 import { areWallpaperSettingsEqual, useWallpaper } from '../../../hooks/use-wallpaper'
 import { listWallpaperImages } from '../../../lib/wallpaper-storage'
@@ -23,6 +24,7 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
   const [currentCrtEnabled, setCrtEnabled] = useCrtEffect()
   const [currentCrtTuning, setCrtTuning] = useCrtTuning()
   const [currentMonitorFrame, setMonitorFrame] = useMonitorFrame()
+  const isMobile = useIsMobile()
   const [currentFillScreen, setFillScreen] = useFillScreen()
   const [currentGradientEnabled, setGradientEnabled] = useGradientTitlebar()
   const [currentWallpaper, setWallpaper] = useWallpaper()
@@ -172,6 +174,8 @@ export function DisplayProperties({ windowId }: ProcessComponentProps): React.Re
         />
 
         <AppearanceTab
+          canUseMonitorFrame={!isMobile}
+          canToggleFillScreen={!isMobile}
           currentMonitorFrame={currentMonitorFrame}
           onMonitorFrameChange={setMonitorFrame}
           currentFillScreen={currentFillScreen}

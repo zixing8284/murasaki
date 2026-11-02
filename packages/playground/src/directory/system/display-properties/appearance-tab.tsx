@@ -34,6 +34,8 @@ const CRT_PRESETS = {
 } as const
 
 interface AppearanceTabProps {
+  canUseMonitorFrame?: boolean
+  canToggleFillScreen?: boolean
   currentMonitorFrame: boolean
   onMonitorFrameChange: (value: boolean) => void
   currentFillScreen: boolean
@@ -47,6 +49,8 @@ interface AppearanceTabProps {
 }
 
 export function AppearanceTab({
+  canUseMonitorFrame = true,
+  canToggleFillScreen = true,
   currentMonitorFrame,
   onMonitorFrameChange,
   currentFillScreen,
@@ -66,18 +70,30 @@ export function AppearanceTab({
   return (
     <ScrollableTabPanel value="appearance" className="gap-3">
       <Checkbox
-        checked={currentMonitorFrame}
+        checked={canUseMonitorFrame ? currentMonitorFrame : false}
+        disabled={!canUseMonitorFrame}
         onCheckedChange={onMonitorFrameChange}
       >
         Show CRT monitor frame
       </Checkbox>
+      {!canUseMonitorFrame && (
+        <div className="text-[10px] text-(--gray-text)">
+          Unavailable on mobile layout.
+        </div>
+      )}
 
       <Checkbox
-        checked={currentFillScreen}
+        checked={canToggleFillScreen ? currentFillScreen : true}
+        disabled={!canToggleFillScreen}
         onCheckedChange={onFillScreenChange}
       >
         Cover full screen (fill viewport)
       </Checkbox>
+      {!canToggleFillScreen && (
+        <div className="text-[10px] text-(--gray-text)">
+          Always enabled on mobile layout.
+        </div>
+      )}
 
       <Checkbox
         checked={currentCrtEnabled}

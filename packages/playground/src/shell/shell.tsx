@@ -15,6 +15,7 @@ import { useDesktopBgColor } from '../hooks/use-desktop-bg-color'
 import { useFillScreen } from '../hooks/use-fill-screen'
 import { useGradientTitlebar } from '../hooks/use-gradient-titlebar'
 import { useIconLabelBgColor } from '../hooks/use-icon-label-bg-color'
+import { useIsMobile } from '../hooks/use-is-mobile'
 import { useMonitorFrame } from '../hooks/use-monitor-frame'
 import { usePinchZoomPause } from '../hooks/use-pinch-zoom-pause'
 import { SCREEN_SIZE_PRESETS, useScreenSize } from '../hooks/use-screen-size'
@@ -88,9 +89,11 @@ export function Shell(): React.ReactElement {
   // not compete with the browser's per-frame page re-rasterization. Only wires
   // up listeners while the CRT effect is active.
   usePinchZoomPause(crtEnabled)
-  const [monitorFrame] = useMonitorFrame()
+  const [storedMonitorFrame] = useMonitorFrame()
   const shaderGlass = useShaderGlass(screenRef)
   const [gradientEnabled] = useGradientTitlebar()
+  const isMobile = useIsMobile()
+  const monitorFrame = !isMobile && storedMonitorFrame
 
   // Stop CRT Glass when the monitor frame is hidden — the effect is only
   // meaningful inside the bezel, and leaving the capture stream running
@@ -105,6 +108,7 @@ export function Shell(): React.ReactElement {
   const [iconLabelBgColor] = useIconLabelBgColor()
   const [screenSize, setScreenSize] = useScreenSize()
   const [fillScreen] = useFillScreen()
+  const effectiveFillScreen = fillScreen || isMobile
 
   // Default (no-bezel) layout mirrors elternal.world: a fixed-resolution virtual
   // desktop uniformly scaled to fit its container, centered and letterboxed.
@@ -278,7 +282,7 @@ export function Shell(): React.ReactElement {
         outline: '1px dotted var(--button-face)',
         outlineOffset: '-5px',
       }
-    : fillScreen
+    : effectiveFillScreen
       ? { width: '100%', height: '100%' }
       : {
           width: screenSize.width,
@@ -289,7 +293,9 @@ export function Shell(): React.ReactElement {
 
   const screenSurroundClass = monitorFrame
     ? 'relative z-1 size-full overflow-hidden bg-gray-950 p-[clamp(2px,0.4vw,4px)] shadow-[inset_0_0_24px_rgb(0_0_0/0.85)]'
-    : 'size-full'
+    : isMobile
+      ? 'relative z-1 size-full overflow-hidden'
+      : 'size-full'
 
   const desktopContent = (
     <>
@@ -322,8 +328,8 @@ export function Shell(): React.ReactElement {
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
                       >
-                        {/* Desktop Icons */}
-                        <Desktop ref={desktopRef} />
+                        {/* Mobile shell keeps the active app front-and-center instead of showing desktop icons behind it. */}
+                        {!isMobile && <Desktop ref={desktopRef} />}
 
                         {isDragActive && (
                           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none">
@@ -344,6 +350,7 @@ export function Shell(): React.ReactElement {
                         anchorRef={startButtonRef}
                         screenRef={screenRef}
                         onClose={() => setShowStartMenu(false)}
+                        isMobile={isMobile}
                       />
                     )}
 
@@ -353,6 +360,7 @@ export function Shell(): React.ReactElement {
                       showStartMenu={showStartMenu}
                       onStartMenuToggle={() => setShowStartMenu(!showStartMenu)}
                       onShowDesktop={handleShowDesktop}
+                      isMobile={isMobile}
                     />
                   </ScreenBoundaryContext>
                 </ShellInputProvider>
@@ -366,7 +374,17 @@ export function Shell(): React.ReactElement {
     // Default: the desk padding letterboxes the fixed-resolution virtual screen.
     // Appearance → "Cover full screen" switches to native fill (desktop = viewport,
     // no fixed resolution, no scale) and drops the padding.
-    <div className={`flex h-screen w-full bg-[#20242c] ${fillScreen ? 'p-0' : 'p-[clamp(0.5rem,2.5vw,1.25rem)]'} select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden`}>
+    <div
+      className={`flex ${isMobile ? 'h-[100dvh]' : 'h-screen'} w-full bg-[#20242c] ${effectiveFillScreen ? 'p-0' : 'p-[clamp(0.5rem,2.5vw,1.25rem)]'} select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden`}
+      style={
+        isMobile
+          ? {
+              paddingTop: 'env(safe-area-inset-top)',
+              paddingBottom: 'env(safe-area-inset-bottom)',
+            }
+          : undefined
+      }
+    >
       {/*
         Alignment wrapper — className switches between modes but element type stays `div`,
         so React updates props in-place and never remounts the subtree below.

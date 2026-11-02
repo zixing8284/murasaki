@@ -27,6 +27,8 @@ export interface BaseWindowProps {
   disableMaximize?: boolean
   disableMinimize?: boolean
   disableResize?: boolean
+  /** Force the app into a mobile fullscreen shell rather than desktop floating-window behavior. */
+  isMobile?: boolean
   /** Default window dimensions — applied as inline style for initial size */
   defaultSize?: { width?: number, height?: number }
   /** Default absolute window position — applied as inline style for initial placement */
@@ -71,6 +73,7 @@ export function BaseWindow({
   disableMaximize = false,
   disableMinimize = false,
   disableResize = false,
+  isMobile = false,
   defaultSize,
   defaultPosition,
   autoSize = false,
@@ -121,6 +124,7 @@ export function BaseWindow({
   // window can be grown to reveal in-content menus and stays put afterwards.
   const effectiveWidth = sizeOverride?.width ?? autoWidth
   const effectiveHeight = sizeOverride?.height ?? autoHeight
+  const mobileFullscreen = isMobile && isActive && !proc.minimized
 
   const defaultIcon = proc.icon
     ? <img src={assetPath(proc.icon.sm)} alt="" className="size-4 pixelated shrink-0" draggable={false} />
@@ -133,15 +137,15 @@ export function BaseWindow({
           ref={frameRef}
           data-window-frame=""
           data-system-cursor={loadingCursor ? 'working' : undefined}
-          className={`max-w-full max-h-full ${(isInteracting && !proc.maximized) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
+          className={`max-w-full max-h-full ${mobileFullscreen ? 'rounded-none border-none shadow-none' : ''}${(isInteracting && !proc.maximized && !mobileFullscreen) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
           style={{
             zIndex,
-            width: effectiveWidth,
-            height: effectiveHeight,
-            top: clampInitialPosition(defaultPosition?.top, effectiveHeight),
-            right: defaultPosition?.right,
-            bottom: defaultPosition?.bottom,
-            left: clampInitialPosition(defaultPosition?.left, effectiveWidth),
+            width: mobileFullscreen ? '100%' : effectiveWidth,
+            height: mobileFullscreen ? '100%' : effectiveHeight,
+            top: mobileFullscreen ? 0 : clampInitialPosition(defaultPosition?.top, effectiveHeight),
+            right: mobileFullscreen ? 0 : defaultPosition?.right,
+            bottom: mobileFullscreen ? 0 : defaultPosition?.bottom,
+            left: mobileFullscreen ? 0 : clampInitialPosition(defaultPosition?.left, effectiveWidth),
           }}
           onPointerDown={(e) => {
             e.stopPropagation()
@@ -156,14 +160,16 @@ export function BaseWindow({
             <WindowTitle icon={titleIcon ?? defaultIcon}>{proc.title}</WindowTitle>
             <WindowButtons>
               {!disableMinimize && <WindowMinimizeButton onClick={() => actions.minimize(windowId)} />}
-              <WindowMaximizeButton
-                onClick={() => actions.toggleMaximize(windowId)}
-              />
+              {!disableMaximize && (
+                <WindowMaximizeButton
+                  onClick={() => actions.toggleMaximize(windowId)}
+                />
+              )}
               <WindowCloseButton onClick={() => actions.close(windowId)} />
             </WindowButtons>
           </WindowTitleBar>
           <WindowContent ref={contentRef} className={contentClassName}>{children}</WindowContent>
-          {!disableResize && <WindowResizeGrip ref={resizeRef} />}
+          {!mobileFullscreen && !disableResize && <WindowResizeGrip ref={resizeRef} />}
         </WindowFrame>
       </WindowPortal>
     </Window>

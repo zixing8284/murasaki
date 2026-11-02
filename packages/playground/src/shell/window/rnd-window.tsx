@@ -27,6 +27,8 @@ interface RndWindowProps {
   onDragChange?: (dragging: boolean) => void
   /** Called when resize starts/stops — use to disable iframe pointer-events during resize */
   onResizeChange?: (resizing: boolean) => void
+  /** Force the active app into a mobile fullscreen presentation instead of a desktop window. */
+  isMobile?: boolean
 }
 
 export function RndWindow({
@@ -43,6 +45,7 @@ export function RndWindow({
   loadingCursor = false,
   onDragChange,
   onResizeChange,
+  isMobile = false,
 }: RndWindowProps): React.ReactElement | null {
   const { processes, container } = useProcesses()
   const actions = useProcessActions()
@@ -136,8 +139,8 @@ export function RndWindow({
   } = useShellWindowInteraction({
     windowId,
     container: portalContainer,
-    draggable: true,
-    resizable: !disableResize,
+    draggable: !isMobile,
+    resizable: !isMobile && !disableResize,
     onActivate: () => actions.activate(windowId),
     onDragChange: handleDragChange,
     onResizeChange: handleResizeChange,
@@ -157,9 +160,9 @@ export function RndWindow({
       className={className}
       contentClassName={contentClassName}
       titleIcon={titleIcon}
-      disableMaximize={disableMaximize}
+      disableMaximize={disableMaximize || isMobile}
       disableMinimize={disableMinimize}
-      disableResize={disableResize}
+      disableResize={disableResize || isMobile}
       defaultSize={defaultSize}
       defaultPosition={resolvedDefaultPosition}
       autoSize={autoSize}
@@ -171,6 +174,7 @@ export function RndWindow({
       frameRef={setFrame}
       dragRef={setDragHandleRef}
       resizeRef={setResizeHandleRef}
+      isMobile={isMobile}
     >
       {children}
     </BaseWindow>

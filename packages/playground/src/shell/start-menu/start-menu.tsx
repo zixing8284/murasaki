@@ -26,6 +26,7 @@ interface StartMenuProps {
   anchorRef: RefObject<HTMLElement | null>
   /** Shell screen area containing both desktop and taskbar, excluding the browser viewport frame. */
   screenRef: RefObject<HTMLElement | null>
+  isMobile?: boolean
 }
 
 interface StartIconProps {
@@ -78,7 +79,7 @@ const ACCESSORIES = getStartMenuApps('accessories')
 const DOCUMENTS = getStartMenuApps('documents')
 const SETTINGS = getStartMenuApps('settings')
 
-export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): React.ReactElement {
+export function StartMenu({ onClose, anchorRef, screenRef, isMobile = false }: StartMenuProps): React.ReactElement {
   const { open } = useProcessActions()
   const { smallStartIcons } = useTaskbarSettings()
   const bigTop = !smallStartIcons
@@ -124,6 +125,45 @@ export function StartMenu({ onClose, anchorRef, screenRef }: StartMenuProps): Re
   const launch = (appId: string): void => {
     open(appId as Parameters<typeof open>[0])
     onClose()
+  }
+
+  if (isMobile) {
+    const mobileApps = [...PROGRAMS, ...ACCESSORIES, ...DOCUMENTS, ...SETTINGS]
+
+    return (
+      <>
+        <div
+          className="absolute inset-0 z-246 bg-black/20"
+          role="presentation"
+          aria-hidden="true"
+          onClick={onClose}
+        />
+
+        <div className="absolute inset-x-2 bottom-[calc(env(safe-area-inset-bottom)+0.5rem)] z-247 rounded-none border border-(--button-shadow) bg-(--button-face) shadow-(--shadow-raised)">
+          <div className="flex items-center justify-between border-b border-b-(--button-shadow) bg-linear-to-b from-(--active-title) to-(--gradient-active-title) px-3 py-2 text-(--title-text)">
+            <span className="text-[11px]">Start</span>
+            <button type="button" className="border border-(--button-shadow) bg-(--button-face) px-2 py-0.5 text-[10px] shadow-(--shadow-raised) active:shadow-(--shadow-sunken)" onClick={onClose}>Close</button>
+          </div>
+
+          <div className="max-h-[60vh] overflow-y-auto p-2">
+            <div className="grid grid-cols-2 gap-2">
+              {mobileApps.map(app => (
+                <button
+                  key={app.appId}
+                  type="button"
+                  className="flex items-center gap-2 border border-(--button-shadow) bg-(--button-face) px-2 py-2 text-left shadow-(--shadow-raised) active:shadow-(--shadow-sunken)"
+                  onClick={() => launch(app.appId)}
+                  onPointerEnter={() => preloadApp(app.appId)}
+                >
+                  <StartIcon src={app.icon} />
+                  <span className="truncate text-[11px]">{app.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    )
   }
 
   return (

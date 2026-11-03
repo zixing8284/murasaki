@@ -58,6 +58,7 @@ import { FolderTree } from './folder-tree'
 import { sortNodes } from './sort'
 
 const ICONS = EXPLORER_TOOLBAR_ICONS
+const HISTORY_ICON = '/icons/explorer/history.png'
 
 // Order the Views toolbar button and Ctrl+cycling step through.
 const VIEW_CYCLE: readonly FileGridView[] = ['large', 'small', 'list', 'details', 'thumbnails']
@@ -143,6 +144,10 @@ function CloseGlyph(): ReactElement {
 /** History (recent locations) dropdown driven by the shared context menu. */
 function HistoryTrigger({ disabled, showText }: { disabled: boolean, showText?: boolean }): ReactElement {
   const { openAt } = useContextMenu()
+  const iconState = disabled
+    ? 'opacity-50 grayscale'
+    : 'grayscale group-hover:grayscale-0 group-active:grayscale-0'
+
   return (
     <Button
       flat
@@ -156,10 +161,7 @@ function HistoryTrigger({ disabled, showText }: { disabled: boolean, showText?: 
       }}
       className={`group shrink-0${showText ? ' flex h-auto min-w-0 flex-col items-center justify-center gap-0.5 px-2 py-0.5' : ''}`}
     >
-      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className={`size-4 shrink-0${disabled ? ' opacity-50' : ''}`}>
-        <circle cx="8" cy="8" r="6" />
-        <path d="M8 4.5V8l2.5 1.5" strokeLinecap="square" />
-      </svg>
+      <img src={assetPath(HISTORY_ICON)} alt="" className={`size-5 shrink-0 pixelated ${iconState}`} draggable={false} />
       {showText && <span className="leading-none">History</span>}
     </Button>
   )

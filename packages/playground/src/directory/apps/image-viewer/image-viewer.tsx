@@ -203,7 +203,7 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
                   />
                 )
               : (
-                  <span className="text-(--gray-text)">No image loaded</span>
+                  <span className="text-(--info-text) font-semibold">No image loaded</span>
                 )}
           </div>
         </ScrollArea>

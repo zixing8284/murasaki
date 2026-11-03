@@ -11,6 +11,7 @@ import {
 } from '@murasaki-io/react98'
 import { IconTile } from '../../components/icon-tile'
 import { useDesktopLayout } from '../../contexts/desktop-layout/hooks'
+import { DESKTOP_LAYER } from './layer-order'
 import { useDesktopIconDrag } from './use-desktop-icon-drag'
 
 interface DesktopIconProps {
@@ -64,7 +65,11 @@ export function DesktopIcon({
   })
 
   const dragging = dragOffset !== null
-  const zIndex = dragging ? 2 : selected ? 1 : undefined
+  const zIndex = dragging
+    ? DESKTOP_LAYER.iconDragging
+    : selected
+      ? DESKTOP_LAYER.iconSelected
+      : undefined
 
   return (
     <ContextMenu container={menuContainer}>

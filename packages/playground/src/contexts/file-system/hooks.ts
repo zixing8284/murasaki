@@ -5,6 +5,12 @@ import { assetPath } from '../../lib/asset-path'
 import { FileSystemContext } from './context'
 import { getAllNodes, getNode, listChildren, readBlob } from './db'
 
+function isRenderableNode(node: VfsNode): boolean {
+  if (node.type !== 'file')
+    return true
+  return !!node.hasBlob || !!node.assetUrl || node.textContent != null
+}
+
 export function useFileSystem(): FileSystemContextValue {
   const context = use(FileSystemContext)
   if (!context) {
@@ -28,7 +34,7 @@ export function useFolderChildren(parentPath: string | null): { children: VfsNod
     listChildren(parentPath)
       .then((children) => {
         if (active)
-          setState({ children, loading: false })
+          setState({ children: children.filter(isRenderableNode), loading: false })
       })
       .catch(() => {
         if (active)

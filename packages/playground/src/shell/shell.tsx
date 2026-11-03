@@ -1,4 +1,4 @@
-import type { CSSProperties, DragEvent } from 'react'
+import type { CSSProperties, DragEvent, PointerEvent } from 'react'
 import type { DesktopHandle } from './desktop/desktop'
 import { LayerProvider } from '@murasaki-io/react98'
 import { useEffect, useRef, useState } from 'react'
@@ -159,6 +159,15 @@ export function Shell(): React.ReactElement {
     setShowStartMenu(false)
   }
 
+  const handleShellPointerDownCapture = (event: PointerEvent<HTMLDivElement>): void => {
+    const target = event.target as HTMLElement
+    if (target.closest('[data-file-id]'))
+      return
+    if (target.closest('[data-area="desktop"]') && !target.closest('[data-window-frame]'))
+      return
+    desktopRef.current?.clearSelection()
+  }
+
   const handleShowDesktop = (): void => {
     minimizeAll()
     desktopRef.current?.clearSelection()
@@ -305,6 +314,7 @@ export function Shell(): React.ReactElement {
         ref={setScreenRootRef}
         className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden${wallpaperBgClasses ? ` ${wallpaperBgClasses}` : ''}${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
         style={screenStyle}
+        onPointerDownCapture={handleShellPointerDownCapture}
       >
         {!isBooted
           ? (

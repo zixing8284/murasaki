@@ -14,6 +14,7 @@ import { APP_ID } from '../../contexts/process/directory'
 import { useProcessActions } from '../../contexts/process/hooks'
 import { DesktopContextMenuContent } from './desktop-context-menu'
 import { DesktopIcon } from './desktop-icon'
+import { DESKTOP_LAYER } from './layer-order'
 import { useDesktopGridRows } from './use-desktop-grid-rows'
 import { useDesktopIconEntries } from './use-desktop-icon-entries'
 import { getSelectionBox, SELECTION_THRESHOLD, useDesktopSelection } from './use-desktop-selection'
@@ -160,6 +161,7 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
                 top: selectionBox.top,
                 width: selectionBox.width,
                 height: selectionBox.height,
+                zIndex: DESKTOP_LAYER.selectionMarquee,
               }}
             />
           )}

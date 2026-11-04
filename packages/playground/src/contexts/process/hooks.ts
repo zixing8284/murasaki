@@ -27,7 +27,10 @@ function useProcessState(): ProcessContextState {
 export function useProcesses(): ProcessContextValue {
   const state = useProcessState()
   const actions = useProcessActions()
-  return { ...state, ...actions }
+  return {
+    ...state,
+    ...actions,
+  }
 }
 
 /**

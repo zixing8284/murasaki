@@ -111,5 +111,10 @@ export function useFocusScope({
           previous.focus()
       }
     }
-  }, [enabled, containerRef, autoFocus, restoreFocus])
+  }, [
+    enabled,
+    containerRef,
+    autoFocus,
+    restoreFocus,
+  ])
 }

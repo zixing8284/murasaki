@@ -12,11 +12,31 @@ import {
 import { Fragment } from 'react'
 
 const TARGETS = [
-  { id: 'top-left', label: 'Top-left corner', style: { gridColumn: 1, gridRow: 1 } },
-  { id: 'top-right', label: 'Top-right corner', style: { gridColumn: 3, gridRow: 1 } },
-  { id: 'center', label: 'Center area', style: { gridColumn: 2, gridRow: 2 } },
-  { id: 'bottom-left', label: 'Bottom-left corner', style: { gridColumn: 1, gridRow: 3 } },
-  { id: 'bottom-right', label: 'Bottom-right corner', style: { gridColumn: 3, gridRow: 3 } },
+  {
+    id: 'top-left',
+    label: 'Top-left corner',
+    style: { gridColumn: 1, gridRow: 1 },
+  },
+  {
+    id: 'top-right',
+    label: 'Top-right corner',
+    style: { gridColumn: 3, gridRow: 1 },
+  },
+  {
+    id: 'center',
+    label: 'Center area',
+    style: { gridColumn: 2, gridRow: 2 },
+  },
+  {
+    id: 'bottom-left',
+    label: 'Bottom-left corner',
+    style: { gridColumn: 1, gridRow: 3 },
+  },
+  {
+    id: 'bottom-right',
+    label: 'Bottom-right corner',
+    style: { gridColumn: 3, gridRow: 3 },
+  },
 ] as const
 
 const ITEMS = [

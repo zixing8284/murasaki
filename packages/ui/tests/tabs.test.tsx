@@ -87,7 +87,10 @@ describe('tabs', () => {
   // === Controlled mode ===
 
   it('reflects controlled value prop', async () => {
-    const screen = await renderTabs({ value: 'two', onValueChange: () => {} })
+    const screen = await renderTabs({
+      value: 'two',
+      onValueChange: () => {},
+    })
     await expect.element(screen.getByText('Content Two')).toBeInTheDocument()
     expect(screen.container.textContent).not.toContain('Content One')
   })

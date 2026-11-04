@@ -23,7 +23,10 @@ export function getSelectionBox(rect: SelectionRect): { left: number, top: numbe
 }
 
 function mergeSelectedIds(baseIds: readonly string[], selectedIds: readonly string[]): string[] {
-  return Array.from(new Set([...baseIds, ...selectedIds]))
+  return Array.from(new Set([
+    ...baseIds,
+    ...selectedIds,
+  ]))
 }
 
 export interface UseDesktopSelectionOptions {
@@ -132,13 +135,20 @@ export function useDesktopSelection({
       startX: start.x,
       startY: start.y,
       additive: point.ctrlKey || point.metaKey,
-      baseSelectedIds: point.ctrlKey || point.metaKey ? selectedIconIds : [],
+      baseSelectedIds: point.ctrlKey || point.metaKey
+        ? selectedIconIds
+        : [],
       moved: false,
     }
     clearDragPreview()
     if (!drag.additive)
       setSelectedIconIds([])
-    setSelectionRect({ startX: start.x, startY: start.y, currentX: start.x, currentY: start.y })
+    setSelectionRect({
+      startX: start.x,
+      startY: start.y,
+      currentX: start.x,
+      currentY: start.y,
+    })
 
     const update = (nextPoint: ShellInputPoint): void => {
       const current = getDesktopPoint(nextPoint.clientX, nextPoint.clientY)
@@ -178,7 +188,12 @@ export function useDesktopSelection({
       onEnd: finish,
       onCancel: finish,
     }
-  }, [clearDragPreview, getDesktopPoint, getIconIdsInSelection, selectedIconIds])
+  }, [
+    clearDragPreview,
+    getDesktopPoint,
+    getIconIdsInSelection,
+    selectedIconIds,
+  ])
 
   const lassoSurface = useMemo<ShellInputSurface | null>(() => {
     if (!desktopEl)
@@ -195,5 +210,10 @@ export function useDesktopSelection({
   }, [beginLassoSelection, desktopEl])
   useShellInputSurface(lassoSurface)
 
-  return { selectedIconIds, setSelectedIconIds, selectionRect, handleIconSelect }
+  return {
+    selectedIconIds,
+    setSelectedIconIds,
+    selectionRect,
+    handleIconSelect,
+  }
 }

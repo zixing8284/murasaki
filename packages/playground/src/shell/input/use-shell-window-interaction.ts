@@ -273,7 +273,14 @@ export function useShellWindowInteraction({
       onEnd: finish,
       onCancel: finish,
     }
-  }, [container, maxHeight, maxWidth, minHeight, minWidth, onActivate])
+  }, [
+    container,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    onActivate,
+  ])
 
   const resizeSurface = useMemo<ShellInputSurface | null>(() => {
     if (!frameElement)
@@ -286,7 +293,12 @@ export function useShellWindowInteraction({
       contains: point => pointInElement(point, resizeHandleRef.current) && frameIsTopmostAtPoint(point, frameElement),
       onStart: beginResize,
     }
-  }, [beginResize, frameElement, resizable, windowId])
+  }, [
+    beginResize,
+    frameElement,
+    resizable,
+    windowId,
+  ])
 
   const dragSurface = useMemo<ShellInputSurface | null>(() => {
     if (!frameElement)
@@ -303,7 +315,12 @@ export function useShellWindowInteraction({
       },
       onStart: beginDrag,
     }
-  }, [beginDrag, draggable, frameElement, windowId])
+  }, [
+    beginDrag,
+    draggable,
+    frameElement,
+    windowId,
+  ])
 
   useShellInputSurface(resizeSurface)
   useShellInputSurface(dragSurface)

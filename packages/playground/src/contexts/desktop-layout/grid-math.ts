@@ -9,7 +9,9 @@ export interface GridDropDelta {
 
 function pxToNum(value: string): number {
   const n = Number.parseFloat(value)
-  return Number.isFinite(n) ? n : 0
+  return Number.isFinite(n)
+    ? n
+    : 0
 }
 
 function clamp(n: number, min: number, max: number): number {

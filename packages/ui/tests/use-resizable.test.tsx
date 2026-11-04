@@ -8,7 +8,7 @@ function ResizableHarness({
 }: {
   onResizeChange?: (resizing: boolean) => void
 }): React.ReactElement {
-  const [handleRef, setHandleRefState] = useState<HTMLDivElement | null>(null)
+  const [handleRef, setHandleRef] = useState<HTMLDivElement | null>(null)
   const {
     resetSize,
     resizing,
@@ -39,7 +39,7 @@ function ResizableHarness({
       <div
         ref={(el) => {
           setResizeRef(el)
-          setHandleRefState(el)
+          setHandleRef(el)
         }}
         data-testid="handle"
       />

@@ -19,22 +19,24 @@ export function Notepad({ windowId }: ProcessComponentProps): ReactElement {
   const { title, close } = useProcessActions()
   const { saveTextFile } = useFileSystem()
   const [path, setPath] = useState<string | null>(launch?.path ?? null)
-  const [name, setName] = useState('Untitled')
+  const [localName, setLocalName] = useState('Untitled')
+  const name = path
+    ? getName(path)
+    : localName
   const [text, setText] = useState('')
   const [dirty, setDirty] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (launch?.path)
-      setPath(launch.path)
-  }, [launch?.nonce, launch?.path])
+  const [lastNonce, setLastNonce] = useState(launch?.nonce)
+  if (lastNonce !== launch?.nonce && launch?.path) {
+    setLastNonce(launch.nonce)
+    setPath(launch.path)
+  }
 
   // Load the launched VFS file's text.
   useEffect(() => {
     if (!path)
       return
     let active = true
-    setName(getName(path))
     getFile(path)
       .then(file => file?.text() ?? '')
       .then((content) => {
@@ -55,7 +57,7 @@ export function Notepad({ windowId }: ProcessComponentProps): ReactElement {
 
   const newDocument = (): void => {
     setPath(null)
-    setName('Untitled')
+    setLocalName('Untitled')
     setText('')
     setDirty(false)
   }
@@ -66,7 +68,7 @@ export function Notepad({ windowId }: ProcessComponentProps): ReactElement {
     if (!file)
       return
     setPath(null)
-    setName(file.name)
+    setLocalName(file.name)
     setDirty(false)
     void file.text().then(setText)
   }

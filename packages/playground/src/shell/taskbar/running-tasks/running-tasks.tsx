@@ -38,14 +38,20 @@ export function RunningTasks({ isMobile = false }: RunningTasksProps): React.Rea
     return 0
   }, [orderedWindows, selectedPid, foregroundId])
 
-  const selectedWindow = selectedIndex >= 0 ? orderedWindows[selectedIndex] : null
-  const selectedLabel = selectedIndex >= 0 ? `${selectedIndex + 1}/${orderedWindows.length}` : `0/0`
+  const selectedWindow = selectedIndex >= 0
+    ? orderedWindows[selectedIndex]
+    : null
+  const selectedLabel = selectedIndex >= 0
+    ? `${selectedIndex + 1}/${orderedWindows.length}`
+    : `0/0`
 
   const stepSelection = (direction: -1 | 1): void => {
     if (orderedWindows.length <= 1)
       return
 
-    const baseIndex = selectedIndex >= 0 ? selectedIndex : 0
+    const baseIndex = selectedIndex >= 0
+      ? selectedIndex
+      : 0
     const nextIndex = (baseIndex + direction + orderedWindows.length) % orderedWindows.length
     const target = orderedWindows[nextIndex]
     if (!target)
@@ -112,7 +118,9 @@ export function RunningTasks({ isMobile = false }: RunningTasksProps): React.Rea
             >
               <AppIcon appId={selectedWindow.appId} size="sm" />
               <span
-                className={`truncate text-[11px] ${foregroundId === selectedWindow.id && !selectedWindow.minimized ? '' : 'opacity-80'}`}
+                className={`truncate text-[11px] ${foregroundId === selectedWindow.id && !selectedWindow.minimized
+                  ? ''
+                  : 'opacity-80'}`}
               >
                 {selectedWindow.title}
               </span>

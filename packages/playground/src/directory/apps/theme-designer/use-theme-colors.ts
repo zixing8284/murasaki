@@ -144,7 +144,12 @@ export function useThemeColors(): ThemeColorsState {
     }, THEME_DRAFT_WRITE_DEBOUNCE_MS)
 
     return () => window.clearTimeout(timeoutId)
-  }, [colors, currentSchemeId, linkElements, titlebarGradients])
+  }, [
+    colors,
+    currentSchemeId,
+    linkElements,
+    titlebarGradients,
+  ])
 
   const setColor = (key: string, hex: string): void => {
     setColors(prev => ({ ...prev, [key]: hex }))
@@ -163,7 +168,10 @@ export function useThemeColors(): ThemeColorsState {
 
   const loadFromThemeFile = (content: string): void => {
     const parsed = parseThemeFile(content)
-    setColors(prev => ({ ...prev, ...parsed }))
+    setColors(prev => ({
+      ...prev,
+      ...parsed,
+    }))
     setCurrentSchemeId('custom')
   }
 

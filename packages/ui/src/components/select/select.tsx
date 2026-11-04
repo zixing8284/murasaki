@@ -159,7 +159,9 @@ function collectItemLabels(children: React.ReactNode, map: Map<string, string>):
     return
   if (children.type === SelectItem) {
     const { value, textValue, children: itemChildren } = children.props as SelectItemProps
-    const label = textValue ?? (typeof itemChildren === 'string' ? itemChildren : undefined)
+    const label = textValue ?? (typeof itemChildren === 'string'
+      ? itemChildren
+      : undefined)
     if (label !== undefined)
       map.set(value, label)
     return
@@ -259,7 +261,9 @@ export function Select({
   const labelMap = new Map<string, string>()
   collectItemLabels(children, labelMap)
 
-  const scannedLabel = currentValue !== undefined ? labelMap.get(currentValue) : undefined
+  const scannedLabel = currentValue !== undefined
+    ? labelMap.get(currentValue)
+    : undefined
   const selectedLabel = (selectedLabelState && selectedLabelState.value === currentValue
     ? selectedLabelState.label
     : undefined) ?? scannedLabel
@@ -408,7 +412,9 @@ export interface SelectValueProps extends Omit<React.ComponentProps<'span'>, 'ch
 export function SelectValue({ className, placeholder, ...props }: SelectValueProps): React.ReactElement {
   const { value, selectedLabel } = useSelectContext()
   const hasValue = value !== undefined && value !== ''
-  const content = hasValue ? (selectedLabel ?? value) : placeholder
+  const content = hasValue
+    ? (selectedLabel ?? value)
+    : placeholder
 
   return (
     <span
@@ -474,7 +480,9 @@ export function SelectContent({
       return
 
     const active = document.activeElement as HTMLElement | null
-    const activeIndex = active ? options.indexOf(active) : -1
+    const activeIndex = active
+      ? options.indexOf(active)
+      : -1
     const ordered = [
       ...options.slice(activeIndex + 1),
       ...options.slice(0, activeIndex + 1),
@@ -540,10 +548,15 @@ export function SelectContent({
 
   const detected = position?.availableHeight
   const listboxStyle = (() => {
-    if (!detected)
-      return maxHeight ? { maxHeight } : undefined
+    if (!detected) {
+      return maxHeight
+        ? { maxHeight }
+        : undefined
+    }
     const capped = maxHeight
-      ? Math.min(detected, typeof maxHeight === 'number' ? maxHeight : Number.POSITIVE_INFINITY)
+      ? Math.min(detected, typeof maxHeight === 'number'
+          ? maxHeight
+          : Number.POSITIVE_INFINITY)
       : detected
     return { maxHeight: capped }
   })()
@@ -554,8 +567,12 @@ export function SelectContent({
         ref={contentRef}
         className={cn(contentVariants())}
         style={{
-          left: ready && position ? position.x : -9999,
-          top: ready && position ? position.y : -9999,
+          left: ready && position
+            ? position.x
+            : -9999,
+          top: ready && position
+            ? position.y
+            : -9999,
           opacity: ready ? undefined : 0,
           width: triggerWidth,
         }}
@@ -609,7 +626,9 @@ export function SelectItem({
 }: SelectItemProps): React.ReactElement {
   const { value: selectedValue, onItemSelect } = useSelectContext()
   const isSelected = selectedValue === value
-  const label = textValue ?? (typeof children === 'string' ? children : '')
+  const label = textValue ?? (typeof children === 'string'
+    ? children
+    : '')
 
   const commit = (): void => {
     if (!disabled)

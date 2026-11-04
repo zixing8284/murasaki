@@ -20,11 +20,15 @@ export function rgbToHsl(r: number, g: number, b: number): HSL {
 
   if (max !== min) {
     const d = max - min
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    s = l > 0.5
+      ? d / (2 - max - min)
+      : d / (max + min)
 
     switch (max) {
       case r:
-        h = (g - b) / d + (g < b ? 6 : 0)
+        h = (g - b) / d + (g < b
+          ? 6
+          : 0)
         break
       case g:
         h = (b - r) / d + 2
@@ -61,7 +65,9 @@ export function hslToRgb(h: number, s: number, l: number): RGB {
     r = g = b = l
   }
   else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+    const q = l < 0.5
+      ? l * (1 + s)
+      : l + s - l * s
     const p = 2 * l - q
     r = hue2rgb(p, q, h + 1 / 3)
     g = hue2rgb(p, q, h)
@@ -100,7 +106,11 @@ export function cssToRgb(css: string): RGB | null {
   const match = css.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/)
   if (!match)
     return null
-  return { r: Number(match[1]), g: Number(match[2]), b: Number(match[3]) }
+  return {
+    r: Number(match[1]),
+    g: Number(match[2]),
+    b: Number(match[3]),
+  }
 }
 
 export function cssToHex(css: string): string {
@@ -271,7 +281,10 @@ export function readThemeColorsFromCss(themeId: ThemeId): Record<string, string>
     const result = Object.fromEntries(
       ALL_COLOR_KEYS.map((key) => {
         const rawValue = computed.getPropertyValue(`--${key}`)
-        return [key, normalizeCssColor(rawValue, colorProbe)]
+        return [
+          key,
+          normalizeCssColor(rawValue, colorProbe),
+        ]
       }),
     )
     root.removeChild(themeProbe)

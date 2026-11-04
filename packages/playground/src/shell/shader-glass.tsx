@@ -155,7 +155,20 @@ export function ShaderGlass({ stream, settings }: ShaderGlassProps): React.React
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
     gl.bufferData(
       gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+      new Float32Array([
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+      ]),
       gl.STATIC_DRAW,
     )
     const aPos = gl.getAttribLocation(program, 'a_pos')

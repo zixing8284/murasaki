@@ -31,7 +31,9 @@ function RenameInput({ initial, onCommit, onCancel }: {
     input.focus()
     // Select the base name (not the extension), matching Explorer.
     const dot = initial.lastIndexOf('.')
-    input.setSelectionRange(0, dot > 0 ? dot : initial.length)
+    input.setSelectionRange(0, dot > 0
+      ? dot
+      : initial.length)
   }, [initial])
 
   // Enter and blur both fire; guard so the rename only commits once.
@@ -107,7 +109,9 @@ function IconItem({ node, view, selected, renaming, onSelect, onOpen, onRenameCo
       type="button"
       data-fs-path={node.path}
       data-selected={selected || undefined}
-      className={`pointer-events-none text-(--window-text) outline-none ${thumbs ? 'w-24' : large ? 'w-18' : 'w-40 px-1 py-0.5'}`}
+      className={`pointer-events-none text-(--window-text) outline-none ${thumbs
+        ? 'w-24'
+        : large ? 'w-18' : 'w-40 px-1 py-0.5'}`}
       onClick={renaming ? undefined : onSelect}
       onDoubleClick={renaming ? undefined : onOpen}
       onKeyDown={(event) => {
@@ -122,14 +126,18 @@ function IconItem({ node, view, selected, renaming, onSelect, onOpen, onRenameCo
           ? <Thumbnail node={node} />
           : (
               <img
-                src={assetPath(large ? largeIcon(node.icon) : node.icon)}
+                src={assetPath(large
+                  ? largeIcon(node.icon)
+                  : node.icon)}
                 alt=""
                 className={`${large ? 'size-8' : 'size-4'} shrink-0 pixelated`}
                 draggable={false}
               />
             )}
         label={renaming ? '' : node.name}
-        labelSlot={renaming ? <RenameInput initial={node.name} onCommit={onRenameCommit} onCancel={onRenameCancel} /> : undefined}
+        labelSlot={renaming
+          ? <RenameInput initial={node.name} onCommit={onRenameCommit} onCancel={onRenameCancel} />
+          : undefined}
         selected={selected}
         variant={tile ? 'tile' : 'row'}
       />
@@ -174,7 +182,9 @@ function DetailsHeaderCell({ label: text, sortKey, sort, onSort, align = 'left' 
     <button
       type="button"
       onClick={() => onSort(sortKey)}
-      className={`flex h-full min-w-0 items-center gap-1 bg-(--button-face) px-2 shadow-(--shadow-raised) outline-none ${align === 'right' ? 'justify-end' : ''}`}
+      className={`flex h-full min-w-0 items-center gap-1 bg-(--button-face) px-2 shadow-(--shadow-raised) outline-none ${align === 'right'
+        ? 'justify-end'
+        : ''}`}
     >
       <span className="truncate text-(--button-text)">{text}</span>
       {active && <SortArrow dir={sort.dir} />}
@@ -210,7 +220,9 @@ function DetailsRow({ node, selected, renaming, onSelect, onOpen, onRenameCommit
             )}
       </span>
       <span className="truncate pr-2 text-right text-(--window-text)">
-        {node.type === 'folder' ? '' : formatSize(node.size)}
+        {node.type === 'folder'
+          ? ''
+          : formatSize(node.size)}
       </span>
       <span className="truncate px-2 text-(--window-text)">{node.kind}</span>
       <span className="truncate px-2 text-(--window-text)">{formatModified(node.modifiedAt)}</span>

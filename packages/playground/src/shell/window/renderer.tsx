@@ -108,7 +108,9 @@ function renderProcessWindow(
   }
 
   if (windowConfig?.type === 'none') {
-    return Component ? <Component windowId={windowId} /> : null
+    return Component
+      ? <Component windowId={windowId} />
+      : null
   }
 
   // The RndWindow frame is always rendered immediately. The component content

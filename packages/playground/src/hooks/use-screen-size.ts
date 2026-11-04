@@ -59,7 +59,9 @@ function parseStoredScreenSize(value: unknown): ScreenSize | null {
   }
 
   const candidate: ScreenSize = { width, height }
-  return isValidPreset(candidate) ? candidate : null
+  return isValidPreset(candidate)
+    ? candidate
+    : null
 }
 
 function readSettings(): ScreenSize {

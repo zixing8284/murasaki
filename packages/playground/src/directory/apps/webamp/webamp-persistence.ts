@@ -37,7 +37,9 @@ function parseStoredPosition(value: unknown): StoredPosition | null {
     return null
   if (!Number.isFinite(main.x) || !Number.isFinite(main.y))
     return null
-  return { main: { x: main.x, y: main.y } }
+  return {
+    main: { x: main.x, y: main.y },
+  }
 }
 
 export function readStoredMainPosition(): Point | null {

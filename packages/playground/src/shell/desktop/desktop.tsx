@@ -82,7 +82,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     row: number,
     excludeIds?: string | readonly string[],
   ): boolean => {
-    const excluded = new Set(typeof excludeIds === 'string' ? [excludeIds] : excludeIds ?? [])
+    const excluded = new Set(typeof excludeIds === 'string'
+      ? [excludeIds]
+      : excludeIds ?? [])
     return Object.entries(resolvedLayout).some(
       ([id, pos]: [string, GridPosition]) => !excluded.has(id) && pos.col === col && pos.row === row,
     )
@@ -116,7 +118,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
     setRefreshing(false)
   }
 
-  const selectionBox = selectionRect ? getSelectionBox(selectionRect) : null
+  const selectionBox = selectionRect
+    ? getSelectionBox(selectionRect)
+    : null
 
   return (
     <ContextMenu container={desktopEl}>
@@ -140,7 +144,9 @@ export function Desktop({ ref }: { ref?: Ref<DesktopHandle> }): ReactElement {
                 selected={selectedIconIdSet.has(entry.id)}
                 selectedIds={selectedIconIds}
                 positions={resolvedLayout}
-                dragOffset={dragPreviewIdSet.has(entry.id) ? dragPreview?.offset ?? null : null}
+                dragOffset={dragPreviewIdSet.has(entry.id)
+                  ? dragPreview?.offset ?? null
+                  : null}
                 onSelect={handleIconSelect}
                 onDragPreviewChange={setDragPreview}
                 onOpen={entry.onOpen}

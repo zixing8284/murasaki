@@ -28,10 +28,19 @@ export function DesktopLayoutProvider({ children }: { children: ReactNode }): Re
   }
 
   const setPositions = (updates: GridLayout): void => {
-    setStoredPositions(prev => ({ ...prev, ...updates }))
+    setStoredPositions(prev => ({
+      ...prev,
+      ...updates,
+    }))
   }
 
-  const value = { positions: storedPositions, setPosition, setPositions, getDefaultPosition, gridRef }
+  const value = {
+    positions: storedPositions,
+    setPosition,
+    setPositions,
+    getDefaultPosition,
+    gridRef,
+  }
 
   return <DesktopLayoutContext value={value}>{children}</DesktopLayoutContext>
 }

@@ -21,7 +21,9 @@ export function formatAddress(path: readonly string[]): string {
     return path[path.length - 1] ?? ''
   const drive = path[driveIndex].replace(/[()]/g, '')
   const rest = path.slice(driveIndex + 1)
-  return rest.length > 0 ? `${drive}\\${rest.join('\\')}` : `${drive}\\`
+  return rest.length > 0
+    ? `${drive}\\${rest.join('\\')}`
+    : `${drive}\\`
 }
 
 export function formatSize(bytes: number): string {
@@ -30,10 +32,15 @@ export function formatSize(bytes: number): string {
   if (bytes < 1024)
     return `${bytes} bytes`
   const kb = bytes / 1024
-  if (kb < 1024)
-    return `${kb < 10 ? kb.toFixed(1) : Math.round(kb)}KB`
+  if (kb < 1024) {
+    return `${kb < 10
+      ? kb.toFixed(1)
+      : Math.round(kb)}KB`
+  }
   const mb = kb / 1024
-  return `${mb < 10 ? mb.toFixed(1) : Math.round(mb)}MB`
+  return `${mb < 10
+    ? mb.toFixed(1)
+    : Math.round(mb)}MB`
 }
 
 /** Windows-style last-modified date, e.g. `12/31/99 12:00 PM`. */
@@ -43,7 +50,9 @@ export function formatModified(epochMs: number): string {
   const day = date.getDate()
   const year = String(date.getFullYear()).slice(-2)
   let hours = date.getHours()
-  const meridiem = hours >= 12 ? 'PM' : 'AM'
+  const meridiem = hours >= 12
+    ? 'PM'
+    : 'AM'
   hours = hours % 12 || 12
   const minutes = String(date.getMinutes()).padStart(2, '0')
   return `${month}/${day}/${year} ${hours}:${minutes} ${meridiem}`

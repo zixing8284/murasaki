@@ -68,7 +68,9 @@ describe('select', () => {
   })
 
   it('displays defaultValue option label initially', async () => {
-    const screen = await renderSelect({ root: { defaultValue: 'banana' } })
+    const screen = await renderSelect({
+      root: { defaultValue: 'banana' },
+    })
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Banana')
   })
@@ -164,21 +166,30 @@ describe('select', () => {
   })
 
   it('omits the hidden input when name is not provided', async () => {
-    const screen = await renderSelect({ root: { name: undefined } })
+    const screen = await renderSelect({
+      root: { name: undefined },
+    })
     expect(screen.container.querySelector('input[type="hidden"]')).toBeNull()
   })
 
   // === Controlled mode ===
 
   it('reflects controlled value', async () => {
-    const screen = await renderSelect({ root: { value: 'cherry', onValueChange: () => {} } })
+    const screen = await renderSelect({
+      root: {
+        value: 'cherry',
+        onValueChange: () => {},
+      },
+    })
     const trigger = screen.getByRole('combobox')
     await expect.element(trigger).toHaveTextContent('Cherry')
   })
 
   it('calls onValueChange when an option is selected', async () => {
     const handleChange = vi.fn()
-    const screen = await renderSelect({ root: { value: 'apple', onValueChange: handleChange } })
+    const screen = await renderSelect({
+      root: { value: 'apple', onValueChange: handleChange },
+    })
     await screen.getByRole('combobox').click()
     await screen.getByRole('option', { name: 'Cherry' }).click()
 
@@ -188,7 +199,9 @@ describe('select', () => {
   // === Disabled ===
 
   it('does not open when disabled', async () => {
-    const screen = await renderSelect({ root: { disabled: true } })
+    const screen = await renderSelect({
+      root: { disabled: true },
+    })
     const trigger = screen.getByRole('combobox')
     // Native click — Playwright refuses to click disabled buttons.
     ;(trigger.element() as HTMLElement).click()
@@ -317,7 +330,9 @@ describe('select', () => {
 
   it('calls onOpenChange when opening and closing', async () => {
     const onOpenChange = vi.fn()
-    const screen = await renderSelect({ root: { onOpenChange } })
+    const screen = await renderSelect({
+      root: { onOpenChange },
+    })
     const trigger = screen.getByRole('combobox')
 
     await trigger.click()

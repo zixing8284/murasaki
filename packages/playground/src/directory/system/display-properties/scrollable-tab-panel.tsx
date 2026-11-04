@@ -17,7 +17,10 @@ export function ScrollableTabPanel({ value, className, children }: ScrollableTab
   return (
     <TabPanel value={value} className="flex min-h-0 flex-col p-0">
       <ScrollArea className="min-h-0 flex-1">
-        <div className={`flex flex-col p-3${className ? ` ${className}` : ''}`}>
+        <div className={`flex flex-col p-3${className
+          ? ` ${className}`
+          : ''}`}
+        >
           {children}
         </div>
       </ScrollArea>

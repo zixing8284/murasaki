@@ -70,7 +70,13 @@ function ContainerBoundedContextMenu(): React.ReactElement {
         <div
           ref={setContainer}
           data-testid="boundary"
-          style={{ position: 'fixed', left: 80, top: 80, width: 180, height: 140 }}
+          style={{
+            position: 'fixed',
+            left: 80,
+            top: 80,
+            width: 180,
+            height: 140,
+          }}
         >
           target
         </div>
@@ -122,7 +128,12 @@ describe('context-menu', () => {
     )
 
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
 
     expect(document.querySelector('[data-testid="menu-content"]')).toBeNull()
@@ -146,7 +157,12 @@ describe('context-menu', () => {
     )
 
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
 
     expect(onContextMenu).toHaveBeenCalledOnce()
@@ -170,12 +186,22 @@ describe('context-menu', () => {
     )
 
     screen.getByText('nested item').element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     expect(document.querySelector('[data-testid="menu-content"]')).toBeNull()
 
     screen.getByTestId('blank-area').element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 20, clientY: 20 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
     )
 
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
@@ -184,7 +210,12 @@ describe('context-menu', () => {
   it('moves focus to the first enabled menuitem when opened', async () => {
     const screen = await renderBasic()
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
 
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
@@ -194,7 +225,12 @@ describe('context-menu', () => {
   it('closes on Escape', async () => {
     const screen = await renderBasic()
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
 
@@ -205,7 +241,12 @@ describe('context-menu', () => {
   it('closes on outside pointerdown', async () => {
     const screen = await renderBasic()
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
 
@@ -259,7 +300,12 @@ describe('context-menu', () => {
     const onOpen = vi.fn()
     const screen = await renderBasic(onOpen)
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
 
@@ -288,7 +334,12 @@ describe('context-menu', () => {
     )
 
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
 
@@ -304,7 +355,12 @@ describe('context-menu', () => {
     const onOpen = vi.fn()
     const screen = await renderBasic(onOpen)
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
     await expect.poll(() => document.activeElement?.textContent?.trim()).toBe('Open')
@@ -320,7 +376,12 @@ describe('context-menu', () => {
     const target = screen.getByRole('button', { name: 'target' }).element() as HTMLElement
     target.focus()
     target.dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
     )
     await expect.element(screen.getByTestId('menu-content')).toBeInTheDocument()
 

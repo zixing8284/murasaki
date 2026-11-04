@@ -79,7 +79,10 @@ export function DesktopFilesProvider({ children }: { children: ReactNode }): Rea
     const createdItems = await Promise.all(acceptedFiles.map(saveDesktopMediaFile))
 
     startTransition(() => {
-      setItems(prev => [...prev, ...createdItems])
+      setItems(prev => [
+        ...prev,
+        ...createdItems,
+      ])
     })
 
     return createdItems

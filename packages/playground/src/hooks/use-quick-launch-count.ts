@@ -13,7 +13,9 @@ function parseStoredQuickLaunchState(value: unknown): StoredQuickLaunchState | n
   const visibleCount = (value as Partial<StoredQuickLaunchState>).visibleCount
   if (typeof visibleCount !== 'number' || !Number.isFinite(visibleCount))
     return null
-  return { visibleCount: Math.max(0, Math.round(visibleCount)) }
+  return {
+    visibleCount: Math.max(0, Math.round(visibleCount)),
+  }
 }
 
 export function useQuickLaunchCount(

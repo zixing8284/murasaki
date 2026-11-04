@@ -124,9 +124,14 @@ export function Menu({
     const active = document.activeElement instanceof HTMLElement
       ? document.activeElement
       : null
-    const activeIndex = active ? items.indexOf(active) : -1
+    const activeIndex = active
+      ? items.indexOf(active)
+      : -1
     const orderedItems = activeIndex >= 0
-      ? [...items.slice(activeIndex + 1), ...items.slice(0, activeIndex + 1)]
+      ? [
+          ...items.slice(activeIndex + 1),
+          ...items.slice(0, activeIndex + 1),
+        ]
       : items
     const match = orderedItems.find(item => getMenuItemText(item).startsWith(search))
     match?.focus()
@@ -229,7 +234,12 @@ const menuItemVariants = cva(
     variants: {
       disabled: {
         true: ['text-(--gray-text)', 'cursor-default', '[text-shadow:1px_1px_0_var(--button-hilight)]'],
-        false: ['cursor-pointer', 'text-(--menu-text)', 'hover:bg-(--menu-hilight)', 'hover:text-(--hilight-text)'],
+        false: [
+          'cursor-pointer',
+          'text-(--menu-text)',
+          'hover:bg-(--menu-hilight)',
+          'hover:text-(--hilight-text)',
+        ],
       },
       selected: {
         true: ['bg-(--menu-hilight)', 'text-(--hilight-text)'],
@@ -326,7 +336,9 @@ export function MenuItem({
       className={cn(menuItemVariants({ disabled, selected }), className)}
       onClick={handleItemClick}
       onKeyDown={handleKeyDown}
-      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      tabIndex={disabled
+        ? -1
+        : (tabIndex ?? 0)}
       {...props}
     >
       {reserveIconSpace && <span aria-hidden="true" className={MENU_INDICATOR_SLOT} />}
@@ -443,10 +455,16 @@ export function MenuCheckboxItem({
       className={cn(menuItemVariants({ disabled }), className)}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      tabIndex={disabled
+        ? -1
+        : (tabIndex ?? 0)}
       {...props}
     >
-      <span className={MENU_INDICATOR_SLOT}>{checked ? <MenuCheckIcon /> : null}</span>
+      <span className={MENU_INDICATOR_SLOT}>
+        {checked
+          ? <MenuCheckIcon />
+          : null}
+      </span>
       {children}
     </li>
   )
@@ -538,10 +556,16 @@ export function MenuRadioItem({
       className={cn(menuItemVariants({ disabled }), className)}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      tabIndex={disabled
+        ? -1
+        : (tabIndex ?? 0)}
       {...props}
     >
-      <span className={MENU_INDICATOR_SLOT}>{checked ? <MenuBulletIcon /> : null}</span>
+      <span className={MENU_INDICATOR_SLOT}>
+        {checked
+          ? <MenuBulletIcon />
+          : null}
+      </span>
       {children}
     </li>
   )
@@ -791,7 +815,9 @@ export function MenuSubTrigger({
       onKeyDown={handleKeyDown}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      tabIndex={disabled
+        ? -1
+        : (tabIndex ?? 0)}
       {...props}
     >
       {reserveIconSpace && <span aria-hidden="true" className={MENU_INDICATOR_SLOT} />}
@@ -905,8 +931,12 @@ export function MenuSubContent({
     : maxHeightProp
   const layerStyle: React.CSSProperties = {
     position: 'fixed',
-    left: ready && position ? position.x : -9999,
-    top: ready && position ? position.y : -9999,
+    left: ready && position
+      ? position.x
+      : -9999,
+    top: ready && position
+      ? position.y
+      : -9999,
     zIndex: 'var(--react98-layer-popup-z-index)',
     ...style,
   }

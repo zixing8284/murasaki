@@ -61,7 +61,13 @@ const ICONS = EXPLORER_TOOLBAR_ICONS
 const HISTORY_ICON = '/icons/explorer/history.png'
 
 // Order the Views toolbar button and Ctrl+cycling step through.
-const VIEW_CYCLE: readonly FileGridView[] = ['large', 'small', 'list', 'details', 'thumbnails']
+const VIEW_CYCLE: readonly FileGridView[] = [
+  'large',
+  'small',
+  'list',
+  'details',
+  'thumbnails',
+]
 const RECENT_LIMIT = 10
 
 // Windows 98 embossed splitter grip: two 1px dotted columns.
@@ -104,7 +110,9 @@ function ToolbarButton({ label, icon, disabled, pressed, showText, onClick }: {
       : 'grayscale group-hover:grayscale-0 group-active:grayscale-0'
   return (
     <Button
-      {...(pressed ? { active: true } : { flat: true })}
+      {...(pressed
+        ? { active: true }
+        : { flat: true })}
       iconOnly={!showText}
       aria-label={label}
       title={label}
@@ -234,7 +242,9 @@ function FolderContent({ children, writable, onContextTarget, onDeselect, onDrop
 }
 
 function ImportProgressDialog({ done, total }: { done: number, total: number }): ReactElement {
-  const percent = total > 0 ? Math.round((done / total) * 100) : 0
+  const percent = total > 0
+    ? Math.round((done / total) * 100)
+    : 0
   return (
     <DialogWindow title="Copying…" onClose={() => {}}>
       <div className="flex w-72 flex-col gap-2 p-3">
@@ -303,7 +313,14 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
   const fs = useFileSystem()
   const allNodes = useAllNodes()
 
-  const [nav, setNav] = useState<NavState>(() => ({ history: [[...toSegments(DEFAULT_PATH)]], index: 0 }))
+  const [nav, setNav] = useState<NavState>(() => ({
+    history: [
+      [
+        ...toSegments(DEFAULT_PATH),
+      ],
+    ],
+    index: 0,
+  }))
   const [selectedPath, setSelectedPath] = useState<string | null>(null)
   const [renamePath, setRenamePath] = useState<string | null>(null)
   const [recent, setRecent] = useState<string[]>([])
@@ -345,42 +362,70 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
     : children
   const displayNodes = sortNodes(baseNodes, sort)
 
-  const contextNode = contextPath ? displayNodes.find(node => node.path === contextPath) ?? null : null
-  const selectedNode = selectedPath ? displayNodes.find(node => node.path === selectedPath) ?? null : null
+  const contextNode = contextPath
+    ? displayNodes.find(node => node.path === contextPath) ?? null
+    : null
+  const selectedNode = selectedPath
+    ? displayNodes.find(node => node.path === selectedPath) ?? null
+    : null
 
-  // Record every visited folder and reset per-folder UI state on navigation.
-  useEffect(() => {
+  // Reset per-folder UI state on navigation.
+  const [prevCanonical, setPrevCanonical] = useState(canonicalPath)
+  if (prevCanonical !== canonicalPath) {
+    setPrevCanonical(canonicalPath)
     setSelectedPath(null)
     setRenamePath(null)
     setSearch('')
-    setRecent(previous => [canonicalPath, ...previous.filter(entry => entry !== canonicalPath)].slice(0, RECENT_LIMIT))
-  }, [canonicalPath])
+    setRecent(previous => [
+      canonicalPath,
+      ...previous.filter(entry => entry !== canonicalPath),
+    ].slice(0, RECENT_LIMIT))
+  }
 
   useEffect(() => {
-    title(windowId, folderNode ? folderNode.name : getName(canonicalPath))
-  }, [folderNode, canonicalPath, title, windowId])
+    title(windowId, folderNode
+      ? folderNode.name
+      : getName(canonicalPath))
+  }, [
+    folderNode,
+    canonicalPath,
+    title,
+    windowId,
+  ])
 
   // Navigate to a folder requested at open time (e.g. the Recycle Bin icon).
-  useEffect(() => {
-    const target = launch?.path
-    if (!target)
-      return
-    setNav(current => (fromSegments(current.history[current.index]) === target
+  const [lastLaunchNonce, setLastLaunchNonce] = useState(launch?.nonce)
+  if (lastLaunchNonce !== launch?.nonce && launch?.path) {
+    setLastLaunchNonce(launch.nonce)
+    setNav(current => (fromSegments(current.history[current.index]) === launch.path
       ? current
-      : { history: [...current.history.slice(0, current.index + 1), toSegments(target)], index: current.index + 1 }))
-  }, [launch?.nonce, launch?.path])
+      : {
+          history: [
+            ...current.history.slice(0, current.index + 1),
+            toSegments(launch.path),
+          ],
+          index: current.index + 1,
+        }))
+  }
 
   const navigate = (targetCanonical: string): void => {
     if (targetCanonical === canonicalPath)
       return
     setNav(current => ({
-      history: [...current.history.slice(0, current.index + 1), toSegments(targetCanonical)],
+      history: [
+        ...current.history.slice(0, current.index + 1),
+        toSegments(targetCanonical),
+      ],
       index: current.index + 1,
     }))
   }
 
-  const back = (): void => setNav(current => (current.index > 0 ? { ...current, index: current.index - 1 } : current))
-  const forward = (): void => setNav(current => (current.index < current.history.length - 1 ? { ...current, index: current.index + 1 } : current))
+  const back = (): void => setNav(current => (current.index > 0
+    ? { ...current, index: current.index - 1 }
+    : current))
+  const forward = (): void => setNav(current => (current.index < current.history.length - 1
+    ? { ...current, index: current.index + 1 }
+    : current))
   const up = (): void => {
     if (canUp)
       navigate(getParentPath(canonicalPath))
@@ -392,8 +437,11 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
       return
     }
     const appId = openAppForNode(node)
-    if (appId)
-      open(appId, { launch: { path: node.path } })
+    if (appId) {
+      open(appId, {
+        launch: { path: node.path },
+      })
+    }
   }
 
   const cycleView = (): void => {
@@ -402,7 +450,14 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
 
   const arrangeBy = (key: SortKey): void => setSort({ key, dir: 'asc' })
   const sortByColumn = (key: SortKey): void => {
-    setSort(current => (current.key === key ? { key, dir: current.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' }))
+    setSort(current => (current.key === key
+      ? {
+          key,
+          dir: current.dir === 'asc'
+            ? 'desc'
+            : 'asc',
+        }
+      : { key, dir: 'asc' }))
   }
 
   const createFolder = async (): Promise<void> => {
@@ -421,7 +476,9 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
       name,
       kind: association.kind,
       icon: association.icon,
-      mimeType: association.category === 'text' ? 'text/plain' : undefined,
+      mimeType: association.category === 'text'
+        ? 'text/plain'
+        : undefined,
       openApp: association.openApp,
       textContent: '',
     })
@@ -504,7 +561,9 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
   }
 
   const objectCount = displayNodes.length
-  const totalSize = displayNodes.reduce((sum, node) => (node.type === 'file' ? sum + node.size : sum), 0)
+  const totalSize = displayNodes.reduce((sum, node) => (node.type === 'file'
+    ? sum + node.size
+    : sum), 0)
   const addressCrumbs = path.map((_, index) => path.slice(0, index + 1))
   const recentLocations = recent.filter(entry => entry !== canonicalPath)
 
@@ -798,12 +857,18 @@ export function MyDocuments({ windowId }: ProcessComponentProps): ReactElement {
       {showStatusBar && (
         <WindowStatusBar>
           <WindowStatusBarField grow>
-            {selectedNode ? '1 object selected' : `${objectCount} object(s)`}
+            {selectedNode
+              ? '1 object selected'
+              : `${objectCount} object(s)`}
           </WindowStatusBarField>
           <WindowStatusBarField grow={false} className="w-24">
             {selectedNode
-              ? (selectedNode.type === 'file' ? formatSize(selectedNode.size) : '')
-              : (totalSize > 0 ? formatSize(totalSize) : '')}
+              ? (selectedNode.type === 'file'
+                  ? formatSize(selectedNode.size)
+                  : '')
+              : (totalSize > 0
+                  ? formatSize(totalSize)
+                  : '')}
           </WindowStatusBarField>
           <WindowStatusBarField grow={false} className="flex w-32 items-center gap-1">
             <img src={assetPath(FS_ICONS.myComputer)} alt="" className="size-4 shrink-0 pixelated" draggable={false} />

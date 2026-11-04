@@ -26,7 +26,9 @@ interface ComponentExampleClientProps {
 }
 
 function getExampleChildren(children: ReactNode): ReactNode[] {
-  const childArray = Array.isArray(children) ? children : [children]
+  const childArray = Array.isArray(children)
+    ? children
+    : [children]
 
   return childArray.filter((child) => {
     if (child == null || typeof child === 'boolean')
@@ -117,7 +119,9 @@ export function ComponentExampleClient({
 
   return (
     <section className="mt-7 mb-9">
-      {title ? <h3 className="text-base mt-0 mb-2.5">{title}</h3> : null}
+      {title
+        ? <h3 className="text-base mt-0 mb-2.5">{title}</h3>
+        : null}
       <div className="inline-flex gap-1 mb-2 border-b border-b-(--m98-docs-border)" role="tablist" aria-label={title ?? 'Example'}>
         <button
           type="button"
@@ -125,9 +129,13 @@ export function ComponentExampleClient({
           id={previewTabId}
           aria-controls={previewId}
           aria-selected={tab === 'preview'}
-          tabIndex={tab === 'preview' ? 0 : -1}
+          tabIndex={tab === 'preview'
+            ? 0
+            : -1}
           className="appearance-none bg-transparent border-none border-b-2 border-b-transparent py-1.5 px-2.5 [font:inherit] text-[0.9rem] text-inherit cursor-pointer opacity-70 data-active:opacity-100 data-active:border-b-current hover:opacity-100 focus-visible:[outline:2px_solid_currentColor] focus-visible:-outline-offset-2"
-          data-active={tab === 'preview' ? '' : undefined}
+          data-active={tab === 'preview'
+            ? ''
+            : undefined}
           onClick={() => setTab('preview')}
           onKeyDown={(event) => {
             if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
@@ -145,9 +153,13 @@ export function ComponentExampleClient({
           id={codeTabId}
           aria-controls={codeId}
           aria-selected={tab === 'code'}
-          tabIndex={tab === 'code' ? 0 : -1}
+          tabIndex={tab === 'code'
+            ? 0
+            : -1}
           className="appearance-none bg-transparent border-none border-b-2 border-b-transparent py-1.5 px-2.5 [font:inherit] text-[0.9rem] text-inherit cursor-pointer opacity-70 data-active:opacity-100 data-active:border-b-current hover:opacity-100 focus-visible:[outline:2px_solid_currentColor] focus-visible:-outline-offset-2"
-          data-active={tab === 'code' ? '' : undefined}
+          data-active={tab === 'code'
+            ? ''
+            : undefined}
           onClick={() => setTab('code')}
           onKeyDown={(event) => {
             if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
@@ -169,7 +181,9 @@ export function ComponentExampleClient({
       >
         <div
           className={frameClassName}
-          data-theme={previewTheme === 'auto' ? exampleTheme : undefined}
+          data-theme={previewTheme === 'auto'
+            ? exampleTheme
+            : undefined}
         >
           <div
             className={[
@@ -198,7 +212,11 @@ export function ComponentExampleClient({
             onClick={() => void handleCopyCode()}
             aria-label="Copy example code"
           >
-            {copyStatus === 'copied' ? 'COPIED' : copyStatus === 'failed' ? 'FAILED' : 'COPY'}
+            {copyStatus === 'copied'
+              ? 'COPIED'
+              : copyStatus === 'failed'
+                ? 'FAILED'
+                : 'COPY'}
           </button>
           <div>
             <CompiledCode compiledSource={compiledSource} />

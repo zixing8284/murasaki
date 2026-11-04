@@ -67,7 +67,9 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
       params.set('body', body)
 
     const queryString = params.toString()
-    const mailtoUrl = `mailto:${DEFAULT_TO}${queryString ? `?${queryString}` : ''}`
+    const mailtoUrl = `mailto:${DEFAULT_TO}${queryString
+      ? `?${queryString}`
+      : ''}`
 
     window.open(mailtoUrl, '_blank')
   }
@@ -148,7 +150,9 @@ export function OutlookExpress({ windowId }: ProcessComponentProps): ReactElemen
 
       <WindowStatusBar>
         <WindowStatusBarField className="truncate">
-          {subject ? `Subject: ${subject}` : 'Ready'}
+          {subject
+            ? `Subject: ${subject}`
+            : 'Ready'}
         </WindowStatusBarField>
       </WindowStatusBar>
 

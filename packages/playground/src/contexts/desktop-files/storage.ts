@@ -77,7 +77,9 @@ export async function saveDesktopMediaFile(file: File): Promise<DesktopMediaFile
     size: file.size,
     createdAt: timestamp,
     updatedAt: timestamp,
-    kind: file.type.startsWith('video/') ? 'video' : 'audio',
+    kind: file.type.startsWith('video/')
+      ? 'video'
+      : 'audio',
     blob: file,
   }
 

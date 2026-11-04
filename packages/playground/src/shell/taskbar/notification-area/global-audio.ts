@@ -92,7 +92,9 @@ class GlobalAudio {
 
   private applyGain(): void {
     const { masterGain } = getGlobalAudioCtx()
-    masterGain.gain.value = this.muted ? 0 : this.volume / 100
+    masterGain.gain.value = this.muted
+      ? 0
+      : this.volume / 100
   }
 
   private notify(): void {

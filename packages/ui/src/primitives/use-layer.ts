@@ -96,7 +96,12 @@ interface FixedFrame {
   originY: number
 }
 
-const IDENTITY_FRAME: FixedFrame = { scaleX: 1, scaleY: 1, originX: 0, originY: 0 }
+const IDENTITY_FRAME: FixedFrame = {
+  scaleX: 1,
+  scaleY: 1,
+  originX: 0,
+  originY: 0,
+}
 
 function clamp(value: number, min: number, max: number): number {
   if (max < min)
@@ -201,7 +206,14 @@ function getBoundary(boundaryRef: RefObject<Element | null> | undefined): Bounda
   }
   const width = window.innerWidth
   const height = window.innerHeight
-  return { top: 0, left: 0, right: width, bottom: height, width, height }
+  return {
+    top: 0,
+    left: 0,
+    right: width,
+    bottom: height,
+    width,
+    height,
+  }
 }
 
 function resolveSide({
@@ -222,17 +234,25 @@ function resolveSide({
   if (side === 'top' || side === 'bottom') {
     const topSpace = anchorRect.top - gap - boundary.top - collisionPadding
     const bottomSpace = boundary.bottom - anchorRect.bottom - gap - collisionPadding
-    const preferred = side === 'top' ? topSpace : bottomSpace
+    const preferred = side === 'top'
+      ? topSpace
+      : bottomSpace
     if (preferred >= size.height)
       return side
-    return topSpace > bottomSpace ? 'top' : 'bottom'
+    return topSpace > bottomSpace
+      ? 'top'
+      : 'bottom'
   }
   const leftSpace = anchorRect.left - gap - boundary.left - collisionPadding
   const rightSpace = boundary.right - anchorRect.right - gap - collisionPadding
-  const preferred = side === 'left' ? leftSpace : rightSpace
+  const preferred = side === 'left'
+    ? leftSpace
+    : rightSpace
   if (preferred >= size.width)
     return side
-  return leftSpace > rightSpace ? 'left' : 'right'
+  return leftSpace > rightSpace
+    ? 'left'
+    : 'right'
 }
 
 function getAlignedPosition({
@@ -320,7 +340,13 @@ function getAlignedPosition({
     }
   }
 
-  return { x, y, side, availableHeight, availableWidth }
+  return {
+    x,
+    y,
+    side,
+    availableHeight,
+    availableWidth,
+  }
 }
 
 /**
@@ -419,7 +445,14 @@ export function useLayer({
         width: localSize.width * frame.scaleX,
       }
       const boundary = getBoundary(boundaryRef)
-      const resolvedSide = resolveSide({ anchorRect, boundary, collisionPadding, gap, side, size })
+      const resolvedSide = resolveSide({
+        anchorRect,
+        boundary,
+        collisionPadding,
+        gap,
+        side,
+        size,
+      })
       const screenPosition = getAlignedPosition({
         align,
         anchorRect,
@@ -461,7 +494,9 @@ export function useLayer({
     // thread produced a visible flash/displacement. One more rAF pass refines
     // the placement after intrinsic sizing settles.
     compute()
-    const frameIds: number[] = [window.requestAnimationFrame(compute)]
+    const frameIds: number[] = [
+      window.requestAnimationFrame(compute),
+    ]
 
     window.addEventListener('scroll', compute, true)
     window.addEventListener('resize', compute)
@@ -471,7 +506,22 @@ export function useLayer({
       window.removeEventListener('scroll', compute, true)
       window.removeEventListener('resize', compute)
     }
-  }, [anchorRef, anchorRectFn, layerRef, open, side, align, gap, collisionPadding, estimatedHeight, estimatedWidth, boundaryRef])
+  }, [
+    anchorRef,
+    anchorRectFn,
+    layerRef,
+    open,
+    side,
+    align,
+    gap,
+    collisionPadding,
+    estimatedHeight,
+    estimatedWidth,
+    boundaryRef,
+  ])
 
-  return [open ? position : null, open && ready]
+  return [
+    open ? position : null,
+    open && ready,
+  ]
 }

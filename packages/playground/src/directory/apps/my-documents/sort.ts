@@ -16,8 +16,12 @@ function compareNodes(a: VfsNode, b: VfsNode, key: SortKey): number {
     case 'modified':
       return a.modifiedAt - b.modifiedAt
     case 'type': {
-      const aType = a.type === 'folder' ? 'File Folder' : associate(a.name).kind
-      const bType = b.type === 'folder' ? 'File Folder' : associate(b.name).kind
+      const aType = a.type === 'folder'
+        ? 'File Folder'
+        : associate(a.name).kind
+      const bType = b.type === 'folder'
+        ? 'File Folder'
+        : associate(b.name).kind
       return aType.localeCompare(bType)
     }
     case 'name':
@@ -28,10 +32,15 @@ function compareNodes(a: VfsNode, b: VfsNode, key: SortKey): number {
 
 /** Sort nodes with folders grouped first (classic Explorer behavior). */
 export function sortNodes(nodes: readonly VfsNode[], { key, dir }: SortState): VfsNode[] {
-  const sign = dir === 'asc' ? 1 : -1
+  const sign = dir === 'asc'
+    ? 1
+    : -1
   return [...nodes].sort((a, b) => {
-    if (a.type !== b.type)
-      return a.type === 'folder' ? -1 : 1
+    if (a.type !== b.type) {
+      return a.type === 'folder'
+        ? -1
+        : 1
+    }
     const primary = compareNodes(a, b, key)
     if (primary !== 0)
       return primary * sign

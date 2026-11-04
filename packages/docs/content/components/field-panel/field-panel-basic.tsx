@@ -2,7 +2,14 @@
 
 import { FieldPanel } from '@murasaki-io/react98'
 
-const files = ['AUTOEXEC.BAT', 'COMMAND.COM', 'CONFIG.SYS', 'README.TXT', 'SETUP.EXE', 'WIN.COM']
+const files = [
+  'AUTOEXEC.BAT',
+  'COMMAND.COM',
+  'CONFIG.SYS',
+  'README.TXT',
+  'SETUP.EXE',
+  'WIN.COM',
+]
 
 export function FieldPanelBasicDemo(): React.ReactElement {
   return (

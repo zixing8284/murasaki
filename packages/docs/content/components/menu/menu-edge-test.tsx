@@ -34,10 +34,26 @@ const ACCESSORIES = [
 ]
 
 const EDGE_MENUS = [
-  { id: 'top-left', label: 'Top left', style: { left: 12, top: 12 } },
-  { id: 'top-right', label: 'Top right', style: { right: 12, top: 12 } },
-  { id: 'bottom-left', label: 'Bottom left', style: { bottom: 12, left: 12 } },
-  { id: 'bottom-right', label: 'Bottom right', style: { bottom: 12, right: 12 } },
+  {
+    id: 'top-left',
+    label: 'Top left',
+    style: { left: 12, top: 12 },
+  },
+  {
+    id: 'top-right',
+    label: 'Top right',
+    style: { right: 12, top: 12 },
+  },
+  {
+    id: 'bottom-left',
+    label: 'Bottom left',
+    style: { bottom: 12, left: 12 },
+  },
+  {
+    id: 'bottom-right',
+    label: 'Bottom right',
+    style: { bottom: 12, right: 12 },
+  },
 ] as const
 
 function EdgeMenu({

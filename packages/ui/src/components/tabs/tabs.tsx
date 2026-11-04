@@ -164,7 +164,9 @@ export function Tab({ children, className, value, disabled, ...props }: TabProps
       aria-disabled={disabled}
       data-selected={isSelected || undefined}
       data-disabled={disabled || undefined}
-      tabIndex={disabled ? -1 : 0}
+      tabIndex={disabled
+        ? -1
+        : 0}
       className={cn(tabVariants({ selected: isSelected }), className)}
       onClick={handleTabClick}
       onKeyDown={handleKeyDown}
@@ -216,7 +218,9 @@ export function TabPanel({ children, className, value, ...props }: TabPanelProps
         !isSelected && keepMounted && 'invisible',
         className,
       )}
-      {...((!isSelected && keepMounted) ? { inert: true } : {})}
+      {...((!isSelected && keepMounted)
+        ? { inert: true }
+        : {})}
       {...props}
     >
       {children}
@@ -264,10 +268,18 @@ export function Tabs({
   }
 
   return (
-    <TabsContext value={{ selectedValue, setSelectedValue, baseId, keepMounted }}>
+    <TabsContext value={{
+      selectedValue,
+      setSelectedValue,
+      baseId,
+      keepMounted,
+    }}
+    >
       <div
         className={cnPure(
-          keepMounted ? 'grid grid-rows-[auto_1fr]' : tabsRootVariants(),
+          keepMounted
+            ? 'grid grid-rows-[auto_1fr]'
+            : tabsRootVariants(),
           className,
         )}
         {...props}

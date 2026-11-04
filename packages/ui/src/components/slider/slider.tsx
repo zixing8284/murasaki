@@ -21,7 +21,12 @@ const containerVariants = cva(['relative', 'flex'], {
 
 // Hidden native input - preserves all native behaviors
 const nativeInputVariants = cva(
-  ['absolute', 'opacity-0', 'cursor-pointer', 'z-10'],
+  [
+    'absolute',
+    'opacity-0',
+    'cursor-pointer',
+    'z-10',
+  ],
   {
     variants: {
       vertical: {
@@ -66,8 +71,18 @@ const trackWrapperVariants = cva(['relative'], {
 const fillVariants = cva(['absolute', 'pointer-events-none'], {
   variants: {
     vertical: {
-      true: ['w-0.5', 'left-1/2', '-translate-x-1/2', 'bottom-0'],
-      false: ['h-0.5', 'top-1/2', '-translate-y-1/2', 'left-0'],
+      true: [
+        'w-0.5',
+        'left-1/2',
+        '-translate-x-1/2',
+        'bottom-0',
+      ],
+      false: [
+        'h-0.5',
+        'top-1/2',
+        '-translate-y-1/2',
+        'left-0',
+      ],
     },
   },
   defaultVariants: {
@@ -92,7 +107,12 @@ const trackVariants = cva(
           'left-1/2',
           '-translate-x-1/2',
         ],
-        false: ['h-1', 'w-full', 'top-1/2', '-translate-y-1/2'],
+        false: [
+          'h-1',
+          'w-full',
+          'top-1/2',
+          '-translate-y-1/2',
+        ],
       },
     },
     defaultVariants: {
@@ -106,7 +126,12 @@ const THUMB_WIDTH = 11
 const THUMB_HEIGHT = 21
 
 // Thumb styles — positioning and size only (visual rendering via SVG icons)
-const thumbVariants = cva(['absolute', 'pointer-events-none', 'w-2.75', 'h-5.25'], {
+const thumbVariants = cva([
+  'absolute',
+  'pointer-events-none',
+  'w-2.75',
+  'h-5.25',
+], {
   variants: {
     vertical: {
       true: 'left-1/2',
@@ -201,12 +226,16 @@ export function Slider({
 
   // Internal state for uncontrolled mode
   const [internalValue, setInternalValue] = useState<number>(() =>
-    defaultValue !== undefined ? Number(defaultValue) : Number(min),
+    defaultValue !== undefined
+      ? Number(defaultValue)
+      : Number(min),
   )
 
   // Use controlled value if provided, otherwise internal
   const isControlled = controlledValue !== undefined
-  const currentValue = isControlled ? Number(controlledValue) : internalValue
+  const currentValue = isControlled
+    ? Number(controlledValue)
+    : internalValue
 
   // Calculate thumb position percentage
   const minNum = Number(min)
@@ -313,7 +342,9 @@ export function Slider({
               disabled ? 'bg-(--gray-text)' : 'bg-(--hilight)',
             )}
             data-slider-fill=""
-            style={vertical ? { height: `${String(percentage)}%` } : { width: `${String(percentage)}%` }}
+            style={vertical
+              ? { height: `${String(percentage)}%` }
+              : { width: `${String(percentage)}%` }}
           />
         )}
 

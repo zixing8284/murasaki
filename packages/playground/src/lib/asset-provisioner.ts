@@ -44,7 +44,9 @@ export function tierPaths(manifest: AssetManifest | null, tier: AssetTier): stri
 export async function fetchAssetManifest(signal?: AbortSignal): Promise<AssetManifest | null> {
   try {
     const response = await fetch(assetPath(ASSET_MANIFEST_PUBLIC_PATH), { cache: 'no-cache', signal })
-    return response.ok ? (await response.json()) as AssetManifest : null
+    return response.ok
+      ? (await response.json()) as AssetManifest
+      : null
   }
   catch {
     return null
@@ -101,7 +103,9 @@ export async function preloadImages(paths: readonly string[], options: PreloadOp
         options.onComplete?.(path)
       }
       catch (err) {
-        options.onComplete?.(path, err instanceof Error ? err : new Error(`Unable to preload ${path}`))
+        options.onComplete?.(path, err instanceof Error
+          ? err
+          : new Error(`Unable to preload ${path}`))
       }
     }
   }))
@@ -118,7 +122,9 @@ function decodeImage(path: string, signal: AbortSignal): Promise<void> {
     const settle = (error?: Error): void => {
       image.onload = null
       image.onerror = null
-      error ? reject(error) : resolve()
+      error
+        ? reject(error)
+        : resolve()
     }
 
     image.decoding = 'async'

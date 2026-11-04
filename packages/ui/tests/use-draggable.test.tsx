@@ -8,7 +8,7 @@ function DraggableHarness({
 }: {
   onDragChange?: (dragging: boolean) => void
 }): React.ReactElement {
-  const [dragRef, setDragRefState] = useState<HTMLDivElement | null>(null)
+  const [handleEl, setHandleEl] = useState<HTMLDivElement | null>(null)
   const {
     dragging,
     resetPosition,
@@ -37,7 +37,7 @@ function DraggableHarness({
       <div
         ref={(el) => {
           setDragRef(el)
-          setDragRefState(el)
+          setHandleEl(el)
         }}
         data-testid="handle"
       >
@@ -49,7 +49,7 @@ function DraggableHarness({
       <button type="button" data-testid="reset" onClick={resetPosition}>
         Reset
       </button>
-      <span data-testid="handle-ready">{String(Boolean(dragRef))}</span>
+      <span data-testid="handle-ready">{String(Boolean(handleEl))}</span>
     </div>
   )
 }

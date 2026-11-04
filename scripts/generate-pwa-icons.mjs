@@ -38,7 +38,9 @@ const MASKABLE_ICONS = [
 ]
 
 function sips(...args) {
-  execFileSync('sips', args, { stdio: ['ignore', 'ignore', 'inherit'] })
+  execFileSync('sips', args, {
+    stdio: ['ignore', 'ignore', 'inherit'],
+  })
 }
 
 function readArtworkJpeg() {
@@ -56,7 +58,13 @@ function main() {
     writeFileSync(jpeg, readArtworkJpeg())
 
     // Centre-crop to a square at the artwork's native resolution.
-    const dims = execFileSync('sips', ['-g', 'pixelWidth', '-g', 'pixelHeight', jpeg], { encoding: 'utf8' })
+    const dims = execFileSync('sips', [
+      '-g',
+      'pixelWidth',
+      '-g',
+      'pixelHeight',
+      jpeg,
+    ], { encoding: 'utf8' })
     const width = Number(dims.match(/pixelWidth:\s*(\d+)/)?.[1])
     const height = Number(dims.match(/pixelHeight:\s*(\d+)/)?.[1])
     if (!width || !height)

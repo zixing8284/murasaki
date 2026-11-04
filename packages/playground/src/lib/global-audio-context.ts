@@ -37,7 +37,11 @@ function createInstance(): GlobalAudioCtx {
   const masterGain = ctx.createGain()
   masterGain.gain.value = 0.75
   masterGain.connect(ctx.destination)
-  return { ctx, masterGain, sourceCache: new WeakMap() }
+  return {
+    ctx,
+    masterGain,
+    sourceCache: new WeakMap(),
+  }
 }
 
 export function getGlobalAudioCtx(): GlobalAudioCtx {

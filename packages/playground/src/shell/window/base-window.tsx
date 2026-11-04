@@ -60,7 +60,9 @@ function clampInitialPosition(value: number | string | undefined, size: number |
   if (value === undefined || size === undefined)
     return value
 
-  const length = typeof value === 'number' ? `${value}px` : value
+  const length = typeof value === 'number'
+    ? `${value}px`
+    : value
   return `clamp(0px, round(${length}, 1px), max(0px, calc(100% - ${String(size)}px)))`
 }
 
@@ -98,10 +100,8 @@ export function BaseWindow({
   const contentWidth = contentSize?.width
   const contentHeight = contentSize?.height
   useLayoutEffect(() => {
-    if (!autoSize || contentWidth == null || contentHeight == null) {
-      setAutoDims(null)
+    if (!autoSize || contentWidth == null || contentHeight == null)
       return
-    }
     const contentEl = contentRef.current
     const frameEl = contentEl?.parentElement
     if (!contentEl || !frameEl)
@@ -111,15 +111,27 @@ export function BaseWindow({
     const dims = { width: contentWidth + chromeW, height: contentHeight + chromeH }
     setAutoDims(dims)
     onAutoFit?.(dims)
-  }, [autoSize, contentWidth, contentHeight, onAutoFit])
+  }, [
+    autoSize,
+    contentWidth,
+    contentHeight,
+    onAutoFit,
+  ])
 
   if (!win)
     return null
 
   const { process: proc, isActive, zIndex } = win
 
-  const autoWidth = autoSize && autoDims ? autoDims.width : defaultSize?.width
-  const autoHeight = autoSize && autoDims ? autoDims.height : defaultSize?.height
+  const effectiveAutoDims = autoSize && contentWidth != null && contentHeight != null
+    ? autoDims
+    : null
+  const autoWidth = effectiveAutoDims
+    ? effectiveAutoDims.width
+    : defaultSize?.width
+  const autoHeight = effectiveAutoDims
+    ? effectiveAutoDims.height
+    : defaultSize?.height
   // A user-chosen size (after manual resize) always wins over auto-fit so the
   // window can be grown to reveal in-content menus and stays put afterwards.
   const effectiveWidth = sizeOverride?.width ?? autoWidth
@@ -137,15 +149,21 @@ export function BaseWindow({
           ref={frameRef}
           data-window-frame=""
           data-system-cursor={loadingCursor ? 'working' : undefined}
-          className={`max-w-full max-h-full ${mobileFullscreen ? 'rounded-none border-none shadow-none' : ''}${(isInteracting && !proc.maximized && !mobileFullscreen) ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none' : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
+          className={`max-w-full max-h-full ${mobileFullscreen ? 'rounded-none border-none shadow-none' : ''}${(isInteracting && !proc.maximized && !mobileFullscreen)
+            ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none'
+            : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
           style={{
             zIndex,
             width: mobileFullscreen ? '100%' : effectiveWidth,
             height: mobileFullscreen ? '100%' : effectiveHeight,
-            top: mobileFullscreen ? 0 : clampInitialPosition(defaultPosition?.top, effectiveHeight),
+            top: mobileFullscreen
+              ? 0
+              : clampInitialPosition(defaultPosition?.top, effectiveHeight),
             right: mobileFullscreen ? 0 : defaultPosition?.right,
             bottom: mobileFullscreen ? 0 : defaultPosition?.bottom,
-            left: mobileFullscreen ? 0 : clampInitialPosition(defaultPosition?.left, effectiveWidth),
+            left: mobileFullscreen
+              ? 0
+              : clampInitialPosition(defaultPosition?.left, effectiveWidth),
           }}
           onPointerDown={(e) => {
             e.stopPropagation()
@@ -155,7 +173,9 @@ export function BaseWindow({
           <WindowTitleBar
             ref={dragRef}
             className="touch-none pointer-coarse:h-6"
-            onDoubleClick={disableMaximize ? undefined : () => actions.toggleMaximize(windowId)}
+            onDoubleClick={disableMaximize
+              ? undefined
+              : () => actions.toggleMaximize(windowId)}
           >
             <WindowTitle icon={titleIcon ?? defaultIcon}>{proc.title}</WindowTitle>
             <WindowButtons>

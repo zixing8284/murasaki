@@ -64,7 +64,9 @@ export function ThemeProvider(props: ThemeProviderProps): React.ReactElement {
       return
 
     const current = el.getAttribute('data-theme')
-    const nextAttribute = themeId === DEFAULT_THEME && !hasAttributeTarget ? null : themeId
+    const nextAttribute = themeId === DEFAULT_THEME && !hasAttributeTarget
+      ? null
+      : themeId
     if (nextAttribute === null) {
       if (current !== null)
         el.removeAttribute('data-theme')

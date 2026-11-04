@@ -84,7 +84,9 @@ export function useRovingFocus({
     function getItems(node: HTMLElement): HTMLElement[] {
       const all = Array.from(node.querySelectorAll<HTMLElement>(itemSelector))
         .filter(el => el.getAttribute('aria-disabled') !== 'true')
-      return filterItem ? all.filter(filterItem) : all
+      return filterItem
+        ? all.filter(filterItem)
+        : all
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
@@ -96,7 +98,9 @@ export function useRovingFocus({
         return
 
       const active = document.activeElement as HTMLElement | null
-      const currentIndex = active ? items.indexOf(active) : -1
+      const currentIndex = active
+        ? items.indexOf(active)
+        : -1
 
       let nextIndex = -1
       if (FORWARD_KEYS[orientation].includes(event.key)) {
@@ -105,7 +109,9 @@ export function useRovingFocus({
         }
         else {
           const candidate = currentIndex + 1
-          nextIndex = candidate < items.length ? candidate : (loop ? 0 : currentIndex)
+          nextIndex = candidate < items.length
+            ? candidate
+            : (loop ? 0 : currentIndex)
         }
       }
       else if (BACKWARD_KEYS[orientation].includes(event.key)) {
@@ -114,7 +120,11 @@ export function useRovingFocus({
         }
         else {
           const candidate = currentIndex - 1
-          nextIndex = candidate >= 0 ? candidate : (loop ? items.length - 1 : currentIndex)
+          nextIndex = candidate >= 0
+            ? candidate
+            : (loop
+                ? items.length - 1
+                : currentIndex)
         }
       }
       else if (event.key === 'Home') {
@@ -142,5 +152,13 @@ export function useRovingFocus({
     return () => {
       container.removeEventListener('keydown', handleKeyDown)
     }
-  }, [enabled, containerRef, itemSelector, orientation, loop, filterItem, onFocus])
+  }, [
+    enabled,
+    containerRef,
+    itemSelector,
+    orientation,
+    loop,
+    filterItem,
+    onFocus,
+  ])
 }

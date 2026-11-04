@@ -87,7 +87,9 @@ export function OptionButton({
   const generatedId = React.useId()
   const inputId = id ?? generatedId
   const isChecked
-    = groupValue !== undefined ? groupValue === value : undefined
+    = groupValue !== undefined
+      ? groupValue === value
+      : undefined
   const currentChecked = isChecked ?? checked
 
   const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>): void => {

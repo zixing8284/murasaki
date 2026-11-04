@@ -139,7 +139,12 @@ describe('layer-provider', () => {
     const screen = await render(<ContextMenuFixture />)
     const layerRoot = await waitForLayerRoot()
     screen.getByRole('button', { name: 'target' }).element().dispatchEvent(
-      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 24, clientY: 32 }),
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 24,
+        clientY: 32,
+      }),
     )
 
     await expect.element(screen.getByTestId('context-menu-content')).toBeInTheDocument()

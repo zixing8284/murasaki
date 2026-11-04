@@ -113,8 +113,12 @@ async function uniqueChildName(parentPath: string, desiredName: string): Promise
     return desiredName
 
   const dot = desiredName.lastIndexOf('.')
-  const base = dot > 0 ? desiredName.slice(0, dot) : desiredName
-  const ext = dot > 0 ? desiredName.slice(dot) : ''
+  const base = dot > 0
+    ? desiredName.slice(0, dot)
+    : desiredName
+  const ext = dot > 0
+    ? desiredName.slice(dot)
+    : ''
   for (let index = 2; ; index++) {
     const candidate = `${base} (${index})${ext}`
     if (!taken.has(candidate.toLowerCase()))
@@ -158,7 +162,9 @@ export async function createFile(parentPath: string, options: CreateFileOptions)
     mimeType: options.mimeType,
     openApp: options.openApp,
     hasBlob: options.blob != null,
-    textContent: options.blob == null ? options.textContent : undefined,
+    textContent: options.blob == null
+      ? options.textContent
+      : undefined,
   }
   await runTransaction([NODES, BLOBS], 'readwrite', (tx) => {
     tx.objectStore(NODES).put(node)
@@ -181,8 +187,12 @@ export async function saveTextFile(path: string, text: string): Promise<VfsNode 
   }
   await runTransaction([NODES, BLOBS], 'readwrite', (tx) => {
     tx.objectStore(NODES).put(updated)
-    if (node.hasBlob)
-      tx.objectStore(BLOBS).put({ path, blob: new Blob([text], { type: node.mimeType ?? 'text/plain' }) } satisfies BlobRecord)
+    if (node.hasBlob) {
+      tx.objectStore(BLOBS).put({
+        path,
+        blob: new Blob([text], { type: node.mimeType ?? 'text/plain' }),
+      } satisfies BlobRecord)
+    }
   })
   return updated
 }
@@ -237,7 +247,9 @@ export async function renameNode(path: string, rawName: string): Promise<VfsNode
     const blobStore = tx.objectStore(BLOBS)
     for (const node of subtree) {
       const isRoot = node.path === path
-      const newPath = isRoot ? newRoot : newRoot + node.path.slice(path.length)
+      const newPath = isRoot
+        ? newRoot
+        : newRoot + node.path.slice(path.length)
       const rewritten: VfsNode = {
         ...node,
         path: newPath,
@@ -290,7 +302,9 @@ export async function moveNode(path: string, newParentPath: string, options?: {
     const blobStore = tx.objectStore(BLOBS)
     for (const child of subtree) {
       const isRoot = child.path === path
-      const newPath = isRoot ? newRoot : newRoot + child.path.slice(path.length)
+      const newPath = isRoot
+        ? newRoot
+        : newRoot + child.path.slice(path.length)
       const rewritten: VfsNode = {
         ...child,
         path: newPath,
@@ -333,10 +347,14 @@ export async function restoreNode(path: string): Promise<VfsNode | undefined> {
     return undefined
 
   const originalPath = node.originalPath
-  const targetParent = originalPath ? getParentPath(originalPath) : DEFAULT_PATH
+  const targetParent = originalPath
+    ? getParentPath(originalPath)
+    : DEFAULT_PATH
   const parentExists = (await getNode(targetParent)) != null
   return moveNode(path, parentExists ? targetParent : DEFAULT_PATH, {
-    desiredName: originalPath ? getName(originalPath) : node.name,
+    desiredName: originalPath
+      ? getName(originalPath)
+      : node.name,
     restore: true,
   })
 }

@@ -148,7 +148,9 @@ export function IframeWindow({
           <div className="absolute inset-0">
             <AppLaunchSplash
               name={entry?.name ?? win.process.title}
-              iconSrc={entry ? assetPath(entry.icon.lg) : undefined}
+              iconSrc={entry
+                ? assetPath(entry.icon.lg)
+                : undefined}
             />
           </div>
         )}

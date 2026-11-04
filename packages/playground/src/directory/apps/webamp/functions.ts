@@ -191,7 +191,9 @@ function parseStoredSkinMuseumSkin(value: unknown): StoredSkinMuseumSkin | null 
   if (!value || typeof value !== 'object')
     return null
   const url = (value as Partial<StoredSkinMuseumSkin>).url
-  return typeof url === 'string' && url.length > 0 ? { url } : null
+  return typeof url === 'string' && url.length > 0
+    ? { url }
+    : null
 }
 
 export function readStoredSkinMuseumUrl(): string | null {
@@ -204,7 +206,9 @@ export function readStoredSkinMuseumUrl(): string | null {
 
 export function readStoredSkinMuseumInitialSkin(): { url: string } | undefined {
   const url = readStoredSkinMuseumUrl()
-  return url ? { url } : undefined
+  return url
+    ? { url }
+    : undefined
 }
 
 export function writeStoredSkinMuseumUrl(url: string): void {
@@ -216,7 +220,10 @@ export function clearStoredSkinMuseumUrl(): void {
 }
 
 function noteRandomSkinMuseumUrlAccess(url: string): void {
-  recentRandomSkinMuseumUrlAccess = { at: Date.now(), url }
+  recentRandomSkinMuseumUrlAccess = {
+    at: Date.now(),
+    url,
+  }
 }
 
 export function consumeRecentRandomSkinMuseumUrlAccess(maxAgeMs: number): string | null {
@@ -262,7 +269,9 @@ async function fetchRandomWinampSkinMuseumUrl(): Promise<string | null> {
   const payload = await response.json() as WebampSkinMuseumResponse
   const nextUrl = payload.data?.skins?.nodes?.[0]?.download_url
 
-  return typeof nextUrl === 'string' && nextUrl.length > 0 ? nextUrl : null
+  return typeof nextUrl === 'string' && nextUrl.length > 0
+    ? nextUrl
+    : null
 }
 
 function createRandomWinampSkinMuseumSkin(): WebampSkinOption {
@@ -333,14 +342,21 @@ export const DEFAULT_SKINS: WebampSkinOption[] = [
 export interface Size { width: number, height: number }
 export interface Point { x: number, y: number }
 
-export const WEBAMP_WINDOW_KEYS = ['main', 'playlist', 'milkdrop', 'equalizer'] as const
+export const WEBAMP_WINDOW_KEYS = [
+  'main',
+  'playlist',
+  'milkdrop',
+  'equalizer',
+] as const
 export type WebampWindowKey = typeof WEBAMP_WINDOW_KEYS[number]
 
 export interface WindowRect extends Point, Size { key: WebampWindowKey }
 export interface BBox { minX: number, minY: number, maxX: number, maxY: number }
 
 export function webampWindowElementId(key: WebampWindowKey): string {
-  return key === 'main' ? 'main-window' : `${key}-window`
+  return key === 'main'
+    ? 'main-window'
+    : `${key}-window`
 }
 
 // ---------------------------------------------------------------------------
@@ -483,7 +499,9 @@ export function getButterchurnGlobal(): unknown {
 
 export function getButterchurnPresetsGlobal(): Record<string, unknown> | null {
   const raw = unwrapDefault(window.butterchurnPresets)
-  return raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : null
+  return raw && typeof raw === 'object'
+    ? (raw as Record<string, unknown>)
+    : null
 }
 
 export function hasBundledMilkdropAssets(webamp: WebampCI): boolean {
@@ -608,19 +626,38 @@ export function findMilkdropSpot(
   const stackH = mainH * 2 // main + playlist
 
   // 1. Right of main.
-  if (main.x + mainW + mdW <= hostW)
-    return { x: main.x + mainW, y: clampY(main.y, mdH, hostH) }
+  if (main.x + mainW + mdW <= hostW) {
+    return {
+      x: main.x + mainW,
+      y: clampY(main.y, mdH, hostH),
+    }
+  }
   // 2. Left of main.
-  if (main.x - mdW >= 0)
-    return { x: main.x - mdW, y: clampY(main.y, mdH, hostH) }
+  if (main.x - mdW >= 0) {
+    return {
+      x: main.x - mdW,
+      y: clampY(main.y, mdH, hostH),
+    }
+  }
   // 3. Below playlist.
-  if (main.y + stackH + mdH <= hostH)
-    return { x: clampX(main.x, mdW, hostW), y: main.y + stackH }
+  if (main.y + stackH + mdH <= hostH) {
+    return {
+      x: clampX(main.x, mdW, hostW),
+      y: main.y + stackH,
+    }
+  }
   // 4. Above main.
-  if (main.y - mdH >= 0)
-    return { x: clampX(main.x, mdW, hostW), y: main.y - mdH }
+  if (main.y - mdH >= 0) {
+    return {
+      x: clampX(main.x, mdW, hostW),
+      y: main.y - mdH,
+    }
+  }
   // 5. Top-right corner — guaranteed non-zero so the user can find and drag it.
-  return { x: Math.max(0, hostW - mdW), y: 0 }
+  return {
+    x: Math.max(0, hostW - mdW),
+    y: 0,
+  }
 }
 
 function clampX(x: number, w: number, hostW: number): number {
@@ -649,7 +686,13 @@ export function collectOpenWindowRects(
     if (!win?.open || !win.position)
       continue
     const { width, height } = sizeOf(key)
-    rects.push({ key, x: win.position.x, y: win.position.y, width, height })
+    rects.push({
+      key,
+      x: win.position.x,
+      y: win.position.y,
+      width,
+      height,
+    })
   }
   return rects
 }

@@ -49,7 +49,9 @@ export function useWebampViewportBounds(
     scheduleSync()
 
     const host = containerRef.current
-    const observer = host ? new ResizeObserver(scheduleSync) : null
+    const observer = host
+      ? new ResizeObserver(scheduleSync)
+      : null
     if (host && observer)
       observer.observe(host)
 

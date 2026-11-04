@@ -79,7 +79,14 @@ export function Tooltip({
 
   useEffect(() => clearTimer, [clearTimer])
 
-  const context = { open, show, hide, triggerRef, contentRef, tooltipId }
+  const context = {
+    open,
+    show,
+    hide,
+    triggerRef,
+    contentRef,
+    tooltipId,
+  }
 
   return <TooltipContext value={context}>{children}</TooltipContext>
 }

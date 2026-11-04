@@ -106,7 +106,9 @@ export function useShaderGlass(
       }
       streamRef.current = null
       setStream(null)
-      setError(err instanceof Error ? err.name : 'error')
+      setError(err instanceof Error
+        ? err.name
+        : 'error')
     }
   }, [targetRef, stop])
 
@@ -115,5 +117,12 @@ export function useShaderGlass(
 
   const supported = useMemo(() => isSupported(), [])
 
-  return { active: stream !== null, supported, stream, error, start, stop }
+  return {
+    active: stream !== null,
+    supported,
+    stream,
+    error,
+    start,
+    stop,
+  }
 }

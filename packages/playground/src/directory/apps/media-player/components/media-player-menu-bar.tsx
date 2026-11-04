@@ -117,7 +117,9 @@ export function MediaPlayerMenuBar({
           <WindowMenuBarTrigger><Accel text="Play" index={0} /></WindowMenuBarTrigger>
           <WindowMenuBarContent>
             <MenuItem reserveIconSpace disabled={!hasTrack} onClick={onTogglePlay}>
-              {isPlaying ? <Accel text="Pause" /> : <Accel text="Play" />}
+              {isPlaying
+                ? <Accel text="Pause" />
+                : <Accel text="Play" />}
               <MenuShortcut>Space</MenuShortcut>
             </MenuItem>
             <MenuItem reserveIconSpace disabled={!hasTrack} onClick={onStop}>

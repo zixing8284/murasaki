@@ -11,7 +11,13 @@ function ThemeControls(): React.ReactElement {
     <div className="flex flex-col gap-2 p-2">
       <div className="flex flex-wrap gap-2">
         {themeIds.map(id => (
-          <Button key={id} onClick={() => setTheme(id)} className={id === themeId ? 'shadow-(--shadow-border-inset)' : ''}>
+          <Button
+            key={id}
+            onClick={() => setTheme(id)}
+            className={id === themeId
+              ? 'shadow-(--shadow-border-inset)'
+              : ''}
+          >
             {themeLabels[id]}
           </Button>
         ))}

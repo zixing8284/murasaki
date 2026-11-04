@@ -186,7 +186,10 @@ describe('slider', () => {
   })
 
   it('renders vertical ticks positioned with bottom style', async () => {
-    const ticks = [{ value: 0 }, { value: 100 }]
+    const ticks = [
+      { value: 0 },
+      { value: 100 },
+    ]
     const screen = await render(<Slider vertical ticks={ticks} />)
 
     // Each tick wrapper should use bottom positioning
@@ -229,7 +232,11 @@ describe('slider', () => {
   })
 
   it('renders ticks without labels', async () => {
-    const ticks = [{ value: 0 }, { value: 50 }, { value: 100 }]
+    const ticks = [
+      { value: 0 },
+      { value: 50 },
+      { value: 100 },
+    ]
     const screen = await render(<Slider ticks={ticks} />)
 
     // A datalist should be present for accessibility

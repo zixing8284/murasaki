@@ -226,7 +226,9 @@ function installFrameMetadataSync(
     const handleNavigation = (): void => {
       scheduleFrameMetadataSync(frameWindow, sync)
     }
-    const observer = titleElement ? new MutationObserver(sync) : undefined
+    const observer = titleElement
+      ? new MutationObserver(sync)
+      : undefined
     const restorePushState = patchHistoryMethod(frameWindow, 'pushState', sync)
     const restoreReplaceState = patchHistoryMethod(frameWindow, 'replaceState', sync)
 
@@ -580,7 +582,9 @@ export function Ie2Chrome({
             draggable={false}
           />
           <span className="min-w-0 truncate">
-            {loadingUrl !== null ? `Opening page ${loadingUrl}` : 'Done'}
+            {loadingUrl !== null
+              ? `Opening page ${loadingUrl}`
+              : 'Done'}
           </span>
         </WindowStatusBarField>
         <WindowStatusBarField grow={false} className="w-36 p-0.5">

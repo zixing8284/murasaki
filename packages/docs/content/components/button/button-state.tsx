@@ -7,7 +7,13 @@ export function ButtonStateDemo(): React.ReactElement {
   const [active, setActive] = useState(false)
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+    <div style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 8,
+      alignItems: 'center',
+    }}
+    >
       <Button active={active} onClick={() => setActive(value => !value)}>
         {active ? 'Pressed' : 'Press Me'}
       </Button>

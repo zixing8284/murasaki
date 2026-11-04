@@ -113,10 +113,14 @@ export function WindowMenuBar({
     if (currentIndex < 0)
       return
 
-    const offset = direction === 'next' ? 1 : -1
+    const offset = direction === 'next'
+      ? 1
+      : -1
     const nextIndex = (currentIndex + offset + triggers.length) % triggers.length
     const nextTrigger = triggers[nextIndex]
-    const nextValue = nextTrigger ? getWindowMenuBarTriggerValue(nextTrigger) : undefined
+    const nextValue = nextTrigger
+      ? getWindowMenuBarTriggerValue(nextTrigger)
+      : undefined
 
     if (!nextTrigger)
       return
@@ -131,7 +135,9 @@ export function WindowMenuBar({
     if (event.defaultPrevented)
       return
 
-    const target = event.target instanceof Element ? event.target : null
+    const target = event.target instanceof Element
+      ? event.target
+      : null
     const currentTrigger = target?.closest<HTMLButtonElement>(WINDOW_MENU_BAR_TRIGGER_SELECTOR)
     if (!currentTrigger || !event.currentTarget.contains(currentTrigger))
       return
@@ -142,7 +148,9 @@ export function WindowMenuBar({
 
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
       event.preventDefault()
-      focusMenu(currentValue, event.key === 'ArrowRight' ? 'next' : 'previous', value !== null)
+      focusMenu(currentValue, event.key === 'ArrowRight'
+        ? 'next'
+        : 'previous', value !== null)
       return
     }
 
@@ -469,7 +477,9 @@ export function WindowMenuBarContent({
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
       event.preventDefault()
       event.stopPropagation()
-      menubar.focusMenu(menu.value, event.key === 'ArrowRight' ? 'next' : 'previous', true)
+      menubar.focusMenu(menu.value, event.key === 'ArrowRight'
+        ? 'next'
+        : 'previous', true)
     }
   }
 
@@ -495,8 +505,12 @@ export function WindowMenuBarContent({
     : maxHeightProp
   const layerStyle: React.CSSProperties = {
     position: 'fixed',
-    left: ready && position ? position.x : -9999,
-    top: ready && position ? position.y : -9999,
+    left: ready && position
+      ? position.x
+      : -9999,
+    top: ready && position
+      ? position.y
+      : -9999,
     zIndex: 'var(--react98-layer-popup-z-index)',
     ...style,
   }

@@ -83,19 +83,32 @@ export function useStartupPreload(): StartupPreloadState {
             ...prev,
             loaded: Math.min(loaded, critical.length),
             currentAsset: path,
-            errors: error ? [...prev.errors, path] : prev.errors,
+            errors: error
+              ? [...prev.errors, path]
+              : prev.errors,
           }))
         },
       })
 
       const elapsed = performance.now() - start
       const minWait = delay(Math.max(0, MIN_SPLASH_MS - elapsed))
-      await Promise.all([minWait, Promise.race([criticalRun, delay(CRITICAL_BUDGET_MS)])])
+      await Promise.all([
+        minWait,
+        Promise.race([
+          criticalRun,
+          delay(CRITICAL_BUDGET_MS),
+        ]),
+      ])
 
       if (!mounted || controller.signal.aborted)
         return
 
-      setState(prev => ({ ...prev, phase: 'ready', ready: true, currentAsset: null }))
+      setState(prev => ({
+        ...prev,
+        phase: 'ready',
+        ready: true,
+        currentAsset: null,
+      }))
 
       // Continue warming in the background — independent of desktop entry.
       void criticalRun.then(async () => {

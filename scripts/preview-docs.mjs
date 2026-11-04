@@ -39,9 +39,13 @@ function isInsideOutDir(filePath) {
 }
 
 async function resolveFile(pathname) {
-  const relativePath = pathname === '' || pathname === '/' ? '/index.html' : pathname
+  const relativePath = pathname === '' || pathname === '/'
+    ? '/index.html'
+    : pathname
   const candidates = relativePath.endsWith('/')
-    ? [join(outDir, relativePath, 'index.html')]
+    ? [
+        join(outDir, relativePath, 'index.html'),
+      ]
     : [
         join(outDir, relativePath),
         join(outDir, `${relativePath}.html`),
@@ -59,7 +63,9 @@ async function resolveFile(pathname) {
   }
 
   const notFound = join(outDir, '404.html')
-  return await exists(notFound) ? notFound : null
+  return await exists(notFound)
+    ? notFound
+    : null
 }
 
 function redirect(response, location) {

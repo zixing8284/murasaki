@@ -42,7 +42,9 @@ function FolderTreeNode({ node, childrenByParent, currentPath, binHasItems, expa
   // folder reads as "open" even when its subtree is collapsed).
   const iconSrc = node.path === RECYCLE_BIN_PATH
     ? (binHasItems ? ICON.recycleBinFull.sm : ICON.recycleBin.sm)
-    : node.icon === FS_ICONS.folder && (root || expanded || selected) ? FS_ICONS.folderOpen : node.icon
+    : node.icon === FS_ICONS.folder && (root || expanded || selected)
+      ? FS_ICONS.folderOpen
+      : node.icon
   const icon = <TreeIcon src={iconSrc} />
 
   const childNodes = subFolders.map(child => (
@@ -103,7 +105,9 @@ export function FolderTree({ nodes, currentPath, onNavigate }: FolderTreeProps):
       const next = new Set(prev)
       for (const ancestor of ancestorPaths(currentPath))
         next.add(ancestor)
-      return next.size === prev.size ? prev : next
+      return next.size === prev.size
+        ? prev
+        : next
     })
   }
 

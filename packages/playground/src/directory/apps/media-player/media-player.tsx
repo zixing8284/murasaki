@@ -91,8 +91,12 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
     const chromeWidth = frame.offsetWidth - area.clientWidth
     const chromeHeight = frame.offsetHeight - area.clientHeight
     const containerEl = frame.offsetParent as HTMLElement | null
-    const maxWidth = containerEl ? containerEl.clientWidth - frame.offsetLeft : Number.POSITIVE_INFINITY
-    const maxHeight = containerEl ? containerEl.clientHeight - frame.offsetTop : Number.POSITIVE_INFINITY
+    const maxWidth = containerEl
+      ? containerEl.clientWidth - frame.offsetLeft
+      : Number.POSITIVE_INFINITY
+    const maxHeight = containerEl
+      ? containerEl.clientHeight - frame.offsetTop
+      : Number.POSITIVE_INFINITY
     const nextWidth = Math.max(320, Math.min(desiredAreaWidth + chromeWidth, maxWidth))
     const nextHeight = Math.max(240, Math.min(desiredAreaHeight + chromeHeight, maxHeight))
     frame.style.width = `${nextWidth}px`
@@ -148,7 +152,12 @@ export function MediaPlayer({ windowId }: ProcessComponentProps): ReactElement |
     return () => {
       active = false
     }
-  }, [clearLaunchRequest, getFile, launchRequest, loadLocalFile])
+  }, [
+    clearLaunchRequest,
+    getFile,
+    launchRequest,
+    loadLocalFile,
+  ])
 
   // Keep the latest loaders in refs so the launch effect below can depend only
   // on the launch identity — otherwise an unstable callback identity would

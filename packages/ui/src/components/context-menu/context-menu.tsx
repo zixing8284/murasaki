@@ -62,7 +62,9 @@ export function ContextMenu({
   }
 
   const close = (): void => {
-    setState(prev => (prev.open ? { ...prev, open: false } : prev))
+    setState(prev => (prev.open
+      ? { ...prev, open: false }
+      : prev))
   }
 
   const setAvailableSize = (availableHeight: number | null, availableWidth: number | null): void => {
@@ -255,8 +257,12 @@ export function ContextMenuContent({
   // pointer coords so the element is in the DOM for measurement but invisible.
   // This prevents the menu from flashing at the raw pointer position before
   // the first computed position (with correct side-flip) is ready.
-  const left = ready && position ? position.x : x
-  const top = ready && position ? position.y : y
+  const left = ready && position
+    ? position.x
+    : x
+  const top = ready && position
+    ? position.y
+    : y
 
   return (
     <LayerPortal>
@@ -266,7 +272,12 @@ export function ContextMenuContent({
         className={cnPure('fixed pointer-events-auto [z-index:var(--react98-layer-popup-z-index)]', className)}
         data-open=""
         data-context-menu-available-height={position?.availableHeight ?? ''}
-        style={{ left, top, opacity: ready ? undefined : 0, ...style }}
+        style={{
+          left,
+          top,
+          opacity: ready ? undefined : 0,
+          ...style,
+        }}
         onClick={handleMenuClick}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {

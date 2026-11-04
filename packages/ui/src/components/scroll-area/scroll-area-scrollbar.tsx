@@ -45,18 +45,32 @@ function Track({
     if (isVertical) {
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
       const clickPos = e.clientY - rect.top
-      scrollPage('v', clickPos < (thumbTop ?? 0) ? -1 : 1)
+      scrollPage('v', clickPos < (thumbTop ?? 0)
+        ? -1
+        : 1)
     }
     else {
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
       const clickPos = e.clientX - rect.left
-      scrollPage('h', clickPos < (thumbLeft ?? 0) ? -1 : 1)
+      scrollPage('h', clickPos < (thumbLeft ?? 0)
+        ? -1
+        : 1)
     }
   }
 
   const positionStyle: React.CSSProperties = isVertical
-    ? { top: btnHeight, bottom: btnHeight, left: 0, right: 0 }
-    : { left: barSize, right: barSize, top: 0, bottom: 0 }
+    ? {
+        top: btnHeight,
+        bottom: btnHeight,
+        left: 0,
+        right: 0,
+      }
+    : {
+        left: barSize,
+        right: barSize,
+        top: 0,
+        bottom: 0,
+      }
 
   return (
     <div
@@ -159,7 +173,12 @@ function VerticalBar({
     <div
       data-murasaki-vbar=""
       className={cnPure('absolute top-0 right-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border will-change-transform', className)}
-      style={{ width: barSize, height, touchAction: 'none', ...style }}
+      style={{
+        width: barSize,
+        height,
+        touchAction: 'none',
+        ...style,
+      }}
       {...props}
     >
       <ArrowButton
@@ -218,7 +237,12 @@ function HorizontalBar({
     <div
       data-murasaki-hbar=""
       className={cnPure('absolute bottom-0 left-0 [z-index:var(--react98-layer-scrollbar-z-index)] box-border will-change-transform', className)}
-      style={{ height: btnHeight, width, touchAction: 'none', ...style }}
+      style={{
+        height: btnHeight,
+        width,
+        touchAction: 'none',
+        ...style,
+      }}
       {...props}
     >
       <ArrowButton

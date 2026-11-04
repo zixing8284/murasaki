@@ -49,7 +49,9 @@ export function useGameLibrary(): GameLibrary {
       catch (cause) {
         if (!active || controller.signal.aborted)
           return
-        setError(cause instanceof Error ? cause.message : String(cause))
+        setError(cause instanceof Error
+          ? cause.message
+          : String(cause))
         setStatus('error')
       }
     })()
@@ -81,7 +83,9 @@ export function useGameLibrary(): GameLibrary {
       setSizes(prev => ({ ...prev, [id]: bytes.byteLength }))
     }
     catch (cause) {
-      setError(cause instanceof Error ? cause.message : String(cause))
+      setError(cause instanceof Error
+        ? cause.message
+        : String(cause))
     }
     finally {
       setInstalling((prev) => {
@@ -111,5 +115,11 @@ export function useGameLibrary(): GameLibrary {
     [catalog, sizes, installing],
   )
 
-  return { status, error, entries, install, remove }
+  return {
+    status,
+    error,
+    entries,
+    install,
+    remove,
+  }
 }

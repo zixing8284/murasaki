@@ -8,7 +8,11 @@ export function SliderDisabledDemo(): React.ReactElement {
       <Slider
         disabled
         defaultValue={45}
-        ticks={[{ value: 0, label: '0' }, { value: 50, label: '50' }, { value: 100, label: '100' }]}
+        ticks={[
+          { value: 0, label: '0' },
+          { value: 50, label: '50' },
+          { value: 100, label: '100' },
+        ]}
       />
       <div className="flex h-40 items-center gap-6">
         <Slider disabled vertical defaultValue={35} />

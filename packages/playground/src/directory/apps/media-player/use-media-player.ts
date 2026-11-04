@@ -37,7 +37,9 @@ function detectTrackType(file?: File): 'audio' | 'video' {
       return 'video'
     if (file.type.startsWith('audio/'))
       return 'audio'
-    return VIDEO_EXTENSIONS.test(file.name) ? 'video' : 'audio'
+    return VIDEO_EXTENSIONS.test(file.name)
+      ? 'video'
+      : 'audio'
   }
   return 'audio'
 }
@@ -259,11 +261,15 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     const newPosition = currentPlayOrderIndex + offset
 
     if (offset > 0 && newPosition >= playOrder.length) {
-      return ignoreRepeat || model.repeat === 'all' ? playOrder[0] : null
+      return ignoreRepeat || model.repeat === 'all'
+        ? playOrder[0]
+        : null
     }
 
     if (offset < 0 && newPosition < 0) {
-      return ignoreRepeat || model.repeat === 'all' ? playOrder[playOrder.length - 1] : null
+      return ignoreRepeat || model.repeat === 'all'
+        ? playOrder[playOrder.length - 1]
+        : null
     }
 
     return playOrder[newPosition] ?? null
@@ -321,7 +327,9 @@ export function useMediaPlayer(): UseMediaPlayerResult {
           // Update model index before loading
           setModel((prev) => {
             const index = prev.playlist.findIndex(t => t.id === nextTrack.id)
-            return index !== -1 ? { ...prev, currentIndex: index } : prev
+            return index !== -1
+              ? { ...prev, currentIndex: index }
+              : prev
           })
           manager.loadAndPlay(nextTrack)
         }
@@ -399,7 +407,9 @@ export function useMediaPlayer(): UseMediaPlayerResult {
     }
 
     setModel((prev) => {
-      const basePlaylist = options?.replacePlaylist ? [] : prev.playlist
+      const basePlaylist = options?.replacePlaylist
+        ? []
+        : prev.playlist
       const newPlaylist = [...basePlaylist, pendingTrack]
       const newIndex = newPlaylist.length - 1
       return {

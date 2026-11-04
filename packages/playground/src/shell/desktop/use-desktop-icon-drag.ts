@@ -68,7 +68,9 @@ function buildDragItems(
   positions: GridLayout,
   selectedIds: readonly string[],
 ): DragItem[] {
-  const dragIds = selectedIds.includes(id) ? selectedIds : [id]
+  const dragIds = selectedIds.includes(id)
+    ? selectedIds
+    : [id]
   const seen = new Set<string>()
   const items: DragItem[] = []
 
@@ -76,7 +78,9 @@ function buildDragItems(
     if (seen.has(dragId))
       continue
 
-    const position = dragId === id ? { col, row } : positions[dragId]
+    const position = dragId === id
+      ? { col, row }
+      : positions[dragId]
     if (!position)
       continue
 
@@ -188,7 +192,10 @@ export function useDesktopIconDrag({
       // persisting it together with the moves pins the untouched icons in place.
       // Vacated cells stay empty instead of triggering a reflow — the dragged
       // icon moves and nothing else shifts, matching the classic desktop.
-      setPositions({ ...positions, ...moved })
+      setPositions({
+        ...positions,
+        ...moved,
+      })
     }
 
     const finish = (): void => {
@@ -230,7 +237,19 @@ export function useDesktopIconDrag({
       },
       onCancel: finish,
     }
-  }, [col, gridRef, id, isCellOccupied, onDragPreviewChange, onOpen, onSelect, positions, row, selectedIds, setPositions])
+  }, [
+    col,
+    gridRef,
+    id,
+    isCellOccupied,
+    onDragPreviewChange,
+    onOpen,
+    onSelect,
+    positions,
+    row,
+    selectedIds,
+    setPositions,
+  ])
 
   const surface = useMemo<ShellInputSurface | null>(() => {
     if (!iconElement)

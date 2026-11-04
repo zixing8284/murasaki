@@ -62,7 +62,14 @@ function computeMetrics(
     hThumbLeft = h.THUMB_POS
   }
 
-  return { hasVertical: hasV, hasHorizontal: hasH, vThumbTop, vThumbHeight, hThumbLeft, hThumbWidth }
+  return {
+    hasVertical: hasV,
+    hasHorizontal: hasH,
+    vThumbTop,
+    vThumbHeight,
+    hThumbLeft,
+    hThumbWidth,
+  }
 }
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
@@ -192,7 +199,12 @@ export function useScrollState(
       el.style.removeProperty('-ms-overflow-style')
       el.removeAttribute('data-murasaki-scrollbar-id')
     }
-  }, [viewportRef, scrollbarId, syncLayout, requestLayoutSync])
+  }, [
+    viewportRef,
+    scrollbarId,
+    syncLayout,
+    requestLayoutSync,
+  ])
 
   useLayoutEffect(() => {
     syncLayout()
@@ -242,7 +254,9 @@ export function useScrollState(
     if (!el)
       return
 
-    const startScroll = axis === 'v' ? el.scrollTop : el.scrollLeft
+    const startScroll = axis === 'v'
+      ? el.scrollTop
+      : el.scrollLeft
     // Divide pointer deltas by the ancestor scale so the thumb tracks the pointer
     // inside a scaled container (identity when unscaled).
     const scale = scaleMagnitude(getScreenFromLocalMatrix(el))
@@ -250,7 +264,9 @@ export function useScrollState(
     const onMove = (ev: PointerEvent): void => {
       if (ev.pointerId !== pointerId)
         return
-      const delta = ((axis === 'v' ? ev.clientY : ev.clientX) - startPos) / scale
+      const delta = ((axis === 'v'
+        ? ev.clientY
+        : ev.clientX) - startPos) / scale
       const trackSize = axis === 'v'
         ? (vTrackRef.current?.clientHeight ?? 0)
         : (hTrackRef.current?.clientWidth ?? 0)

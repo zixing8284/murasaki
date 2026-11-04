@@ -17,7 +17,9 @@ interface ScrollArrowIconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 function borderFill(normal: string, pressed: string, isPressed?: boolean): string {
-  return isPressed ? `var(${pressed})` : `var(${normal})`
+  return isPressed
+    ? `var(${pressed})`
+    : `var(${normal})`
 }
 
 export function ArrowUpIcon({ pressed, ...props }: ScrollArrowIconProps): React.ReactElement {

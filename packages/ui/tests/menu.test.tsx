@@ -20,7 +20,13 @@ function BoundarySubmenu(): React.ReactElement {
     <div
       ref={boundaryRef}
       data-testid="submenu-boundary"
-      style={{ position: 'fixed', left: 80, top: 80, width: 180, height: 140 }}
+      style={{
+        position: 'fixed',
+        left: 80,
+        top: 80,
+        width: 180,
+        height: 140,
+      }}
     >
       <Menu style={{ position: 'absolute', right: 4, bottom: 4 }}>
         <MenuSub>

@@ -215,7 +215,13 @@ export function useResizable<
       document.addEventListener('mousemove', onMousemove)
       document.addEventListener('mouseup', onMouseup)
     },
-    [container, minWidth, minHeight, maxWidth, maxHeight],
+    [
+      container,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    ],
   )
 
   useEffect(() => {

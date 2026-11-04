@@ -111,7 +111,12 @@ export function TaskbarQuickLaunch({
       setUncontrolledVisibleCount(clamped)
     }
     onVisibleCountChange?.(clamped)
-  }, [visibleCount, setUncontrolledVisibleCount, onVisibleCountChange, icons.length])
+  }, [
+    visibleCount,
+    setUncontrolledVisibleCount,
+    onVisibleCountChange,
+    icons.length,
+  ])
 
   const visibleIconsCount = Math.max(0, Math.floor(quickLaunchWidth / iconStepWidth))
 
@@ -161,7 +166,14 @@ export function TaskbarQuickLaunch({
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [icons.length, isDragging, maxQuickLaunchWidth, iconStepWidth, minVisibleCount, setVisibleIconCount])
+  }, [
+    icons.length,
+    isDragging,
+    maxQuickLaunchWidth,
+    iconStepWidth,
+    minVisibleCount,
+    setVisibleIconCount,
+  ])
 
   useEffect(() => {
     if (isDragging) {

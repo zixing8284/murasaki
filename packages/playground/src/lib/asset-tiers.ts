@@ -35,7 +35,16 @@ export const CRITICAL_OVERRIDES = new Set<string>(['/wallpaper/SoapBubbles.bmp']
 /** Images larger than this are warmed in the background, never blocking paint. */
 const LARGE_ASSET_BYTES = 24 * 1024
 
-const IMAGE_EXTENSIONS = new Set(['png', 'gif', 'jpg', 'jpeg', 'webp', 'bmp', 'svg', 'ico'])
+const IMAGE_EXTENSIONS = new Set([
+  'png',
+  'gif',
+  'jpg',
+  'jpeg',
+  'webp',
+  'bmp',
+  'svg',
+  'ico',
+])
 
 /** Whether a public path points at a decodable raster/vector image. */
 export function isImageAsset(publicPath: string): boolean {

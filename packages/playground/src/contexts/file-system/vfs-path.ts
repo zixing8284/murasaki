@@ -5,24 +5,32 @@ export const ROOT_PATH = 'Desktop'
 
 /** Join a parent path and a child name into a canonical node path. */
 export function joinPath(parentPath: string, name: string): string {
-  return parentPath ? `${parentPath}/${name}` : name
+  return parentPath
+    ? `${parentPath}/${name}`
+    : name
 }
 
 /** The parent path of a node path (`''` for the root). */
 export function getParentPath(path: string): string {
   const index = path.lastIndexOf('/')
-  return index === -1 ? '' : path.slice(0, index)
+  return index === -1
+    ? ''
+    : path.slice(0, index)
 }
 
 /** The leaf name of a node path. */
 export function getName(path: string): string {
   const index = path.lastIndexOf('/')
-  return index === -1 ? path : path.slice(index + 1)
+  return index === -1
+    ? path
+    : path.slice(index + 1)
 }
 
 /** Split a path into its ordered name segments. */
 export function toSegments(path: string): string[] {
-  return path.length === 0 ? [] : path.split('/')
+  return path.length === 0
+    ? []
+    : path.split('/')
 }
 
 /** Join ordered name segments back into a path. */

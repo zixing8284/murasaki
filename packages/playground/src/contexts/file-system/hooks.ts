@@ -22,30 +22,35 @@ export function useFileSystem(): FileSystemContextValue {
 /** Immediate children of a folder, re-fetched whenever the store mutates. */
 export function useFolderChildren(parentPath: string | null): { children: VfsNode[], loading: boolean } {
   const { revision } = useFileSystem()
-  const [state, setState] = useState<{ children: VfsNode[], loading: boolean }>({ children: [], loading: true })
+  const [result, setResult] = useState<{ path: string, revision: number, children: VfsNode[] } | null>(null)
 
   useEffect(() => {
-    if (parentPath == null) {
-      setState({ children: [], loading: false })
+    if (parentPath == null)
       return
-    }
     let active = true
-    setState(previous => ({ ...previous, loading: true }))
     listChildren(parentPath)
       .then((children) => {
-        if (active)
-          setState({ children: children.filter(isRenderableNode), loading: false })
+        if (active) {
+          setResult({
+            path: parentPath,
+            revision,
+            children: children.filter(isRenderableNode),
+          })
+        }
       })
       .catch(() => {
         if (active)
-          setState({ children: [], loading: false })
+          setResult({ path: parentPath, revision, children: [] })
       })
     return () => {
       active = false
     }
   }, [parentPath, revision])
 
-  return state
+  if (parentPath == null)
+    return { children: [], loading: false }
+  const upToDate = result?.path === parentPath && result?.revision === revision
+  return { children: result?.children ?? [], loading: !upToDate }
 }
 
 /** Every node in the store (for the folder tree), re-fetched on mutation. */
@@ -75,10 +80,8 @@ export function useVfsNode(path: string | null): VfsNode | null {
   const [node, setNode] = useState<VfsNode | null>(null)
 
   useEffect(() => {
-    if (path == null) {
-      setNode(null)
+    if (path == null)
       return
-    }
     let active = true
     getNode(path)
       .then((next) => {
@@ -91,7 +94,9 @@ export function useVfsNode(path: string | null): VfsNode | null {
     }
   }, [path, revision])
 
-  return node
+  return path == null
+    ? null
+    : node
 }
 
 /**
@@ -104,21 +109,11 @@ export function useVfsImageSrc(node: Pick<VfsNode, 'path' | 'type' | 'assetUrl' 
   const assetUrl = node?.assetUrl ?? null
   const hasBlob = node?.hasBlob ?? false
   const isFile = node?.type === 'file'
-  const [src, setSrc] = useState<string | null>(null)
+  const [blobResult, setBlobResult] = useState<{ path: string, src: string } | null>(null)
 
   useEffect(() => {
-    if (!isFile || path == null) {
-      setSrc(null)
+    if (!isFile || path == null || assetUrl || !hasBlob)
       return
-    }
-    if (assetUrl) {
-      setSrc(assetPath(assetUrl))
-      return
-    }
-    if (!hasBlob) {
-      setSrc(null)
-      return
-    }
     let active = true
     let objectUrl: string | null = null
     readBlob(path)
@@ -126,7 +121,7 @@ export function useVfsImageSrc(node: Pick<VfsNode, 'path' | 'type' | 'assetUrl' 
         if (!active || !blob)
           return
         objectUrl = URL.createObjectURL(blob)
-        setSrc(objectUrl)
+        setBlobResult({ path, src: objectUrl })
       })
       .catch(() => {})
     return () => {
@@ -136,5 +131,13 @@ export function useVfsImageSrc(node: Pick<VfsNode, 'path' | 'type' | 'assetUrl' 
     }
   }, [path, assetUrl, hasBlob, isFile])
 
-  return src
+  if (!isFile || path == null)
+    return null
+  if (assetUrl)
+    return assetPath(assetUrl)
+  if (!hasBlob)
+    return null
+  return blobResult?.path === path
+    ? blobResult.src
+    : null
 }

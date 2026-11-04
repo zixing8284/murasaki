@@ -228,8 +228,14 @@ export function Shell(): React.ReactElement {
     : ''
 
   const screenStyle = {
-    ...(isBooted ? { backgroundColor: desktopBgColor } : {}),
-    ...(isBooted && wallpaperSrc ? { backgroundImage: `url(${isCustom ? wallpaperSrc : assetPath(wallpaperSrc)})` } : {}),
+    ...(isBooted
+      ? { backgroundColor: desktopBgColor }
+      : {}),
+    ...(isBooted && wallpaperSrc
+      ? { backgroundImage: `url(${isCustom
+          ? wallpaperSrc
+          : assetPath(wallpaperSrc)})` }
+      : {}),
     '--desktop-icon-label-bg': isNoneWallpaper ? 'transparent' : iconLabelBgColor,
   } as CSSProperties
 
@@ -275,11 +281,15 @@ export function Shell(): React.ReactElement {
   //          and browser zoom reflows the desktop instead of being fought by a refit.
   const alignmentWrapperClass = !monitorFrame
     ? 'relative size-full overflow-hidden'
-    : (!glassActive ? 'contents' : 'flex items-center gap-3 max-h-full max-w-full')
+    : (!glassActive
+        ? 'contents'
+        : 'flex items-center gap-3 max-h-full max-w-full')
 
   const bezelContainerClass = !monitorFrame
     ? 'absolute top-0 left-0 overflow-hidden'
-    : `relative isolate box-border min-h-0 min-w-0 overflow-hidden bg-(--button-face) p-[clamp(20px,3.5vw,40px)] shadow-[2px_2px_0_1px_var(--button-dk-shadow)]${!glassActive ? ' max-h-full max-w-full' : ''}`
+    : `relative isolate box-border min-h-0 min-w-0 overflow-hidden bg-(--button-face) p-[clamp(20px,3.5vw,40px)] shadow-[2px_2px_0_1px_var(--button-dk-shadow)]${!glassActive
+      ? ' max-h-full max-w-full'
+      : ''}`
 
   const bezelContainerStyle: CSSProperties | undefined = monitorFrame
     ? {
@@ -312,7 +322,9 @@ export function Shell(): React.ReactElement {
       {/* Desktop */}
       <div
         ref={setScreenRootRef}
-        className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden${wallpaperBgClasses ? ` ${wallpaperBgClasses}` : ''}${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
+        className={`relative z-0 flex size-full min-h-0 flex-col overflow-hidden${wallpaperBgClasses
+          ? ` ${wallpaperBgClasses}`
+          : ''}${gradientEnabled ? '' : ' [--gradient-active-title:var(--active-title)] [--gradient-inactive-title:var(--inactive-title)]'}`}
         style={screenStyle}
         onPointerDownCapture={handleShellPointerDownCapture}
       >
@@ -385,7 +397,7 @@ export function Shell(): React.ReactElement {
     // Appearance → "Cover full screen" switches to native fill (desktop = viewport,
     // no fixed resolution, no scale) and drops the padding.
     <div
-      className={`flex ${isMobile ? 'h-[100dvh]' : 'h-screen'} w-full bg-[#20242c] ${effectiveFillScreen ? 'p-0' : 'p-[clamp(0.5rem,2.5vw,1.25rem)]'} select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden`}
+      className={`flex ${isMobile ? 'h-dvh' : 'h-screen'} w-full bg-[#20242c] ${effectiveFillScreen ? 'p-0' : 'p-[clamp(0.5rem,2.5vw,1.25rem)]'} select-none selection:bg-(--hilight) selection:text-(--hilight-text) items-center justify-center overflow-hidden`}
       style={
         isMobile
           ? {
@@ -456,7 +468,9 @@ export function Shell(): React.ReactElement {
                       : 'Requires Chrome 104+ (Region Capture)'
                   }
                   className="cursor-pointer bg-(--button-face) px-1.5 py-0.5 text-[10px] text-(--button-text) disabled:cursor-not-allowed disabled:opacity-50"
-                  style={{ boxShadow: shaderGlass.active ? 'var(--shadow-sunken)' : 'var(--shadow-raised)' }}
+                  style={{
+                    boxShadow: shaderGlass.active ? 'var(--shadow-sunken)' : 'var(--shadow-raised)',
+                  }}
                   onClick={() => {
                     if (shaderGlass.active)
                       shaderGlass.stop()

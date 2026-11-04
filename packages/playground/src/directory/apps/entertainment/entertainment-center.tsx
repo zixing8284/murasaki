@@ -61,7 +61,9 @@ export function EntertainmentCenter(): ReactElement {
 
       <div className="mt-0.5 flex shrink-0 gap-0.5">
         <div className="flex-1 px-2 py-0.5 text-(--window-text) shadow-(--shadow-status-field)">
-          {selected ? `${selected.label} — double-click to play` : `${GAMES.length} games`}
+          {selected
+            ? `${selected.label} — double-click to play`
+            : `${GAMES.length} games`}
         </div>
       </div>
     </div>

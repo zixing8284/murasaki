@@ -4,7 +4,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export function SelectBasicDemo(): React.ReactElement {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 260 }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 14,
+      maxWidth: 260,
+    }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <label htmlFor="select-color">Color:</label>
         <Select name="color" defaultValue="red">

@@ -56,8 +56,14 @@ export function IconTile({ icon, label, selected, variant = 'tile', labelSlot, c
     : ''
 
   return (
-    <div className={`${container}${className ? ` ${className}` : ''}`}>
-      <span className={`pointer-events-auto shrink-0${selected ? ` ${SELECTED_ICON_FILTER}` : ''}`}>
+    <div className={`${container}${className
+      ? ` ${className}`
+      : ''}`}
+    >
+      <span className={`pointer-events-auto shrink-0${selected
+        ? ` ${SELECTED_ICON_FILTER}`
+        : ''}`}
+      >
         {icon}
       </span>
       {labelSlot

@@ -51,8 +51,11 @@ export function GamePlayer({ game, token, onStop, onRestart }: GamePlayerProps):
         player.load(objectUrl)
       }
       catch (cause) {
-        if (!cancelled)
-          setError(cause instanceof Error ? cause.message : String(cause))
+        if (!cancelled) {
+          setError(cause instanceof Error
+            ? cause.message
+            : String(cause))
+        }
       }
     })()
 

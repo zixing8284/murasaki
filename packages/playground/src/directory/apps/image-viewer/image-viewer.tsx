@@ -19,7 +19,17 @@ import { useProcessActions, useProcessLaunch } from '../../../contexts/process/h
 import { InactiveClickGuard } from '../../../shell/window/inactive-click-guard'
 
 // Discrete zoom stops (percent) stepped through by the +/- buttons.
-const ZOOM_STOPS = [10, 25, 50, 75, 100, 150, 200, 400, 800] as const
+const ZOOM_STOPS = [
+  10,
+  25,
+  50,
+  75,
+  100,
+  150,
+  200,
+  400,
+  800,
+] as const
 const DEFAULT_ZOOM = 100
 
 /** Transparent-background checkerboard so PNG/SVG/WebP alpha reads clearly. */
@@ -49,30 +59,39 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
   const { title } = useProcessActions()
   const [currentPath, setCurrentPath] = useState<string | null>(launch?.path ?? null)
   const [siblings, setSiblings] = useState<VfsNode[]>([])
-  const [src, setSrc] = useState<string | null>(null)
-  const [naturalSize, setNaturalSize] = useState<{ width: number, height: number } | null>(null)
+  const [srcForPath, setSrcForPath] = useState<{ path: string | null, url: string } | null>(null)
+  const [naturalSizeForPath, setNaturalSizeForPath] = useState<{ path: string | null, size: { width: number, height: number } } | null>(null)
   const [zoom, setZoom] = useState<number>(DEFAULT_ZOOM)
   const [fit, setFit] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const src = srcForPath?.path === currentPath
+    ? srcForPath.url
+    : null
+  const naturalSize = naturalSizeForPath?.path === currentPath
+    ? naturalSizeForPath.size
+    : null
 
   // Follow the launched file (and any later re-launch onto the same window).
-  useEffect(() => {
-    if (launch?.path)
-      setCurrentPath(launch.path)
-  }, [launch?.nonce, launch?.path])
+  const [lastNonce, setLastNonce] = useState(launch?.nonce)
+  if (lastNonce !== launch?.nonce && launch?.path) {
+    setLastNonce(launch.nonce)
+    setCurrentPath(launch.path)
+  }
 
-  const name = currentPath ? getName(currentPath) : 'Image Viewer'
+  const name = currentPath
+    ? getName(currentPath)
+    : 'Image Viewer'
 
   useEffect(() => {
-    title(windowId, currentPath ? `${name} - Image Viewer` : 'Image Viewer')
+    title(windowId, currentPath
+      ? `${name} - Image Viewer`
+      : 'Image Viewer')
   }, [currentPath, name, title, windowId])
 
   // Load sibling image files (for Previous / Next) from the same folder.
   useEffect(() => {
-    if (!currentPath) {
-      setSiblings([])
+    if (!currentPath)
       return
-    }
     let active = true
     listChildren(getParentPath(currentPath))
       .then((children) => {
@@ -87,20 +106,16 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
 
   // Resolve the current node to an object URL, revoked on change/unmount.
   useEffect(() => {
-    if (!currentPath) {
-      setSrc(null)
+    if (!currentPath)
       return
-    }
     let active = true
     let objectUrl: string | null = null
-    setSrc(null)
-    setNaturalSize(null)
     getFile(currentPath)
       .then((file) => {
         if (!active || !file)
           return
         objectUrl = URL.createObjectURL(file)
-        setSrc(objectUrl)
+        setSrcForPath({ path: currentPath, url: objectUrl })
         setZoom(DEFAULT_ZOOM)
         setFit(true)
       })
@@ -113,7 +128,9 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
   }, [currentPath])
 
   const index = useMemo(
-    () => (currentPath ? siblings.findIndex(node => node.path === currentPath) : -1),
+    () => (currentPath
+      ? siblings.findIndex(node => node.path === currentPath)
+      : -1),
     [siblings, currentPath],
   )
   const canPrev = index > 0
@@ -146,14 +163,17 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
     event.target.value = ''
     if (!file)
       return
-    setSrc((previous) => {
-      if (previous?.startsWith('blob:'))
-        URL.revokeObjectURL(previous)
-      return URL.createObjectURL(file)
+    setSrcForPath((previous) => {
+      if (previous?.url?.startsWith('blob:'))
+        URL.revokeObjectURL(previous.url)
+      return {
+        path: null,
+        url: URL.createObjectURL(file),
+      }
     })
     setCurrentPath(null)
     setSiblings([])
-    setNaturalSize(null)
+    setNaturalSizeForPath(null)
     setZoom(DEFAULT_ZOOM)
     setFit(true)
     title(windowId, `${file.name} - Image Viewer`)
@@ -198,7 +218,10 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
                     style={scaledStyle}
                     onLoad={(event) => {
                       const image = event.currentTarget
-                      setNaturalSize({ width: image.naturalWidth, height: image.naturalHeight })
+                      setNaturalSizeForPath({
+                        path: currentPath,
+                        size: { width: image.naturalWidth, height: image.naturalHeight },
+                      })
                     }}
                   />
                 )
@@ -212,10 +235,14 @@ export function ImageViewer({ windowId }: ProcessComponentProps): ReactElement {
       <WindowStatusBar>
         <WindowStatusBarField grow>{name}</WindowStatusBarField>
         <WindowStatusBarField grow={false} className="w-28 justify-center">
-          {naturalSize ? `${naturalSize.width} × ${naturalSize.height}` : ''}
+          {naturalSize
+            ? `${naturalSize.width} × ${naturalSize.height}`
+            : ''}
         </WindowStatusBarField>
         <WindowStatusBarField grow={false} className="w-16 justify-center">
-          {fit ? 'Fit' : `${zoom}%`}
+          {fit
+            ? 'Fit'
+            : `${zoom}%`}
         </WindowStatusBarField>
       </WindowStatusBar>
     </div>

@@ -52,14 +52,22 @@ export function useDesktopIconEntries(): IconEntry[] {
     label: 'Recycle Bin',
     icon: (
       <img
-        src={assetPath(recycleBinChildren.length > 0 ? ICON.recycleBinFull.lg : ICON.recycleBin.lg)}
+        src={assetPath(recycleBinChildren.length > 0
+          ? ICON.recycleBinFull.lg
+          : ICON.recycleBin.lg)}
         alt=""
         className="size-8 pixelated shrink-0"
         draggable={false}
       />
     ),
-    onOpen: () => open(APP_ID.MY_DOCUMENTS, { launch: { path: RECYCLE_BIN_PATH } }),
+    onOpen: () => open(APP_ID.MY_DOCUMENTS, {
+      launch: { path: RECYCLE_BIN_PATH },
+    }),
   }
 
-  return [...apps, recycleBin, ...files]
+  return [
+    ...apps,
+    recycleBin,
+    ...files,
+  ]
 }

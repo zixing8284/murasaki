@@ -87,7 +87,10 @@ export class MediaManager {
   }
 
   private updateState(updates: Partial<MediaState>): void {
-    this.state = { ...this.state, ...updates }
+    this.state = {
+      ...this.state,
+      ...updates,
+    }
     this.notifyStateChange()
   }
 
@@ -122,7 +125,9 @@ export class MediaManager {
 
   private buildDecodeErrorMessage(track: Track, mediaErrorCode?: number): string {
     const isLocalBlob = track.url.startsWith('blob:')
-    const prefix = track.type === 'video' ? 'Video' : 'Audio'
+    const prefix = track.type === 'video'
+      ? 'Video'
+      : 'Audio'
 
     if (mediaErrorCode === 3 || mediaErrorCode === 4) {
       return isLocalBlob
@@ -149,11 +154,20 @@ export class MediaManager {
 
     on('loadedmetadata', () => {
       const videoEl = el as HTMLVideoElement
-      const videoWidth = 'videoWidth' in el ? videoEl.videoWidth : 0
-      const videoHeight = 'videoHeight' in el ? videoEl.videoHeight : 0
+      const videoWidth = 'videoWidth' in el
+        ? videoEl.videoWidth
+        : 0
+      const videoHeight = 'videoHeight' in el
+        ? videoEl.videoHeight
+        : 0
       // A fresh media element resets playbackRate to 1 on source load; reapply.
       el.playbackRate = this.desiredPlaybackRate
-      this.updateState({ duration: el.duration || 0, hasVideo: videoWidth > 0, videoWidth, videoHeight })
+      this.updateState({
+        duration: el.duration || 0,
+        hasVideo: videoWidth > 0,
+        videoWidth,
+        videoHeight,
+      })
     })
 
     on('resize', () => {

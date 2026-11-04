@@ -122,5 +122,14 @@ export function useMediaPlayerKeyboardShortcuts({
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [enabled, onSeekBackward, onSeekForward, onTogglePlay, onToggleFullscreen, onToggleMute, onVolumeDown, onVolumeUp])
+  }, [
+    enabled,
+    onSeekBackward,
+    onSeekForward,
+    onTogglePlay,
+    onToggleFullscreen,
+    onToggleMute,
+    onVolumeDown,
+    onVolumeUp,
+  ])
 }

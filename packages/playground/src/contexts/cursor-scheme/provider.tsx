@@ -11,7 +11,9 @@ const STORAGE_KEY = PLAYGROUND_STORAGE_KEYS.cursorScheme
 function readStoredScheme(): CursorSchemeId {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY)
-    return isCursorSchemeId(stored) ? stored : DEFAULT_CURSOR_SCHEME_ID
+    return isCursorSchemeId(stored)
+      ? stored
+      : DEFAULT_CURSOR_SCHEME_ID
   }
   catch {
     return DEFAULT_CURSOR_SCHEME_ID

@@ -22,7 +22,9 @@ interface ActiveInteraction {
 }
 
 function eventTargetNode(event: Event): Node | null {
-  return event.target instanceof Node ? event.target : null
+  return event.target instanceof Node
+    ? event.target
+    : null
 }
 
 function dispatchMouseupFallback(target: Element, event?: MouseEvent): void {
@@ -76,12 +78,17 @@ export function useWebampInteractionBoundary(
         dispatchTouchEndFallback()
       }
 
-      const targetNode = event ? eventTargetNode(event) : null
+      const targetNode = event
+        ? eventTargetNode(event)
+        : null
       if (targetNode && host.contains(targetNode))
         return
 
-      if (interaction.kind === 'mouse')
-        dispatchMouseupFallback(interaction.target, event instanceof MouseEvent ? event : undefined)
+      if (interaction.kind === 'mouse') {
+        dispatchMouseupFallback(interaction.target, event instanceof MouseEvent
+          ? event
+          : undefined)
+      }
     }
 
     const onMouseDown = (event: MouseEvent): void => begin(event, 'mouse')

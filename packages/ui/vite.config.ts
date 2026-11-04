@@ -10,7 +10,11 @@ export default defineConfig({
   root: '.',
   plugins: [
     react(),
-    babel({ presets: [reactCompilerPreset()] }),
+    babel({
+      presets: [
+        reactCompilerPreset(),
+      ],
+    }),
     tailwindcss(),
   ],
   build: {
@@ -43,7 +47,9 @@ export default defineConfig({
     browser: {
       enabled: true,
       provider: playwright(),
-      instances: [{ browser: 'chromium' }],
+      instances: [
+        { browser: 'chromium' },
+      ],
       headless: true,
     },
   },

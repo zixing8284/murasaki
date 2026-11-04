@@ -85,7 +85,18 @@ export function Button({
   ...props
 }: ButtonProps): React.ReactElement {
   return (
-    <button type={type} className={cn(buttonVariants({ active, primary, flat, iconOnly, className }))} data-active={active || undefined} {...props}>
+    <button
+      type={type}
+      className={cn(buttonVariants({
+        active,
+        primary,
+        flat,
+        iconOnly,
+        className,
+      }))}
+      data-active={active || undefined}
+      {...props}
+    >
       {children}
     </button>
   )

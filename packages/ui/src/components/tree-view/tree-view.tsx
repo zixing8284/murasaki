@@ -183,8 +183,15 @@ export function TreeViewItem({
           aria-disabled={disabled || undefined}
           data-selected={selected || undefined}
           data-disabled={disabled || undefined}
-          tabIndex={disabled || !onClick ? -1 : 0}
-          className={cn(treeViewItemStyles({ variant: 'leaf', disabled, selected, interactive: Boolean(onClick) }))}
+          tabIndex={disabled || !onClick
+            ? -1
+            : 0}
+          className={cn(treeViewItemStyles({
+            variant: 'leaf',
+            disabled,
+            selected,
+            interactive: Boolean(onClick),
+          }))}
           onClick={activate}
           onKeyDown={(e) => {
             if (onClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -217,7 +224,9 @@ export function TreeViewItem({
           data-expanded={expanded || undefined}
           data-selected={selected || undefined}
           data-disabled={disabled || undefined}
-          tabIndex={disabled ? -1 : 0}
+          tabIndex={disabled
+            ? -1
+            : 0}
           className={cn(treeViewItemStyles({ variant: 'branch', disabled, selected }))}
           onClick={activate}
           onDoubleClick={() => setExpanded(!expanded)}
@@ -238,7 +247,9 @@ export function TreeViewItem({
             }}
             onDoubleClick={e => e.stopPropagation()}
           >
-            {expanded ? (collapseIcon ?? <TreeCollapseGlyph />) : (expandIcon ?? <TreeExpandGlyph />)}
+            {expanded
+              ? (collapseIcon ?? <TreeCollapseGlyph />)
+              : (expandIcon ?? <TreeExpandGlyph />)}
           </span>
           {icon && <span className="shrink-0">{icon}</span>}
           <span className="leading-none">{label}</span>
@@ -259,7 +270,9 @@ export function TreeViewItem({
         aria-disabled={disabled || undefined}
         data-selected={selected || undefined}
         data-disabled={disabled || undefined}
-        tabIndex={disabled || !onClick ? -1 : 0}
+        tabIndex={disabled || !onClick
+          ? -1
+          : 0}
         className={cn(
           treeViewItemStyles({
             variant: 'leaf',

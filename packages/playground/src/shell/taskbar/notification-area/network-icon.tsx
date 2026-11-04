@@ -33,7 +33,9 @@ export function NetworkIcon(): React.ReactElement {
       {NETWORK_ONLINE_ICONS.map((src, index) => (
         <img
           key={src}
-          className={isOnline && networkIconIndex === index ? 'mx-px' : 'hidden'}
+          className={isOnline && networkIconIndex === index
+            ? 'mx-px'
+            : 'hidden'}
           src={src}
           alt="Network connected"
           title="Connected"

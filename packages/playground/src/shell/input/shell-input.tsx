@@ -141,7 +141,9 @@ export function ShellInputProvider({
         const element = surface.element
         if (!element)
           continue
-        const contains = surface.contains ? surface.contains(point) : defaultContains(point, element)
+        const contains = surface.contains
+          ? surface.contains(point)
+          : defaultContains(point, element)
         if (!contains)
           continue
 
@@ -210,8 +212,13 @@ export function ShellInputProvider({
     const handleTouchEnd = (event: TouchEvent): void => {
       if (event.changedTouches.length === 1) {
         const touch = event.changedTouches[0]
-        if (touch)
-          lastTouchEndRef.current = { x: touch.clientX, y: touch.clientY, time: Date.now() }
+        if (touch) {
+          lastTouchEndRef.current = {
+            x: touch.clientX,
+            y: touch.clientY,
+            time: Date.now(),
+          }
+        }
       }
 
       const active = activeRef.current

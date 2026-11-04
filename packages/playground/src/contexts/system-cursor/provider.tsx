@@ -49,7 +49,10 @@ export function SystemCursorProvider({ children }: { children: ReactNode }): Rea
         if (released)
           return
         released = true
-        setCounts(prev => ({ ...prev, [kind]: Math.max(0, prev[kind] - 1) }))
+        setCounts(prev => ({
+          ...prev,
+          [kind]: Math.max(0, prev[kind] - 1),
+        }))
       }
     },
   }), [])

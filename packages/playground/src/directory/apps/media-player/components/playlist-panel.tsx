@@ -43,11 +43,15 @@ export function PlaylistPanel({
                 onDoubleClick={() => onPlayTrack(track)}
               >
                 <span className="flex w-4 shrink-0 items-center justify-center">
-                  {isNowPlaying || isLoading ? <NowPlayingIndicator loading={isLoading} /> : null}
+                  {isNowPlaying || isLoading
+                    ? <NowPlayingIndicator loading={isLoading} />
+                    : null}
                 </span>
                 <span className="min-w-0 truncate pl-0.5">
                   {track.title}
-                  {track.artist ? ` - ${track.artist}` : ''}
+                  {track.artist
+                    ? ` - ${track.artist}`
+                    : ''}
                 </span>
                 {isLoading
                   ? (

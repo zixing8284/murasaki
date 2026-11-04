@@ -360,16 +360,24 @@ function syncLayout(s: ScrollbarState): void {
 
   s.vBar.style.display = hasV ? 'block' : 'none'
   s.hBar.style.display = hasH ? 'block' : 'none'
-  s.corner.style.display = hasV && hasH ? 'block' : 'none'
+  s.corner.style.display = hasV && hasH
+    ? 'block'
+    : 'none'
 
   // Padding so content doesn't sit behind the scrollbar
-  t.style.paddingRight = hasV ? `${BAR_SIZE}px` : s.origPaddingRight
-  t.style.paddingBottom = hasH ? `${BTN_HEIGHT}px` : s.origPaddingBottom
+  t.style.paddingRight = hasV
+    ? `${BAR_SIZE}px`
+    : s.origPaddingRight
+  t.style.paddingBottom = hasH
+    ? `${BTN_HEIGHT}px`
+    : s.origPaddingBottom
   t.style.boxSizing = 'border-box'
 
   if (hasV) {
     // Vertical thumb size = viewport/content ratio, position = scroll progress.
-    const vHeight = hasH ? t.clientHeight - BTN_HEIGHT : t.clientHeight
+    const vHeight = hasH
+      ? t.clientHeight - BTN_HEIGHT
+      : t.clientHeight
     s.vBar.style.height = `${vHeight}px`
     s.vBar.style.bottom = 'auto'
 
@@ -382,7 +390,9 @@ function syncLayout(s: ScrollbarState): void {
 
   if (hasH) {
     // Horizontal thumb uses the same ratio/progress mapping as vertical.
-    const hWidth = hasV ? t.clientWidth - BAR_SIZE : t.clientWidth
+    const hWidth = hasV
+      ? t.clientWidth - BAR_SIZE
+      : t.clientWidth
     s.hBar.style.width = `${hWidth}px`
     s.hBar.style.right = 'auto'
 
@@ -481,18 +491,28 @@ function addDragBehavior(
     // Divide pointer deltas by the ancestor scale so thumb drag maps to content
     // pixels correctly even inside a scaled container (identity when unscaled).
     const scale = scaleMagnitude(getScreenFromLocalMatrix(thumb))
-    const startPos = axis === 'v' ? e.clientY : e.clientX
-    const startScroll = axis === 'v' ? t.scrollTop : t.scrollLeft
+    const startPos = axis === 'v'
+      ? e.clientY
+      : e.clientX
+    const startScroll = axis === 'v'
+      ? t.scrollTop
+      : t.scrollLeft
 
     const onMove = (ev: PointerEvent): void => {
       if (ev.pointerId !== pointerId)
         return
-      const delta = ((axis === 'v' ? ev.clientY : ev.clientX) - startPos) / scale
-      const track = axis === 'v' ? s.vTrack : s.hTrack
+      const delta = ((axis === 'v'
+        ? ev.clientY
+        : ev.clientX) - startPos) / scale
+      const track = axis === 'v'
+        ? s.vTrack
+        : s.hTrack
       const thumbSize = axis === 'v'
         ? Number.parseFloat(s.vThumb.style.height)
         : Number.parseFloat(s.hThumb.style.width)
-      const trackSize = axis === 'v' ? track.clientHeight : track.clientWidth
+      const trackSize = axis === 'v'
+        ? track.clientHeight
+        : track.clientWidth
       const scrollSize = axis === 'v'
         ? t.scrollHeight - t.clientHeight
         : t.scrollWidth - t.clientWidth

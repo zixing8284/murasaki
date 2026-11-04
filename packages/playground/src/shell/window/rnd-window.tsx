@@ -57,7 +57,9 @@ export function RndWindow({
 
   // Read stored position once on mount (singleton windows only)
   const [initialStoredPosition] = useState<{ left: number, top: number } | null>(
-    () => (appId && entry?.singleton !== false) ? readWindowPosition(appId) : null,
+    () => (appId && entry?.singleton !== false)
+      ? readWindowPosition(appId)
+      : null,
   )
 
   // Auto-fit windows start sized to their content, but once the user resizes
@@ -108,7 +110,12 @@ export function RndWindow({
       }
       onDragChange?.(isDragging)
     },
-    [appId, entry, portalContainer, onDragChange],
+    [
+      appId,
+      entry,
+      portalContainer,
+      onDragChange,
+    ],
   )
 
   // Freeze the user's size when an auto-fit window is resized so subsequent

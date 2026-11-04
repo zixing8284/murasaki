@@ -15,7 +15,9 @@ export function TriangleThumbIcon({
   ...props
 }: React.SVGProps<SVGSVGElement> & { active?: boolean, disabled?: boolean }): React.ReactElement {
   const patternId = useId()
-  const faceFill = (active || disabled) ? `url(#${patternId})` : 'var(--button-face)'
+  const faceFill = (active || disabled)
+    ? `url(#${patternId})`
+    : 'var(--button-face)'
   return (
     <svg fill="none" height={21} shapeRendering="crispEdges" viewBox="0 0 11 21" width={11} {...props}>
       <defs>
@@ -60,7 +62,9 @@ export function RectThumbIcon({
   ...props
 }: React.SVGProps<SVGSVGElement> & { active?: boolean, disabled?: boolean }): React.ReactElement {
   const patternId = useId()
-  const faceFill = (active || disabled) ? `url(#${patternId})` : 'var(--button-face)'
+  const faceFill = (active || disabled)
+    ? `url(#${patternId})`
+    : 'var(--button-face)'
   return (
     <svg fill="none" height={21} shapeRendering="crispEdges" viewBox="0 0 11 21" width={11} {...props}>
       <defs>

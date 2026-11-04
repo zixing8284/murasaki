@@ -56,7 +56,14 @@ export function ScrollAreaThumb({
         'bg-(--button-face)',
         className,
       )}
-      style={{ ...thumbStyle, minWidth: BAR_SIZE, minHeight: BAR_SIZE, boxShadow: THUMB_BOX_SHADOW, touchAction: 'none', ...style }}
+      style={{
+        ...thumbStyle,
+        minWidth: BAR_SIZE,
+        minHeight: BAR_SIZE,
+        boxShadow: THUMB_BOX_SHADOW,
+        touchAction: 'none',
+        ...style,
+      }}
       onPointerDown={onPointerDown}
       {...props}
     />

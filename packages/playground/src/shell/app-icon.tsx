@@ -24,7 +24,10 @@ export function AppIcon({ appId, size, className }: AppIconProps): React.ReactEl
   const src = icon[size]
 
   return (
-    <div className={`relative ${sizeClass[size]} shrink-0${className ? ` ${className}` : ''}`}>
+    <div className={`relative ${sizeClass[size]} shrink-0${className
+      ? ` ${className}`
+      : ''}`}
+    >
       <img
         src={assetPath(src)}
         alt=""

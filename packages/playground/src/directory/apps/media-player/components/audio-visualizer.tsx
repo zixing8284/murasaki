@@ -102,7 +102,12 @@ export function AudioVisualizer({ getMediaElement, isPlaying, isAudio }: AudioVi
         rafRef.current = 0
       }
     }
-  }, [isAudio, isPlaying, analyserRef, dataRef])
+  }, [
+    isAudio,
+    isPlaying,
+    analyserRef,
+    dataRef,
+  ])
 
   useEffect(() => {
     if (isAudio && isPlaying)

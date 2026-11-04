@@ -134,5 +134,10 @@ export function useDismissable({
         window.removeEventListener('blur', handleWindowBlur)
       }
     }
-  }, [enabled, escapeKey, outsidePointer, layerRefs])
+  }, [
+    enabled,
+    escapeKey,
+    outsidePointer,
+    layerRefs,
+  ])
 }

@@ -16,44 +16,58 @@ export function PdfViewer({ windowId }: ProcessComponentProps): ReactElement {
   const launch = useProcessLaunch(windowId)
   const { title } = useProcessActions()
   const [currentPath, setCurrentPath] = useState<string | null>(launch?.path ?? null)
-  const [displayName, setDisplayName] = useState<string>('PDF Viewer')
+  const [localFileName, setLocalFileName] = useState<string | null>(null)
+  const [resolvedPath, setResolvedPath] = useState<string | null>(null)
   const [src, setSrc] = useState<string | null>(null)
   const [loadState, setLoadState] = useState<LoadState>('idle')
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const displayName = currentPath
+    ? getName(currentPath)
+    : (localFileName ?? 'PDF Viewer')
+  const effectiveLoadState: LoadState = currentPath != null && resolvedPath !== currentPath
+    ? 'loading'
+    : loadState
+  const effectiveSrc = resolvedPath === currentPath
+    ? src
+    : null
+
+  const [lastNonce, setLastNonce] = useState(launch?.nonce)
+  if (lastNonce !== launch?.nonce && launch?.path) {
+    setLastNonce(launch.nonce)
+    setCurrentPath(launch.path)
+  }
 
   useEffect(() => {
-    if (launch?.path)
-      setCurrentPath(launch.path)
-  }, [launch?.nonce, launch?.path])
-
-  useEffect(() => {
-    title(windowId, displayName === 'PDF Viewer' ? 'PDF Viewer' : `${displayName} - PDF Viewer`)
+    title(windowId, displayName === 'PDF Viewer'
+      ? 'PDF Viewer'
+      : `${displayName} - PDF Viewer`)
   }, [displayName, title, windowId])
 
   // Resolve the launched VFS file to an object URL for the native PDF plugin.
   useEffect(() => {
-    if (!currentPath) {
+    if (!currentPath)
       return
-    }
     let active = true
     let objectUrl: string | null = null
-    setLoadState('loading')
-    setDisplayName(getName(currentPath))
     getFile(currentPath)
       .then((file) => {
         if (!active)
           return
         if (!file) {
           setLoadState('error')
+          setResolvedPath(currentPath)
           return
         }
         objectUrl = URL.createObjectURL(file)
         setSrc(objectUrl)
         setLoadState('ready')
+        setResolvedPath(currentPath)
       })
       .catch(() => {
-        if (active)
+        if (active) {
           setLoadState('error')
+          setResolvedPath(currentPath)
+        }
       })
     return () => {
       active = false
@@ -73,7 +87,8 @@ export function PdfViewer({ windowId }: ProcessComponentProps): ReactElement {
       return URL.createObjectURL(file)
     })
     setCurrentPath(null)
-    setDisplayName(file.name)
+    setResolvedPath(null)
+    setLocalFileName(file.name)
     setLoadState('ready')
   }
 
@@ -88,12 +103,12 @@ export function PdfViewer({ windowId }: ProcessComponentProps): ReactElement {
       </InactiveClickGuard>
 
       <div className="m-0.5 min-h-0 flex-1 bg-(--window) shadow-(--shadow-border-field)">
-        {loadState === 'ready' && src
+        {effectiveLoadState === 'ready' && effectiveSrc
           ? (
-              <object data={src} type="application/pdf" className="size-full" aria-label={displayName}>
+              <object data={effectiveSrc} type="application/pdf" className="size-full" aria-label={displayName}>
                 <div className="flex h-full flex-col items-center justify-center gap-2 p-4 text-center">
-                  <p>This document can’t be displayed inline.</p>
-                  <a href={src} download={displayName} className="underline">
+                  <p>This document can't be displayed inline.</p>
+                  <a href={effectiveSrc} download={displayName} className="underline">
                     Download
                     {displayName}
                   </a>
@@ -102,9 +117,9 @@ export function PdfViewer({ windowId }: ProcessComponentProps): ReactElement {
             )
           : (
               <div className="flex h-full items-center justify-center text-(--gray-text)">
-                {loadState === 'loading'
+                {effectiveLoadState === 'loading'
                   ? 'Opening document…'
-                  : loadState === 'error'
+                  : effectiveLoadState === 'error'
                     ? 'This document could not be opened.'
                     : 'No document loaded'}
               </div>

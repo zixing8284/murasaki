@@ -69,7 +69,9 @@ const WALLPAPER_FILES = [
 ] as const
 
 function getDefaultModeForFile(file: string): WallpaperMode {
-  return /\.(?:bmp|gif|png)$/i.test(file) ? 'tiled' : 'centered'
+  return /\.(?:bmp|gif|png)$/i.test(file)
+    ? 'tiled'
+    : 'centered'
 }
 
 function toWallpaperId(file: string): string {
@@ -91,7 +93,12 @@ function toWallpaperLabel(file: string): string {
 }
 
 export const WALLPAPERS: WallpaperEntry[] = [
-  { id: 'none', label: '(None)', src: '', defaultMode: 'tiled' },
+  {
+    id: 'none',
+    label: '(None)',
+    src: '',
+    defaultMode: 'tiled',
+  },
   ...WALLPAPER_FILES.map(file => ({
     id: toWallpaperId(file),
     label: toWallpaperLabel(file),

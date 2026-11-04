@@ -5,7 +5,9 @@ export function getStorage(area: StorageArea): Storage | null {
     if (typeof window === 'undefined') {
       return null
     }
-    return area === 'local' ? window.localStorage : window.sessionStorage
+    return area === 'local'
+      ? window.localStorage
+      : window.sessionStorage
   }
   catch {
     return null
@@ -83,7 +85,9 @@ export function writeJsonStorageItem(area: StorageArea, key: string, value: unkn
 
 export function readBooleanStorageItem(area: StorageArea, key: string, fallback = true): boolean {
   const value = readStorageItem(area, key)
-  return value === null ? fallback : value !== 'false'
+  return value === null
+    ? fallback
+    : value !== 'false'
 }
 
 export function writeBooleanStorageItem(area: StorageArea, key: string, value: boolean): void {

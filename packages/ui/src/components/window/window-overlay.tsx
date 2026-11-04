@@ -23,7 +23,9 @@ export function WindowOverlay({
       aria-hidden="true"
       className={cn(
         'inset-0 bg-black/30',
-        positioning === 'fixed' ? 'fixed' : 'absolute',
+        positioning === 'fixed'
+          ? 'fixed'
+          : 'absolute',
         className,
       )}
       {...props}

@@ -39,7 +39,11 @@ export default defineConfig({
   base,
   plugins: [
     react({ include: /\.(jsx|js|tsx|ts)$/ }),
-    babel({ presets: [reactCompilerPreset()] }),
+    babel({
+      presets: [
+        reactCompilerPreset(),
+      ],
+    }),
     embeddedDocsRoutePlugin(),
     playgroundAssetManifestPlugin(),
     tailwindcss(),
@@ -110,7 +114,9 @@ function parseDocsRoutePath(requestUrl: string | undefined): string | null {
 
 function resolveEmbeddedDocsHtmlFile(docsRoutePath: string): string | null {
   const candidates = docsRoutePath === ''
-    ? [resolve(embeddedDocsRoot, 'index.html')]
+    ? [
+        resolve(embeddedDocsRoot, 'index.html'),
+      ]
     : [
         resolve(embeddedDocsRoot, docsRoutePath, 'index.html'),
         resolve(embeddedDocsRoot, `${docsRoutePath}.html`),
@@ -171,7 +177,12 @@ function playgroundAssetManifestPlugin(): Plugin {
         const buffer = readFileSync(file)
         const hash = createHash('sha1').update(buffer).digest('hex').slice(0, 16)
         const relPath = `/${relative(publicRoot, file).split(sep).join(posix.sep)}`
-        assets.push({ path: relPath, size: stat.size, hash, group: classifyAsset(relPath, stat.size) })
+        assets.push({
+          path: relPath,
+          size: stat.size,
+          hash,
+          group: classifyAsset(relPath, stat.size),
+        })
       })
     }
 
@@ -195,7 +206,10 @@ function playgroundAssetManifestPlugin(): Plugin {
   const finalize = (manifest: PlaygroundAssetsManifest, shell: string[]): string => {
     manifest.groups.shell = shell
     manifest.version = createHash('sha1')
-      .update([...manifest.assets.map(a => `${a.path}:${a.hash}`), ...shell].join('\n'))
+      .update([
+        ...manifest.assets.map(a => `${a.path}:${a.hash}`),
+        ...shell,
+      ].join('\n'))
       .digest('hex')
       .slice(0, 16)
     return JSON.stringify(manifest, null, 2)
@@ -285,21 +299,60 @@ function buildWebManifest(): Record<string, unknown> {
     background_color: THEME_COLOR,
     theme_color: THEME_COLOR,
     icons: [
-      { src: 'icons/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: 'icons/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: 'icons/pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      {
+        src: 'icons/pwa-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: 'icons/pwa-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: 'icons/pwa-maskable-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
     ],
   }
 }
 
 function webManifestHtmlTags(): HtmlTagDescriptor[] {
   return [
-    { tag: 'link', attrs: { rel: 'manifest', href: 'manifest.webmanifest' }, injectTo: 'head' },
-    { tag: 'meta', attrs: { name: 'theme-color', content: THEME_COLOR }, injectTo: 'head' },
-    { tag: 'link', attrs: { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon-180.png' }, injectTo: 'head' },
-    { tag: 'meta', attrs: { name: 'apple-mobile-web-app-capable', content: 'yes' }, injectTo: 'head' },
-    { tag: 'meta', attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }, injectTo: 'head' },
-    { tag: 'meta', attrs: { name: 'apple-mobile-web-app-title', content: APP_SHORT_NAME }, injectTo: 'head' },
+    {
+      tag: 'link',
+      attrs: { rel: 'manifest', href: 'manifest.webmanifest' },
+      injectTo: 'head',
+    },
+    {
+      tag: 'meta',
+      attrs: { name: 'theme-color', content: THEME_COLOR },
+      injectTo: 'head',
+    },
+    {
+      tag: 'link',
+      attrs: { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon-180.png' },
+      injectTo: 'head',
+    },
+    {
+      tag: 'meta',
+      attrs: { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      injectTo: 'head',
+    },
+    {
+      tag: 'meta',
+      attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+      injectTo: 'head',
+    },
+    {
+      tag: 'meta',
+      attrs: { name: 'apple-mobile-web-app-title', content: APP_SHORT_NAME },
+      injectTo: 'head',
+    },
   ]
 }
 

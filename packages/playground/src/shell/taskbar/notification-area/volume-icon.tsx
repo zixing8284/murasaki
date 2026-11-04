@@ -74,9 +74,15 @@ export function VolumeIcon(): React.ReactElement {
     return () => window.removeEventListener('resize', handler)
   }, [isOpen, updatePosition])
 
-  const iconSrc = muted || volume === 0 ? VOLUME_MUTED_ICON_SRC : VOLUME_ICON_SRC
-  const iconAlt = muted ? 'Volume muted' : `Volume: ${volume}%`
-  const iconTitle = muted ? 'Volume: Muted' : `Volume: ${volume}%`
+  const iconSrc = muted || volume === 0
+    ? VOLUME_MUTED_ICON_SRC
+    : VOLUME_ICON_SRC
+  const iconAlt = muted
+    ? 'Volume muted'
+    : `Volume: ${volume}%`
+  const iconTitle = muted
+    ? 'Volume: Muted'
+    : `Volume: ${volume}%`
 
   return (
     <>

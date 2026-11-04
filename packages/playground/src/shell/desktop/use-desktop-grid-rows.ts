@@ -47,5 +47,10 @@ export function useDesktopGridRows(gridRef: RefObject<HTMLElement | null>): UseD
     }
   }
 
-  return { desktopRef, desktopEl, gridRows, setGridEl }
+  return {
+    desktopRef,
+    desktopEl,
+    gridRows,
+    setGridEl,
+  }
 }

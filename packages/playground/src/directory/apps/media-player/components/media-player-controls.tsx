@@ -133,7 +133,9 @@ export function MediaPlayerControls({
         <div className="flex shrink-0 items-center gap-0">
           <ControlTooltip label={player.isPlaying ? 'Pause' : 'Play'}>
             <TransportButton onClick={player.togglePlay} disabled={!hasCurrentTrack} aria-label={player.isPlaying ? 'Pause' : 'Play'}>
-              {player.isPlaying ? <PauseIcon /> : <PlayIcon />}
+              {player.isPlaying
+                ? <PauseIcon />
+                : <PlayIcon />}
             </TransportButton>
           </ControlTooltip>
 
@@ -185,13 +187,25 @@ export function MediaPlayerControls({
             </ControlTooltip>
 
             <ControlTooltip label="Repeat All">
-              <TransportButton onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')} active={player.repeat === 'all'} aria-label="Repeat All">
+              <TransportButton
+                onClick={() => player.setRepeat(player.repeat === 'all'
+                  ? 'off'
+                  : 'all')}
+                active={player.repeat === 'all'}
+                aria-label="Repeat All"
+              >
                 <RepeatAllIcon />
               </TransportButton>
             </ControlTooltip>
 
             <ControlTooltip label="Repeat One">
-              <TransportButton onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')} active={player.repeat === 'one'} aria-label="Repeat One">
+              <TransportButton
+                onClick={() => player.setRepeat(player.repeat === 'one'
+                  ? 'off'
+                  : 'one')}
+                active={player.repeat === 'one'}
+                aria-label="Repeat One"
+              >
                 <RepeatOneIcon />
               </TransportButton>
             </ControlTooltip>
@@ -201,7 +215,11 @@ export function MediaPlayerControls({
         <div className="flex shrink-0 items-center gap-2 px-1">
           <ControlTooltip label={player.muted ? 'Unmute' : 'Mute'}>
             <TransportButton onClick={player.toggleMute} aria-label={player.muted ? 'Unmute' : 'Mute'}>
-              {player.muted ? <VolumeMutedIcon /> : player.volume > 50 ? <VolumeHighIcon /> : <VolumeLowIcon />}
+              {player.muted
+                ? <VolumeMutedIcon />
+                : player.volume > 50
+                  ? <VolumeHighIcon />
+                  : <VolumeLowIcon />}
             </TransportButton>
           </ControlTooltip>
 
@@ -256,8 +274,22 @@ export function MediaPlayerControls({
                     </MenuItem>
                     <MenuSeparator />
                     <MenuItem onClick={player.toggleShuffle}>{player.shuffle ? 'Disable Shuffle' : 'Enable Shuffle'}</MenuItem>
-                    <MenuItem onClick={() => player.setRepeat(player.repeat === 'all' ? 'off' : 'all')}>{player.repeat === 'all' ? 'Disable Repeat All' : 'Enable Repeat All'}</MenuItem>
-                    <MenuItem onClick={() => player.setRepeat(player.repeat === 'one' ? 'off' : 'one')}>{player.repeat === 'one' ? 'Disable Repeat One' : 'Enable Repeat One'}</MenuItem>
+                    <MenuItem onClick={() => player.setRepeat(player.repeat === 'all'
+                      ? 'off'
+                      : 'all')}
+                    >
+                      {player.repeat === 'all'
+                        ? 'Disable Repeat All'
+                        : 'Enable Repeat All'}
+                    </MenuItem>
+                    <MenuItem onClick={() => player.setRepeat(player.repeat === 'one'
+                      ? 'off'
+                      : 'one')}
+                    >
+                      {player.repeat === 'one'
+                        ? 'Disable Repeat One'
+                        : 'Enable Repeat One'}
+                    </MenuItem>
                   </WindowMenuBarContent>
                 </WindowMenuBarMenu>
               </WindowMenuBar>

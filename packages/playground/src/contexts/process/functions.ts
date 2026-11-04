@@ -67,8 +67,14 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         return prev
       return {
         ...prev,
-        processes: { ...prev.processes, [id]: { ...prev.processes[id], minimized: false } },
-        stackOrder: [...prev.stackOrder.filter(pid => pid !== id), id],
+        processes: {
+          ...prev.processes,
+          [id]: { ...prev.processes[id], minimized: false },
+        },
+        stackOrder: [
+          ...prev.stackOrder.filter(pid => pid !== id),
+          id,
+        ],
         foregroundId: id,
       }
     })
@@ -98,7 +104,9 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     setState((prev) => {
       const updated: Processes = {}
       for (const [id, proc] of Object.entries(prev.processes)) {
-        updated[id] = proc.minimized ? proc : { ...proc, minimized: true }
+        updated[id] = proc.minimized
+          ? proc
+          : { ...proc, minimized: true }
       }
       return { ...prev, processes: updated, foregroundId: null }
     })
@@ -119,14 +127,23 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         // restore
         return {
           ...prev,
-          processes: { ...prev.processes, [id]: { ...prev.processes[id], minimized: false } },
-          stackOrder: [...prev.stackOrder.filter(pid => pid !== id), id],
+          processes: {
+            ...prev.processes,
+            [id]: { ...prev.processes[id], minimized: false },
+          },
+          stackOrder: [
+            ...prev.stackOrder.filter(pid => pid !== id),
+            id,
+          ],
           foregroundId: id,
         }
       }
       else if (prev.foregroundId === id) {
         // minimize
-        const updated = { ...prev.processes, [id]: { ...prev.processes[id], minimized: true } }
+        const updated = {
+          ...prev.processes,
+          [id]: { ...prev.processes[id], minimized: true },
+        }
         return {
           ...prev,
           processes: updated,
@@ -137,8 +154,14 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         // activate
         return {
           ...prev,
-          processes: { ...prev.processes, [id]: { ...prev.processes[id], minimized: false } },
-          stackOrder: [...prev.stackOrder.filter(pid => pid !== id), id],
+          processes: {
+            ...prev.processes,
+            [id]: { ...prev.processes[id], minimized: false },
+          },
+          stackOrder: [
+            ...prev.stackOrder.filter(pid => pid !== id),
+            id,
+          ],
           foregroundId: id,
         }
       }
@@ -151,7 +174,10 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         return prev
       return {
         ...prev,
-        processes: { ...prev.processes, [id]: { ...prev.processes[id], componentWindow: el } },
+        processes: {
+          ...prev.processes,
+          [id]: { ...prev.processes[id], componentWindow: el },
+        },
       }
     })
   }
@@ -160,7 +186,10 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
     setState((prev) => {
       if (!prev.processes[id])
         return prev
-      const updated = { ...prev.processes, [id]: { ...prev.processes[id], minimized: true } }
+      const updated = {
+        ...prev.processes,
+        [id]: { ...prev.processes[id], minimized: true },
+      }
       let newForeground = prev.foregroundId
       if (prev.foregroundId === id) {
         newForeground = pickNextForeground(prev.stackOrder, updated, id)
@@ -179,9 +208,14 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
       return
 
     // Singleton: PID = appId; Non-singleton: generate unique PID
-    const pid = entry.singleton !== false ? appId : generatePid(appId)
+    const pid = entry.singleton !== false
+      ? appId
+      : generatePid(appId)
     const launch = overrides?.launch
-      ? { nonce: nextLaunchNonce(), path: overrides.launch.path }
+      ? {
+          nonce: nextLaunchNonce(),
+          path: overrides.launch.path,
+        }
       : undefined
 
     setState((prev) => {
@@ -196,11 +230,18 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
             [pid]: {
               ...running,
               minimized: false,
-              ...(overrides?.title ? { title: overrides.title } : {}),
-              ...(launch ? { launch } : {}),
+              ...(overrides?.title
+                ? { title: overrides.title }
+                : {}),
+              ...(launch
+                ? { launch }
+                : {}),
             },
           },
-          stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
+          stackOrder: [
+            ...prev.stackOrder.filter(id => id !== pid),
+            pid,
+          ],
           foregroundId: pid,
         }
       }
@@ -225,7 +266,10 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
       return {
         ...prev,
         processes: { ...prev.processes, [pid]: process },
-        stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
+        stackOrder: [
+          ...prev.stackOrder.filter(id => id !== pid),
+          pid,
+        ],
         foregroundId: pid,
       }
     })
@@ -237,8 +281,14 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         return prev
       return {
         ...prev,
-        processes: { ...prev.processes, [id]: { ...prev.processes[id], minimized: false } },
-        stackOrder: [...prev.stackOrder.filter(pid => pid !== id), id],
+        processes: {
+          ...prev.processes,
+          [id]: { ...prev.processes[id], minimized: false },
+        },
+        stackOrder: [
+          ...prev.stackOrder.filter(pid => pid !== id),
+          id,
+        ],
         foregroundId: id,
       }
     })
@@ -254,7 +304,10 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
         return prev
       return {
         ...prev,
-        processes: { ...prev.processes, [id]: { ...prev.processes[id], title: newTitle } },
+        processes: {
+          ...prev.processes,
+          [id]: { ...prev.processes[id], title: newTitle },
+        },
       }
     })
   }
@@ -277,15 +330,23 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
   // Use for runtime-determined windows (e.g. plugin system, user-generated dialogs).
   const openEphemeral: ProcessContextActions['openEphemeral'] = (Component, options) => {
     const { id: baseId, title: ephTitle, icon, singleton: isSingleton = true } = options
-    const pid = isSingleton ? baseId : generatePid(baseId)
+    const pid = isSingleton
+      ? baseId
+      : generatePid(baseId)
 
     setState((prev) => {
       // If singleton and already running, activate it
       if (isSingleton && prev.processes[pid]) {
         return {
           ...prev,
-          processes: { ...prev.processes, [pid]: { ...prev.processes[pid], minimized: false } },
-          stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
+          processes: {
+            ...prev.processes,
+            [pid]: { ...prev.processes[pid], minimized: false },
+          },
+          stackOrder: [
+            ...prev.stackOrder.filter(id => id !== pid),
+            pid,
+          ],
           foregroundId: pid,
         }
       }
@@ -305,7 +366,10 @@ export function createProcessActions(setState: SetState): ProcessContextActions 
       return {
         ...prev,
         processes: { ...prev.processes, [pid]: process },
-        stackOrder: [...prev.stackOrder.filter(id => id !== pid), pid],
+        stackOrder: [
+          ...prev.stackOrder.filter(id => id !== pid),
+          pid,
+        ],
         foregroundId: pid,
       }
     })

@@ -46,7 +46,11 @@ const CRC_TABLE = (() => {
   const t = new Uint32Array(256)
   for (let n = 0; n < 256; n++) {
     let c = n
-    for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1
+    for (let k = 0; k < 8; k++) {
+      c = c & 1
+        ? 0xEDB88320 ^ (c >>> 1)
+        : c >>> 1
+    }
     t[n] = c >>> 0
   }
   return t
@@ -87,7 +91,16 @@ function encodePng(pixels, size) {
   const idat = deflateSync(raw, { level: 9 })
 
   return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]),
+    Buffer.from([
+      0x89,
+      0x50,
+      0x4E,
+      0x47,
+      0x0D,
+      0x0A,
+      0x1A,
+      0x0A,
+    ]),
     chunk('IHDR', ihdr),
     chunk('IDAT', idat),
     chunk('IEND', Buffer.alloc(0)),

@@ -37,7 +37,9 @@ export const ShellInputContext = createContext<ShellInputContextValue | null>(nu
 const INTERACTIVE_SELECTOR = 'button, a, input, select, textarea, [role="button"], [role="menuitem"]'
 
 export function closestInteractive(target: EventTarget | Element | null): Element | null {
-  return target instanceof Element ? target.closest(INTERACTIVE_SELECTOR) : null
+  return target instanceof Element
+    ? target.closest(INTERACTIVE_SELECTOR)
+    : null
 }
 
 export function isRawPointOnInteractive(point: ShellInputPoint): boolean {

@@ -18,7 +18,9 @@ function normalizeHexColor(value: unknown): string | null {
     return null
 
   const normalized = value.trim().toLowerCase()
-  return HEX_COLOR_PATTERN.test(normalized) ? normalized : null
+  return HEX_COLOR_PATTERN.test(normalized)
+    ? normalized
+    : null
 }
 
 function emit(key: string): void {

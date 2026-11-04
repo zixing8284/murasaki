@@ -63,6 +63,9 @@ export function formReducer(state: FormState, action: FormAction): FormState {
     case 'SET_CUSTOM_WALLPAPERS':
       return { ...state, customWallpapers: action.value }
     case 'ADD_CUSTOM_WALLPAPER':
-      return { ...state, customWallpapers: [...state.customWallpapers, action.value] }
+      return {
+        ...state,
+        customWallpapers: [...state.customWallpapers, action.value],
+      }
   }
 }

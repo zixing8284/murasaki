@@ -838,6 +838,10 @@ export interface MenuSubContentProps extends Omit<MenuProps, 'ref'> {
   estimatedHeight?: number
   /** Optional collision boundary for submenu positioning. Defaults to the viewport. */
   boundaryRef?: React.RefObject<Element | null>
+  /** Called before Escape dismissal; call `event.preventDefault()` to cancel. */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void
+  /** Called before outside-pointer dismissal; call `event.preventDefault()` to cancel. */
+  onPointerDownOutside?: (event: PointerEvent) => void
 }
 
 export function MenuSubContent({
@@ -851,6 +855,8 @@ export function MenuSubContent({
   estimatedHeight = 200,
   boundaryRef,
   maxHeight: maxHeightProp,
+  onEscapeKeyDown,
+  onPointerDownOutside,
   children,
   ...props
 }: MenuSubContentProps): React.ReactElement | null {
@@ -882,6 +888,8 @@ export function MenuSubContent({
     onDismiss: () => sub.setOpen(false),
     outsidePointer: true,
     layerRefs,
+    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
+    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
   })
 
   // Focus first enabled item when the submenu opens.

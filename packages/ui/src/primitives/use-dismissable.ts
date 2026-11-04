@@ -37,6 +37,10 @@ export interface UseDismissableOptions {
    * pointer events whose target is contained by any of these elements.
    */
   layerRefs?: ReadonlyArray<RefObject<Element | null>>
+  /** Called before Escape dismissal; call `event.preventDefault()` to cancel. */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void
+  /** Called before outside-pointer dismissal; call `event.preventDefault()` to cancel. */
+  onPointerDownOutside?: (event: PointerEvent) => void
 }
 
 /**
@@ -65,14 +69,24 @@ export function useDismissable({
   escapeKey = true,
   outsidePointer = false,
   layerRefs,
+  onEscapeKeyDown,
+  onPointerDownOutside,
 }: UseDismissableOptions): void {
   const layerIdRef = useRef<symbol>(Symbol('dismissable-layer'))
 
-  // Latest-callback ref so subscribers don't tear down on every parent render.
+  // Latest-callback refs — stable across renders without re-attaching listeners.
   const onDismissRef = useRef(onDismiss)
   useEffect(() => {
     onDismissRef.current = onDismiss
   }, [onDismiss])
+  const onEscapeKeyDownRef = useRef(onEscapeKeyDown)
+  useEffect(() => {
+    onEscapeKeyDownRef.current = onEscapeKeyDown
+  }, [onEscapeKeyDown])
+  const onPointerDownOutsideRef = useRef(onPointerDownOutside)
+  useEffect(() => {
+    onPointerDownOutsideRef.current = onPointerDownOutside
+  }, [onPointerDownOutside])
 
   useEffect(() => {
     if (!enabled)
@@ -90,7 +104,9 @@ export function useDismissable({
         return
       if (event.key !== 'Escape')
         return
-      onDismissRef.current()
+      onEscapeKeyDownRef.current?.(event)
+      if (!event.defaultPrevented)
+        onDismissRef.current()
     }
 
     function handlePointerDown(event: PointerEvent): void {
@@ -107,7 +123,9 @@ export function useDismissable({
         if (node && node.contains(target))
           return
       }
-      onDismissRef.current()
+      onPointerDownOutsideRef.current?.(event)
+      if (!event.defaultPrevented)
+        onDismissRef.current()
     }
 
     // When the user clicks inside an <iframe> the parent window does not

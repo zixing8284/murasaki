@@ -436,6 +436,10 @@ export interface SelectContentProps extends Omit<React.ComponentProps<'ul'>, 'ch
   children?: React.ReactNode
   /** Upper bound for the listbox height before it scrolls. */
   maxHeight?: number | string
+  /** Called before Escape dismissal; call `event.preventDefault()` to cancel. */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void
+  /** Called before outside-pointer dismissal; call `event.preventDefault()` to cancel. */
+  onPointerDownOutside?: (event: PointerEvent) => void
 }
 
 /**
@@ -447,6 +451,8 @@ export function SelectContent({
   children,
   className,
   maxHeight,
+  onEscapeKeyDown,
+  onPointerDownOutside,
   ...props
 }: SelectContentProps): React.ReactElement | null {
   const {
@@ -523,6 +529,8 @@ export function SelectContent({
     onDismiss: () => setOpen(false),
     outsidePointer: true,
     layerRefs: [triggerRef, contentRef],
+    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
+    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
   })
 
   // Focus the selected (or first enabled) option when the popup opens.

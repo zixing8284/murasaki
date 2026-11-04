@@ -357,6 +357,10 @@ export interface WindowMenuBarContentProps extends Omit<MenuProps, 'ref'> {
   estimatedHeight?: number
   /** Optional collision boundary for menu positioning. Defaults to the viewport. */
   boundaryRef?: React.RefObject<Element | null>
+  /** Called before Escape dismissal; call `event.preventDefault()` to cancel. */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void
+  /** Called before outside-pointer dismissal; call `event.preventDefault()` to cancel. */
+  onPointerDownOutside?: (event: PointerEvent) => void
 }
 
 export function WindowMenuBarContent({
@@ -372,6 +376,8 @@ export function WindowMenuBarContent({
   estimatedHeight = 200,
   boundaryRef,
   maxHeight: maxHeightProp,
+  onEscapeKeyDown,
+  onPointerDownOutside,
   children,
   ...props
 }: WindowMenuBarContentProps): React.ReactElement | null {
@@ -435,6 +441,8 @@ export function WindowMenuBarContent({
     onDismiss: () => menubar.setValue(null),
     outsidePointer: true,
     layerRefs,
+    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
+    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
   })
 
   React.useLayoutEffect(() => {

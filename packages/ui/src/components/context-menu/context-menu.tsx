@@ -162,6 +162,10 @@ export interface ContextMenuContentProps extends ComponentProps<'div'> {
    * automatically closes the menu. Defaults to true.
    */
   closeOnItemClick?: boolean
+  /** Called before Escape dismissal; call `event.preventDefault()` to cancel. */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void
+  /** Called before outside-pointer dismissal; call `event.preventDefault()` to cancel. */
+  onPointerDownOutside?: (event: PointerEvent) => void
 }
 
 /**
@@ -178,6 +182,8 @@ export function ContextMenuContent({
   style,
   onClick,
   closeOnItemClick = true,
+  onEscapeKeyDown,
+  onPointerDownOutside,
   children,
   ...props
 }: ContextMenuContentProps): ReactElement | null {
@@ -231,6 +237,8 @@ export function ContextMenuContent({
     onDismiss: close,
     outsidePointer: true,
     layerRefs,
+    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
+    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
   })
 
   useFocusScope({

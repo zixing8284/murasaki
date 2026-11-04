@@ -98,7 +98,9 @@ export function StartMenu({ onClose, anchorRef, screenRef, isMobile = false }: S
       const screenRect = screen.getBoundingClientRect()
       // 4px padding mirrors `useLayer`'s default collisionPadding.
       const next = Math.max(0, rect.top - screenRect.top - 4)
-      setMaxHeight(prev => (prev === next ? prev : next))
+      setMaxHeight(prev => (prev === next
+        ? prev
+        : next))
     }
     // Defer the initial measure off the effect's synchronous body so the
     // setState lands in a separate frame from mount.
@@ -128,7 +130,12 @@ export function StartMenu({ onClose, anchorRef, screenRef, isMobile = false }: S
   }
 
   if (isMobile) {
-    const mobileApps = [...PROGRAMS, ...ACCESSORIES, ...DOCUMENTS, ...SETTINGS]
+    const mobileApps = [
+      ...PROGRAMS,
+      ...ACCESSORIES,
+      ...DOCUMENTS,
+      ...SETTINGS,
+    ]
 
     return (
       <>
@@ -145,7 +152,7 @@ export function StartMenu({ onClose, anchorRef, screenRef, isMobile = false }: S
             <button type="button" className="border border-(--button-shadow) bg-(--button-face) px-2 py-0.5 text-[10px] shadow-(--shadow-raised) active:shadow-(--shadow-sunken)" onClick={onClose}>Close</button>
           </div>
 
-          <div className="max-h-[60vh] overflow-y-auto p-2">
+          <div className="max-h-[60vh] overflow-y-auto overscroll-contain p-2">
             <div className="grid grid-cols-2 gap-2">
               {mobileApps.map(app => (
                 <button

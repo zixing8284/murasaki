@@ -13,7 +13,10 @@ export const DEFAULT_ICON: AppIcon = ICON.programManager
  */
 type AppModuleLoader = () => Promise<{ default: ComponentType<ProcessComponentProps> }>
 function lazyApp(load: AppModuleLoader): { Component: ComponentType<ProcessComponentProps>, preload: AppModuleLoader } {
-  return { Component: lazy(load), preload: load }
+  return {
+    Component: lazy(load),
+    preload: load,
+  }
 }
 
 /**
@@ -55,7 +58,12 @@ const directory = {
     shortcut: true,
     defaultSize: { width: 750 },
     defaultPosition: { top: '10%', left: '3.75rem' },
-    window: { type: 'iframe', src: '/programs/docs/index.html', chrome: 'ie2', className: 'h-[90%]' },
+    window: {
+      type: 'iframe',
+      src: '/programs/docs/index.html',
+      chrome: 'ie2',
+      className: 'h-[90%]',
+    },
   },
   notepad: {
     name: 'Notepad',
@@ -82,7 +90,12 @@ const directory = {
     ephemeral: true,
     defaultSize: { width: 420, height: 560 },
     defaultPosition: { top: '12%', left: '25%' },
-    window: { disableMaximize: true, disableMinimize: true, disableResize: true, contentClassName: 'p-2' },
+    window: {
+      disableMaximize: true,
+      disableMinimize: true,
+      disableResize: true,
+      contentClassName: 'p-2',
+    },
   },
   settings: {
     name: 'Settings',
@@ -116,6 +129,7 @@ const directory = {
     icon: ICON.paint,
     singleton: false,
     showOnDesktop: true,
+    startMenu: { folder: 'programs', order: 20 },
     defaultSize: { width: 900, height: 650 },
     defaultPosition: { top: '5%', left: '5%' },
     window: { type: 'iframe', src: '/programs/jspaint/index.html' },
@@ -168,7 +182,13 @@ const directory = {
     singleton: true,
     defaultSize: { width: 190, height: 292 },
     defaultPosition: { top: '20%', left: '32%' },
-    window: { type: 'iframe', src: '/programs/entertainment/arcade/index.html?boot=winmine.exe', disableMaximize: true, autoSize: true, autoSizeMinContent: { width: 180, height: 300 } },
+    window: {
+      type: 'iframe',
+      src: '/programs/entertainment/arcade/index.html?boot=winmine.exe',
+      disableMaximize: true,
+      autoSize: true,
+      autoSizeMinContent: { width: 180, height: 300 },
+    },
   },
   gamesolitaire: {
     name: 'Solitaire',
@@ -177,7 +197,12 @@ const directory = {
     singleton: true,
     defaultSize: { width: 620, height: 470 },
     defaultPosition: { top: '12%', left: '20%' },
-    window: { type: 'iframe', src: '/programs/entertainment/arcade/index.html?boot=sol.exe', disableMaximize: true, autoSize: true },
+    window: {
+      type: 'iframe',
+      src: '/programs/entertainment/arcade/index.html?boot=sol.exe',
+      disableMaximize: true,
+      autoSize: true,
+    },
   },
   gamefreecell: {
     name: 'FreeCell',
@@ -186,7 +211,12 @@ const directory = {
     singleton: true,
     defaultSize: { width: 640, height: 480 },
     defaultPosition: { top: '12%', left: '20%' },
-    window: { type: 'iframe', src: '/programs/entertainment/arcade/index.html?boot=freecell.exe', disableMaximize: true, autoSize: true },
+    window: {
+      type: 'iframe',
+      src: '/programs/entertainment/arcade/index.html?boot=freecell.exe',
+      disableMaximize: true,
+      autoSize: true,
+    },
   },
   gameskifree: {
     name: 'SkiFree',
@@ -195,7 +225,12 @@ const directory = {
     singleton: true,
     defaultSize: { width: 528, height: 540 },
     defaultPosition: { top: '8%', left: '20%' },
-    window: { type: 'iframe', src: '/programs/entertainment/arcade/index.html?boot=ski32.exe', disableMaximize: true, autoSize: true },
+    window: {
+      type: 'iframe',
+      src: '/programs/entertainment/arcade/index.html?boot=ski32.exe',
+      disableMaximize: true,
+      autoSize: true,
+    },
   },
   outlookexpress: {
     name: 'Outlook Express',
@@ -288,7 +323,12 @@ const directory = {
     startMenu: { folder: 'settings', order: 30, label: 'Taskbar…' },
     defaultSize: { width: 360, height: 428 },
     defaultPosition: { top: '12%', left: '30%' },
-    window: { disableMaximize: true, disableMinimize: true, disableResize: true, contentClassName: 'p-2' },
+    window: {
+      disableMaximize: true,
+      disableMinimize: true,
+      disableResize: true,
+      contentClassName: 'p-2',
+    },
   },
 } satisfies Record<string, ProcessDirectoryEntry>
 
@@ -411,7 +451,12 @@ export function getQuickLaunchApps(): QuickLaunchAppItem[] {
     .sort(([, a], [, b]) => (a.quickLaunch?.order ?? 0) - (b.quickLaunch?.order ?? 0))
     .map(([appId, entry]) => {
       const title = entry.quickLaunch?.title ?? entry.name
-      return { appId, title, alt: entry.quickLaunch?.alt ?? title, icon: entry.icon }
+      return {
+        appId,
+        title,
+        alt: entry.quickLaunch?.alt ?? title,
+        icon: entry.icon,
+      }
     })
 }
 

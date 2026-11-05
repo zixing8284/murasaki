@@ -37,7 +37,7 @@ jobs:
         run: pnpm ui:build
 
       - name: Create version PR or publish @murasaki-io/react98
-        uses: changesets/action@v2
+        uses: changesets/action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           version-script: pnpm version-packages

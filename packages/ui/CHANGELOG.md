@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1
+
+### Patch Changes
+
+- a4b75d1: Fix context-menu, menu, select, and window-menu-bar component formatting to satisfy lint requirements.
+
 ## 0.10.0
 
 ### Minor Changes

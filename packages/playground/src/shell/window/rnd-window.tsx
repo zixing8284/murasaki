@@ -29,6 +29,8 @@ interface RndWindowProps {
   onResizeChange?: (resizing: boolean) => void
   /** Force the active app into a mobile fullscreen presentation instead of a desktop window. */
   isMobile?: boolean
+  /** Keep mounted but hide when this process isn't the mobile-visible one. */
+  mobileVisible?: boolean
 }
 
 export function RndWindow({
@@ -46,6 +48,7 @@ export function RndWindow({
   onDragChange,
   onResizeChange,
   isMobile = false,
+  mobileVisible = true,
 }: RndWindowProps): React.ReactElement | null {
   const { processes, container } = useProcesses()
   const actions = useProcessActions()
@@ -182,6 +185,7 @@ export function RndWindow({
       dragRef={setDragHandleRef}
       resizeRef={setResizeHandleRef}
       isMobile={isMobile}
+      mobileVisible={mobileVisible}
     >
       {children}
     </BaseWindow>

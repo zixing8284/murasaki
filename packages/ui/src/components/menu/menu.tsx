@@ -888,8 +888,12 @@ export function MenuSubContent({
     onDismiss: () => sub.setOpen(false),
     outsidePointer: true,
     layerRefs,
-    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
-    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
+    ...(onEscapeKeyDown
+      ? { onEscapeKeyDown }
+      : {}),
+    ...(onPointerDownOutside
+      ? { onPointerDownOutside }
+      : {}),
   })
 
   // Focus first enabled item when the submenu opens.

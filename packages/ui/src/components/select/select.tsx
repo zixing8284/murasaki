@@ -529,8 +529,12 @@ export function SelectContent({
     onDismiss: () => setOpen(false),
     outsidePointer: true,
     layerRefs: [triggerRef, contentRef],
-    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
-    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
+    ...(onEscapeKeyDown
+      ? { onEscapeKeyDown }
+      : {}),
+    ...(onPointerDownOutside
+      ? { onPointerDownOutside }
+      : {}),
   })
 
   // Focus the selected (or first enabled) option when the popup opens.

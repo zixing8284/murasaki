@@ -29,6 +29,8 @@ export interface BaseWindowProps {
   disableResize?: boolean
   /** Force the app into a mobile fullscreen shell rather than desktop floating-window behavior. */
   isMobile?: boolean
+  /** Keep mounted but hide when not the chosen mobile foreground window. */
+  mobileVisible?: boolean
   /** Default window dimensions — applied as inline style for initial size */
   defaultSize?: { width?: number, height?: number }
   /** Default absolute window position — applied as inline style for initial placement */
@@ -76,6 +78,7 @@ export function BaseWindow({
   disableMinimize = false,
   disableResize = false,
   isMobile = false,
+  mobileVisible = true,
   defaultSize,
   defaultPosition,
   autoSize = false,
@@ -137,6 +140,7 @@ export function BaseWindow({
   const effectiveWidth = sizeOverride?.width ?? autoWidth
   const effectiveHeight = sizeOverride?.height ?? autoHeight
   const mobileFullscreen = isMobile && isActive && !proc.minimized
+  const hideForMobile = isMobile && !mobileVisible
 
   const defaultIcon = proc.icon
     ? <img src={assetPath(proc.icon.sm)} alt="" className="size-4 pixelated shrink-0" draggable={false} />
@@ -149,7 +153,7 @@ export function BaseWindow({
           ref={frameRef}
           data-window-frame=""
           data-system-cursor={loadingCursor ? 'working' : undefined}
-          className={`max-w-full max-h-full ${mobileFullscreen ? 'rounded-none border-none shadow-none' : ''}${(isInteracting && !proc.maximized && !mobileFullscreen)
+          className={`max-w-full max-h-full ${hideForMobile ? 'hidden' : ''}${mobileFullscreen ? 'rounded-none border-none shadow-none' : ''}${(isInteracting && !proc.maximized && !mobileFullscreen)
             ? 'bg-transparent! shadow-[inset_-2px_-2px_0_var(--button-shadow),inset_2px_2px_0_var(--button-shadow)]! outline-1 outline-dotted outline-(--button-shadow) *:opacity-0 *:pointer-events-none'
             : ''}${autoSize ? ' min-w-0! min-h-0!' : ''} ${className ?? ''}`}
           style={{

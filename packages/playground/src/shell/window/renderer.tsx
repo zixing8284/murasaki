@@ -41,9 +41,10 @@ interface SuspenseWindowProps {
   Component: ComponentType<ProcessComponentProps> | undefined
   windowConfig: ProcessDefaultWindowConfig | undefined
   isMobile?: boolean
+  mobileVisible?: boolean
 }
 
-function SuspenseWindow({ windowId, Component, windowConfig, isMobile = false }: SuspenseWindowProps): React.ReactElement {
+function SuspenseWindow({ windowId, Component, windowConfig, isMobile = false, mobileVisible = true }: SuspenseWindowProps): React.ReactElement {
   const [loaded, setLoaded] = useState(false)
 
   return (
@@ -56,6 +57,7 @@ function SuspenseWindow({ windowId, Component, windowConfig, isMobile = false }:
       disableResize={windowConfig?.disableResize || isMobile}
       loadingCursor={!loaded}
       isMobile={isMobile}
+      mobileVisible={mobileVisible}
     >
       <Suspense fallback={<WindowLoadingPlaceholder />}>
         <LoadDetector onLoaded={() => setLoaded(true)} />
@@ -72,6 +74,7 @@ function renderProcessWindow(
   entry: ProcessDirectoryEntry | undefined,
   Component: ComponentType<ProcessComponentProps> | undefined,
   isMobile = false,
+  mobileVisible = true,
 ): React.ReactElement | null {
   const windowConfig = entry?.window
 
@@ -87,6 +90,7 @@ function renderProcessWindow(
           disableMinimize={windowConfig.disableMinimize}
           disableResize={windowConfig.disableResize || isMobile}
           isMobile={isMobile}
+          mobileVisible={mobileVisible}
         />
       )
     }
@@ -103,6 +107,7 @@ function renderProcessWindow(
         autoSize={windowConfig.autoSize}
         autoSizeMinContent={windowConfig.autoSizeMinContent}
         isMobile={isMobile}
+        mobileVisible={mobileVisible}
       />
     )
   }
@@ -123,6 +128,7 @@ function renderProcessWindow(
       Component={Component}
       windowConfig={windowConfig}
       isMobile={isMobile}
+      mobileVisible={mobileVisible}
     />
   )
 }
@@ -136,26 +142,27 @@ export function WindowRenderer(): React.ReactElement {
   const { processes, foregroundId, stackOrder } = useProcesses()
   const isMobile = useIsMobile()
 
-  const visiblePids = isMobile
+  const processIds = Object.keys(processes)
+  const mobileVisiblePid = isMobile
     ? (() => {
         const foreground = foregroundId ? processes[foregroundId] : undefined
         if (foregroundId && foreground && !foreground.minimized) {
-          return [foregroundId]
+          return foregroundId
         }
         for (let i = stackOrder.length - 1; i >= 0; i--) {
           const pid = stackOrder[i]
           const proc = processes[pid]
           if (proc && !proc.minimized) {
-            return [pid]
+            return pid
           }
         }
-        return []
+        return null
       })()
-    : Object.keys(processes)
+    : null
 
   return (
     <>
-      {visiblePids.map((pid) => {
+      {processIds.map((pid) => {
         const proc = processes[pid]
         const entry = appDirectory[proc.appId as AppId]
         // Ephemeral processes carry their own Component; regular ones use the directory
@@ -167,7 +174,7 @@ export function WindowRenderer(): React.ReactElement {
         // window loses its dragged position.
         return (
           <Fragment key={pid}>
-            {renderProcessWindow(pid, entry, Component, isMobile)}
+            {renderProcessWindow(pid, entry, Component, isMobile, !isMobile || pid === mobileVisiblePid)}
           </Fragment>
         )
       })}

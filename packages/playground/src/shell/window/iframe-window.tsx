@@ -20,6 +20,8 @@ interface IframeWindowProps {
   disableResize?: boolean
   /** Force the active app into a mobile fullscreen shell instead of a desktop window. */
   isMobile?: boolean
+  /** Keep mounted but hide when this process isn't the mobile-visible one. */
+  mobileVisible?: boolean
   /** Size the window to the content dimensions the iframe reports (see ProcessBaseWindowConfig). */
   autoSize?: boolean
   /** Minimum content box to reserve when auto-sizing, so emulated menus have room (see ProcessBaseWindowConfig). */
@@ -45,6 +47,7 @@ export function IframeWindow({
   disableMinimize = false,
   disableResize = false,
   isMobile = false,
+  mobileVisible = true,
   autoSize = false,
   autoSizeMinContent,
 }: IframeWindowProps): React.ReactElement | null {
@@ -117,6 +120,7 @@ export function IframeWindow({
       onDragChange={handleInteractionChange}
       onResizeChange={handleInteractionChange}
       isMobile={isMobile}
+      mobileVisible={mobileVisible}
     >
       {/*
        * Iframe wrapper: clicking activates the window and triggers delayed focus.

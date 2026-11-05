@@ -441,8 +441,12 @@ export function WindowMenuBarContent({
     onDismiss: () => menubar.setValue(null),
     outsidePointer: true,
     layerRefs,
-    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
-    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
+    ...(onEscapeKeyDown
+      ? { onEscapeKeyDown }
+      : {}),
+    ...(onPointerDownOutside
+      ? { onPointerDownOutside }
+      : {}),
   })
 
   React.useLayoutEffect(() => {

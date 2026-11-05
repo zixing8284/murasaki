@@ -237,8 +237,12 @@ export function ContextMenuContent({
     onDismiss: close,
     outsidePointer: true,
     layerRefs,
-    ...(onEscapeKeyDown ? { onEscapeKeyDown } : {}),
-    ...(onPointerDownOutside ? { onPointerDownOutside } : {}),
+    ...(onEscapeKeyDown
+      ? { onEscapeKeyDown }
+      : {}),
+    ...(onPointerDownOutside
+      ? { onPointerDownOutside }
+      : {}),
   })
 
   useFocusScope({

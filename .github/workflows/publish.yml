@@ -37,14 +37,15 @@ jobs:
         run: pnpm ui:build
 
       - name: Create version PR or publish @murasaki-io/react98
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: pnpm version-packages
-          publish: pnpm release
-          commit: "chore(release): version @murasaki-io/react98"
-          title: "chore(release): version @murasaki-io/react98"
-          createGithubReleases: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-script: pnpm version-packages
+          publish-script: pnpm release
+          commit-message: "chore(release): version @murasaki-io/react98"
+          pr-title: "chore(release): version @murasaki-io/react98"
+          create-github-releases: true
+          push-with-git-cli: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Required by setup-node's generated .npmrc for npm publish auth
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

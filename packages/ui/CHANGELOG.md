@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- 444f49c: Add `onEscapeKeyDown` and `onPointerDownOutside` interceptable callbacks to `useDismissable` and the four components that use it (`ContextMenuContent`, `MenuSubContent`, `SelectContent`, `WindowMenuBarContent`). Calling `event.preventDefault()` inside either callback cancels the dismissal.
+
 ## 0.9.2
 
 ### Patch Changes

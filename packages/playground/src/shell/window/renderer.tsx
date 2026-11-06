@@ -106,6 +106,7 @@ function renderProcessWindow(
         disableResize={windowConfig.disableResize || isMobile}
         autoSize={windowConfig.autoSize}
         autoSizeMinContent={windowConfig.autoSizeMinContent}
+        mobileFitContent={windowConfig.mobileFitContent}
         isMobile={isMobile}
         mobileVisible={mobileVisible}
       />

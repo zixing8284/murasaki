@@ -9,9 +9,9 @@ export function ThemeDesigner(): React.ReactElement {
   const state = useThemeColors()
 
   return (
-    <div className="flex flex-col gap-1.5 h-full py-1">
+    <div className="flex h-full min-h-0 flex-col gap-1.5 overflow-hidden py-1">
       <div className="flex items-center gap-1 px-1">
-        <label className="text-(--button-text)" htmlFor="classic-theme-scheme">
+        <label className="shrink-0 whitespace-nowrap text-(--button-text)" htmlFor="classic-theme-scheme">
           Scheme:
         </label>
         <Select
@@ -22,7 +22,7 @@ export function ThemeDesigner(): React.ReactElement {
               state.loadBuiltInScheme(value as ThemeId)
           }}
         >
-          <SelectTrigger id="classic-theme-scheme" className="w-48">
+          <SelectTrigger id="classic-theme-scheme" className="w-full min-w-0 flex-1 md:w-48 md:flex-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -34,19 +34,19 @@ export function ThemeDesigner(): React.ReactElement {
         </Select>
       </div>
 
-      <div className="flex gap-2 flex-1 min-h-0">
-        <div className="flex-1 min-w-0">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 md:flex-row">
+        <div className="h-[30%] min-h-32 min-w-0 flex-none md:h-auto md:flex-1">
           <DesignerPreview colors={state.allColors} />
         </div>
 
-        <FieldPanel className="w-44 shrink-0">
+        <FieldPanel className="min-h-0 w-full flex-1 overflow-y-auto md:w-44 md:flex-none md:overflow-visible">
           <ColorControls state={state} />
         </FieldPanel>
       </div>
 
-      <div className="flex items-center justify-between border-t border-(--button-shadow) pt-1.5">
+      <div className="flex flex-col items-stretch gap-1 border-t border-(--button-shadow) pt-1.5 md:flex-row md:items-center md:justify-between">
         <FileControls state={state} />
-        <span className="text-(--gray-text)">
+        <span className="hidden text-(--gray-text) md:inline">
           Color derivation logic inspired by
           {' '}
           <a

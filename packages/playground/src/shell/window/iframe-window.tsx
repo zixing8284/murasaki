@@ -26,6 +26,76 @@ interface IframeWindowProps {
   autoSize?: boolean
   /** Minimum content box to reserve when auto-sizing, so emulated menus have room (see ProcessBaseWindowConfig). */
   autoSizeMinContent?: { width?: number, height?: number }
+  mobileFitContent?: boolean
+}
+
+function fitEmbeddedCanvas(iframe: HTMLIFrameElement): () => void {
+  const body = iframe.contentDocument?.body
+  if (!body)
+    return () => {}
+
+  let gameWindow: HTMLElement | null = null
+  let stage: HTMLElement | null = null
+  let originalStyle: Pick<CSSStyleDeclaration, 'left' | 'top' | 'transform' | 'transformOrigin'> | null = null
+  let resizeObserver: ResizeObserver | null = null
+
+  const fit = (): void => {
+    if (gameWindow && !gameWindow.isConnected) {
+      resizeObserver?.disconnect()
+      gameWindow = null
+      stage = null
+      originalStyle = null
+    }
+
+    if (!gameWindow) {
+      const canvas = body.querySelector('canvas')
+      gameWindow = canvas?.closest<HTMLElement>('[style*="position: absolute"]') ?? null
+      stage = gameWindow?.parentElement ?? null
+      if (gameWindow) {
+        originalStyle = {
+          left: gameWindow.style.left,
+          top: gameWindow.style.top,
+          transform: gameWindow.style.transform,
+          transformOrigin: gameWindow.style.transformOrigin,
+        }
+      }
+      if (stage)
+        resizeObserver?.observe(stage)
+    }
+
+    if (!gameWindow || !stage)
+      return
+
+    const width = gameWindow.offsetWidth
+    const height = gameWindow.offsetHeight
+    const scale = Math.min(
+      (stage.clientWidth - 16) / width,
+      (stage.clientHeight - 16) / height,
+    )
+    if (width <= 0 || height <= 0 || !Number.isFinite(scale) || scale <= 0)
+      return
+
+    gameWindow.style.left = `${(stage.clientWidth - width * scale) / 2}px`
+    gameWindow.style.top = `${(stage.clientHeight - height * scale) / 2}px`
+    gameWindow.style.transformOrigin = 'top left'
+    gameWindow.style.transform = `scale(${scale})`
+  }
+
+  resizeObserver = new ResizeObserver(fit)
+  const mutationObserver = new MutationObserver(fit)
+  mutationObserver.observe(body, { childList: true, subtree: true })
+  fit()
+
+  return () => {
+    mutationObserver.disconnect()
+    resizeObserver?.disconnect()
+    if (gameWindow && originalStyle) {
+      gameWindow.style.left = originalStyle.left
+      gameWindow.style.top = originalStyle.top
+      gameWindow.style.transformOrigin = originalStyle.transformOrigin
+      gameWindow.style.transform = originalStyle.transform
+    }
+  }
 }
 
 /**
@@ -50,6 +120,7 @@ export function IframeWindow({
   mobileVisible = true,
   autoSize = false,
   autoSizeMinContent,
+  mobileFitContent = false,
 }: IframeWindowProps): React.ReactElement | null {
   const actions = useProcessActions()
   const win = useProcess(windowId)
@@ -93,6 +164,21 @@ export function IframeWindow({
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
   }, [autoSize, minContentWidth, minContentHeight])
+
+  useEffect(() => {
+    if (!isMobile || !mobileFitContent || !iframeLoaded || !mobileVisible || !win?.isActive)
+      return
+    const iframe = iframeElementRef.current
+    return iframe
+      ? fitEmbeddedCanvas(iframe)
+      : undefined
+  }, [
+    iframeLoaded,
+    isMobile,
+    mobileFitContent,
+    mobileVisible,
+    win?.isActive,
+  ])
 
   const handleInteractionChange = (active: boolean): void => {
     if (iframeElementRef.current) {

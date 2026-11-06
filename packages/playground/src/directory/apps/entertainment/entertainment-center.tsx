@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { IconTile } from '../../../components/icon-tile'
 import { APP_ID } from '../../../contexts/process/directory'
 import { useProcessActions } from '../../../contexts/process/hooks'
+import { useIsMobile } from '../../../hooks/use-is-mobile'
 import { assetPath } from '../../../lib/asset-path'
 import { ICON } from '../../../lib/icons'
 
@@ -22,6 +23,7 @@ const GAMES: GameEntry[] = [
 
 export function EntertainmentCenter(): ReactElement {
   const { open } = useProcessActions()
+  const isMobile = useIsMobile()
   const [selectedId, setSelectedId] = useState<AppId | null>(null)
 
   const selected = GAMES.find(game => game.appId === selectedId)
@@ -39,7 +41,13 @@ export function EntertainmentCenter(): ReactElement {
               type="button"
               className="pointer-events-none w-18 outline-none"
               onPointerDown={event => event.stopPropagation()}
-              onClick={() => setSelectedId(game.appId)}
+              onClick={() => {
+                if (isMobile) {
+                  open(game.appId)
+                  return
+                }
+                setSelectedId(game.appId)
+              }}
               onDoubleClick={() => open(game.appId)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {

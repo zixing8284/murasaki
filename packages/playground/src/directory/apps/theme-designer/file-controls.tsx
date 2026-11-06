@@ -32,13 +32,13 @@ export function FileControls({ state }: FileControlsProps): React.ReactElement {
 
   return (
     <div className="flex items-center gap-(--grouped-button-spacing)">
-      <Button onClick={handleLoadClick} className="min-w-18.75">
+      <Button onClick={handleLoadClick} className="min-w-18.75 whitespace-nowrap">
         Load Theme…
       </Button>
-      <Button onClick={handleSave} className="min-w-18.75">
+      <Button onClick={handleSave} className="min-w-18.75 whitespace-nowrap">
         Save Theme…
       </Button>
-      <Button onClick={state.resetToDefaults} className="min-w-18.75">
+      <Button onClick={state.resetToDefaults} className="min-w-18.75 whitespace-nowrap">
         Reset
       </Button>
       <input

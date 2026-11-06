@@ -45,6 +45,8 @@ export interface ProcessBaseWindowConfig {
    * without leaking menus outside the window.
    */
   autoSizeMinContent?: { width?: number, height?: number }
+  /** Scale and center a fixed-size embedded canvas within the mobile window. */
+  mobileFitContent?: boolean
 }
 
 export interface ProcessDefaultWindowConfig extends ProcessBaseWindowConfig {

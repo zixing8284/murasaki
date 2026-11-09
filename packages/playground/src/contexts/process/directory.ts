@@ -188,7 +188,6 @@ const directory = {
       disableMaximize: true,
       autoSize: true,
       autoSizeMinContent: { width: 180, height: 300 },
-      mobileFitContent: true,
     },
   },
   gamesolitaire: {
@@ -203,7 +202,6 @@ const directory = {
       src: '/programs/entertainment/arcade/index.html?boot=sol.exe',
       disableMaximize: true,
       autoSize: true,
-      mobileFitContent: true,
     },
   },
   gamefreecell: {
@@ -218,7 +216,6 @@ const directory = {
       src: '/programs/entertainment/arcade/index.html?boot=freecell.exe',
       disableMaximize: true,
       autoSize: true,
-      mobileFitContent: true,
     },
   },
   gameskifree: {
@@ -233,7 +230,6 @@ const directory = {
       src: '/programs/entertainment/arcade/index.html?boot=ski32.exe',
       disableMaximize: true,
       autoSize: true,
-      mobileFitContent: true,
     },
   },
   outlookexpress: {

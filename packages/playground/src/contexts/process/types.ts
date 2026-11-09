@@ -41,12 +41,10 @@ export interface ProcessBaseWindowConfig {
    * Minimum content box to reserve when `autoSize` is set. Embedded emulators
    * paint their program at the top-left on a transparent desktop; menus that
    * drop below/right need room *inside the iframe* or they clip. Padding the
-   * auto-fit up to this floor gives short programs (e.g. Minesweeper) that room
-   * without leaking menus outside the window.
+   * desktop auto-fit up to this floor gives short programs (e.g. Minesweeper)
+   * that room without leaking menus outside the window.
    */
   autoSizeMinContent?: { width?: number, height?: number }
-  /** Scale and center a fixed-size embedded canvas within the mobile window. */
-  mobileFitContent?: boolean
 }
 
 export interface ProcessDefaultWindowConfig extends ProcessBaseWindowConfig {

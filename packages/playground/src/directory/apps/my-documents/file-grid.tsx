@@ -77,7 +77,10 @@ function RenameInput({ initial, onCommit, onCancel }: {
 
 /** Image preview for the Thumbnails view, falling back to the 32px icon. */
 function Thumbnail({ node }: { node: VfsNode }): ReactElement {
-  const src = useVfsImageSrc(node)
+  const imageNode = node.mimeType?.startsWith('image/')
+    ? node
+    : null
+  const src = useVfsImageSrc(imageNode)
   if (node.type === 'file' && src) {
     return (
       <span className="pointer-events-auto flex size-11 items-center justify-center">

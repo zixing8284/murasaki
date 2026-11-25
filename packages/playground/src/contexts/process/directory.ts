@@ -79,6 +79,20 @@ const directory = {
     defaultPosition: { top: '15%', left: '20%' },
     window: { contentClassName: 'p-0' },
   },
+  community: {
+    name: 'Community',
+    ...lazyApp(() =>
+      import('../../directory/apps/community/community').then(m => ({ default: m.Community })),
+    ),
+    defaultTitle: 'Community',
+    icon: ICON.outlookExpress,
+    singleton: true,
+    showOnDesktop: true,
+    startMenu: { folder: 'programs', order: 25 },
+    defaultSize: { width: 620, height: 480 },
+    defaultPosition: { top: '12%', left: '18%' },
+    window: { contentClassName: 'p-0' },
+  },
   displayproperties: {
     name: 'Display Properties',
     ...lazyApp(() =>
@@ -347,6 +361,7 @@ export const APP_ID = {
   WELCOME: 'welcome',
   DOCS: 'docs',
   NOTEPAD: 'notepad',
+  COMMUNITY: 'community',
   DISPLAY_PROPERTIES: 'displayproperties',
   SETTINGS: 'settings',
   MOUSE_PROPERTIES: 'mouseproperties',

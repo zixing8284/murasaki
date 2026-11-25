@@ -1,0 +1,25 @@
+{
+  "name": "@murasaki-io/community-service",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001"
+  },
+  "dependencies": {
+    "@auth/core": "catalog:",
+    "@auth/neon-adapter": "catalog:",
+    "@neondatabase/serverless": "catalog:",
+    "next": "catalog:libs",
+    "react": "catalog:libs",
+    "react-dom": "catalog:libs"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "typescript": "catalog:cli"
+  }
+}

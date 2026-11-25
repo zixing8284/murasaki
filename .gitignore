@@ -3,6 +3,9 @@ dist
 packages/*/dist
 packages/*/node_modules
 packages/*/.next
+packages/community-service/*.tsbuildinfo
+packages/community-service/.env*
+!packages/community-service/.env.example
 packages/*/out
 packages/playground/public/programs/docs/*
 **/_pagefind/

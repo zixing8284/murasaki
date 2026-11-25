@@ -15,6 +15,7 @@ Life is hard. Building this project genuinely makes me happy.
 - `packages/playground` — demo
 - `packages/docs` — component docs
 - `packages/next-fixture` — Next.js integration test
+- `packages/community-service` — guestbook, GitHub authentication, and chatbot API
 
 ## Getting Started
 
@@ -25,6 +26,9 @@ pnpm play             # 3. Start the playground
 ```
 
 Docs only: `pnpm docs:dev` → `http://localhost:3000/programs/docs/`
+
+The Community window requires a separately configured service; see
+[`packages/community-service/README.md`](packages/community-service/README.md).
 
 ## Acknowledgements
 

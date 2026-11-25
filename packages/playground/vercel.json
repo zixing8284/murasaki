@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/community/:path*", "destination": "/api/community-proxy?path=:path*" }
+  ]
+}

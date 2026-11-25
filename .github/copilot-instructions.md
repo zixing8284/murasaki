@@ -2,12 +2,13 @@
 
 ## Project Shape
 
-pnpm workspace with four packages:
+pnpm workspace with five packages:
 
 - **`packages/ui`** — Publishable React component library. Build output goes to `dist/`.
 - **`packages/playground`** — Windows 98 desktop demo app that consumes the built UI library.
 - **`packages/docs`** — Standalone Nextra documentation site. Static export is embedded into the playground iframe app.
 - **`packages/next-fixture`** — Next.js consumer fixture for package integration checks.
+- **`packages/community-service`** — Independently deployed Next.js API for the playground Community window.
 
 ## Core Workflow
 

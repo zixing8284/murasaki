@@ -7,6 +7,8 @@
     "play": "pnpm --filter @murasaki-io/react98-playground dev",
     "play:build": "pnpm --filter @murasaki-io/react98-playground build",
     "play:preview": "pnpm --filter @murasaki-io/react98-playground preview",
+    "community:dev": "pnpm --filter @murasaki-io/community-service dev",
+    "community:build": "pnpm --filter @murasaki-io/community-service build",
     "docs:dev": "pnpm --filter @murasaki-io/react98-docs dev",
     "docs:build": "pnpm --filter @murasaki-io/react98-docs build",
     "docs:embed": "node scripts/embed-docs.mjs",

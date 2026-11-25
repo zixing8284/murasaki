@@ -37,6 +37,15 @@ const APP_SHORT_NAME = 'murasaki 98'
 export default defineConfig({
   root: '.',
   base,
+  server: {
+    proxy: {
+      '/api/community': {
+        target: process.env.COMMUNITY_SERVICE_ORIGIN ?? 'http://localhost:3001',
+        changeOrigin: true,
+        xfwd: true,
+      },
+    },
+  },
   plugins: [
     react({ include: /\.(jsx|js|tsx|ts)$/ }),
     babel({

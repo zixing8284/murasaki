@@ -5,7 +5,12 @@ import { createServer } from 'node:http'
 import process from 'node:process'
 // eslint-disable-next-line test/no-import-node-test
 import { after, test } from 'node:test'
-import handler from '../api/community-proxy.ts'
+import handler from '../../../api/community-proxy.ts'
+import playgroundHandler from '../api/community-proxy.ts'
+
+test('root and playground deployments use the same proxy', () => {
+  assert.equal(handler, playgroundHandler)
+})
 
 const upstream = createServer((request, response) => {
   const chunks: Buffer[] = []

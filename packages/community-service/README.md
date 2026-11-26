@@ -25,12 +25,13 @@ Create two Vercel projects from this repository:
    Set the five secret variables above and set `AUTH_URL` to
    `https://<playground-domain>/api/community/auth`. Deploy the service and
    note its stable production domain.
-2. Set the playground project's root directory to `packages/playground`.
-   Configure its build to build the UI library before the playground, for
-   example `pnpm --filter @murasaki-io/react98 build && pnpm build`, and set
-   `COMMUNITY_SERVICE_ORIGIN` to the service's HTTPS origin. Its Vercel
-   function and rewrite forward `/api/community/*` to that service, preserving
-   streaming and authentication cookies.
+2. Set the playground project's root directory to either the repository root
+   or `packages/playground`. Configure its build to build the UI library before
+   the playground and set `COMMUNITY_SERVICE_ORIGIN` to the service's HTTPS
+   origin. Both root directories provide a Vercel function and rewrite that
+   forward `/api/community/*` to that service, preserving streaming and
+   authentication cookies. For a repository-root project, keep the output
+   directory set to `packages/playground/dist`.
 3. Set the GitHub OAuth app callback to
    `https://<playground-domain>/api/community/auth/callback/github`. Redeploy
    after changing configuration, then verify sign-in, historical messages,

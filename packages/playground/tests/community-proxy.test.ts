@@ -6,7 +6,7 @@ import process from 'node:process'
 // eslint-disable-next-line test/no-import-node-test
 import { after, test } from 'node:test'
 import handler from '../../../api/community-proxy.ts'
-import playgroundHandler from '../api/community-proxy.ts'
+import playgroundHandler from '../api/community-proxy.js'
 
 test('root and playground deployments use the same proxy', () => {
   assert.equal(handler, playgroundHandler)

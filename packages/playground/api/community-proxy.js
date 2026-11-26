@@ -1,9 +1,14 @@
-import type { IncomingMessage, ServerResponse } from 'node:http'
+// @ts-check
 import { request as httpRequest } from 'node:http'
 import { request as httpsRequest } from 'node:https'
 import process from 'node:process'
 
-export default function handler(req: IncomingMessage, res: ServerResponse): void {
+/**
+ * @param {import('node:http').IncomingMessage} req
+ * @param {import('node:http').ServerResponse} res
+ * @returns {void}
+ */
+export default function handler(req, res) {
   const origin = process.env.COMMUNITY_SERVICE_ORIGIN
   if (!origin) {
     res.writeHead(503, { 'Content-Type': 'application/json' })

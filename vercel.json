@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/community-proxy.ts": {
+      "includeFiles": "packages/playground/api/community-proxy.js"
+    }
+  },
   "rewrites": [
     { "source": "/api/community/:path*", "destination": "/api/community-proxy?path=:path*" }
   ]

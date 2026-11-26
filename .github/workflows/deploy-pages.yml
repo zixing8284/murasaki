@@ -53,6 +53,8 @@ jobs:
 
       - name: Build playground (with Pages base path)
         run: pnpm play:build
+        env:
+          VITE_COMMUNITY_PLAYGROUND_URL: https://murasaki-playground.vercel.app/
 
       - uses: actions/configure-pages@v6
 

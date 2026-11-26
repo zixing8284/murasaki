@@ -41,6 +41,10 @@ GitHub Pages is static and cannot run the proxy: the Community window needs a
 same-origin proxy on that host or a Vercel-hosted playground. The Vite proxy
 only applies to development, not `vite preview`.
 
+The GitHub Pages build sets `VITE_COMMUNITY_PLAYGROUND_URL` to the Vercel
+playground, so its Community window links there instead of calling the API.
+Update the URL in the Pages workflow if the Vercel domain changes.
+
 The chatbot is publicly accessible, like the original. Origin checks are not
 rate limiting and can be forged by non-browser clients. Before exposing it,
 configure Vercel firewall/rate limits and a DeepSeek spending limit. Restrict

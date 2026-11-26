@@ -406,6 +406,19 @@ function Chatbot(): ReactElement {
 }
 
 export function Community(): ReactElement {
+  const playgroundUrl = import.meta.env.VITE_COMMUNITY_PLAYGROUND_URL
+  if (playgroundUrl) {
+    return (
+      <div className="flex h-full flex-col items-start gap-2 p-4">
+        <p>Community is available on the Vercel playground.</p>
+        <p>Open the playground and select Community to chat or leave a message.</p>
+        <a href={playgroundUrl} target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
+          Open Vercel playground
+        </a>
+      </div>
+    )
+  }
+
   return (
     <Tabs defaultValue="guestbook" keepMounted className="h-full min-h-0 w-full p-2">
       <TabList aria-label="Community">

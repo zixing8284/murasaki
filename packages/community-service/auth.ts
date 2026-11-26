@@ -43,7 +43,16 @@ export async function getUserId(request: Request): Promise<string | null> {
   if (!response.ok)
     throw new Error(`Session lookup failed (${response.status})`)
   const session: unknown = await response.json()
-  if (typeof session !== 'object' || session === null || !('user' in session) || typeof session.user !== 'object' || session.user === null || !('id' in session.user) || typeof session.user.id !== 'string')
+  return getSessionUserId(session)
+}
+
+export function getSessionUserId(session: unknown): string | null {
+  if (typeof session !== 'object' || session === null || !('user' in session) || typeof session.user !== 'object' || session.user === null || !('id' in session.user))
     return null
-  return session.user.id
+  const id = session.user.id
+  if (typeof id === 'string')
+    return id
+  if (typeof id === 'number' && Number.isSafeInteger(id))
+    return String(id)
+  return null
 }

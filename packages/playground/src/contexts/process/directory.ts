@@ -85,7 +85,7 @@ const directory = {
       import('../../directory/apps/community/community').then(m => ({ default: m.Community })),
     ),
     defaultTitle: 'Community',
-    icon: ICON.outlookExpress,
+    icon: ICON.usersGreen,
     singleton: true,
     showOnDesktop: true,
     startMenu: { folder: 'programs', order: 25 },

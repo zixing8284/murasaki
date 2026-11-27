@@ -1,8 +1,11 @@
 import type { FormEvent, ReactElement } from 'react'
-import { Button, Tab, TabList, TabPanel, Tabs, TextBox } from '@murasaki-io/react98'
+import { Button, ScrollArea, Tab, TabList, TabPanel, Tabs, TextBox } from '@murasaki-io/react98'
 import { useEffect, useRef, useState } from 'react'
+import { assetPath } from '../../../lib/asset-path'
+import { ICON } from '../../../lib/icons'
 
-const API = '/api/community'
+const API_ORIGIN = import.meta.env.VITE_COMMUNITY_API_ORIGIN?.replace(/\/+$/, '') ?? ''
+const API = `${API_ORIGIN}/api/community`
 
 interface Entry {
   id: number
@@ -23,31 +26,16 @@ async function readJson<T>(response: Response): Promise<T> {
   return response.json() as Promise<T>
 }
 
-async function authAction(action: 'signin/github' | 'signout'): Promise<void> {
-  const { csrfToken } = await readJson<{ csrfToken: string }>(await fetch(`${API}/auth/csrf`))
-  const form = document.createElement('form')
-  form.method = 'POST'
-  form.action = `${API}/auth/${action}`
-  for (const [name, value] of Object.entries({ csrfToken, callbackUrl: window.location.href })) {
-    const input = document.createElement('input')
-    input.type = 'hidden'
-    input.name = name
-    input.value = value
-    form.append(input)
-  }
-  document.body.append(form)
-  form.submit()
-}
-
 function Guestbook(): ReactElement {
   const [page, setPage] = useState(1)
   const [data, setData] = useState<GuestbookPage | null>(null)
-  const [session, setSession] = useState<{ user?: { name?: string | null } } | null>(null)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [comment, setComment] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
-  const [sessionError, setSessionError] = useState('')
   const [version, setVersion] = useState(0)
+  const latestEntryRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -70,27 +58,13 @@ function Guestbook(): ReactElement {
   }, [page, version])
 
   useEffect(() => {
-    const controller = new AbortController()
-    async function loadSession(): Promise<void> {
-      try {
-        const currentSession = await fetch(`${API}/auth/session`, { signal: controller.signal }).then(readJson<{ user?: { name?: string | null } }>)
-        setSession(currentSession)
-      }
-      catch (err) {
-        if (!controller.signal.aborted) {
-          setSessionError(err instanceof Error
-            ? err.message
-            : 'Unable to load session')
-        }
-      }
-    }
-    void loadSession()
-    return () => controller.abort()
-  }, [])
+    if (data?.entries.length)
+      latestEntryRef.current?.scrollIntoView({ block: 'end' })
+  }, [data])
 
   async function submit(event: FormEvent): Promise<void> {
     event.preventDefault()
-    if (pending || comment.trim().length < 2)
+    if (pending || !name.trim() || !email.trim() || comment.trim().length < 2)
       return
     setPending(true)
     setError('')
@@ -98,7 +72,7 @@ function Guestbook(): ReactElement {
       await readJson(await fetch(`${API}/guestbook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment }),
+        body: JSON.stringify({ name, email, comment }),
       }))
       setComment('')
       setPage(1)
@@ -112,14 +86,6 @@ function Guestbook(): ReactElement {
     finally {
       setPending(false)
     }
-  }
-
-  function sign(action: 'signin/github' | 'signout'): void {
-    void authAction(action).catch((err: unknown) => {
-      setError(err instanceof Error
-        ? err.message
-        : 'Unable to change sign-in state')
-    })
   }
 
   function format(event: React.MouseEvent<HTMLButtonElement>, tag: 'B' | 'I' | 'U'): void {
@@ -142,22 +108,33 @@ function Guestbook(): ReactElement {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-2">
-      <div className="min-h-0 flex-1 overflow-auto bg-(--window) p-2 text-(--window-text) shadow-(--shadow-border-field)" aria-label="Guestbook messages">
-        {!data && !error && <p>Loading messages...</p>}
-        {data?.entries.length === 0 && <p>No messages on this page.</p>}
-        {data?.entries.map(entry => (
-          <div key={entry.id} className="mb-3 break-words whitespace-pre-wrap">
-            <div className="mb-1 text-(--gray-text)">
-              <strong className="text-(--window-text)">{entry.name || 'Guest'}</strong>
-              {' — '}
-              {new Date(entry.create_at).toLocaleString()}
+    <div className="flex h-full min-h-0 min-w-0 flex-col gap-2">
+      <ScrollArea className="min-h-0 min-w-0 flex-1 bg-(--window) shadow-(--shadow-sunken)" aria-label="Guestbook messages">
+        <div className="min-w-0 max-w-full p-2 text-(--window-text)">
+          {!data && !error && <p>Loading messages...</p>}
+          {data?.entries.length === 0 && <p>No messages on this page.</p>}
+          {data?.entries.map((entry, index) => (
+            <div
+              key={entry.id}
+              ref={index === data.entries.length - 1
+                ? latestEntryRef
+                : undefined}
+              className="mb-3 min-w-0 max-w-full whitespace-pre-wrap [overflow-wrap:anywhere]"
+            >
+              <div className="mb-1 flex min-w-0 items-center gap-1 text-(--gray-text)">
+                <img src={assetPath(ICON.usersGreen.sm)} alt="" className="size-4 shrink-0 pixelated" draggable={false} />
+                <strong className="text-(--window-text)">{entry.name || 'Guest'}</strong>
+                <span className="min-w-0 [overflow-wrap:anywhere]">
+                  {' — '}
+                  {new Date(entry.create_at).toLocaleString()}
+                </span>
+              </div>
+              <FormattedMessage text={entry.comment} />
             </div>
-            <FormattedMessage text={entry.comment} />
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-between gap-2">
+          ))}
+        </div>
+      </ScrollArea>
+      <div className="flex shrink-0 items-center justify-between gap-2">
         <div className="flex items-center gap-1">
           <Button type="button" disabled={page <= 1} onClick={() => setPage(value => value - 1)}>Newer</Button>
           <span>
@@ -167,18 +144,42 @@ function Guestbook(): ReactElement {
           </span>
           <Button type="button" disabled={!data || page >= data.totalPages} onClick={() => setPage(value => value + 1)}>Older</Button>
         </div>
-        {session?.user
-          ? <Button type="button" onClick={() => sign('signout')}>Sign out</Button>
-          : <Button type="button" onClick={() => sign('signin/github')}>Sign in with GitHub</Button>}
+        <span className="text-(--gray-text)">Guestbook</span>
       </div>
-      <form className="flex flex-col gap-1" onSubmit={event => void submit(event)}>
+      <form className="flex shrink-0 flex-col gap-1" onSubmit={event => void submit(event)}>
+        <div className="grid min-w-0 grid-cols-2 gap-1">
+          <TextBox
+            aria-label="Your name"
+            autoComplete="name"
+            maxLength={80}
+            placeholder="Your name"
+            required
+            value={name}
+            onValueChange={setName}
+            disabled={pending}
+            className="min-w-0 w-full"
+          />
+          <TextBox
+            aria-label="Your email"
+            autoComplete="email"
+            maxLength={254}
+            placeholder="Your email"
+            required
+            type="email"
+            value={email}
+            onValueChange={setEmail}
+            disabled={pending}
+            className="min-w-0 w-full"
+          />
+        </div>
+        <p className="text-(--gray-text)">Your email is private and will not appear with your message.</p>
         <div className="flex gap-1">
           {(['B', 'I', 'U'] as const).map(tag => (
             <Button
               key={tag}
               type="button"
               aria-label={{ B: 'Bold', I: 'Italic', U: 'Underline' }[tag]}
-              disabled={!session?.user || pending}
+              disabled={pending}
               onMouseDown={event => event.preventDefault()}
               onClick={event => format(event, tag)}
             >
@@ -189,8 +190,8 @@ function Guestbook(): ReactElement {
         <TextBox
           multiline
           aria-label="Guestbook message"
-          placeholder={session?.user ? 'Leave a message' : 'Sign in to leave a message'}
-          disabled={!session?.user || pending}
+          placeholder="Leave a message"
+          disabled={pending}
           maxLength={140}
           value={comment}
           onValueChange={setComment}
@@ -207,13 +208,12 @@ function Guestbook(): ReactElement {
             {comment.length}
             /140
           </span>
-          <Button type="submit" disabled={!session?.user || pending || comment.trim().length < 2}>
+          <Button type="submit" disabled={!name.trim() || !email.trim() || pending || comment.trim().length < 2}>
             {pending ? 'Sending...' : 'Send'}
           </Button>
         </div>
       </form>
       {error && <p role="alert" className="text-(--window-text)">{error}</p>}
-      {sessionError && <p role="alert" className="text-(--window-text)">{sessionError}</p>}
     </div>
   )
 }
@@ -256,13 +256,11 @@ function Chatbot(): ReactElement {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
   const [retryMessages, setRetryMessages] = useState<ChatMessage[] | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const latestMessageRef = useRef<HTMLDivElement>(null)
   const requestRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    const element = scrollRef.current
-    if (element)
-      element.scrollTop = element.scrollHeight
+    latestMessageRef.current?.scrollIntoView({ block: 'end' })
   }, [messages])
 
   useEffect(() => () => requestRef.current?.abort(), [])
@@ -355,33 +353,41 @@ function Chatbot(): ReactElement {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-2">
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto bg-(--window) p-2 text-(--window-text) shadow-(--shadow-border-field)" aria-label="Chat messages">
-        {messages.length === 0 && <p>Say hello to the chatbot!</p>}
-        {messages.map(message => (
-          <div key={message.id} className="mb-3 break-words whitespace-pre-wrap">
-            <div className="flex items-center justify-between gap-2">
-              <strong>
-                {message.role === 'user'
-                  ? 'You'
-                  : 'Bot'}
-              </strong>
-              <Button
-                type="button"
-                disabled={pending}
-                onClick={() => {
-                  setMessages(items => items.filter(item => item.id !== message.id))
-                  setRetryMessages(null)
-                  setError('')
-                }}
-              >
-                Delete
-              </Button>
+      <ScrollArea className="min-h-0 min-w-0 flex-1 bg-(--window) shadow-(--shadow-sunken)" aria-label="Chat messages">
+        <div className="min-w-0 max-w-full p-2 text-(--window-text)">
+          {messages.length === 0 && <p>Say hello to the chatbot!</p>}
+          {messages.map((message, index) => (
+            <div
+              key={message.id}
+              ref={index === messages.length - 1 && !pending
+                ? latestMessageRef
+                : undefined}
+              className="mb-3 min-w-0 max-w-full whitespace-pre-wrap [overflow-wrap:anywhere]"
+            >
+              <div className="flex min-w-0 items-center justify-between gap-2">
+                <strong>
+                  {message.role === 'user'
+                    ? 'You'
+                    : 'Bot'}
+                </strong>
+                <Button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => {
+                    setMessages(items => items.filter(item => item.id !== message.id))
+                    setRetryMessages(null)
+                    setError('')
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+              {message.content}
             </div>
-            {message.content}
-          </div>
-        ))}
-        {pending && <p>Bot is typing...</p>}
-      </div>
+          ))}
+          {pending && <p ref={latestMessageRef}>Bot is typing...</p>}
+        </div>
+      </ScrollArea>
       {error && (
         <div role="alert" className="flex items-center gap-2">
           <span>
@@ -406,19 +412,6 @@ function Chatbot(): ReactElement {
 }
 
 export function Community(): ReactElement {
-  const playgroundUrl = import.meta.env.VITE_COMMUNITY_PLAYGROUND_URL
-  if (playgroundUrl) {
-    return (
-      <div className="flex h-full flex-col items-start gap-2 p-4">
-        <p>Community is available on the Vercel playground.</p>
-        <p>Open the playground and select Community to chat or leave a message.</p>
-        <a href={playgroundUrl} target="_blank" rel="noopener noreferrer" className="text-(--highlight) underline">
-          Open Vercel playground
-        </a>
-      </div>
-    )
-  }
-
   return (
     <Tabs defaultValue="guestbook" keepMounted className="h-full min-h-0 w-full p-2">
       <TabList aria-label="Community">

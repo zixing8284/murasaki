@@ -4,7 +4,7 @@ import process from 'node:process'
 import { after, test } from 'node:test'
 import { POST } from '../app/api/community/chatbot/route.ts'
 
-process.env.AUTH_URL = 'https://playground.example/api/community/auth'
+process.env.COMMUNITY_ALLOWED_ORIGINS = 'https://playground.example'
 process.env.DEEPSEEK_API_KEY = 'test-key'
 const originalFetch = globalThis.fetch
 
@@ -53,5 +53,6 @@ test('forwards a valid conversation and streams the model response', async () =>
     { role: 'user', content: 'hi' },
   ]))
   assert.equal(response.status, 200)
+  assert.equal(response.headers.get('access-control-allow-origin'), 'https://playground.example')
   assert.equal(await response.text(), stream)
 })

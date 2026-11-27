@@ -6,6 +6,7 @@
     "module": "esnext",
     "plugins": [{ "name": "next" }],
     "types": ["node"],
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "isolatedModules": true
   },

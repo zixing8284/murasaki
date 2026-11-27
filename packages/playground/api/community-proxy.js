@@ -19,11 +19,14 @@ export default function handler(req, res) {
   const incoming = new URL(req.url ?? '/', 'http://localhost')
   const path = incoming.searchParams.get('path') ?? ''
   incoming.searchParams.delete('path')
-  if (!/^(?:guestbook|chatbot|auth(?:\/[\w-]+)*)$/.test(path)) {
+  if (!/^(?:guestbook|chatbot)$/.test(path)) {
     res.writeHead(404)
     res.end()
     return
   }
+
+  const headers = { ...req.headers }
+  delete headers.cookie
 
   const target = new URL(`/api/community/${path}`, origin)
   target.search = incoming.searchParams.toString()
@@ -33,13 +36,15 @@ export default function handler(req, res) {
   const upstream = send(target, {
     method: req.method,
     headers: {
-      ...req.headers,
+      ...headers,
       'host': target.host,
       'x-forwarded-host': req.headers.host,
       'x-forwarded-proto': 'https',
     },
   }, (response) => {
-    res.writeHead(response.statusCode ?? 502, response.headers)
+    const responseHeaders = { ...response.headers }
+    delete responseHeaders['set-cookie']
+    res.writeHead(response.statusCode ?? 502, responseHeaders)
     response.pipe(res)
   })
   upstream.on('error', (error) => {

@@ -1,0 +1,6 @@
+ALTER TABLE guest_book
+  ALTER COLUMN user_id DROP NOT NULL;
+
+ALTER TABLE guest_book
+  ADD COLUMN IF NOT EXISTS author_name TEXT,
+  ADD COLUMN IF NOT EXISTS email TEXT;

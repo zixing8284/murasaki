@@ -15,7 +15,7 @@ Life is hard. Building this project genuinely makes me happy.
 - `packages/playground` — demo
 - `packages/docs` — component docs
 - `packages/next-fixture` — Next.js integration test
-- `packages/community-service` — guestbook, GitHub authentication, and chatbot API
+- `packages/community-service` — guestbook and chatbot API
 
 ## Getting Started
 

@@ -1,4 +1,5 @@
 import process from 'node:process'
+import { withCommunityCors } from '../../../../community-cors.ts'
 
 export const maxDuration = 30
 
@@ -7,14 +8,7 @@ interface Message {
   content: string
 }
 
-export async function POST(request: Request): Promise<Response> {
-  const origin = request.headers.get('origin')
-  const publicOrigin = process.env.AUTH_URL
-    ? new URL(process.env.AUTH_URL).origin
-    : null
-  if (!origin || origin !== publicOrigin)
-    return Response.json({ error: 'Invalid origin' }, { status: 403 })
-
+async function postChatbot(request: Request): Promise<Response> {
   const data: unknown = await request.json()
   if (typeof data !== 'object' || data === null || !('messages' in data) || !Array.isArray(data.messages) || data.messages.length < 1 || data.messages.length > 100)
     return Response.json({ error: 'Invalid conversation' }, { status: 400 })
@@ -57,3 +51,6 @@ export async function POST(request: Request): Promise<Response> {
     headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store' },
   })
 }
+
+export const POST = withCommunityCors(postChatbot)
+export const OPTIONS = withCommunityCors(async () => new Response(null))

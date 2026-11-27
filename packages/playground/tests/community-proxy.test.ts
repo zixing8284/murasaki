@@ -45,19 +45,20 @@ after(() => {
 })
 
 test('forwards requests, query parameters, bodies and cookies', async () => {
-  const response = await fetch(`${proxyUrl}/api/community-proxy?path=auth%2Fcallback%2Fgithub&code=abc`, {
+  const response = await fetch(`${proxyUrl}/api/community-proxy?path=guestbook&page=2`, {
     method: 'POST',
     headers: { 'cookie': 'session=existing', 'content-type': 'application/x-www-form-urlencoded' },
-    body: 'csrfToken=example',
+    body: 'comment=example',
   })
   assert.equal(response.status, 200)
-  assert.deepEqual(await response.json(), {
-    path: '/api/community/auth/callback/github?code=abc',
+  const forwarded = await response.json()
+  assert.deepEqual(forwarded, {
+    path: '/api/community/guestbook?page=2',
     method: 'POST',
-    cookie: 'session=existing',
-    body: 'csrfToken=example',
+    body: 'comment=example',
   })
-  assert.deepEqual(response.headers.getSetCookie(), ['session=one; Path=/; HttpOnly', 'csrf=two; Path=/'])
+  assert.equal('cookie' in forwarded, false)
+  assert.deepEqual(response.headers.getSetCookie(), [])
 })
 
 test('rejects paths outside the community API', async () => {

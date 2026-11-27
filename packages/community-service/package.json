@@ -9,8 +9,6 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
-    "@auth/core": "catalog:",
-    "@auth/neon-adapter": "catalog:",
     "@neondatabase/serverless": "catalog:",
     "next": "catalog:libs",
     "react": "catalog:libs",

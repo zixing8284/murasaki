@@ -63,12 +63,13 @@ export const ICON = {
   freecell: px16x32('freecell'),
   skifree: px16x32('skifree'),
   outlookExpress: px16('outlook-express'),
+  usersGreen: px16x32('users-green'),
   webamp: px16x32('webamp'),
   folderMyDocs: px16x32('folder-my-docs'),
   taskbar: px16('taskbar'),
 
   // --- Start menu decorative rows ------------------------------------------
-  windowsUpdate: px16('windows-update'),
+  windowsUpdate: px16x32('windows-update'),
   programGroup: px16x32('program-group'),
   searchFile: px16x32('search-file'),
   searchComputer: px16('search-computer'),
